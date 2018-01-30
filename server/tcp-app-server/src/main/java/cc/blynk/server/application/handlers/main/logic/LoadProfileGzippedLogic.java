@@ -12,7 +12,6 @@ import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.FlashedToken;
-import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -61,12 +60,12 @@ public class LoadProfileGzippedLogic {
         String[] parts = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
         if (parts.length == 1) {
             //load specific by id
-            int dashId = ParseUtil.parseInt(message.body);
+            int dashId = Integer.parseInt(message.body);
             DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
             write(ctx, gzipDash(dash), message.id, email, isNewProtocol);
         } else {
             String token = parts[0];
-            int dashId = ParseUtil.parseInt(parts[1]);
+            int dashId = Integer.parseInt(parts[1]);
             String publishingEmail = parts[2];
             //this is for simplification of testing.
             String appName = parts.length == 4 ? parts[3] : state.userKey.appName;

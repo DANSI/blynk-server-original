@@ -20,7 +20,6 @@ import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.server.workers.timer.TimerWorker;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.netty.channel.Channel;
@@ -128,7 +127,7 @@ public class DashBoard {
 
     public Widget findWidgetByPin(int deviceId, String[] splitted) {
         PinType type = PinType.getPinType(splitted[0].charAt(0));
-        byte pin = ParseUtil.parseByte(splitted[1]);
+        byte pin = Byte.parseByte(splitted[1]);
         return findWidgetByPin(deviceId, pin, type);
     }
 

@@ -4,7 +4,6 @@ import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -29,7 +28,7 @@ public final class AddPushLogic {
     public static void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
         String[] data = StringUtils.split3(message.body);
 
-        int dashId = ParseUtil.parseInt(data[0]);
+        int dashId = Integer.parseInt(data[0]);
         String uid = data[1];
         String token = data[2];
 

@@ -3,7 +3,6 @@ package cc.blynk.server.core.model.widgets.ui.table;
 import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
-import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.utils.structure.TableLimitedQueue;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.netty.channel.ChannelHandlerContext;
@@ -46,7 +45,7 @@ public class Table extends OnePinWidget {
                         break;
                     case "add" :
                         if (values.length > 3) {
-                            int id = ParseUtil.parseInt(values[1]);
+                            int id = Integer.parseInt(values[1]);
                             String rowName = values[2];
                             String rowValue = values[3];
                             Row existingRow = get(id);
@@ -59,7 +58,7 @@ public class Table extends OnePinWidget {
                         break;
                     case "update" :
                         if (values.length > 3) {
-                            int id = ParseUtil.parseInt(values[1]);
+                            int id = Integer.parseInt(values[1]);
                             String rowName = values[2];
                             String rowValue = values[3];
                             for (Row row : rows) {
@@ -72,7 +71,7 @@ public class Table extends OnePinWidget {
                         break;
                     case "pick" :
                         if (values.length > 1) {
-                            currentRowIndex = Math.min(ParseUtil.parseInt(values[1]), rows.size() - 1);
+                            currentRowIndex = Math.min(Integer.parseInt(values[1]), rows.size() - 1);
                         }
                         break;
                     case "select" :
@@ -87,8 +86,8 @@ public class Table extends OnePinWidget {
                         break;
                     case "order" :
                         if (values.length > 2) {
-                            int oldIndex = ParseUtil.parseInt(values[1]);
-                            int newIndex = ParseUtil.parseInt(values[2]);
+                            int oldIndex = Integer.parseInt(values[1]);
+                            int newIndex = Integer.parseInt(values[2]);
                             try {
                                 rows.order(oldIndex, newIndex);
                             } catch (Exception e) {
@@ -105,7 +104,7 @@ public class Table extends OnePinWidget {
     }
 
     private void selectRow(String idString, boolean select) {
-        int id = ParseUtil.parseInt(idString);
+        int id = Integer.parseInt(idString);
         Row row = get(id);
         if (row != null) {
             row.isSelected = select;

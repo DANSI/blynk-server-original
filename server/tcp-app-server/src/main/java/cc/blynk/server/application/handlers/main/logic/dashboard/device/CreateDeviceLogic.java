@@ -9,7 +9,6 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.ChannelHandlerContext;
@@ -44,7 +43,7 @@ public class CreateDeviceLogic {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        int dashId = ParseUtil.parseInt(split[0]);
+        int dashId = Integer.parseInt(split[0]);
         String deviceString = split[1];
 
         if (deviceString == null || deviceString.isEmpty()) {

@@ -12,7 +12,6 @@ import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.StringUtils;
@@ -48,14 +47,14 @@ public class CreateWidgetLogic {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        int dashId = ParseUtil.parseInt(split[0]);
+        int dashId = Integer.parseInt(split[0]);
 
         long widgetAddToId;
         long templateIdAddToId;
         String widgetString;
         if (split.length == 4) {
-            widgetAddToId = ParseUtil.parseLong(split[1]);
-            templateIdAddToId = ParseUtil.parseLong(split[2]);
+            widgetAddToId = Long.parseLong(split[1]);
+            templateIdAddToId = Long.parseLong(split[2]);
             widgetString = split[3];
         } else {
             widgetAddToId = -1;

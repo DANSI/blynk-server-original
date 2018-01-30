@@ -8,7 +8,6 @@ import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
-import cc.blynk.server.internal.ParseUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -69,7 +68,7 @@ public class SetWidgetPropertyLogic {
         }
 
         int deviceId = state.device.id;
-        byte pin = ParseUtil.parseByte(bodyParts[0]);
+        byte pin = Byte.parseByte(bodyParts[0]);
 
         //for now supporting only virtual pins
         Widget widget = dash.findWidgetByPin(deviceId, pin, PinType.VIRTUAL);

@@ -11,6 +11,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
 
+import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -58,6 +60,9 @@ public abstract class BaseSimpleChannelInboundHandler<I> extends ChannelInboundH
                 }
                 quotaMeter.mark();
                 messageReceived(ctx, (I) msg);
+            } catch (NumberFormatException nfe) {
+                log.debug("Error parsing number. {}", nfe.getMessage());
+                ctx.writeAndFlush(illegalCommand(getMsgId(msg)), ctx.voidPromise());
             } catch (BaseServerException bse) {
                 handleBaseServerException(ctx, bse, getMsgId(msg));
             } catch (Exception e) {

@@ -8,7 +8,6 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -39,7 +38,7 @@ public class UpdateDashSettingLogic {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        int dashId = ParseUtil.parseInt(split[0]);
+        int dashId = Integer.parseInt(split[0]);
         String dashSettingsString = split[1];
 
         if (dashSettingsString == null || dashSettingsString.isEmpty()) {

@@ -14,7 +14,6 @@ import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -61,16 +60,16 @@ public class ExportGraphDataLogic {
         }
 
         String[] dashIdAndDeviceId = split2Device(messageParts[0]);
-        int dashId = ParseUtil.parseInt(dashIdAndDeviceId[0]);
+        int dashId = Integer.parseInt(dashIdAndDeviceId[0]);
         int targetId = -1;
 
         if (dashIdAndDeviceId.length == 2) {
-            targetId = ParseUtil.parseInt(dashIdAndDeviceId[1]);
+            targetId = Integer.parseInt(dashIdAndDeviceId[1]);
         }
 
         DashBoard dashBoard = user.profile.getDashByIdOrThrow(dashId);
 
-        long widgetId = ParseUtil.parseLong(messageParts[1]);
+        long widgetId = Long.parseLong(messageParts[1]);
         Widget widget = dashBoard.getWidgetByIdOrThrow(widgetId);
 
         if (widget instanceof HistoryGraph) {

@@ -5,7 +5,6 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.others.rtc.StringToZoneId;
 import cc.blynk.server.core.model.widgets.others.rtc.ZoneIdToString;
-import cc.blynk.server.internal.ParseUtil;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -58,7 +57,7 @@ public class TimeInput extends OnePinWidget {
                     String[] daysString = values[3].split(",");
                     days = new int[daysString.length];
                     for (int i = 0; i < daysString.length; i++) {
-                        days[i] = ParseUtil.parseInt(daysString[i]);
+                        days[i] = Integer.parseInt(daysString[i]);
                     }
                 }
             }
@@ -76,7 +75,7 @@ public class TimeInput extends OnePinWidget {
             case "" :
                 return NEVER;
             default :
-                return ParseUtil.parseInt(value);
+                return Integer.parseInt(value);
         }
     }
 

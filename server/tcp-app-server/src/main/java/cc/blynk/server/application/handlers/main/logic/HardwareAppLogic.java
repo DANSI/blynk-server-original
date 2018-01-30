@@ -13,7 +13,6 @@ import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.processors.BaseProcessorHandler;
 import cc.blynk.server.core.processors.WebhookProcessor;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -62,7 +61,7 @@ public class HardwareAppLogic extends BaseProcessorHandler {
 
         //here we have "1-200000"
         String[] dashIdAndTargetIdString = split2Device(split[0]);
-        int dashId = ParseUtil.parseInt(dashIdAndTargetIdString[0]);
+        int dashId = Integer.parseInt(dashIdAndTargetIdString[0]);
 
         DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
 
@@ -76,7 +75,7 @@ public class HardwareAppLogic extends BaseProcessorHandler {
 
         //new logic for multi devices
         if (dashIdAndTargetIdString.length == 2) {
-            targetId = ParseUtil.parseInt(dashIdAndTargetIdString[1]);
+            targetId = Integer.parseInt(dashIdAndTargetIdString[1]);
         }
 
         //sending message only if widget assigned to device or tag has assigned devices
@@ -110,7 +109,7 @@ public class HardwareAppLogic extends BaseProcessorHandler {
                 }
 
                 PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
-                byte pin = ParseUtil.parseByte(splitBody[1]);
+                byte pin = Byte.parseByte(splitBody[1]);
                 String value = splitBody[2];
                 long now = System.currentTimeMillis();
 
@@ -161,10 +160,10 @@ public class HardwareAppLogic extends BaseProcessorHandler {
                                                     Session session, DashBoard dash,
                                                     StringMessage message, String[] splitBody) {
         //in format "vu 200000 1"
-        long widgetId = ParseUtil.parseLong(splitBody[1]);
+        long widgetId = Long.parseLong(splitBody[1]);
         Widget deviceSelector = dash.getWidgetByIdOrThrow(widgetId);
         if (deviceSelector instanceof DeviceSelector) {
-            int selectedDeviceId = ParseUtil.parseInt(splitBody[2]);
+            int selectedDeviceId = Integer.parseInt(splitBody[2]);
             ((DeviceSelector) deviceSelector).value = selectedDeviceId;
             ctx.write(ok(message.id), ctx.voidPromise());
 

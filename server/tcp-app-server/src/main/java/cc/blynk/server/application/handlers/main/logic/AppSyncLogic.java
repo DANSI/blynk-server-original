@@ -6,7 +6,6 @@ import cc.blynk.server.core.model.widgets.AppSyncWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.internal.ParseUtil;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
@@ -28,13 +27,13 @@ public final class AppSyncLogic {
 
     public static void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
         String[] dashIdAndTargetIdString = split2Device(message.body);
-        int dashId = ParseUtil.parseInt(dashIdAndTargetIdString[0]);
+        int dashId = Integer.parseInt(dashIdAndTargetIdString[0]);
         int targetId = AppSyncWidget.ANY_TARGET;
 
         DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
 
         if (dashIdAndTargetIdString.length == 2) {
-            targetId = ParseUtil.parseInt(dashIdAndTargetIdString[1]);
+            targetId = Integer.parseInt(dashIdAndTargetIdString[1]);
 
             //special case. app sync with targetId most probably comes from DeviceTiles widget
             //so we do update for it.

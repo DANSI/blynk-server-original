@@ -5,7 +5,6 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -33,8 +32,8 @@ public final class DeleteTagLogic {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        int dashId = ParseUtil.parseInt(split[0]);
-        int tagId = ParseUtil.parseInt(split[1]);
+        int dashId = Integer.parseInt(split[0]);
+        int tagId = Integer.parseInt(split[1]);
 
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 

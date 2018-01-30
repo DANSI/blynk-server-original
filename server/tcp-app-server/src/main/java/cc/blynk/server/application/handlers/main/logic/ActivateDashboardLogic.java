@@ -7,7 +7,6 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.internal.ParseUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -42,7 +41,7 @@ public class ActivateDashboardLogic {
         User user = state.user;
         String dashBoardIdString = message.body;
 
-        int dashId = ParseUtil.parseInt(dashBoardIdString);
+        int dashId = Integer.parseInt(dashBoardIdString);
 
         log.debug("Activating dash {} for user {}", dashBoardIdString, user.email);
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);

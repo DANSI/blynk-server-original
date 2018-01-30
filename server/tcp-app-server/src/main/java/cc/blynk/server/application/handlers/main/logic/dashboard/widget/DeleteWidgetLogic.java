@@ -11,7 +11,6 @@ import cc.blynk.server.core.model.widgets.ui.Tabs;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.ChannelHandlerContext;
@@ -45,8 +44,8 @@ public class DeleteWidgetLogic {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        int dashId = ParseUtil.parseInt(split[0]);
-        long widgetId = ParseUtil.parseLong(split[1]);
+        int dashId = Integer.parseInt(split[0]);
+        long widgetId = Long.parseLong(split[1]);
 
         User user = state.user;
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);

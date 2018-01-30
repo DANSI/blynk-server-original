@@ -8,7 +8,6 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -41,8 +40,8 @@ public class DeleteDeviceLogic {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        int dashId = ParseUtil.parseInt(split[0]);
-        int deviceId = ParseUtil.parseInt(split[1]);
+        int dashId = Integer.parseInt(split[0]);
+        int deviceId = Integer.parseInt(split[1]);
 
         if (deviceId == 0) {
             throw new IllegalCommandException("You are not allowed to remove device with id 0.");

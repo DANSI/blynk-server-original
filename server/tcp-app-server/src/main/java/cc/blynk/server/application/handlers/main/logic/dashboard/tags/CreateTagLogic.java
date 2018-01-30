@@ -6,7 +6,6 @@ import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -35,7 +34,7 @@ public final class CreateTagLogic {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        int dashId = ParseUtil.parseInt(split[0]);
+        int dashId = Integer.parseInt(split[0]);
         String deviceString = split[1];
 
         if (deviceString == null || deviceString.isEmpty()) {

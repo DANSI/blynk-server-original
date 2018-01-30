@@ -15,7 +15,6 @@ import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.reporting.GraphPinRequest;
-import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -58,7 +57,7 @@ public class GetEnhancedGraphDataLogic {
         int targetId = -1;
         String[] dashIdAndTargetIdString = split2Device(messageParts[0]);
         if (dashIdAndTargetIdString.length == 2) {
-            targetId = ParseUtil.parseInt(dashIdAndTargetIdString[1]);
+            targetId = Integer.parseInt(dashIdAndTargetIdString[1]);
         }
         int dashId = Integer.parseInt(dashIdAndTargetIdString[0]);
 

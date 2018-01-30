@@ -6,7 +6,6 @@ import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.Purchase;
-import cc.blynk.server.internal.ParseUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -64,7 +63,7 @@ public class AddEnergyLogic {
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String[] bodyParts = split2(message.body);
 
-        int energyAmountToAdd = ParseUtil.parseInt(bodyParts[0]);
+        int energyAmountToAdd = Integer.parseInt(bodyParts[0]);
         ResponseMessage response;
         if (bodyParts.length == 2 && isValidTransactionId(bodyParts[1])) {
             insertPurchase(user.email, energyAmountToAdd, bodyParts[1]);

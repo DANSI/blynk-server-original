@@ -5,9 +5,7 @@ import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
@@ -15,6 +13,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
 import static cc.blynk.server.internal.CommonByteBufUtil.notificationError;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 
@@ -43,16 +42,18 @@ public class AppMailLogic {
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
         String[] split = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
-        int dashId = ParseUtil.parseInt(split[0]);
+        int dashId = Integer.parseInt(split[0]);
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
         //dashId deviceId
         if (split.length == 2) {
-            int deviceId = ParseUtil.parseInt(split[1]);
+            int deviceId = Integer.parseInt(split[1]);
             Device device = dash.getDeviceById(deviceId);
 
             if (device == null || device.token == null) {
-                throw new IllegalCommandBodyException("Wrong device id.");
+                log.debug("Wrong device id.");
+                ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+                return;
             }
 
             makeSingleTokenEmail(ctx, dash, device, user.email, message.id);

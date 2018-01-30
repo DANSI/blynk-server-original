@@ -9,7 +9,6 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.DBManager;
-import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -40,7 +39,7 @@ public class GetCloneCodeLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        int dashId = ParseUtil.parseInt(message.body);
+        int dashId = Integer.parseInt(message.body);
 
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
