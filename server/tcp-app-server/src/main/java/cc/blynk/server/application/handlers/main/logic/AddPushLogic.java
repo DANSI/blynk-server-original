@@ -3,12 +3,14 @@ package cc.blynk.server.application.handlers.main.logic;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
-import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 
 /**
@@ -18,6 +20,8 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
  *
  */
 public final class AddPushLogic {
+
+    private static final Logger log = LogManager.getLogger(AddPushLogic.class);
 
     private AddPushLogic() {
     }
@@ -34,7 +38,9 @@ public final class AddPushLogic {
         Notification notification = dash.getWidgetByType(Notification.class);
 
         if (notification == null) {
-            throw new NotAllowedException("No notification widget.", message.id);
+            log.error("No notification widget.");
+            ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
+            return;
         }
 
         switch (state.version.osType) {
