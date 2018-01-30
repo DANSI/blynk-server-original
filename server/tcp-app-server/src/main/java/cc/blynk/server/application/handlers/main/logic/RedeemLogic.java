@@ -59,7 +59,7 @@ public class RedeemLogic {
     }
 
     private void unlockContent(User user, int reward) {
-        user.purchaseEnergy(reward);
+        user.addEnergy(reward);
         log.info("Unlocking content for {}. Reward {}.", user.email, reward);
     }
 

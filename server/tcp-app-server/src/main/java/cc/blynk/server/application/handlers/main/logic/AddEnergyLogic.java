@@ -62,7 +62,7 @@ public class AddEnergyLogic {
         int energyAmountToAdd = ParseUtil.parseInt(bodyParts[0]);
         if (bodyParts.length == 2 && isValidTransactionId(bodyParts[1])) {
             insertPurchase(user.email, energyAmountToAdd, bodyParts[1]);
-            user.purchaseEnergy(energyAmountToAdd);
+            user.addEnergy(energyAmountToAdd);
             ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
         } else {
             throw new NotAllowedException("Purchase with invalid transaction id. User " + user.email);

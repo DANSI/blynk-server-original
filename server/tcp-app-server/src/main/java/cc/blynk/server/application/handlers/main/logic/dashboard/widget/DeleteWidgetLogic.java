@@ -80,7 +80,7 @@ public class DeleteWidgetLogic {
             deleteTabs(timerWorker, user, state.userKey, dash, 0);
         }
 
-        user.recycleEnergy(widgetToDelete.getPrice());
+        user.addEnergy(widgetToDelete.getPrice());
         if (inDeviceTiles) {
             deviceTiles.deleteWidget(widgetId);
         } else {
@@ -119,7 +119,7 @@ public class DeleteWidgetLogic {
             }
         }
 
-        user.recycleEnergy(removedWidgetPrice);
+        user.addEnergy(removedWidgetPrice);
         dash.widgets = zeroTabWidgets.toArray(new Widget[zeroTabWidgets.size()]);
         dash.updatedAt = System.currentTimeMillis();
     }

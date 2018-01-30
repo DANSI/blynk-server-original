@@ -100,11 +100,7 @@ public class User {
         this.energy -= price;
     }
 
-    public void recycleEnergy(int price) {
-        purchaseEnergy(price);
-    }
-
-    public void purchaseEnergy(int price) {
+    public void addEnergy(int price) {
         //non-atomic. we are fine with that
         this.energy += price;
         this.lastModifiedTs = System.currentTimeMillis();
