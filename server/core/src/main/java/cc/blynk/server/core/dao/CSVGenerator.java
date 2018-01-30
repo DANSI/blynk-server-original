@@ -4,7 +4,6 @@ import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.utils.FileUtils;
 import io.netty.util.CharsetUtil;
@@ -55,7 +54,7 @@ public class CSVGenerator {
     public Path createCSV(User user, int dashId, int inDeviceId, PinType pinType, byte pin, int... deviceIds)
             throws Exception {
         if (pinType == null || pin == DataStream.NO_PIN) {
-            throw new IllegalCommandBodyException("Wrong pin format.");
+            throw new IllegalStateException("Wrong pin format.");
         }
 
         Path path = generateExportCSVPath(user.email, dashId, inDeviceId, pinType, pin);

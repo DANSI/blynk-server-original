@@ -55,7 +55,7 @@ public final class UpdateTileTemplateLogic {
 
         DeviceTiles deviceTiles = (DeviceTiles) widget;
 
-        TileTemplate newTileTemplate = JsonParser.parseTileTemplate(tileTemplateString);
+        TileTemplate newTileTemplate = JsonParser.parseTileTemplate(tileTemplateString, message.id);
         int existingTileTemplateIndex = deviceTiles.getTileTemplateIndexByIdOrThrow(newTileTemplate.id);
         TileTemplate existingTileTemplate = deviceTiles.templates[existingTileTemplateIndex];
 

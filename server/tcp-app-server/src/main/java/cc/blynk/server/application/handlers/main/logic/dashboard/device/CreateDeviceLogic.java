@@ -56,7 +56,7 @@ public class CreateDeviceLogic {
             throw new NotAllowedException("Device limit is reached.", message.id);
         }
 
-        Device newDevice = JsonParser.parseDevice(deviceString);
+        Device newDevice = JsonParser.parseDevice(deviceString, message.id);
 
         log.debug("Creating new device {}.", deviceString);
 

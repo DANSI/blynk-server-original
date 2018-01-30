@@ -51,9 +51,11 @@ public class LoadProfileGzippedLogic {
         //load all
         String email = state.user.email;
         boolean isNewProtocol = state.isNewProtocol();
+        int msgId = message.id;
+
         if (message.length == 0) {
             Profile profile = state.user.profile;
-            write(ctx, gzipProfile(profile), message.id, email, isNewProtocol);
+            write(ctx, gzipProfile(profile), msgId, email, isNewProtocol);
             return;
         }
 
@@ -62,7 +64,7 @@ public class LoadProfileGzippedLogic {
             //load specific by id
             int dashId = Integer.parseInt(message.body);
             DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
-            write(ctx, gzipDash(dash), message.id, email, isNewProtocol);
+            write(ctx, gzipDash(dash), msgId, email, isNewProtocol);
         } else {
             String token = parts[0];
             int dashId = Integer.parseInt(parts[1]);
@@ -78,12 +80,12 @@ public class LoadProfileGzippedLogic {
                         DashBoard dash = publishingUser.profile.getDashByIdOrThrow(dashId);
                         //todo ugly. but ok for now
                         String copyString = JsonParser.toJsonRestrictiveDashboard(dash);
-                        DashBoard copyDash = JsonParser.parseDashboard(copyString);
+                        DashBoard copyDash = JsonParser.parseDashboard(copyString, msgId);
                         copyDash.eraseValues();
-                        write(ctx, gzipDashRestrictive(copyDash), message.id, email, isNewProtocol);
+                        write(ctx, gzipDashRestrictive(copyDash), msgId, email, isNewProtocol);
                     }
                 } catch (Exception e) {
-                    ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
+                    ctx.writeAndFlush(illegalCommand(msgId), ctx.voidPromise());
                     log.error("Error getting publishing profile.", e.getMessage());
                 }
             });

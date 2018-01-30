@@ -50,7 +50,7 @@ public class UpdateDashSettingLogic {
         }
 
         log.debug("Trying to parse project settings : {}", dashSettingsString);
-        DashboardSettings settings = JsonParser.parseDashboardSettings(dashSettingsString);
+        DashboardSettings settings = JsonParser.parseDashboardSettings(dashSettingsString, message.id);
 
         User user = state.user;
 

@@ -104,7 +104,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         clientPair.appClient.send("getWidget 1\0" + widgetId);
-        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(3));
+        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(3), 0);
         assertNotNull(deviceTiles);
         assertEquals(widgetId, deviceTiles.id);
         assertNotNull(deviceTiles.templates);
@@ -143,7 +143,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
 
 
         clientPair.appClient.send("getWidget 1\0" + widgetId);
-        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(4));
+        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(4), 0);
         assertNotNull(deviceTiles);
         assertEquals(widgetId, deviceTiles.id);
         assertNotNull(deviceTiles.templates);
@@ -187,7 +187,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
 
 
         clientPair.appClient.send("getWidget 1\0" + widgetId);
-        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(4));
+        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(4), 0);
         assertNotNull(deviceTiles);
         assertEquals(widgetId, deviceTiles.id);
         assertNotNull(deviceTiles.templates);
@@ -231,7 +231,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
 
         clientPair.appClient.send("getWidget 1\0" + widgetId);
-        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(4));
+        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(4), 0);
         assertNotNull(deviceTiles);
         assertEquals(widgetId, deviceTiles.id);
         assertNotNull(deviceTiles.templates);
@@ -254,7 +254,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
 
         clientPair.appClient.send("getWidget 1\0" + widgetId);
-        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(6));
+        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(6), 0);
         assertNotNull(deviceTiles);
         assertEquals(widgetId, deviceTiles.id);
         assertNotNull(deviceTiles.templates);
@@ -276,7 +276,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
 
         clientPair.appClient.send("createDevice 1\0" + device1.toString());
         String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice);
+        Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device)));
@@ -311,7 +311,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
 
         clientPair.appClient.send("getWidget 1\0" + widgetId);
-        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(4));
+        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(4), 0);
         assertNotNull(deviceTiles);
         assertEquals(widgetId, deviceTiles.id);
         assertNotNull(deviceTiles.templates);
@@ -338,7 +338,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
 
         clientPair.appClient.send("getWidget 1\0" + widgetId);
-        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(6));
+        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(6), 0);
         assertNotNull(deviceTiles);
         assertEquals(widgetId, deviceTiles.id);
         assertNotNull(deviceTiles.templates);
@@ -364,7 +364,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
 
         clientPair.appClient.send("createDevice 1\0" + device1.toString());
         String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice);
+        Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device)));
@@ -414,7 +414,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
 
         clientPair.appClient.send("getWidget 1\0" + widgetId);
-        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(4));
+        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(4), 0);
         assertNotNull(deviceTiles);
         assertEquals(widgetId, deviceTiles.id);
         assertNotNull(deviceTiles.templates);
@@ -441,7 +441,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("getWidget 1\0" + widgetId);
-        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody());
+        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(), 0);
         assertNotNull(deviceTiles);
 
         DeviceTile deviceTile = deviceTiles.tiles[0];
@@ -487,7 +487,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
 
         clientPair.appClient.send("createDevice 1\0" + device1.toString());
         String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice);
+        Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device)));
@@ -560,7 +560,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
 
         clientPair.appClient.send("createDevice 1\0" + device1.toString());
         String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice);
+        Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device)));
@@ -645,7 +645,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         clientPair.appClient.send("getWidget 1\0" + widgetId);
-        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(3));
+        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(3), 0);
         assertNotNull(deviceTiles);
         assertEquals(widgetId, deviceTiles.id);
         assertNotNull(deviceTiles.templates);
@@ -685,7 +685,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         clientPair.appClient.send("getWidget 1\0" + widgetId);
-        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(3));
+        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(3), 0);
         assertNotNull(deviceTiles);
         assertEquals(widgetId, deviceTiles.id);
         assertNotNull(deviceTiles.templates);
@@ -706,7 +706,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
 
         clientPair.appClient.send("getWidget 1\0" + widgetId);
-        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(5));
+        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(5), 0);
         assertNotNull(deviceTiles);
         assertEquals(widgetId, deviceTiles.id);
         assertNotNull(deviceTiles.templates);
@@ -731,7 +731,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
 
         clientPair.appClient.send("getWidget 1\0" + widgetId);
-        DeviceTiles deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(5));
+        DeviceTiles deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(5), 0);
         assertNotNull(deviceTiles);
         assertEquals(widgetId, deviceTiles.id);
         assertNotNull(deviceTiles.templates);
@@ -760,7 +760,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("getWidget 1\0" + widgetId);
-        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(2));
+        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(2), 0);
         assertNotNull(deviceTiles);
         assertEquals(widgetId, deviceTiles.id);
         assertNotNull(deviceTiles.templates);
@@ -772,7 +772,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
 
         clientPair.appClient.send("getWidget 1\0" + widgetId);
-        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(4));
+        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(4), 0);
         assertNotNull(deviceTiles);
         assertEquals(widgetId, deviceTiles.id);
         assertNotNull(deviceTiles.templates);
@@ -808,7 +808,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
 
 
         clientPair.appClient.send("getWidget 1\0" + widgetId);
-        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(3));
+        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(3), 0);
         assertNotNull(deviceTiles);
         assertEquals(widgetId, deviceTiles.id);
         assertNotNull(deviceTiles.templates);
@@ -987,7 +987,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
 
         clientPair.appClient.send("getWidget 1\0" + widgetId);
-        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(6));
+        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(6), 0);
         assertNotNull(deviceTiles);
         assertEquals(widgetId, deviceTiles.id);
         assertNotNull(deviceTiles.templates);

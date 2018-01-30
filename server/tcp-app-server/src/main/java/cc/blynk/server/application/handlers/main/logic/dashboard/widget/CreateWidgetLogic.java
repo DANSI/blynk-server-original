@@ -73,7 +73,7 @@ public class CreateWidgetLogic {
         User user = state.user;
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
-        Widget newWidget = JsonParser.parseWidget(widgetString);
+        Widget newWidget = JsonParser.parseWidget(widgetString, message.id);
 
         if (newWidget.width < 1 || newWidget.height < 1) {
             throw new NotAllowedException("Widget has wrong dimensions.", message.id);

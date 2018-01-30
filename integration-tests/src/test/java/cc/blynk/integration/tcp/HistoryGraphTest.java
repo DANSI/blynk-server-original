@@ -259,7 +259,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
         clientPair.appClient.send("createDevice 1\0" + device1.toString());
         String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice);
+        Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
@@ -268,7 +268,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
         clientPair.appClient.send("createTAg 1\0" + tag0.toString());
         String createdTag = clientPair.appClient.getBody(2);
-        Tag tag = JsonParser.parseTag(createdTag);
+        Tag tag = JsonParser.parseTag(createdTag, 0);
         assertNotNull(tag);
         assertEquals(100_000, tag.id);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createTag(2, tag)));
@@ -327,7 +327,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
         clientPair.appClient.send("createDevice 1\0" + device1.toString());
         String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice);
+        Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device)));
@@ -336,7 +336,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
         clientPair.appClient.send("createTAg 1\0" + tag0.toString());
         String createdTag = clientPair.appClient.getBody(2);
-        Tag tag = JsonParser.parseTag(createdTag);
+        Tag tag = JsonParser.parseTag(createdTag, 0);
         assertNotNull(tag);
         assertEquals(100_000, tag.id);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createTag(2, tag)));
@@ -397,7 +397,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
         clientPair.appClient.send("createDevice 1\0" + device1.toString());
         String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice);
+        Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
@@ -406,7 +406,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
         clientPair.appClient.send("createTAg 1\0" + tag0.toString());
         String createdTag = clientPair.appClient.getBody(2);
-        Tag tag = JsonParser.parseTag(createdTag);
+        Tag tag = JsonParser.parseTag(createdTag, 0);
         assertNotNull(tag);
         assertEquals(100_000, tag.id);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createTag(2, tag)));
@@ -467,7 +467,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
         clientPair.appClient.send("createDevice 1\0" + device1.toString());
         String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice);
+        Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
@@ -476,7 +476,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
         clientPair.appClient.send("createTAg 1\0" + tag0.toString());
         String createdTag = clientPair.appClient.getBody(2);
-        Tag tag = JsonParser.parseTag(createdTag);
+        Tag tag = JsonParser.parseTag(createdTag, 0);
         assertNotNull(tag);
         assertEquals(100_000, tag.id);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createTag(2, tag)));
@@ -537,7 +537,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
         clientPair.appClient.send("createDevice 1\0" + device1.toString());
         String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice);
+        Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
@@ -546,7 +546,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
         clientPair.appClient.send("createTAg 1\0" + tag0.toString());
         String createdTag = clientPair.appClient.getBody(2);
-        Tag tag = JsonParser.parseTag(createdTag);
+        Tag tag = JsonParser.parseTag(createdTag, 0);
         assertNotNull(tag);
         assertEquals(100_000, tag.id);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createTag(2, tag)));
@@ -607,7 +607,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
         clientPair.appClient.send("createDevice 1\0" + device1.toString());
         String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice);
+        Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
@@ -616,7 +616,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
         clientPair.appClient.send("createTAg 1\0" + tag0.toString());
         String createdTag = clientPair.appClient.getBody(2);
-        Tag tag = JsonParser.parseTag(createdTag);
+        Tag tag = JsonParser.parseTag(createdTag, 0);
         assertNotNull(tag);
         assertEquals(100_000, tag.id);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createTag(2, tag)));
@@ -678,14 +678,14 @@ public class HistoryGraphTest extends IntegrationBase {
 
         clientPair.appClient.send("createDevice 1\0" + device1.toString());
         String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice);
+        Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
 
         clientPair.appClient.send("createDevice 1\0" + device2.toString());
         createdDevice = clientPair.appClient.getBody(2);
-        device = JsonParser.parseDevice(createdDevice);
+        device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(2, device.toString())));
@@ -694,7 +694,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
         clientPair.appClient.send("createTAg 1\0" + tag0.toString());
         String createdTag = clientPair.appClient.getBody(3);
-        Tag tag = JsonParser.parseTag(createdTag);
+        Tag tag = JsonParser.parseTag(createdTag, 0);
         assertNotNull(tag);
         assertEquals(100_000, tag.id);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createTag(3, tag)));
@@ -1474,7 +1474,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
         clientPair.appClient.send("createDevice 1\0" + device1.toString());
         String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice);
+        Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
@@ -1552,7 +1552,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
         clientPair.appClient.send("createDevice 1\0" + device1.toString());
         String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice);
+        Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
@@ -1638,7 +1638,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
         clientPair.appClient.send("createDevice 1\0" + device1.toString());
         String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice);
+        Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
@@ -1841,7 +1841,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
         clientPair.appClient.send("createDevice 1\0" + device1.toString());
         String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice);
+        Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));

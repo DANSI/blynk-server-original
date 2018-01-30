@@ -482,7 +482,7 @@ public class MainWorkflowTest extends IntegrationBase {
         assertEquals("{\"dashBoards\":[{\"id\":10,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false}]}", responseProfile.toString());
 
         clientPair.appClient.send("loadProfileGzipped 10");
-        responseDash = JsonParser.parseDashboard(clientPair.appClient.getBody(8));
+        responseDash = JsonParser.parseDashboard(clientPair.appClient.getBody(8), 0);
         responseDash.updatedAt = 0;
         responseDash.createdAt = 0;
         assertEquals("{\"id\":10,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false}", responseDash.toString());

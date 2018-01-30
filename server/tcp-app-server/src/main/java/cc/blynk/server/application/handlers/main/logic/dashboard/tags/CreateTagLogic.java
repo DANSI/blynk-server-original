@@ -43,7 +43,7 @@ public final class CreateTagLogic {
 
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
-        Tag newTag = JsonParser.parseTag(deviceString);
+        Tag newTag = JsonParser.parseTag(deviceString, message.id);
 
         log.debug("Creating new tag {}.", newTag);
 

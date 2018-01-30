@@ -39,7 +39,7 @@ public class UpdateAppLogic {
             throw new NotAllowedException("App is larger then limit.", message.id);
         }
 
-        App newApp = JsonParser.parseApp(appString);
+        App newApp = JsonParser.parseApp(appString, message.id);
 
         if (newApp.isNotValid()) {
             throw new NotAllowedException("App is not valid.", message.id);

@@ -66,7 +66,7 @@ public class AppWorkflowTest extends IntegrationBase {
     @Test
     public void testAppCreated() throws Exception {
         clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"isMultiFace\":true,\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"My App\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
-        App app = JsonParser.parseApp(clientPair.appClient.getBody());
+        App app = JsonParser.parseApp(clientPair.appClient.getBody(), 0);
         assertNotNull(app);
         assertNotNull(app.id);
         assertEquals(13, app.id.length());
@@ -82,12 +82,12 @@ public class AppWorkflowTest extends IntegrationBase {
     @Test
     public void testAppCreated2() throws Exception {
         clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"My App\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
-        App app = JsonParser.parseApp(clientPair.appClient.getBody());
+        App app = JsonParser.parseApp(clientPair.appClient.getBody(), 0);
         assertNotNull(app);
         assertNotNull(app.id);
 
         clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"My App\",\"icon\":\"myIcon\",\"projectIds\":[2]}");
-        app = JsonParser.parseApp(clientPair.appClient.getBody(2));
+        app = JsonParser.parseApp(clientPair.appClient.getBody(2), 0);
         assertNotNull(app);
         assertNotNull(app.id);
     }
@@ -95,7 +95,7 @@ public class AppWorkflowTest extends IntegrationBase {
     @Test
     public void testUnicodeName() throws Exception {
         clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"Моя апка\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
-        App app = JsonParser.parseApp(clientPair.appClient.getBody());
+        App app = JsonParser.parseApp(clientPair.appClient.getBody(), 0);
         assertNotNull(app);
         assertNotNull(app.id);
         assertEquals("Моя апка", app.name);
@@ -104,12 +104,12 @@ public class AppWorkflowTest extends IntegrationBase {
     @Test
     public void testCantCreateWithSameId() throws Exception {
         clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"My App\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
-        App app = JsonParser.parseApp(clientPair.appClient.getBody());
+        App app = JsonParser.parseApp(clientPair.appClient.getBody(), 0);
         assertNotNull(app);
         assertNotNull(app.id);
 
         clientPair.appClient.send("createApp {\"id\":\"" + app.id + "\",\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"My App\",\"icon\":\"myIcon\",\"projectIds\":[2]}");
-        app = JsonParser.parseApp(clientPair.appClient.getBody(2));
+        app = JsonParser.parseApp(clientPair.appClient.getBody(2), 0);
         assertNotNull(app);
         assertNotNull(app.id);
     }
@@ -117,7 +117,7 @@ public class AppWorkflowTest extends IntegrationBase {
     @Test
     public void testAppUpdated() throws Exception {
         clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"My App\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
-        App app = JsonParser.parseApp(clientPair.appClient.getBody());
+        App app = JsonParser.parseApp(clientPair.appClient.getBody(), 0);
         assertNotNull(app);
         assertNotNull(app.id);
 
@@ -145,7 +145,7 @@ public class AppWorkflowTest extends IntegrationBase {
     @Test
     public void testAppDelete() throws Exception {
         clientPair.appClient.send("createApp {\"id\":1,\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"My App\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
-        App app = JsonParser.parseApp(clientPair.appClient.getBody());
+        App app = JsonParser.parseApp(clientPair.appClient.getBody(), 0);
         assertNotNull(app);
         assertNotNull(app.id);
 

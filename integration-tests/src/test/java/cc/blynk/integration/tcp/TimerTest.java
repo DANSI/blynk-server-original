@@ -581,7 +581,7 @@ public class TimerTest extends IntegrationBase {
 
         clientPair.appClient.send("createDevice 1\0" + device1.toString());
         String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice);
+        Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
@@ -600,7 +600,7 @@ public class TimerTest extends IntegrationBase {
 
         clientPair.appClient.send("createTag 1\0" + tag0.toString());
         String createdTag = clientPair.appClient.getBody();
-        Tag tag = JsonParser.parseTag(createdTag);
+        Tag tag = JsonParser.parseTag(createdTag, 0);
         assertNotNull(tag);
         assertEquals(100_000, tag.id);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createTag(1, tag)));

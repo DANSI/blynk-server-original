@@ -42,7 +42,7 @@ public final class UpdateDeviceLogic {
 
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
-        Device newDevice = JsonParser.parseDevice(deviceString);
+        Device newDevice = JsonParser.parseDevice(deviceString, message.id);
 
         log.debug("Updating new device {}.", deviceString);
 

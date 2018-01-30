@@ -63,7 +63,7 @@ public class CreateDashLogic {
         }
 
         log.debug("Trying to parse user newDash : {}", dashString);
-        DashBoard newDash = JsonParser.parseDashboard(dashString);
+        DashBoard newDash = JsonParser.parseDashboard(dashString, message.id);
 
         log.info("Creating new dashboard.");
 

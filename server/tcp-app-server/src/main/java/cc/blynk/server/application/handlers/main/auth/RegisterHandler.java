@@ -109,12 +109,12 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
 
         log.info("Registered {}.", email);
 
-        createProjectForExportedApp(newUser, appName);
+        createProjectForExportedApp(newUser, appName, message.id);
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }
 
-    private void createProjectForExportedApp(User newUser, String appName) {
+    private void createProjectForExportedApp(User newUser, String appName, int msgId) {
         if (appName.equals(AppNameUtil.BLYNK)) {
             return;
         }
@@ -144,7 +144,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
         DashBoard dash = parentUser.profile.getDashByIdOrThrow(dashId);
 
         //todo ugly, but quick. refactor
-        DashBoard clonedDash = JsonParser.parseDashboard(JsonParser.toJsonRestrictiveDashboard(dash));
+        DashBoard clonedDash = JsonParser.parseDashboard(JsonParser.toJsonRestrictiveDashboard(dash), msgId);
 
         clonedDash.id = 1;
         clonedDash.parentId = dash.parentId;

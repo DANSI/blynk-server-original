@@ -80,7 +80,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.send("createDevice 1\0" + device1.toString());
         String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice);
+        Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
@@ -123,7 +123,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.send("createDevice 1\0" + device1.toString());
         String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice);
+        Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
@@ -150,7 +150,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.send("createDevice 1\0" + device1.toString());
         String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice);
+        Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
@@ -185,7 +185,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.send("createDevice 1\0" + device1.toString());
         String createdDevice = clientPair.appClient.getBody(2);
-        Device device = JsonParser.parseDevice(createdDevice);
+        Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(2, device.toString())));
@@ -212,7 +212,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.send("createDevice 1\0" + device1.toString());
         String createdDevice = clientPair.appClient.getBody(2);
-        Device device = JsonParser.parseDevice(createdDevice);
+        Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(2, device.toString())));
@@ -252,7 +252,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.send("createDevice 1\0" + device1.toString());
         String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice);
+        Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
@@ -281,7 +281,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.send("createDevice 1\0" + device1.toString());
         String createdDevice = clientPair.appClient.getBody(3);
-        Device device = JsonParser.parseDevice(createdDevice);
+        Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(3, device.toString())));
@@ -318,7 +318,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.send("createDevice 1\0" + device1.toString());
         String createdDevice = clientPair.appClient.getBody(2);
-        Device device = JsonParser.parseDevice(createdDevice);
+        Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(2, device.toString())));
@@ -350,7 +350,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.send("createDevice 1\0" + device1.toString());
         String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice);
+        Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
@@ -471,7 +471,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.send("createDevice 1\0" + device1.toString());
         String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice);
+        Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
@@ -495,7 +495,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.send("createDevice 1\0" + device1.toString());
         String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice);
+        Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(createDevice(1, device.toString())));

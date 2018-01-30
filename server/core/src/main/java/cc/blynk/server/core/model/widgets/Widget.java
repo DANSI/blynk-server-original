@@ -60,6 +60,8 @@ import cc.blynk.utils.ByteUtils;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+import java.io.IOException;
+
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 
 /**
@@ -200,7 +202,11 @@ public abstract class Widget implements CopyObject<Widget> {
     @Override
     public Widget copy() {
         String copyWidgetString = JsonParser.toJson(this);
-        return JsonParser.parseWidget(copyWidgetString);
+        try {
+            return JsonParser.parseWidget(copyWidgetString);
+        } catch (IOException ioe) {
+            throw new RuntimeException(ioe);
+        }
     }
 
     public void setProperty(WidgetProperty property, String propertyValue) {

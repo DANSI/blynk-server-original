@@ -45,7 +45,7 @@ public class UpdateDashLogic {
         }
 
         log.debug("Trying to parse user dash : {}", dashString);
-        DashBoard updatedDash = JsonParser.parseDashboard(dashString);
+        DashBoard updatedDash = JsonParser.parseDashboard(dashString, message.id);
 
         if (updatedDash == null) {
             throw new IllegalCommandException("Project parsing error.");

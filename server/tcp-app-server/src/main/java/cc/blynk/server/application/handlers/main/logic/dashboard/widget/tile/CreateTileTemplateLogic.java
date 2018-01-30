@@ -55,7 +55,7 @@ public final class CreateTileTemplateLogic {
 
         DeviceTiles deviceTiles = (DeviceTiles) widget;
 
-        TileTemplate newTileTemplate = JsonParser.parseTileTemplate(tileTemplateString);
+        TileTemplate newTileTemplate = JsonParser.parseTileTemplate(tileTemplateString, message.id);
         for (TileTemplate tileTemplate : deviceTiles.templates) {
             if (tileTemplate.id == newTileTemplate.id) {
                 throw new NotAllowedException("tile template with same id already exists.", message.id);

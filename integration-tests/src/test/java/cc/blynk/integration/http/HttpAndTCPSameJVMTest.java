@@ -441,7 +441,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
 
         clientPair.appClient.send("createDevice 1\0" + device1.toString());
         String createdDevice = clientPair.appClient.getBody(2);
-        Device device = JsonParser.parseDevice(createdDevice);
+        Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(2, device.toString())));

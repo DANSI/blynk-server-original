@@ -41,7 +41,7 @@ public final class UpdateTagLogic {
 
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
-        Tag newTag = JsonParser.parseTag(tagString);
+        Tag newTag = JsonParser.parseTag(tagString, message.id);
 
         log.debug("Updating new tag {}.", tagString);
 

@@ -65,7 +65,7 @@ public class OfflineNotificationTest extends IntegrationBase {
 
         clientPair.appClient.send("createDevice 1\0" + device2.toString());
         String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice);
+        Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
@@ -108,7 +108,7 @@ public class OfflineNotificationTest extends IntegrationBase {
 
         clientPair.appClient.send("createDevice 1\0" + device2.toString());
         String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice);
+        Device device = JsonParser.parseDevice(createdDevice, 0);
         TestCase.assertNotNull(device);
         TestCase.assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
@@ -166,7 +166,7 @@ public class OfflineNotificationTest extends IntegrationBase {
 
         clientPair.appClient.send("createDevice 1\0" + device2.toString());
         String createdDevice = clientPair.appClient.getBody(3);
-        Device device = JsonParser.parseDevice(createdDevice);
+        Device device = JsonParser.parseDevice(createdDevice, 0);
         TestCase.assertNotNull(device);
         TestCase.assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(3, device.toString())));

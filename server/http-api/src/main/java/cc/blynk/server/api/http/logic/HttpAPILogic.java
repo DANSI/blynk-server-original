@@ -294,12 +294,9 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             java.nio.file.Path path = reportingDao.csvGenerator.createCSV(
                     user, dashId, deviceId, pinType, pin, deviceId);
             return redirect("/" + path.getFileName().toString());
-        } catch (IllegalCommandBodyException e1) {
-            log.debug(e1.getMessage());
-            return badRequest(e1.getMessage());
-        } catch (NoDataException noData) {
-            log.debug("No data for pin.");
-            return badRequest("No data for pin.");
+        } catch (NoDataException | IllegalStateException noData) {
+            log.debug(noData.getMessage());
+            return badRequest(noData.getMessage());
         } catch (Exception e) {
             log.debug("Error getting pin data.", e);
             return badRequest("Error getting pin data.");

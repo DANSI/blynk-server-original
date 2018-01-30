@@ -93,7 +93,7 @@ public class SetPropertyTest extends IntegrationBase {
 
         clientPair.appClient.send("createTag 1\0" + tag0.toString());
         String createdTag = clientPair.appClient.getBody();
-        Tag tag = JsonParser.parseTag(createdTag);
+        Tag tag = JsonParser.parseTag(createdTag, 0);
         assertNotNull(tag);
         assertEquals(100_000, tag.id);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createTag(1, tag)));

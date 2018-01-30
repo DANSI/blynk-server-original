@@ -74,7 +74,7 @@ public class PortUnificationTest extends IntegrationBase {
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
 
         String createdDevice = appClient.getBody(4);
-        Device device = JsonParser.parseDevice(createdDevice);
+        Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
 

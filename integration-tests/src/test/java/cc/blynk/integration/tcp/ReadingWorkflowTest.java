@@ -127,7 +127,7 @@ public class ReadingWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("createDevice 1\0" + device2.toString());
         String createdDevice = clientPair.appClient.getBody();
 
-        device2 = JsonParser.parseDevice(createdDevice);
+        device2 = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device2);
         assertNotNull(device2.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device2.toString())));
@@ -159,7 +159,7 @@ public class ReadingWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("createDevice 1\0" + device2.toString());
         String createdDevice = clientPair.appClient.getBody();
 
-        device2 = JsonParser.parseDevice(createdDevice);
+        device2 = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device2);
         assertNotNull(device2.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device2.toString())));
@@ -198,7 +198,7 @@ public class ReadingWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("createDevice 1\0" + device2.toString());
         String createdDevice = clientPair.appClient.getBody();
 
-        device2 = JsonParser.parseDevice(createdDevice);
+        device2 = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device2);
         assertNotNull(device2.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device2.toString())));
@@ -255,7 +255,7 @@ public class ReadingWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("createDevice 1\0" + device2.toString());
         String createdDevice = clientPair.appClient.getBody();
 
-        device2 = JsonParser.parseDevice(createdDevice);
+        device2 = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device2);
         assertNotNull(device2.token);
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(createDevice(1, device2.toString())));

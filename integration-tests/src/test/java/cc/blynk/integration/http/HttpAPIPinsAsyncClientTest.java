@@ -239,7 +239,7 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
         f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/data/v111").execute();
         response = f.get();
         assertEquals(400, response.getStatusCode());
-        assertEquals("No data for pin.", response.getResponseBody());
+        assertEquals("No data.", response.getResponseBody());
         assertEquals("*", response.getHeader(ACCESS_CONTROL_ALLOW_ORIGIN));
 
         f = httpclient.prepareGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/data/z111").execute();

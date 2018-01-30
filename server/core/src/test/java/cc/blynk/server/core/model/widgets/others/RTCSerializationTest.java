@@ -22,7 +22,7 @@ public class RTCSerializationTest {
     @Test
     public void testDeSerializationIsCorrect() {
         String widgetString = "{\"id\":1, \"x\":1, \"y\":1, \"type\":\"RTC\", \"tzName\":\"Australia/Sydney\"}";
-        Widget widget = JsonParser.parseWidget(widgetString);
+        Widget widget = JsonParser.parseWidget(widgetString, 0);
 
         assertNotNull(widget);
 
@@ -34,7 +34,7 @@ public class RTCSerializationTest {
     @Test
     public void testDeSerializationIsCorrectForNull() {
         String widgetString = "{\"id\":1, \"x\":1, \"y\":1, \"type\":\"RTC\"}";
-        Widget widget = JsonParser.parseWidget(widgetString);
+        Widget widget = JsonParser.parseWidget(widgetString, 0);
 
         assertNotNull(widget);
 
