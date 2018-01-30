@@ -246,7 +246,7 @@ public class ReportingDao implements Closeable {
         }
     }
 
-    public byte[][] getReportingData(User user, GraphPinRequest[] requestedPins) {
+    public byte[][] getReportingData(User user, GraphPinRequest[] requestedPins) throws NoDataException {
         byte[][] values = new byte[requestedPins.length][];
 
         for (int i = 0; i < requestedPins.length; i++) {
