@@ -9,7 +9,6 @@ import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
-import cc.blynk.server.core.protocol.exceptions.EnergyLimitException;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -21,6 +20,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static cc.blynk.server.internal.CommonByteBufUtil.energyLimit;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 
 /**
@@ -96,7 +96,9 @@ public class CreateWidgetLogic {
 
         int price = newWidget.getPrice();
         if (user.notEnoughEnergy(price)) {
-            throw new EnergyLimitException("Not enough energy.", message.id);
+            log.debug("Not enough energy.");
+            ctx.writeAndFlush(energyLimit(message.id), ctx.voidPromise());
+            return;
         }
         user.subtractEnergy(price);
 

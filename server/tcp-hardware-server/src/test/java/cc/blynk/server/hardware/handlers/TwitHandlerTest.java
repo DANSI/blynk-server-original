@@ -9,7 +9,6 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.protocol.enums.Command;
-import cc.blynk.server.core.protocol.exceptions.NotificationBodyInvalidException;
 import cc.blynk.server.core.protocol.exceptions.QuotaLimitException;
 import cc.blynk.server.core.protocol.model.messages.MessageFactory;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -18,7 +17,6 @@ import cc.blynk.server.hardware.handlers.hardware.logic.TwitLogic;
 import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.utils.properties.ServerProperties;
 import io.netty.channel.ChannelHandlerContext;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -78,23 +76,6 @@ public class TwitHandlerTest {
     public void setup() {
 		state = new HardwareStateHolder(user, dash, device);
     }
-
-	@Test(expected = NotificationBodyInvalidException.class)
-	public void testTweetMessageWithEmptyBody() {
-		StringMessage twitMessage = (StringMessage) MessageFactory.produce(1, Command.TWEET, "");
-        state.user.profile = profile;
-		TwitLogic tweetHandler = new TwitLogic(twitterWrapper, 60);
-		tweetHandler.messageReceived(ctx, state, twitMessage);
-	}
-
-	@Test(expected = NotificationBodyInvalidException.class)
-	public void testTweetMessageWithBodyMoreThen140Symbols() {
-		final String longBody = RandomStringUtils.random(150);
-		StringMessage twitMessage = (StringMessage) MessageFactory.produce(1, Command.TWEET, longBody);
-        state.user.profile = profile;
-		TwitLogic tweetHandler = new TwitLogic(twitterWrapper, 60);
-		tweetHandler.messageReceived(ctx, state, twitMessage);
-	}
 
 	@Test(expected = QuotaLimitException.class)
 	public void testSendQuotaLimitationException() throws InterruptedException {

@@ -8,11 +8,13 @@ import java.nio.charset.StandardCharsets;
 
 import static cc.blynk.server.core.protocol.enums.Command.DEVICE_OFFLINE;
 import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK;
+import static cc.blynk.server.core.protocol.enums.Response.ENERGY_LIMIT;
 import static cc.blynk.server.core.protocol.enums.Response.FACEBOOK_USER_LOGIN_WITH_PASS;
 import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
 import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND_BODY;
 import static cc.blynk.server.core.protocol.enums.Response.INVALID_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_ERROR;
+import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_INVALID_BODY;
 import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_NOT_AUTHORIZED;
 import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
 import static cc.blynk.server.core.protocol.enums.Response.NO_ACTIVE_DASHBOARD;
@@ -35,6 +37,14 @@ import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
 public final class CommonByteBufUtil {
 
     private CommonByteBufUtil() {
+    }
+
+    public static ResponseMessage energyLimit(int msgId) {
+        return makeResponse(msgId, ENERGY_LIMIT);
+    }
+
+    public static ResponseMessage notificationInvalidBody(int msgId) {
+        return makeResponse(msgId, NOTIFICATION_INVALID_BODY);
     }
 
     public static ResponseMessage notificationError(int msgId) {
