@@ -6,7 +6,6 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Target;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -126,10 +125,11 @@ public class GetGraphDataLogic {
         try {
             PinType pinType = PinType.getPinType(messageParts[1].charAt(0));
             byte pin = Byte.parseByte(messageParts[2]);
-            String cmd = messageParts[3];
-            if (!"del".equals(cmd)) {
-                throw new IllegalCommandBodyException("Wrong body format. Expecting 'del'.");
-            }
+            //String cmd = messageParts[3];
+            //this check is not necessary actually
+            //if (!"del".equals(cmd)) {
+            //    throw new IllegalCommandBodyException("Wrong body format. Expecting 'del'.");
+            //}
             reportingDao.delete(user, dashId, deviceId, pinType, pin);
         } catch (NumberFormatException e) {
             throw new IllegalCommandException("HardwareLogic command body incorrect.");
