@@ -29,7 +29,6 @@ import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.
 import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.NotEqual;
 import cc.blynk.server.core.model.widgets.others.eventor.model.condition.string.StringEqual;
 import cc.blynk.server.core.model.widgets.others.eventor.model.condition.string.StringNotEqual;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
@@ -85,7 +84,7 @@ public class EventorTest extends IntegrationBase {
             dataStream = parsePin(splitted[6]);
             //123
             value = splitted[7];
-        } catch (IllegalCommandBodyException e) {
+        } catch (Exception e) {
             value = splitted[6];
         }
 

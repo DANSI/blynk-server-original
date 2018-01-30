@@ -1,6 +1,6 @@
 package cc.blynk.server.internal;
 
-import cc.blynk.server.core.protocol.exceptions.ParseException;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 
 /**
  * The Blynk Project.
@@ -16,7 +16,7 @@ public final class ParseUtil {
         try {
             return Integer.parseInt(intString);
         } catch (NumberFormatException ex) {
-            throw new ParseException(intString + " not a valid int number.");
+            throw new IllegalCommandException(intString + " not a valid int number.");
         }
     }
 
@@ -24,7 +24,7 @@ public final class ParseUtil {
         try {
             return Byte.parseByte(byteString);
         } catch (NumberFormatException ex) {
-            throw new ParseException(byteString + " not a valid byte number.");
+            throw new IllegalCommandException(byteString + " not a valid byte number.");
         }
     }
 
@@ -32,7 +32,7 @@ public final class ParseUtil {
         try {
             return Long.parseLong(longString);
         } catch (NumberFormatException nfe) {
-            throw new ParseException(longString + " not a valid long number.");
+            throw new IllegalCommandException(longString + " not a valid long number.");
         }
     }
 
