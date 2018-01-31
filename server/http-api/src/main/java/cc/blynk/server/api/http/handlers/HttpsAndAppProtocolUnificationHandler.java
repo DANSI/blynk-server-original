@@ -49,7 +49,6 @@ public class HttpsAndAppProtocolUnificationHandler extends ByteToMessageDecoder 
     private final GetServerHandler getServerHandler;
 
     private final HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler;
-    private final LetsEncryptHandler letsEncryptHandler;
 
     public HttpsAndAppProtocolUnificationHandler(Holder holder,
                                                  AppChannelStateHandler appChannelStateHandler,
@@ -58,8 +57,7 @@ public class HttpsAndAppProtocolUnificationHandler extends ByteToMessageDecoder 
                                                  AppShareLoginHandler appShareLoginHandler,
                                                  UserNotLoggedHandler userNotLoggedHandler,
                                                  GetServerHandler getServerHandler,
-                                                 HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler,
-                                                 LetsEncryptHandler letsEncryptHandler) {
+                                                 HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler) {
         this.holder = holder;
         this.appChannelStateHandler = appChannelStateHandler;
         this.registerHandler = registerHandler;
@@ -69,7 +67,6 @@ public class HttpsAndAppProtocolUnificationHandler extends ByteToMessageDecoder 
         this.getServerHandler = getServerHandler;
 
         this.httpAndWebSocketUnificatorHandler = httpAndWebSocketUnificatorHandler;
-        this.letsEncryptHandler = letsEncryptHandler;
 
         log.debug("app.socket.idle.timeout = 600 for new protocol");
     }
@@ -96,13 +93,12 @@ public class HttpsAndAppProtocolUnificationHandler extends ByteToMessageDecoder 
     }
 
     private ChannelPipeline buildHTTPipeline(ChannelPipeline pipeline) {
-        log.trace("HTTP connection detected.", pipeline.channel());
+        log.trace("HTTPS connection detected.", pipeline.channel());
         return pipeline
                 .addLast("HttpsServerCodec", new HttpServerCodec())
                 .addLast("HttpsServerKeepAlive", new HttpServerKeepAliveHandler())
                 .addLast("HttpsObjectAggregator",
                         new HttpObjectAggregator(holder.limits.webRequestMaxSize, true))
-                .addLast(letsEncryptHandler)
                 .addLast("HttpChunkedWrite", new ChunkedWriteHandler())
                 .addLast("HttpUrlMapper", new UrlReWriterHandler("/favicon.ico", "/static/favicon.ico"))
                 .addLast("HttpStaticFile", new StaticFileHandler(holder.props, new StaticFile("/static"),

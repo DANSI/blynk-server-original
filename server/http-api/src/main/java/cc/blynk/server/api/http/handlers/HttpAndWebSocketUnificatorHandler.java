@@ -35,6 +35,7 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
 
 import java.net.InetSocketAddress;
+import java.util.NoSuchElementException;
 
 import static cc.blynk.core.http.Response.redirect;
 
@@ -160,7 +161,11 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         pipeline.addLast(httpAPILogic);
         pipeline.addLast(noMatchHandler);
         pipeline.remove(this);
-        pipeline.remove(LetsEncryptHandler.class);
+        try {
+            pipeline.remove(LetsEncryptHandler.class);
+        } catch (NoSuchElementException nsee) {
+            //ignoring. that's fine. https pipeline doesn't have LetsEncryptHandler
+        }
     }
 
     private void initHttpPipeline(ChannelHandlerContext ctx) {
@@ -186,7 +191,11 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         pipeline.remove(ChunkedWriteHandler.class);
         pipeline.remove(UrlReWriterHandler.class);
         pipeline.remove(StaticFileHandler.class);
-        pipeline.remove(LetsEncryptHandler.class);
+        try {
+            pipeline.remove(LetsEncryptHandler.class);
+        } catch (NoSuchElementException nsee) {
+            //ignoring. that's fine. https pipeline doesn't have LetsEncryptHandler
+        }
     }
 
     @Override

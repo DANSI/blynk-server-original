@@ -3,7 +3,6 @@ package cc.blynk.server.api.http;
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.handlers.HttpAndWebSocketUnificatorHandler;
 import cc.blynk.server.api.http.handlers.HttpsAndAppProtocolUnificationHandler;
-import cc.blynk.server.api.http.handlers.LetsEncryptHandler;
 import cc.blynk.server.application.handlers.main.AppChannelStateHandler;
 import cc.blynk.server.application.handlers.main.auth.AppLoginHandler;
 import cc.blynk.server.application.handlers.main.auth.GetServerHandler;
@@ -36,7 +35,6 @@ public class AppAndHttpsServer extends BaseServer {
 
         final HttpAndWebSocketUnificatorHandler httpAndWebSocketUnificatorHandler =
                 new HttpAndWebSocketUnificatorHandler(holder, port);
-        final LetsEncryptHandler letsEncryptHandler = new LetsEncryptHandler(holder.sslContextHolder.contentHolder);
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
@@ -51,8 +49,7 @@ public class AppAndHttpsServer extends BaseServer {
                         appShareLoginHandler,
                         userNotLoggedHandler,
                         getServerHandler,
-                        httpAndWebSocketUnificatorHandler,
-                        letsEncryptHandler));
+                        httpAndWebSocketUnificatorHandler));
             }
         };
     }
