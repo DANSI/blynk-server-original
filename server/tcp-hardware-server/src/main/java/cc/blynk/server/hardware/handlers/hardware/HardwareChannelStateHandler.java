@@ -62,6 +62,8 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
             log.trace("State handler. Hardware timeout disconnect. Event : {}. Closing.",
                     ((IdleStateEvent) evt).state());
             ctx.close();
+        } else {
+            ctx.fireUserEventTriggered(evt);
         }
     }
 

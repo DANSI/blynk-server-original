@@ -1,6 +1,7 @@
 package cc.blynk.server.hardware.handlers.hardware;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.core.session.StateHolderBase;
@@ -15,6 +16,7 @@ import cc.blynk.server.hardware.handlers.hardware.logic.PushLogic;
 import cc.blynk.server.hardware.handlers.hardware.logic.SetWidgetPropertyLogic;
 import cc.blynk.server.hardware.handlers.hardware.logic.SmsLogic;
 import cc.blynk.server.hardware.handlers.hardware.logic.TwitLogic;
+import cc.blynk.server.hardware.internal.BridgeForwardMessage;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
@@ -49,7 +51,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
     public HardwareHandler(Holder holder, HardwareStateHolder stateHolder) {
         super(StringMessage.class, holder.limits);
         this.hardware = new HardwareLogic(holder, stateHolder.user.email);
-        this.bridge = new BridgeLogic(holder.sessionDao, hardware);
+        this.bridge = new BridgeLogic(holder.sessionDao, holder.tokenManager);
 
         this.email = new MailLogic(holder.blockingIOProcessor,
                 holder.mailWrapper, holder.limits.notificationPeriodLimitSec);
@@ -95,6 +97,18 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
             case SET_WIDGET_PROPERTY:
                 propertyLogic.messageReceived(ctx, state, msg);
                 break;
+        }
+    }
+
+    @Override
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        if (evt instanceof  BridgeForwardMessage) {
+            BridgeForwardMessage bridgeForwardMessage = (BridgeForwardMessage) evt;
+            TokenValue tokenValue = bridgeForwardMessage.tokenValue;
+            hardware.messageReceived(ctx, bridgeForwardMessage.message,
+                    bridgeForwardMessage.userKey, tokenValue.user, tokenValue.dash, tokenValue.device.id);
+        } else {
+            ctx.fireUserEventTriggered(evt);
         }
     }
 
