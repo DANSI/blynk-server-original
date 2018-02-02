@@ -573,4 +573,32 @@ public class WebhookTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
     }
 
+    @Test
+    public void testWebhookWorksWithUrlPlaceholder() throws Exception {
+        WebHook webHook = new WebHook();
+        webHook.url = "/pin/";
+        webHook.method = PUT;
+        webHook.headers = new Header[] {new Header("Content-Type", "application/json")};
+        webHook.body = "[\"text\"]";
+        webHook.pin = 123;
+        webHook.pinType = PinType.VIRTUAL;
+        webHook.width = 2;
+        webHook.height = 1;
+
+        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(webHook));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        clientPair.appClient.send("hardware 1 vw 123 " + httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124");
+        verify(clientPair.hardwareClient.responseMock, after(500).times(1)).channelRead(any(), eq(
+                new HardwareMessage(2, b("vw 123 " + httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124"))));
+
+        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124").execute();
+        Response response = f.get();
+
+        assertEquals(200, response.getStatusCode());
+        List<String> values = consumeJsonPinValues(response.getResponseBody());
+        assertEquals(1, values.size());
+        assertEquals("text", values.get(0));
+    }
+
 }

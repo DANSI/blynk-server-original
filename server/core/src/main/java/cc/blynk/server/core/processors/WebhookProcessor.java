@@ -91,6 +91,10 @@ public class WebhookProcessor extends NotificationBase {
 
         String newUrl = format(webHook.url, triggerValue, false);
 
+        if (WebHook.isNotValidUrl(newUrl)) {
+            return;
+        }
+
         BoundRequestBuilder builder = buildRequestMethod(webHook.method, newUrl);
         if (webHook.headers != null) {
             for (Header header : webHook.headers) {
