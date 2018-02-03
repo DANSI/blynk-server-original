@@ -150,7 +150,7 @@ public class TimerTest extends IntegrationBase {
                         null, new BaseAction[] {setPinAction}, false)
         });
 
-        clientPair.appClient.send("updateWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        clientPair.appClient.updateWidget(1, eventor);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         verify(clientPair.appClient.responseMock, after(1500).never()).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1-0 vw 1 1"))));
@@ -362,7 +362,7 @@ public class TimerTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, timer);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        clientPair.appClient.send("deleteWidget 1 112");
+        clientPair.appClient.deleteWidget(1, 112);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         verify(clientPair.hardwareClient.responseMock, after(2500).never()).channelRead(any(), any());
@@ -448,7 +448,7 @@ public class TimerTest extends IntegrationBase {
         timer.startValue = "11";
         timer.stopValue = "10";
 
-        clientPair.appClient.send("updateWidget 1\0" + JsonParser.toJson(timer));
+        clientPair.appClient.updateWidget(1, timer);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         verify(clientPair.hardwareClient.responseMock, timeout(2500).times(2)).channelRead(any(), any());
@@ -492,7 +492,7 @@ public class TimerTest extends IntegrationBase {
 
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
 
-        clientPair.appClient.send("deactivate 1");
+        clientPair.appClient.deactivate(1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         Timer timer = new Timer();
@@ -513,14 +513,14 @@ public class TimerTest extends IntegrationBase {
         dashBoard.name = "Test";
         dashBoard.widgets = new Widget[] {timer};
 
-        clientPair.appClient.send("updateDash " + dashBoard.toString());
+        clientPair.appClient.updateDash(dashBoard);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         dashBoard.id = 2;
-        clientPair.appClient.send("createDash " + dashBoard.toString());
+        clientPair.appClient.createDash(dashBoard);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
 
-        clientPair.appClient.send("activate 1");
+        clientPair.appClient.activate(1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(4, OK)));
 
         clientPair.appClient.reset();
@@ -542,7 +542,7 @@ public class TimerTest extends IntegrationBase {
     public void testTimerWidgetTriggered() throws Exception {
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
 
-        clientPair.appClient.send("deactivate 1");
+        clientPair.appClient.deactivate(1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         Timer timer = new Timer();
@@ -563,10 +563,10 @@ public class TimerTest extends IntegrationBase {
         dashBoard.name = "Test";
         dashBoard.widgets = new Widget[] {timer};
 
-        clientPair.appClient.send("updateDash " + dashBoard.toString());
+        clientPair.appClient.updateDash(dashBoard);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
-        clientPair.appClient.send("activate 1");
+        clientPair.appClient.activate(1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
 
         verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 1"))));
@@ -632,7 +632,7 @@ public class TimerTest extends IntegrationBase {
     public void testTimerWidgetTriggeredAndSyncWorks() throws Exception {
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
 
-        clientPair.appClient.send("deactivate 1");
+        clientPair.appClient.deactivate(1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         Timer timer = new Timer();
@@ -653,10 +653,10 @@ public class TimerTest extends IntegrationBase {
         dashBoard.name = "Test";
         dashBoard.widgets = new Widget[] {timer};
 
-        clientPair.appClient.send("updateDash " + dashBoard.toString());
+        clientPair.appClient.updateDash(dashBoard);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
-        clientPair.appClient.send("activate 1");
+        clientPair.appClient.activate(1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
 
         verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("vw 5 1"))));

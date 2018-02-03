@@ -341,9 +341,9 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
         DashBoard dash = new DashBoard();
         dash.id = 1;
         dash.name = "test";
-        appClient.send("createDash " + dash.toString());
+        appClient.createDash(dash);
         verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(3)));
-        appClient.send("activate 1");
+        appClient.activate(1);
         verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(4, DEVICE_NOT_IN_NETWORK)));
 
         appClient.reset();

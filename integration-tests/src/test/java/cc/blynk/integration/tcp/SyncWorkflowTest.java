@@ -167,7 +167,7 @@ public class SyncWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("activate 1");
+        clientPair.appClient.activate(1);
 
         verify(clientPair.appClient.responseMock, timeout(500).times(13)).channelRead(any(), any());
 
@@ -203,7 +203,7 @@ public class SyncWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 10 p x y 10"))));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("activate 1");
+        clientPair.appClient.activate(1);
 
         verify(clientPair.appClient.responseMock, timeout(500).times(12)).channelRead(any(), any());
 
@@ -453,10 +453,10 @@ public class SyncWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("1-0 vw 17 b"))));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, HARDWARE, b("1-0 vw 17 c"))));
 
-        clientPair.appClient.send("deactivate 1");
+        clientPair.appClient.deactivate(1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
 
-        clientPair.appClient.send("activate 1");
+        clientPair.appClient.activate(1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 17 a"))));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 17 b"))));
@@ -471,7 +471,7 @@ public class SyncWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1-0 vw 20 p 0 0 Hello"))));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("1-0 vw 20 p 0 1 World"))));
 
-        clientPair.appClient.send("activate 1");
+        clientPair.appClient.activate(1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 20 p 0 0 Hello"))));
@@ -496,7 +496,7 @@ public class SyncWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(6, HARDWARE, b("1-0 vw 20 p 0 5 H6"))));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7, HARDWARE, b("1-0 vw 20 p 0 6 H7"))));
 
-        clientPair.appClient.send("activate 1");
+        clientPair.appClient.activate(1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 20 p 0 1 H2"))));
@@ -538,7 +538,7 @@ public class SyncWorkflowTest extends IntegrationBase {
 
     @Test
     public void testActivateAndGetSync() throws Exception {
-        clientPair.appClient.send("activate 1");
+        clientPair.appClient.activate(1);
 
         verify(clientPair.appClient.responseMock, timeout(500).times(11)).channelRead(any(), any());
 

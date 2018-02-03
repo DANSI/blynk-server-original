@@ -702,7 +702,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         deviceTiles.templates = null;
         deviceTiles.tiles = null;
 
-        clientPair.appClient.send("updateWidget 1\0" + MAPPER.writeValueAsString(deviceTiles));
+        clientPair.appClient.updateWidget(1, deviceTiles);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
 
         clientPair.appClient.send("getWidget 1\0" + widgetId);
@@ -943,13 +943,13 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.send("getEnergy");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7, GET_ENERGY, "2200")));
 
-        clientPair.appClient.send("deleteWidget 1 101");
+        clientPair.appClient.deleteWidget(1, 101);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(8)));
 
         clientPair.appClient.send("getEnergy");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(9, GET_ENERGY, "2400")));
 
-        clientPair.appClient.send("deleteWidget 1 21321");
+        clientPair.appClient.deleteWidget(1, 21321);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(10)));
 
         clientPair.appClient.send("getEnergy");
@@ -983,7 +983,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, b("21321 1 ") + "{\"id\":100, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":2}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(notAllowed(4)));
 
-        clientPair.appClient.send("updateWidget 1\0" + "{\"id\":100, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 3\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":3}");
+        clientPair.appClient.updateWidget(1, "{\"id\":100, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 3\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":3}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
 
         clientPair.appClient.send("getWidget 1\0" + widgetId);

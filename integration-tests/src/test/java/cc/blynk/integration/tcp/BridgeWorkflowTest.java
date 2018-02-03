@@ -190,7 +190,7 @@ public class BridgeWorkflowTest extends IntegrationBase {
         List<Object> arguments = objectArgumentCaptor.getAllValues();
         String token2 = ((StringMessage) arguments.get(0)).body;
 
-        clientPair.appClient.send("activate 2");
+        clientPair.appClient.activate(2);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, DEVICE_NOT_IN_NETWORK)));
         clientPair.appClient.reset();
 
@@ -400,7 +400,7 @@ public class BridgeWorkflowTest extends IntegrationBase {
         appClient.send("login test@test.com 1 Android" + "\0" + "RC13");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
-        appClient.send("createDash {\"id\":1, \"createdAt\":1, \"name\":\"test board\"}\"");
+        appClient.createDash("{\"id\":1, \"createdAt\":1, \"name\":\"test board\"}");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
 
         appClient.reset();

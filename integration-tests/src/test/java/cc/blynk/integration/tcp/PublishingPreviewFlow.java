@@ -213,7 +213,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         dashBoard.isPreview = true;
         dashBoard.name = "Face Edit Test";
 
-        clientPair.appClient.send("createDash " + dashBoard.toString());
+        clientPair.appClient.createDash(dashBoard);
 
         Device device0 = new Device(0, "My Dashboard", "UNO");
         device0.status = Status.ONLINE;
@@ -278,7 +278,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         dashBoard.isPreview = true;
         dashBoard.name = "Face Edit Test";
 
-        clientPair.appClient.send("createDash " + dashBoard.toString());
+        clientPair.appClient.createDash(dashBoard);
 
         Device device0 = new Device(0, "My Dashboard", "UNO");
         device0.status = Status.ONLINE;
@@ -396,7 +396,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         dashBoard.name = "Face Edit Test";
         dashBoard.devices = null;
 
-        clientPair.appClient.send("createDash " + dashBoard.toString());
+        clientPair.appClient.createDash(dashBoard);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         Device device0 = new Device(0, "My Device", "UNO");
@@ -444,7 +444,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         clientPair.appClient.send("addPushToken 1\0uid1\0token1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
 
-        clientPair.appClient.send("updateWidget 1\0" + "{\"id\":10, \"height\":2, \"width\":1, \"x\":22, \"y\":23, \"username\":\"pupkin@gmail.com\", \"token\":\"token\", \"secret\":\"secret\", \"type\":\"TWITTER\"}");
+        clientPair.appClient.updateWidget(1, "{\"id\":10, \"height\":2, \"width\":1, \"x\":22, \"y\":23, \"username\":\"pupkin@gmail.com\", \"token\":\"token\", \"secret\":\"secret\", \"type\":\"TWITTER\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(6)));
 
         clientPair.appClient.send("updateFace 1");
@@ -506,7 +506,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         dashBoard.parentId = 1;
         dashBoard.isPreview = true;
 
-        clientPair.appClient.send("createDash " + dashBoard.toString());
+        clientPair.appClient.createDash(dashBoard);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
 
         clientPair.appClient.send("deleteDash 2");
@@ -558,7 +558,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         dashBoard.parentId = 1;
         dashBoard.isPreview = true;
 
-        clientPair.appClient.send("createDash " + dashBoard.toString());
+        clientPair.appClient.createDash(dashBoard);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
 
         clientPair.appClient.send("deleteDash 1");

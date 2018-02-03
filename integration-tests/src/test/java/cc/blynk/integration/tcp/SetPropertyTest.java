@@ -108,21 +108,21 @@ public class SetPropertyTest extends IntegrationBase {
         assertEquals("Some Text", slider.label);
         slider.deviceId = tag0.id;
 
-        clientPair.appClient.send("updateWidget 1\0" + JsonParser.toJson(slider));
+        clientPair.appClient.updateWidget(1, slider);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
 
         clientPair.hardwareClient.send("setProperty 4 label MyNewLabel");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1, "1-0 4 label MyNewLabel")));
 
-        clientPair.appClient.send("deactivate 1");
+        clientPair.appClient.deactivate(1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
 
         slider.label = "Some Text2";
-        clientPair.appClient.send("updateWidget 1\0" + JsonParser.toJson(slider));
+        clientPair.appClient.updateWidget(1, slider);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
 
-        clientPair.appClient.send("activate 1");
+        clientPair.appClient.activate(1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(6)));
         verify(clientPair.appClient.responseMock, after(500).never()).channelRead(any(), eq(setProperty(1111, "1-0 4 label MyNewLabel")));
 
@@ -309,7 +309,7 @@ public class SetPropertyTest extends IntegrationBase {
 
     @Test
     public void testSetColorShouldNotWorkForNonActiveProject() throws Exception {
-        clientPair.appClient.send("deactivate 1");
+        clientPair.appClient.deactivate(1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("setProperty 4 color #23C48E");
@@ -346,10 +346,10 @@ public class SetPropertyTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, "{\"id\":102, \"width\":1, \"height\":1, \"x\":5, \"y\":0, \"tabId\":0, \"label\":\"Some Text\", \"type\":\"VIDEO\", \"pinType\":\"VIRTUAL\", \"pin\":122}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        clientPair.appClient.send("deactivate 1");
+        clientPair.appClient.deactivate(1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
-        clientPair.appClient.send("activate 1");
+        clientPair.appClient.activate(1);
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(3)));
         verify(clientPair.appClient.responseMock, never()).channelRead(any(), eq(setProperty(1111, "1 122 label new")));
     }
@@ -374,13 +374,13 @@ public class SetPropertyTest extends IntegrationBase {
 
         assertEquals("http://123.com", videoWidget.url);
 
-        clientPair.appClient.send("updateWidget 1\0{\"id\":102, \"url\":\"http://updated.com\", \"width\":1, \"height\":1, \"x\":5, \"y\":0, \"tabId\":0, \"label\":\"Some Text\", \"type\":\"VIDEO\", \"pinType\":\"VIRTUAL\", \"pin\":17}");
+        clientPair.appClient.updateWidget(1, "{\"id\":102, \"url\":\"http://updated.com\", \"width\":1, \"height\":1, \"x\":5, \"y\":0, \"tabId\":0, \"label\":\"Some Text\", \"type\":\"VIDEO\", \"pinType\":\"VIRTUAL\", \"pin\":17}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
-        clientPair.appClient.send("deactivate 1");
+        clientPair.appClient.deactivate(1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
 
-        clientPair.appClient.send("activate 1");
+        clientPair.appClient.activate(1);
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(4)));
         verify(clientPair.appClient.responseMock, never()).channelRead(any(), eq(setProperty(1111, "1 17 url http://updated.com")));
 

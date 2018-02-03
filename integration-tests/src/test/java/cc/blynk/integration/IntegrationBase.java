@@ -90,7 +90,7 @@ public abstract class IntegrationBase extends BaseTest {
 
     public static void saveProfile(TestAppClient appClient, DashBoard... dashBoards) {
         for (DashBoard dash : dashBoards) {
-            appClient.send("createDash " + dash.toString());
+            appClient.createDash(dash);
         }
     }
 

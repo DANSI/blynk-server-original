@@ -103,7 +103,7 @@ public class BlynkInternalTest extends IntegrationBase {
 
     @Test
     public void appConnectedEvent() throws Exception {
-        clientPair.appClient.send("updateDash {\"id\":1, \"name\":\"test board\", \"isAppConnectedOn\":true}");
+        clientPair.appClient.updateDash("{\"id\":1, \"name\":\"test board\", \"isAppConnectedOn\":true}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
@@ -117,7 +117,7 @@ public class BlynkInternalTest extends IntegrationBase {
 
     @Test
     public void appDisconnectedEvent() throws Exception {
-        clientPair.appClient.send("updateDash {\"id\":1, \"name\":\"test board\", \"isAppConnectedOn\":true}");
+        clientPair.appClient.updateDash("{\"id\":1, \"name\":\"test board\", \"isAppConnectedOn\":true}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.stop().await();

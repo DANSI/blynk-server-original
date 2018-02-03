@@ -64,7 +64,7 @@ public class PortUnificationTest extends IntegrationBase {
 
         appClient.send("register " + DEFAULT_TEST_USER + " 1");
         appClient.send("login " + DEFAULT_TEST_USER + " 1" + " Android" + "\0" + "1.10.4");
-        appClient.send("createDash {\"id\":1, \"createdAt\":1, \"name\":\"test board\"}\"");
+        appClient.createDash("{\"id\":1, \"createdAt\":1, \"name\":\"test board\"}");
 
         Device device1 = new Device(1, "My Device", "ESP8266");
         appClient.createDevice(1, device1);

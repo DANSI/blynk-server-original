@@ -371,7 +371,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         clientPair.hardwareClient.send("hardware vw 89 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(2, b("1-0 vw 89 1"))));
 
-        clientPair.appClient.send("activate 1");
+        clientPair.appClient.activate(1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1111, "1-0 89 label 123")));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(1111, b("1-0 vw 89 1"))));
     }

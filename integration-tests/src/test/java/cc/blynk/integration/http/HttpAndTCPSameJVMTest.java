@@ -497,7 +497,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         String token = clientPair.appClient.getBody();
         clientPair.appClient.reset();
 
-        clientPair.appClient.send("deactivate 1");
+        clientPair.appClient.deactivate(1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         HttpPut request = new HttpPut(httpServerUrl + token + "/pin/v31");
@@ -510,7 +510,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("vw 31 100"))));
         verify(clientPair.appClient.responseMock, after(400).never()).channelRead(any(), eq(produce(111, HARDWARE, b("1 vw 31 100"))));
 
-        clientPair.appClient.send("activate 1");
+        clientPair.appClient.activate(1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
     }
 

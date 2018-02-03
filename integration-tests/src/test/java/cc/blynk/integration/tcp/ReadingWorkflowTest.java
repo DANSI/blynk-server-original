@@ -91,7 +91,7 @@ public class ReadingWorkflowTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, "{\"id\":155, \"frequency\":400, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"GAUGE\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        clientPair.appClient.send("deactivate 1");
+        clientPair.appClient.deactivate(1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.readingWidgetsWorker, 0, 500, TimeUnit.MILLISECONDS);
@@ -237,7 +237,7 @@ public class ReadingWorkflowTest extends IntegrationBase {
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 102"))));
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 103"))));
 
-        clientPair.appClient.send("deactivate 1");
+        clientPair.appClient.deactivate(1);
 
         hardClient2.reset();
         clientPair.hardwareClient.reset();

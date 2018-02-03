@@ -4,6 +4,7 @@ import cc.blynk.client.core.AppClient;
 import cc.blynk.client.handlers.decoders.AppClientMessageDecoder;
 import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.SimpleClientHandler;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -104,6 +105,42 @@ public class TestAppClient extends AppClient {
 
     public void createWidget(int dashId, String widgetJson) {
         send("createWidget " + dashId + BODY_SEPARATOR + widgetJson);
+    }
+
+    public void updateWidget(int dashId, Widget widget) throws Exception {
+        updateWidget(dashId, JsonParser.MAPPER.writeValueAsString(widget));
+    }
+
+    public void updateWidget(int dashId, String widgetJson) {
+        send("updateWidget " + dashId + BODY_SEPARATOR + widgetJson);
+    }
+
+    public void deleteWidget(int dashId, int widgetId) {
+        send("deleteWidget " + dashId + " " + widgetId);
+    }
+
+    public void activate(int dashId) {
+        send("activate " + dashId);
+    }
+
+    public void deactivate(int dashId) {
+        send("deactivate " + dashId);
+    }
+
+    public void updateDash(DashBoard dashBoard) {
+        updateDash(dashBoard.toString());
+    }
+
+    public void updateDash(String dashJson) {
+        send("updateDash " + dashJson);
+    }
+
+    public void createDash(DashBoard dashBoard) {
+        createDash(dashBoard.toString());
+    }
+
+    public void createDash(String dashJson) {
+        send("createDash " + dashJson);
     }
 
     public void send(String line) {

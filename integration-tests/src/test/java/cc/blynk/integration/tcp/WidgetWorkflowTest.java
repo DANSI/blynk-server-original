@@ -110,7 +110,7 @@ public class WidgetWorkflowTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, "{\"frequency\":1000,\"isAxisFlipOn\":false,\"color\":600084223,\"isDefaultColor\":true,\"rangeMappingOn\":false,\"pin\":-1,\"pwmMode\":false,\"deviceId\":0,\"height\":3,\"id\":82561,\"tabId\":1,\"type\":\"VERTICAL_LEVEL_DISPLAY\",\"width\":1,\"x\":0,\"y\":6,\"min\":0,\"max\":1023}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        clientPair.appClient.send("deleteWidget 1 82561");
+        clientPair.appClient.deleteWidget(1, 82561);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
     }
 
@@ -129,7 +129,7 @@ public class WidgetWorkflowTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, "{\"frequency\":1000,\"isAxisFlipOn\":false,\"color\":600084223,\"isDefaultColor\":true,\"rangeMappingOn\":false,\"pin\":-1,\"pwmMode\":false,\"deviceId\":0,\"height\":3,\"id\":82561,\"tabId\":1,\"type\":\"VERTICAL_LEVEL_DISPLAY\",\"width\":1,\"x\":0,\"y\":6,\"min\":0,\"max\":1023}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
-        clientPair.appClient.send("deleteWidget 1 82561");
+        clientPair.appClient.deleteWidget(1, 82561);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
     }
 

@@ -210,7 +210,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         DashBoard dash = new DashBoard();
         dash.id = 2;
         dash.name = "test";
-        clientPair.appClient.send("createDash " + dash.toString());
+        clientPair.appClient.createDash(dash);
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
 
         DashboardSettings settings = new DashboardSettings(dash.name, true, Theme.Blynk, false, false, false);
@@ -592,13 +592,13 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        clientPair.appClient.send("deactivate 1");
+        clientPair.appClient.deactivate(1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(2, DEACTIVATE_DASHBOARD, "1")));
         verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(produce(2, DEACTIVATE_DASHBOARD, "1")));
 
-        clientPair.appClient.send("activate 1");
+        clientPair.appClient.activate(1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
 
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(3, ACTIVATE_DASHBOARD, "1")));
@@ -838,7 +838,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         device.name = "123";
         dash.devices = new Device[] {device};
 
-        clientPair.appClient.send("createDash " + dash.toString());
+        clientPair.appClient.createDash(dash);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("getShareToken 333");

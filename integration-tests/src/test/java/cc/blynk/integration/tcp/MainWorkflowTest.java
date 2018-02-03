@@ -104,7 +104,7 @@ public class MainWorkflowTest extends IntegrationBase {
         appClient.send("login test@test.com 1 Android RC13");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
-        appClient.send("createDash {\"id\":1, \"createdAt\":1, \"name\":\"test board\"}\"");
+        appClient.createDash("{\"id\":1, \"createdAt\":1, \"name\":\"test board\"}");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
 
         appClient.createWidget(1, "{\"id\":1, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":1}");
@@ -128,7 +128,7 @@ public class MainWorkflowTest extends IntegrationBase {
         profile.dashBoards[0].updatedAt = 0;
         assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board\",\"createdAt\":1,\"updatedAt\":0,\"widgets\":[{\"type\":\"BUTTON\",\"id\":1,\"x\":0,\"y\":0,\"color\":0,\"width\":1,\"height\":1,\"tabId\":0,\"label\":\"Some Text\",\"isDefaultColor\":false,\"deviceId\":0,\"pinType\":\"DIGITAL\",\"pin\":1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"pushMode\":false},{\"type\":\"BUTTON\",\"id\":2,\"x\":2,\"y\":2,\"color\":0,\"width\":1,\"height\":1,\"tabId\":0,\"label\":\"Some Text 2\",\"isDefaultColor\":false,\"deviceId\":0,\"pinType\":\"DIGITAL\",\"pin\":2,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"pushMode\":false}],\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false}]}", profile.toString());
 
-        appClient.send("updateWidget 1\0{\"id\":2, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"new label\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":3}\"");
+        appClient.updateWidget(1, "{\"id\":2, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"new label\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":3}\"");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         appClient.reset();
@@ -138,13 +138,13 @@ public class MainWorkflowTest extends IntegrationBase {
         profile.dashBoards[0].updatedAt = 0;
         assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board\",\"createdAt\":1,\"updatedAt\":0,\"widgets\":[{\"type\":\"BUTTON\",\"id\":1,\"x\":0,\"y\":0,\"color\":0,\"width\":1,\"height\":1,\"tabId\":0,\"label\":\"Some Text\",\"isDefaultColor\":false,\"deviceId\":0,\"pinType\":\"DIGITAL\",\"pin\":1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"pushMode\":false},{\"type\":\"BUTTON\",\"id\":2,\"x\":2,\"y\":2,\"color\":0,\"width\":1,\"height\":1,\"tabId\":0,\"label\":\"new label\",\"isDefaultColor\":false,\"deviceId\":0,\"pinType\":\"DIGITAL\",\"pin\":3,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"pushMode\":false}],\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false}]}", profile.toString());
 
-        appClient.send("deleteWidget 1 3");
+        appClient.deleteWidget(1, 3);
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, ILLEGAL_COMMAND)));
 
-        appClient.send("deleteWidget 1 1");
+        appClient.deleteWidget(1, 1);
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
 
-        appClient.send("deleteWidget 1 2");
+        appClient.deleteWidget(1, 2);
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
 
         appClient.reset();
@@ -185,7 +185,7 @@ public class MainWorkflowTest extends IntegrationBase {
         device.name = "123";
         dash.devices = new Device[] {device};
 
-        appClient.send("createDash no_token\0" + dash.toString());
+        appClient.createDash("no_token\0" + dash.toString());
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
 
         appClient.send("getDevices 1");
@@ -216,7 +216,7 @@ public class MainWorkflowTest extends IntegrationBase {
         appClient.send("login test@test.com 1 Android 1.13.3 MyApp");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
-        appClient.send("createDash {\"id\":1, \"createdAt\":1, \"name\":\"test board\"}\"");
+        appClient.createDash("{\"id\":1, \"createdAt\":1, \"name\":\"test board\"}");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
 
         appClient.createWidget(1, "{\"id\":1, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":1}");
@@ -283,7 +283,7 @@ public class MainWorkflowTest extends IntegrationBase {
         appClient.send("login test@test.com 1 Android 1.13.3 MyApp");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
-        appClient.send("createDash {\"id\":2, \"createdAt\":1458856800001, \"name\":\"test board\"}\"");
+        appClient.createDash("{\"id\":2, \"createdAt\":1458856800001, \"name\":\"test board\"}");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
 
         appClient.send("getEnergy");
@@ -340,7 +340,7 @@ public class MainWorkflowTest extends IntegrationBase {
         profile = parseProfile(clientPair.appClient.getBody());
         assertEquals(19, profile.dashBoards[0].widgets.length);
 
-        clientPair.appClient.send("deleteWidget 1 100");
+        clientPair.appClient.deleteWidget(1, 100);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         clientPair.appClient.send("getEnergy");
@@ -379,7 +379,7 @@ public class MainWorkflowTest extends IntegrationBase {
         profile = parseProfile(clientPair.appClient.getBody());
         assertEquals(19, profile.dashBoards[0].widgets.length);
 
-        clientPair.appClient.send("updateWidget 1\0{\"id\":100, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"tabs\":[{\"label\":\"tab 1\"}, {\"label\":\"tab 2\"}], \"type\":\"TABS\"}");
+        clientPair.appClient.updateWidget(1, "{\"id\":100, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"tabs\":[{\"label\":\"tab 1\"}, {\"label\":\"tab 2\"}], \"type\":\"TABS\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         clientPair.appClient.send("getEnergy");
@@ -452,16 +452,16 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void testDashCommands() throws Exception {
-        clientPair.appClient.send("updateDash {\"id\":10, \"name\":\"test board update\"}");
+        clientPair.appClient.updateDash("{\"id\":10, \"name\":\"test board update\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND)));
 
-        clientPair.appClient.send("createDash {\"id\":10, \"name\":\"test board\"}");
+        clientPair.appClient.createDash("{\"id\":10, \"name\":\"test board\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
-        clientPair.appClient.send("createDash {\"id\":10, \"name\":\"test board\"}");
+        clientPair.appClient.createDash("{\"id\":10, \"name\":\"test board\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, NOT_ALLOWED)));
 
-        clientPair.appClient.send("updateDash {\"id\":10, \"name\":\"test board update\"}");
+        clientPair.appClient.updateDash("{\"id\":10, \"name\":\"test board update\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
 
         clientPair.hardwareClient.send("ping");
@@ -490,7 +490,7 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("loadProfileGzipped 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(9, ILLEGAL_COMMAND)));
 
-        clientPair.appClient.send("activate 10");
+        clientPair.appClient.activate(10);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(10, DEVICE_NOT_IN_NETWORK)));
 
         clientPair.appClient.send("loadProfileGzipped");
@@ -500,7 +500,7 @@ public class MainWorkflowTest extends IntegrationBase {
         String expectedProfile = "{\"dashBoards\":[{\"id\":10,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":true}]}";
         assertEquals(expectedProfile, responseProfile.toString());
 
-        clientPair.appClient.send("updateDash {\"id\":10,\"name\":\"test board update\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}");
+        clientPair.appClient.updateDash("{\"id\":10,\"name\":\"test board update\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         expectedProfile = "{\"dashBoards\":[{\"id\":10,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":true}]}";
@@ -521,7 +521,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void testGetTokenWorksWithNewFormats() throws Exception {
-        clientPair.appClient.send("createDash {\"id\":10, \"name\":\"test board\"}");
+        clientPair.appClient.createDash("{\"id\":10, \"name\":\"test board\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("getToken 10");
@@ -538,7 +538,7 @@ public class MainWorkflowTest extends IntegrationBase {
         assertNotNull(token2);
         assertEquals(token, token2);
 
-        clientPair.appClient.send("createDash {\"id\":11, \"name\":\"test board\"}");
+        clientPair.appClient.createDash("{\"id\":11, \"name\":\"test board\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
 
         clientPair.appClient.send("getToken " + b("11 0"));
@@ -549,7 +549,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void deleteDashDeletesTokensAlso() throws Exception {
-        clientPair.appClient.send("createDash {\"id\":10, \"name\":\"test board\"}");
+        clientPair.appClient.createDash("{\"id\":10, \"name\":\"test board\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.reset();
@@ -644,7 +644,7 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.hardwareClient.send("hardware aw 1 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1-0 aw 1 1"))));
 
-        clientPair.appClient.send("deactivate 1");
+        clientPair.appClient.deactivate(1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware aw 1 1");
@@ -665,23 +665,23 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.hardwareClient.send("hardware aw 1 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1-0 aw 1 1"))));
 
-        clientPair.appClient.send("deactivate 1");
+        clientPair.appClient.deactivate(1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         Profile newProfile = parseProfile(readTestUserProfile("user_profile_json_3_dashes.txt"));
-        clientPair.appClient.send("createDash " + newProfile.dashBoards[1]);
+        clientPair.appClient.createDash(newProfile.dashBoards[1]);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         clientPair.hardwareClient.send("hardware aw 1 1");
         verify(clientPair.appClient.responseMock, after(500).never()).channelRead(any(), eq(new ResponseMessage(2, NO_ACTIVE_DASHBOARD)));
 
-        clientPair.appClient.send("activate 2");
+        clientPair.appClient.activate(2);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, DEVICE_NOT_IN_NETWORK)));
 
         clientPair.hardwareClient.send("hardware aw 1 1");
         verify(clientPair.appClient.responseMock, after(500).never()).channelRead(any(), eq(new ResponseMessage(3, NO_ACTIVE_DASHBOARD)));
 
-        clientPair.appClient.send("activate 1");
+        clientPair.appClient.activate(1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
 
         clientPair.hardwareClient.send("hardware aw 1 1");
@@ -694,13 +694,13 @@ public class MainWorkflowTest extends IntegrationBase {
         hardClient2.start();
 
         Profile newProfile = parseProfile(readTestUserProfile("user_profile_json_3_dashes.txt"));
-        clientPair.appClient.send("createDash " + newProfile.dashBoards[1]);
+        clientPair.appClient.createDash(newProfile.dashBoards[1]);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        clientPair.appClient.send("activate 1");
+        clientPair.appClient.activate(1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
-        clientPair.appClient.send("activate 2");
+        clientPair.appClient.activate(2);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, DEVICE_NOT_IN_NETWORK)));
 
         clientPair.appClient.reset();
@@ -719,7 +719,7 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("2-0 aw 1 1"))));
 
 
-        clientPair.appClient.send("deactivate 1");
+        clientPair.appClient.deactivate(1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware aw 1 1");
@@ -732,17 +732,17 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void testActivateWorkflow() throws Exception {
-        clientPair.appClient.send("activate 2");
+        clientPair.appClient.activate(2);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND)));
 
-        clientPair.appClient.send("deactivate 2");
+        clientPair.appClient.deactivate(2);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, ILLEGAL_COMMAND)));
 
         clientPair.appClient.send("hardware 1 ar 1 1");
         //todo check no response
         verify(clientPair.appClient.responseMock, never()).channelRead(any(), eq(ok(3)));
 
-        clientPair.appClient.send("activate 1");
+        clientPair.appClient.activate(1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
     }
 
@@ -764,7 +764,7 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.hardwareClient.send("tweet " + a);
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, NOTIFICATION_INVALID_BODY)));
 
-        clientPair.appClient.send("deactivate 1");
+        clientPair.appClient.deactivate(1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("tweet yo");
@@ -1126,7 +1126,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void testSendHardwareCommandToNotActiveDashboard() throws Exception {
-        clientPair.appClient.send("createDash " + "{\"id\":2,\"name\":\"My Dashboard2\"}");
+        clientPair.appClient.createDash("{\"id\":2,\"name\":\"My Dashboard2\"}");
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
         clientPair.appClient.reset();
 
@@ -1213,7 +1213,7 @@ public class MainWorkflowTest extends IntegrationBase {
                 device
         };
 
-        clientPair.appClient.send("createDash " + dashBoard.toString());
+        clientPair.appClient.createDash(dashBoard);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("getDevices 2");

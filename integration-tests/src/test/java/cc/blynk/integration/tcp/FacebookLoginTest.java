@@ -124,7 +124,7 @@ public class FacebookLoginTest extends IntegrationBase {
 
         saveProfile(appClient, profile.dashBoards);
 
-        appClient.send("activate " + dashId);
+        appClient.activate( dashId);
         appClient.send("getToken " + dashId);
 
         ArgumentCaptor<Object> objectArgumentCaptor = ArgumentCaptor.forClass(Object.class);

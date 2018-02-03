@@ -291,7 +291,7 @@ public class HttpsAdminServerTest extends BaseTest {
     public void testUpdateUser() throws Exception {
         login(admin.email, admin.pass);
 
-        clientPair.appClient.send("deactivate 1");
+        clientPair.appClient.deactivate(1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         User user;
@@ -327,7 +327,7 @@ public class HttpsAdminServerTest extends BaseTest {
         appClient.send("login " + DEFAULT_TEST_USER + " 1 iOS" + "\0" + "1.10.2");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        appClient.send("activate 1");
+        appClient.activate(1);
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         clientPair.hardwareClient.send("hardware vw 1 112");

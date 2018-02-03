@@ -72,7 +72,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         appClient.send("login test@test.com 1 Android" + "\0" + "RC13");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
-        appClient.send("createDash {\"id\":1, \"createdAt\":1, \"name\":\"test board\"}\"");
+        appClient.createDash("{\"id\":1, \"createdAt\":1, \"name\":\"test board\"}");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
 
         appClient.send("addPushToken 1\0uid\0token");
@@ -112,7 +112,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         assertTrue(notification.androidTokens.containsKey("uid1"));
         assertTrue(notification.androidTokens.containsValue("token1"));
 
-        clientPair.appClient.send("updateDash " + profile.getDashById(1).toString());
+        clientPair.appClient.updateDash(profile.getDashById(1));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
 
         clientPair.appClient.send("loadProfileGzipped");
@@ -159,7 +159,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
         notification.notifyWhenOffline = false;
 
-        clientPair.appClient.send("updateDash " + profile.getDashById(1).toString());
+        clientPair.appClient.updateDash(profile.getDashById(1));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.stop();
@@ -171,7 +171,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         Profile profile = parseProfile(readTestUserProfile());
         Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
         notification.notifyWhenOffline = false;
-        clientPair.appClient.send("updateDash " + profile.getDashById(1).toString());
+        clientPair.appClient.updateDash(profile.getDashById(1));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         clientPair.appClient.reset();
 
@@ -192,7 +192,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         Profile profile = parseProfile(readTestUserProfile());
         Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
         notification.notifyWhenOffline = false;
-        clientPair.appClient.send("updateDash " + profile.getDashById(1).toString());
+        clientPair.appClient.updateDash(profile.getDashById(1));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         clientPair.appClient.reset();
 
@@ -224,7 +224,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
         notification.notifyWhenOffline = true;
 
-        clientPair.appClient.send("updateDash " + profile.getDashById(1).toString());
+        clientPair.appClient.updateDash(profile.getDashById(1));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         ChannelFuture channelFuture = clientPair.hardwareClient.stop();
@@ -244,7 +244,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
         notification.notifyWhenOffline = true;
 
-        clientPair.appClient.send("updateDash " + profile.getDashById(1).toString());
+        clientPair.appClient.updateDash(profile.getDashById(1));
         clientPair.appClient.send("logout");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
@@ -264,7 +264,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
         notification.notifyWhenOffline = true;
 
-        clientPair.appClient.send("updateDash " + profile.getDashById(1).toString());
+        clientPair.appClient.updateDash(profile.getDashById(1));
         clientPair.appClient.send("logout uid");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
@@ -284,7 +284,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
         notification.notifyWhenOffline = true;
 
-        clientPair.appClient.send("updateDash " + profile.getDashById(1).toString());
+        clientPair.appClient.updateDash(profile.getDashById(1));
         clientPair.appClient.send("logout uidxxx");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
@@ -301,7 +301,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
         notification.notifyWhenOffline = true;
 
-        clientPair.appClient.send("updateDash " + profile.getDashById(1).toString());
+        clientPair.appClient.updateDash(profile.getDashById(1));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("getToken 1");
@@ -344,7 +344,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
         notification.notifyWhenOffline = true;
 
-        clientPair.appClient.send("updateDash " + profile.getDashById(1).toString());
+        clientPair.appClient.updateDash(profile.getDashById(1));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("getToken 1");
@@ -377,7 +377,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
         notification.notifyWhenOffline = true;
 
-        clientPair.appClient.send("updateDash " + profile.getDashById(1).toString());
+        clientPair.appClient.updateDash(profile.getDashById(1));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("getToken 1");
@@ -406,7 +406,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
         notification.notifyWhenOffline = true;
 
-        clientPair.appClient.send("updateDash " + profile.getDashById(1).toString());
+        clientPair.appClient.updateDash(profile.getDashById(1));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.reset();
@@ -439,7 +439,7 @@ public class NotificationsLogicTest extends IntegrationBase {
 
         long now = System.currentTimeMillis();
 
-        clientPair.appClient.send("updateDash " + profile.getDashById(1).toString());
+        clientPair.appClient.updateDash(profile.getDashById(1));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.stop();
@@ -461,7 +461,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         notification.notifyWhenOffline = true;
         notification.notifyWhenOfflineIgnorePeriod = 1000;
 
-        clientPair.appClient.send("updateDash " + profile.getDashById(1).toString());
+        clientPair.appClient.updateDash(profile.getDashById(1));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         ChannelFuture channelFuture = clientPair.hardwareClient.stop();
@@ -482,7 +482,7 @@ public class NotificationsLogicTest extends IntegrationBase {
 
     @Test
     public void testCreateNewNotificationWidget() throws Exception  {
-        clientPair.appClient.send("deleteWidget 1 9");
+        clientPair.appClient.deleteWidget(1, 9);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.createWidget(1, "{\"id\":9, \"x\":1, \"y\":1, \"width\":1, \"height\":1, \"type\":\"NOTIFICATION\", \"notifyWhenOfflineIgnorePeriod\":0, \"priority\":\"high\", \"notifyWhenOffline\":true}");
@@ -491,7 +491,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         clientPair.appClient.send("addPushToken 1\0uid1\0token1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
 
-        clientPair.appClient.send("updateWidget 1\0{\"id\":9, \"x\":1, \"y\":1, \"width\":1, \"height\":1, \"type\":\"NOTIFICATION\", \"notifyWhenOfflineIgnorePeriod\":0, \"priority\":\"high\", \"notifyWhenOffline\":false}");
+        clientPair.appClient.updateWidget(1, "{\"id\":9, \"x\":1, \"y\":1, \"width\":1, \"height\":1, \"type\":\"NOTIFICATION\", \"notifyWhenOfflineIgnorePeriod\":0, \"priority\":\"high\", \"notifyWhenOffline\":false}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         clientPair.hardwareClient.send("push 123");
@@ -538,7 +538,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         appClient.send("login " + DEFAULT_TEST_USER +" 1 iOS" + "\0" + "1.10.2");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        clientPair.appClient.send("deleteWidget 1 9");
+        clientPair.appClient.deleteWidget(1, 9);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.stop();

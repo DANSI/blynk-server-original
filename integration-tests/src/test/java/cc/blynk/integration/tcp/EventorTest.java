@@ -442,7 +442,7 @@ public class EventorTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("1-0 vw 2 123"))));
 
         eventor = oneRuleEventor("if v1 >= 37 then setpin v2 124");
-        clientPair.appClient.send("updateWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        clientPair.appClient.updateWidget(1, eventor);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
         clientPair.hardwareClient.send("hardware vw 1 36");
@@ -458,7 +458,7 @@ public class EventorTest extends IntegrationBase {
 
     @Test
     public void testPinModeForEventorAndSetPinAction() throws Exception {
-        clientPair.appClient.send("activate 1");
+        clientPair.appClient.activate(1);
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("pm 1 out 2 out 3 out 5 out 6 in 7 in 30 in 8 in"))));
         reset(clientPair.hardwareClient.responseMock);
 
@@ -467,7 +467,7 @@ public class EventorTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, eventor);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        clientPair.appClient.send("activate 1");
+        clientPair.appClient.activate(1);
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("pm 1 out 2 out 3 out 5 out 6 in 7 in 30 in 8 in 9 out"))));
         //reset(clientPair.hardwareClient.responseMock);
 
@@ -538,7 +538,7 @@ public class EventorTest extends IntegrationBase {
 
     @Test
     public void testPinModeForPWMPinForEventorAndSetPinAction() throws Exception {
-        clientPair.appClient.send("activate 1");
+        clientPair.appClient.activate(1);
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("pm 1 out 2 out 3 out 5 out 6 in 7 in 30 in 8 in"))));
         reset(clientPair.hardwareClient.responseMock);
 
@@ -556,7 +556,7 @@ public class EventorTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, eventor);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        clientPair.appClient.send("activate 1");
+        clientPair.appClient.activate(1);
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("pm 1 out 2 out 3 out 5 out 6 in 7 in 30 in 8 in 9 out"))));
 
         clientPair.hardwareClient.send("hardware vw 1 38");

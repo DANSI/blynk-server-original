@@ -1064,7 +1064,7 @@ public class HistoryGraphTest extends IntegrationBase {
         assertEquals(111D, bb.getDouble(), 0.1);
         assertEquals(System.currentTimeMillis(), bb.getLong(), 2000);
 
-        clientPair.appClient.send("deleteWidget 1 432");
+        clientPair.appClient.deleteWidget(1, 432);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         clientPair.hardwareClient.send("hardware vw 88 111");
@@ -1560,7 +1560,7 @@ public class HistoryGraphTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, "{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
-        clientPair.appClient.send("updateWidget 1\0" + "{\n" +
+        clientPair.appClient.updateWidget(1, "{\n" +
                 "                    \"type\":\"LOGGER\",\n" +
                 "                    \"id\":14,\n" +
                 "                    \"x\":0,\n" +
