@@ -112,7 +112,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
-        hardClient2.send("login " + devices[1].token);
+        hardClient2.login(devices[1].token);
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         device1.status = Status.ONLINE;
 
@@ -182,7 +182,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
-        hardClient2.send("login " + devices[1].token);
+        hardClient2.login(devices[1].token);
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         device1.status = Status.ONLINE;
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(hardwareConnected(1, "1-1")));
@@ -413,7 +413,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
-        hardClient2.send("login " + devices[1].token);
+        hardClient2.login(devices[1].token);
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(hardwareConnected(1, "1-1")));
 
@@ -461,7 +461,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
-        hardClient2.send("login " + devices[1].token);
+        hardClient2.login(devices[1].token);
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(hardwareConnected(1, "1-1")));
         device1.status = Status.ONLINE;
@@ -531,7 +531,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
-        hardClient2.send("login " + devices[1].token);
+        hardClient2.login(devices[1].token);
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(hardwareConnected(1, "1-1")));
         device1.status = Status.ONLINE;
@@ -630,7 +630,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
-        hardClient2.send("login " + devices[1].token);
+        hardClient2.login(devices[1].token);
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("hardware 1-200000 vw 88 100");

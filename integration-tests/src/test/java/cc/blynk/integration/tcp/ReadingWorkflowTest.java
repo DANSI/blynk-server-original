@@ -135,7 +135,7 @@ public class ReadingWorkflowTest extends IntegrationBase {
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
-        hardClient2.send("login " + device2.token);
+        hardClient2.login(device2.token);
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         clientPair.appClient.reset();
 
@@ -167,7 +167,7 @@ public class ReadingWorkflowTest extends IntegrationBase {
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
-        hardClient2.send("login " + device2.token);
+        hardClient2.login(device2.token);
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         clientPair.appClient.reset();
 
@@ -206,7 +206,7 @@ public class ReadingWorkflowTest extends IntegrationBase {
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
-        hardClient2.send("login " + device2.token);
+        hardClient2.login(device2.token);
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         clientPair.appClient.reset();
 
@@ -263,7 +263,7 @@ public class ReadingWorkflowTest extends IntegrationBase {
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
-        hardClient2.send("login " + device2.token);
+        hardClient2.login(device2.token);
         verify(hardClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
         clientPair.appClient.reset();
 

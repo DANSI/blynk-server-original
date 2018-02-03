@@ -64,10 +64,10 @@ public class SimplePerformanceTest extends IntegrationBase {
 
         long start = System.currentTimeMillis();
         for (int i = 0; i < clientNumber; i++) {
-            String usernameAndPass = "dima" + i +  "@mail.ua 1";
+            String email = "dima" + i +  "@mail.ua";
 
             Future<ClientPair> future = executorService.submit(
-                    () -> initClientsWithSharedNio("localhost", tcpAppPort, tcpHardPort, usernameAndPass, null, properties)
+                    () -> initClientsWithSharedNio("localhost", tcpAppPort, tcpHardPort, email, "1", null, properties)
             );
             futures.add(future);
         }
@@ -83,27 +83,16 @@ public class SimplePerformanceTest extends IntegrationBase {
 
         System.out.println(clientNumber + " client pairs created in " + (System.currentTimeMillis() - start));
         assertEquals(clientNumber, counter);
-
-        /*
-        System.currentTimeMillis();
-        while (true) {
-            for (ClientPair clientPair : clients) {
-                clientPair.appClient.send("hardware aw 10 10");
-                clientPair.hardwareClient.send("hardware vw 11 11");
-            }
-            sleep(10);
-        }
-        */
     }
 
 
-    ClientPair initClientsWithSharedNio(String host, int appPort, int hardPort, String user, String jsonProfile,
+    ClientPair initClientsWithSharedNio(String host, int appPort, int hardPort, String user, String pass, String jsonProfile,
                                         ServerProperties properties) throws Exception {
 
         TestAppClient appClient = new TestAppClient(host, appPort, properties, sharedNioEventLoopGroup);
         TestHardClient hardClient = new TestHardClient(host, hardPort, sharedNioEventLoopGroup);
 
-        return initAppAndHardPair(appClient, hardClient, user, jsonProfile, 10000);
+        return initAppAndHardPair(appClient, hardClient, user, pass, jsonProfile, 10000);
     }
 
 }

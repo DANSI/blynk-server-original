@@ -185,7 +185,7 @@ public class HistoryGraphTest extends IntegrationBase {
     public void testTooManyDataForGraphWorkWithNewProtocol() throws Exception {
         TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
         appClient.start();
-        appClient.send("login " + DEFAULT_TEST_USER + " 1 Android" + "\0" + "2.18.0");
+        appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.18.0");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         String tempDir = holder.props.getProperty("data.folder");

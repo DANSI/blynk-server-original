@@ -242,10 +242,10 @@ public class PublishingPreviewFlow extends IntegrationBase {
         TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
         appClient2.start();
 
-        appClient2.send("register test@blynk.cc a " + app.id);
+        appClient2.register("test@blynk.cc", "a", app.id);
         verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
 
-        appClient2.send("login test@blynk.cc a Android 1.10.4 " + app.id);
+        appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
         verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
 
         appClient2.send("loadProfileGzipped");
@@ -341,10 +341,10 @@ public class PublishingPreviewFlow extends IntegrationBase {
         TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
         appClient2.start();
 
-        appClient2.send("register test@blynk.cc a " + app.id);
+        appClient2.register("test@blynk.cc", "a", app.id);
         verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
 
-        appClient2.send("login test@blynk.cc a Android 1.10.4 " + app.id);
+        appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
         verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
 
         appClient2.send("loadProfileGzipped");
@@ -426,10 +426,10 @@ public class PublishingPreviewFlow extends IntegrationBase {
         TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
         appClient2.start();
 
-        appClient2.send("register test@blynk.cc a " + app.id);
+        appClient2.register("test@blynk.cc", "a", app.id);
         verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
 
-        appClient2.send("login test@blynk.cc a Android 1.10.4 " + app.id);
+        appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
         verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
 
         appClient2.send("loadProfileGzipped");
@@ -585,10 +585,10 @@ public class PublishingPreviewFlow extends IntegrationBase {
         TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
         appClient2.start();
 
-        appClient2.send("register test@blynk.cc a " + app.id);
+        appClient2.register("test@blynk.cc", "a", app.id);
         verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
 
-        appClient2.send("login test@blynk.cc a Android 1.10.4 " + app.id);
+        appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
         verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
 
         appClient2.send("loadProfileGzipped 1");
@@ -602,7 +602,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         TestHardClient hardClient1 = new TestHardClient("localhost", tcpHardPort);
         hardClient1.start();
 
-        hardClient1.send("login " + device.token);
+        hardClient1.login(device.token);
         verify(hardClient1.responseMock, timeout(2000)).channelRead(any(), eq(ok(1)));
         verify(appClient2.responseMock, timeout(2000)).channelRead(any(), eq(hardwareConnected(1, "1-0")));
 
@@ -650,10 +650,10 @@ public class PublishingPreviewFlow extends IntegrationBase {
         TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
         appClient2.start();
 
-        appClient2.send("register test@blynk.cc a " + app.id);
+        appClient2.register("test@blynk.cc", "a", app.id);
         verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
 
-        appClient2.send("login test@blynk.cc a Android 1.10.4 " + app.id);
+        appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
         verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
 
         appClient2.send("loadProfileGzipped " + qrHolders[0].token + "\0" + 1 + "\0" + DEFAULT_TEST_USER + "\0" + AppNameUtil.BLYNK);
@@ -676,7 +676,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         TestHardClient hardClient1 = new TestHardClient("localhost", tcpHardPort);
         hardClient1.start();
 
-        hardClient1.send("login " + token);
+        hardClient1.login(token);
         verify(hardClient1.responseMock, timeout(2000)).channelRead(any(), eq(ok(1)));
         verify(appClient2.responseMock, timeout(2000)).channelRead(any(), eq(hardwareConnected(1, "1-0")));
 

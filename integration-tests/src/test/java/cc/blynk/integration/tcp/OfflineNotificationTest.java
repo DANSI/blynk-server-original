@@ -81,7 +81,7 @@ public class OfflineNotificationTest extends IntegrationBase {
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
-        hardClient2.send("login " + devices[1].token);
+        hardClient2.login(devices[1].token);
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         hardClient2.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100"));
@@ -124,7 +124,7 @@ public class OfflineNotificationTest extends IntegrationBase {
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
-        hardClient2.send("login " + devices[1].token);
+        hardClient2.login(devices[1].token);
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         hardClient2.send("internal " + b("ver 0.3.1 h-beat 1 buff-in 256 dev Arduino cpu ATmega328P con W5100"));
@@ -186,7 +186,7 @@ public class OfflineNotificationTest extends IntegrationBase {
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
-        hardClient2.send("login " + devices[1].token);
+        hardClient2.login(devices[1].token);
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         hardClient2.stop();
 

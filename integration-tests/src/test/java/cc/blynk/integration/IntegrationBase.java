@@ -174,16 +174,19 @@ public abstract class IntegrationBase extends BaseTest {
         return new ResponseMessage(msgId, INVALID_TOKEN);
     }
 
-    public static ClientPair initAppAndHardPair(String host, int appPort, int hardPort, String user, String jsonProfile,
+    public static ClientPair initAppAndHardPair(String host, int appPort, int hardPort,
+                                                String user, String pass,
+                                                String jsonProfile,
                                                 ServerProperties properties, int energy) throws Exception {
 
         TestAppClient appClient = new TestAppClient(host, appPort, properties);
         TestHardClient hardClient = new TestHardClient(host, hardPort);
 
-        return initAppAndHardPair(appClient, hardClient, user, jsonProfile, energy);
+        return initAppAndHardPair(appClient, hardClient, user, pass, jsonProfile, energy);
     }
 
-    public static ClientPair initAppAndHardPair(TestAppClient appClient, TestHardClient hardClient, String user,
+    public static ClientPair initAppAndHardPair(TestAppClient appClient, TestHardClient hardClient,
+                                                String user, String pass,
                                                 String jsonProfile, int energy) throws Exception {
 
         appClient.start();
@@ -218,8 +221,8 @@ public abstract class IntegrationBase extends BaseTest {
 
         int dashId = profile.dashBoards[0].id;
 
-        appClient.send("register " + user);
-        appClient.send("login " + user + " Android" + "\0" + "1.10.4");
+        appClient.register(user, pass);
+        appClient.login(user, pass, "Android", "1.10.4");
         int rand = ThreadLocalRandom.current().nextInt();
         appClient.send("addEnergy " + energy + "\0" + String.valueOf(rand));
         //we should wait until login finished. Only after that we can send commands
@@ -236,7 +239,7 @@ public abstract class IntegrationBase extends BaseTest {
         List<Object> arguments = objectArgumentCaptor.getAllValues();
         String token = getGetTokenMessage(arguments).body;
 
-        hardClient.send("login " + token);
+        hardClient.login(token);
         verify(hardClient.responseMock, timeout(2000)).channelRead(any(), eq(ok(1)));
         verify(appClient.responseMock, timeout(2000)).channelRead(any(), eq(hardwareConnected(1, "" + dashId + "-0")));
 
@@ -247,18 +250,18 @@ public abstract class IntegrationBase extends BaseTest {
     }
 
     public static ClientPair initAppAndHardPair(int tcpAppPort, int tcpHartPort, ServerProperties properties) throws Exception {
-        return initAppAndHardPair("localhost", tcpAppPort, tcpHartPort, DEFAULT_TEST_USER + " 1", null, properties, 10000);
+        return initAppAndHardPair("localhost", tcpAppPort, tcpHartPort, DEFAULT_TEST_USER, "1", null, properties, 10000);
     }
 
     public static ClientPair initAppAndHardPair() throws Exception {
-        return initAppAndHardPair("localhost", tcpAppPort, tcpHardPort, DEFAULT_TEST_USER + " 1", null, properties, 10000);
+        return initAppAndHardPair("localhost", tcpAppPort, tcpHardPort, DEFAULT_TEST_USER, "1", null, properties, 10000);
     }
 
     public static ClientPair initAppAndHardPair(int energy) throws Exception {
-        return initAppAndHardPair("localhost", tcpAppPort, tcpHardPort, DEFAULT_TEST_USER + " 1", null, properties, energy);
+        return initAppAndHardPair("localhost", tcpAppPort, tcpHardPort, DEFAULT_TEST_USER, "1", null, properties, energy);
     }
 
     public static ClientPair initAppAndHardPair(String jsonProfile) throws Exception {
-        return initAppAndHardPair("localhost", tcpAppPort, tcpHardPort, DEFAULT_TEST_USER + " 1", jsonProfile, properties, 10000);
+        return initAppAndHardPair("localhost", tcpAppPort, tcpHardPort, DEFAULT_TEST_USER, "1", jsonProfile, properties, 10000);
     }
 }

@@ -60,7 +60,7 @@ public class AppMailTest extends IntegrationBase {
     public void testSendEmail() throws Exception {
         TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
         appClient.start();
-        appClient.send("login dima@mail.ua 1");
+        appClient.login("dima@mail.ua", "1");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         appClient.send("email 1");
@@ -71,7 +71,7 @@ public class AppMailTest extends IntegrationBase {
     public void testSendEmailForDevice() throws Exception {
         TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
         appClient.start();
-        appClient.send("login dima@mail.ua 1");
+        appClient.login("dima@mail.ua", "1");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         appClient.send("email 1 0");
@@ -82,7 +82,7 @@ public class AppMailTest extends IntegrationBase {
     public void testSendEmailForSingleDevice() throws Exception {
         TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
         appClient.start();
-        appClient.send("login dima@mail.ua 1");
+        appClient.login("dima@mail.ua", "1");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("getDevices 1");
@@ -115,7 +115,7 @@ public class AppMailTest extends IntegrationBase {
     public void testSendEmailForMultiDevices() throws Exception {
         TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
         appClient.start();
-        appClient.send("login dima@mail.ua 1");
+        appClient.login("dima@mail.ua", "1");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         Device device1 = new Device(1, "My Device2", "ESP8266");

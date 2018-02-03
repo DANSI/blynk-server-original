@@ -593,7 +593,7 @@ public class OTATest extends BaseTest {
 
         TestHardClient newHardwareClient = new TestHardClient("localhost", tcpHardPort);
         newHardwareClient.start();
-        newHardwareClient.send("login " + token);
+        newHardwareClient.login(token);
         verify(newHardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
         newHardwareClient.reset();
 
@@ -637,7 +637,7 @@ public class OTATest extends BaseTest {
 
         TestHardClient newHardwareClient = new TestHardClient("localhost", tcpHardPort);
         newHardwareClient.start();
-        newHardwareClient.send("login " + token);
+        newHardwareClient.login(token);
         verify(newHardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
         newHardwareClient.reset();
 
@@ -681,7 +681,7 @@ public class OTATest extends BaseTest {
 
         TestHardClient newHardwareClient = new TestHardClient("localhost", tcpHardPort);
         newHardwareClient.start();
-        newHardwareClient.send("login " + token);
+        newHardwareClient.login(token);
         verify(newHardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
         newHardwareClient.reset();
 

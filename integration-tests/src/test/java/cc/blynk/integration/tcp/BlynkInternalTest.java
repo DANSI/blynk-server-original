@@ -78,7 +78,7 @@ public class BlynkInternalTest extends IntegrationBase {
 
         clientPair.appClient.send("getToken 1");
         String token2 = clientPair.appClient.getBody();
-        hardClient2.send("login " + token2);
+        hardClient2.login(token2);
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         hardClient2.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100"));
@@ -109,7 +109,7 @@ public class BlynkInternalTest extends IntegrationBase {
         TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
         appClient.start();
 
-        appClient.send("login " + DEFAULT_TEST_USER + " 1 Android 1.13.3");
+        appClient.login(DEFAULT_TEST_USER, "1", "Android", "1.13.3");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(internal(7777, "acon")));

@@ -143,6 +143,26 @@ public class TestAppClient extends AppClient {
         send("createDash " + dashJson);
     }
 
+    public void register(String email, String pass) {
+        send("register " + email + " " + pass);
+    }
+
+    public void register(String email, String pass, String appName) {
+        send("register " + email + " " + pass + " " + appName);
+    }
+
+    public void login(String email, String pass) {
+        send("login " + email + " " + pass);
+    }
+
+    public void login(String email, String pass, String os, String version) {
+        send("login " + email + " " + pass + " " + os + " " + version);
+    }
+
+    public void login(String email, String pass, String os, String version, String appName) {
+        send("login " + email + " " + pass + " " + os + " " + version + " " + appName);
+    }
+
     public void send(String line) {
         send(produceMessageBaseOnUserInput(line, ++msgId));
     }

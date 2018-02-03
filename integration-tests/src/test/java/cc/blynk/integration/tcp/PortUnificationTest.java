@@ -50,8 +50,8 @@ public class PortUnificationTest extends IntegrationBase {
         TestAppClient appClient = new TestAppClient("localhost", appPort, properties);
         appClient.start();
 
-        appClient.send("register " + DEFAULT_TEST_USER + " 1");
-        appClient.send("login " + DEFAULT_TEST_USER + " 1" + " Android" + "\0" + "1.10.4");
+        appClient.register(DEFAULT_TEST_USER, "1");
+        appClient.login(DEFAULT_TEST_USER, "1", "Android", "1.10.4");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
     }
@@ -62,8 +62,8 @@ public class PortUnificationTest extends IntegrationBase {
         TestAppClient appClient = new TestAppClient("localhost", appPort, properties);
         appClient.start();
 
-        appClient.send("register " + DEFAULT_TEST_USER + " 1");
-        appClient.send("login " + DEFAULT_TEST_USER + " 1" + " Android" + "\0" + "1.10.4");
+        appClient.register(DEFAULT_TEST_USER, "1");
+        appClient.login(DEFAULT_TEST_USER, "1", "Android", "1.10.4");
         appClient.createDash("{\"id\":1, \"createdAt\":1, \"name\":\"test board\"}");
 
         Device device1 = new Device(1, "My Device", "ESP8266");
@@ -82,7 +82,7 @@ public class PortUnificationTest extends IntegrationBase {
         TestHardClient hardClient = new TestHardClient("localhost", hardwarePort);
         hardClient.start();
 
-        hardClient.send("login " + device.token);
+        hardClient.login(device.token);
         verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
     }
 }

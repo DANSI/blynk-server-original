@@ -324,7 +324,7 @@ public class HttpsAdminServerTest extends BaseTest {
 
         TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
         appClient.start();
-        appClient.send("login " + DEFAULT_TEST_USER + " 1 iOS" + "\0" + "1.10.2");
+        appClient.login(DEFAULT_TEST_USER, "1","iOS", "1.10.2");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         appClient.activate(1);
@@ -345,7 +345,7 @@ public class HttpsAdminServerTest extends BaseTest {
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
-        hardClient2.send("login " + devices[0].token);
+        hardClient2.login(devices[0].token);
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         hardClient2.send("hardware vw 1 112");

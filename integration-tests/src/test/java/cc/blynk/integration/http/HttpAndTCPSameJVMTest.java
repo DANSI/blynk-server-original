@@ -458,7 +458,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
-        hardClient2.send("login " + devices[1].token);
+        hardClient2.login(devices[1].token);
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.stop();

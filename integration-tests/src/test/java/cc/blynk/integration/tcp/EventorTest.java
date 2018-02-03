@@ -520,7 +520,7 @@ public class EventorTest extends IntegrationBase {
 
         clientPair.appClient.send("getToken 1");
         String token = clientPair.appClient.getBody();
-        hardClient.send("login " + token);
+        hardClient.login(token);
         verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         clientPair.appClient.reset();
 

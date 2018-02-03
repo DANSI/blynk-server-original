@@ -526,7 +526,7 @@ public class TimerTest extends IntegrationBase {
         clientPair.appClient.reset();
         clientPair.appClient.send("getToken 2");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), any());
-        hardClient2.send("login " + clientPair.appClient.getBody());
+        hardClient2.login(clientPair.appClient.getBody());
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         hardClient2.reset();
 
@@ -589,7 +589,7 @@ public class TimerTest extends IntegrationBase {
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
-        hardClient2.send("login " + device.token);
+        hardClient2.login(device.token);
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         clientPair.appClient.reset();
 

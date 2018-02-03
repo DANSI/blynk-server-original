@@ -185,9 +185,9 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
         appClient1.send("getServer " + email + "\0" + appName);
         verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(getServer(2, "127.0.0.1")));
 
-        appClient1.send("register " + email + " " + pass + " " + appName);
+        appClient1.register(email, pass, appName);
         verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(ok(3)));
-        appClient1.send("login " + email + " " + pass + " Android 1.10.4 " + appName);
+        appClient1.login(email, pass, "Android", "1.10.4 " + appName);
         //we should wait until login finished. Only after that we can send commands
         verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(ok(4)));
 
@@ -200,14 +200,14 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
         TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
         hardClient.start();
 
-        hardClient.send("login 123");
+        hardClient.login("123");
         verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(invalidToken(1)));
 
         holder.dbManager.assignServerToToken("123", "127.0.0.1", "user", 0, 0);
-        hardClient.send("login 123");
+        hardClient.login("123");
         verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(invalidToken(2)));
 
-        hardClient.send("login \0");
+        hardClient.login("\0");
         verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(invalidToken(3)));
     }
 
@@ -256,7 +256,7 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
         TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
         hardClient.start();
 
-        hardClient.send("login " + token);
+        hardClient.login(token);
         verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(
                 connectRedirect(1, "test_host " + tcpHardPort)));
     }
@@ -271,7 +271,7 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
         TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
         hardClient.start();
 
-        hardClient.send("login " + token);
+        hardClient.login(token);
         verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(invalidToken(1)));
     }
 
@@ -285,13 +285,13 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
         TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
         hardClient.start();
 
-        hardClient.send("login " + token);
+        hardClient.login(token);
         verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(
                 connectRedirect(1, "test_host " + tcpHardPort)));
 
         holder.dbManager.executeSQL("DELETE FROM forwarding_tokens");
 
-        hardClient.send("login " + token);
+        hardClient.login(token);
         verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(
                 connectRedirect(2, "test_host " + tcpHardPort)));
     }
@@ -306,19 +306,19 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
         TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
         hardClient.start();
 
-        hardClient.send("login " + token);
+        hardClient.login(token);
         verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(
                 connectRedirect(1, "test_host " + tcpHardPort)));
 
         holder.dbManager.executeSQL("DELETE FROM forwarding_tokens");
 
-        hardClient.send("login " + token);
+        hardClient.login(token);
         verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(
                 connectRedirect(2, "test_host " + tcpHardPort)));
 
         LRUCache.LOGIN_TOKENS_CACHE.clear();
 
-        hardClient.send("login " + token);
+        hardClient.login(token);
         verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(invalidToken(3)));
 
         assertTrue(holder.dbManager.forwardingTokenDBDao.insertTokenHost(
@@ -326,15 +326,15 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
 
         LRUCache.LOGIN_TOKENS_CACHE.clear();
 
-        hardClient.send("login " + token);
+        hardClient.login(token);
         verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(
                 connectRedirect(4, "test_host_2 " + tcpHardPort)));
     }
 
     private String workflowForUser(TestAppClient appClient, String username, String pass, String appName) throws Exception{
-        appClient.send("register " + username + " " + pass + " " + appName);
+        appClient.register(username,  pass, appName);
         verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
-        appClient.send("login " + username + " " + pass + " Android 1.10.4 " + appName);
+        appClient.login(username, pass, "Android", "1.10.4 " + appName);
         //we should wait until login finished. Only after that we can send commands
         verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
 

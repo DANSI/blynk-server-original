@@ -90,10 +90,10 @@ public class MultiAppTest extends IntegrationBase {
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
-        hardClient1.send("login " + token1);
+        hardClient1.login(token1);
         verify(hardClient1.responseMock, timeout(2000)).channelRead(any(), eq(ok(1)));
         verify(appClient1.responseMock, timeout(2000)).channelRead(any(), eq(hardwareConnected(1, "1-0")));
-        hardClient2.send("login " + token2);
+        hardClient2.login(token2);
         verify(hardClient2.responseMock, timeout(2000)).channelRead(any(), eq(ok(1)));
         verify(appClient2.responseMock, timeout(2000)).channelRead(any(), eq(hardwareConnected(1, "1-0")));
 
@@ -111,9 +111,9 @@ public class MultiAppTest extends IntegrationBase {
     }
 
     private String workflowForUser(TestAppClient appClient, String email, String pass, String appName) throws Exception{
-        appClient.send("register " + email + " " + pass + " " + appName);
+        appClient.register(email, pass, appName);
         verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
-        appClient.send("login " + email + " " + pass + " Android 1.10.4 " + appName);
+        appClient.login(email, pass, "Android", "1.10.4", appName);
         //we should wait until login finished. Only after that we can send commands
         verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 

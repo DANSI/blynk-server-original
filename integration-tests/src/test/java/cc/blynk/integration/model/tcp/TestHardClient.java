@@ -77,6 +77,10 @@ public class TestHardClient extends BaseClient {
         };
     }
 
+    public void login(String token) {
+        send("login " + token);
+    }
+
     public void send(String line) {
         send(produceMessageBaseOnUserInput(line, ++msgId));
     }

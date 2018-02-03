@@ -100,7 +100,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
-        hardClient2.send("login " + devices[1].token);
+        hardClient2.login(devices[1].token);
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         device1.status = Status.ONLINE;
 
@@ -131,7 +131,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
-        hardClient2.send("login " + device.token);
+        hardClient2.login(device.token);
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         hardClient2.stop().await();
@@ -165,7 +165,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
-        hardClient2.send("login " + devices[1].token);
+        hardClient2.login(devices[1].token);
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(hardwareConnected(1, "1-1")));
 
@@ -193,7 +193,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
         hardClient.start();
 
-        hardClient.send("login " + device.token);
+        hardClient.login(device.token);
         verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(hardwareConnected(1, "1-1")));
 
@@ -220,7 +220,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
         hardClient.start();
 
-        hardClient.send("login " + device.token);
+        hardClient.login(device.token);
         verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(hardwareConnected(1, "1-1")));
 
@@ -290,7 +290,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
-        hardClient2.send("login " + device.token);
+        hardClient2.login(device.token);
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.reset();
@@ -358,7 +358,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
-        hardClient2.send("login " + device.token);
+        hardClient2.login(device.token);
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         device0.status = Status.ONLINE;
@@ -449,7 +449,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
-        hardClient2.send("login " + devices[0].token);
+        hardClient2.login(devices[0].token);
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.reset();
@@ -479,7 +479,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
-        hardClient2.send("login " + device.token);
+        hardClient2.login(device.token);
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("deleteDash 1");
@@ -503,7 +503,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
-        hardClient2.send("login " + device.token);
+        hardClient2.login(device.token);
         verify(hardClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(hardwareConnected(1, "1-1")));
 

@@ -98,10 +98,10 @@ public class MainWorkflowTest extends IntegrationBase {
 
         appClient.start();
 
-        appClient.send("register test@test.com 1");
+        appClient.register("test@test.com", "1");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        appClient.send("login test@test.com 1 Android RC13");
+        appClient.login("test@test.com", "1", "Android", "RC13");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         appClient.createDash("{\"id\":1, \"createdAt\":1, \"name\":\"test board\"}");
@@ -161,7 +161,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         appClient.start();
 
-        appClient.send("register te?st@test.com 1");
+        appClient.register("te?st@test.com", "1");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND)));
     }
 
@@ -171,10 +171,10 @@ public class MainWorkflowTest extends IntegrationBase {
 
         appClient.start();
 
-        appClient.send("register test@test.com 1");
+        appClient.register("test@test.com", "1");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        appClient.send("login test@test.com 1 Android RC13");
+        appClient.login("test@test.com", "1", "Android", "RC13");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         DashBoard dash = new DashBoard();
@@ -210,10 +210,10 @@ public class MainWorkflowTest extends IntegrationBase {
 
         appClient.start();
 
-        appClient.send("register test@test.com 1 MyApp");
+        appClient.register("test@test.com", "1", "MyApp");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        appClient.send("login test@test.com 1 Android 1.13.3 MyApp");
+        appClient.login("test@test.com", "1", "Android", "1.13.3", "MyApp");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         appClient.createDash("{\"id\":1, \"createdAt\":1, \"name\":\"test board\"}");
@@ -233,7 +233,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void testDoubleLogin() throws Exception {
-        clientPair.hardwareClient.send("login " + DEFAULT_TEST_USER + " 1");
+        clientPair.hardwareClient.login(DEFAULT_TEST_USER + " 1");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, USER_ALREADY_REGISTERED)));
     }
 
@@ -277,10 +277,10 @@ public class MainWorkflowTest extends IntegrationBase {
 
         appClient.start();
 
-        appClient.send("register test@test.com 1 MyApp");
+        appClient.register("test@test.com", "1", "MyApp");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        appClient.send("login test@test.com 1 Android 1.13.3 MyApp");
+        appClient.login("test@test.com", "1", "Android", "1.13.3", "MyApp");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         appClient.createDash("{\"id\":2, \"createdAt\":1458856800001, \"name\":\"test board\"}");
@@ -568,7 +568,7 @@ public class MainWorkflowTest extends IntegrationBase {
         //todo on delete also close existing connections?
         TestHardClient newHardClient = new TestHardClient("localhost", tcpHardPort);
         newHardClient.start();
-        newHardClient.send("login " + token);
+        newHardClient.login(token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, INVALID_TOKEN)));
 
         TestAppClient newAppClient = new TestAppClient("localhost", tcpAppPort, properties);
@@ -707,7 +707,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.send("getToken 2");
         String token2 = clientPair.appClient.getBody();
-        hardClient2.send("login " + token2);
+        hardClient2.login(token2);
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.reset();
@@ -1064,7 +1064,7 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(appClient2.responseMock, after(600).never()).channelRead(any(), any());
         assertTrue(appClient2.isClosed());
 
-        appClient2.send("login dima@mail.ua 1 Android 1RC7");
+        appClient2.login("dima@mail.ua", "1", "Android", "1RC7");
         verify(appClient2.responseMock, after(200).never()).channelRead(any(), any());
     }
 
@@ -1078,7 +1078,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
         hardClient.start();
-        hardClient.send("login " + newToken);
+        hardClient.login(newToken);
         verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
     }
 
@@ -1095,7 +1095,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
         hardClient.start();
-        hardClient.send("login " + clientPair.token);
+        hardClient.login(clientPair.token);
         verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
 
         verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("pm 1 out 2 out 3 out 5 out 6 in 7 in 30 in 8 in"))));
@@ -1115,7 +1115,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
         hardClient.start();
-        hardClient.send("login " + clientPair.token);
+        hardClient.login(clientPair.token);
         verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
 
         String expectedBody = "pm 1 out 2 out 3 out 5 out 6 in 7 in 30 in 8 in";
@@ -1139,7 +1139,7 @@ public class MainWorkflowTest extends IntegrationBase {
         //connecting separate hardware to non active dashboard
         TestHardClient nonActiveDashHardClient = new TestHardClient("localhost", tcpHardPort);
         nonActiveDashHardClient.start();
-        nonActiveDashHardClient.send("login " + token);
+        nonActiveDashHardClient.login(token);
         verify(nonActiveDashHardClient.responseMock, timeout(2000)).channelRead(any(), eq(ok(1)));
         nonActiveDashHardClient.reset();
 
@@ -1290,7 +1290,7 @@ public class MainWorkflowTest extends IntegrationBase {
     public void testOutdatedAppNotificationAlertWorks() throws Exception {
         TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
         appClient.start();
-        appClient.send("login dima@mail.ua 1 Android" + "\0" + "1.1.1");
+        appClient.login("dima@mail.ua", "1", "Android", "1.1.1");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(
                 appIsOutdated(1,
@@ -1302,7 +1302,7 @@ public class MainWorkflowTest extends IntegrationBase {
     public void testOutdatedAppNotificationNotTriggered() throws Exception {
         TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
         appClient.start();
-        appClient.send("login dima@mail.ua 1 Android" + "\0" + "1.1.2");
+        appClient.login("dima@mail.ua", "1", "Android", "1.1.2");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(appClient.responseMock, never()).channelRead(any(), eq(
                 appIsOutdated(1,

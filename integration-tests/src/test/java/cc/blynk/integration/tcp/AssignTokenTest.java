@@ -97,7 +97,7 @@ public class AssignTokenTest extends IntegrationBase {
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
-        hardClient2.send("login " + flashedToken.token);
+        hardClient2.login(flashedToken.token);
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("getDevices 1");

@@ -61,7 +61,7 @@ public class FacebookLoginTest extends IntegrationBase {
         String host = "localhost";
         String email = "shartax@gmail.com";
 
-        ClientPair clientPair = initAppAndHardPair(host, tcpAppPort, tcpHardPort, email + " 1", null, properties, 10000);
+        ClientPair clientPair = initAppAndHardPair(host, tcpAppPort, tcpHardPort, email, "1", null, properties, 10000);
 
         ChannelFuture channelFuture = clientPair.appClient.stop();
         channelFuture.await();
@@ -133,7 +133,7 @@ public class FacebookLoginTest extends IntegrationBase {
         List<Object> arguments = objectArgumentCaptor.getAllValues();
         String token = getGetTokenMessage(arguments).body;
 
-        hardClient.send("login " + token);
+        hardClient.login(token);
         verify(hardClient.responseMock, timeout(2000)).channelRead(any(), eq(ok(1)));
         verify(appClient.responseMock, timeout(2000)).channelRead(any(), eq(hardwareConnected(1, String.valueOf(dashId))));
 
