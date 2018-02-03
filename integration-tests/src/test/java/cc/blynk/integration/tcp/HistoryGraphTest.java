@@ -266,7 +266,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
         Tag tag0 = new Tag(100_000, "Tag1", new int[] {0,1});
 
-        clientPair.appClient.send("createTAg 1\0" + tag0.toString());
+        clientPair.appClient.createTag(1, tag0);
         String createdTag = clientPair.appClient.getBody(2);
         Tag tag = JsonParser.parseTag(createdTag, 0);
         assertNotNull(tag);
@@ -334,7 +334,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
         Tag tag0 = new Tag(100_000, "Tag1", new int[] {0,1});
 
-        clientPair.appClient.send("createTAg 1\0" + tag0.toString());
+        clientPair.appClient.createTag(1, tag0);
         String createdTag = clientPair.appClient.getBody(2);
         Tag tag = JsonParser.parseTag(createdTag, 0);
         assertNotNull(tag);
@@ -404,7 +404,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
         Tag tag0 = new Tag(100_000, "Tag1", new int[] {0,1});
 
-        clientPair.appClient.send("createTAg 1\0" + tag0.toString());
+        clientPair.appClient.createTag(1, tag0);
         String createdTag = clientPair.appClient.getBody(2);
         Tag tag = JsonParser.parseTag(createdTag, 0);
         assertNotNull(tag);
@@ -474,7 +474,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
         Tag tag0 = new Tag(100_000, "Tag1", new int[] {0,1});
 
-        clientPair.appClient.send("createTAg 1\0" + tag0.toString());
+        clientPair.appClient.createTag(1, tag0);
         String createdTag = clientPair.appClient.getBody(2);
         Tag tag = JsonParser.parseTag(createdTag, 0);
         assertNotNull(tag);
@@ -544,7 +544,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
         Tag tag0 = new Tag(100_000, "Tag1", new int[] {0,1});
 
-        clientPair.appClient.send("createTAg 1\0" + tag0.toString());
+        clientPair.appClient.createTag(1, tag0);
         String createdTag = clientPair.appClient.getBody(2);
         Tag tag = JsonParser.parseTag(createdTag, 0);
         assertNotNull(tag);
@@ -614,7 +614,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
         Tag tag0 = new Tag(100_000, "Tag1", new int[] {0,1});
 
-        clientPair.appClient.send("createTAg 1\0" + tag0.toString());
+        clientPair.appClient.createTag(1, tag0);
         String createdTag = clientPair.appClient.getBody(2);
         Tag tag = JsonParser.parseTag(createdTag, 0);
         assertNotNull(tag);
@@ -692,7 +692,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
         Tag tag0 = new Tag(100_000, "Tag1", new int[] {0, 1, 2});
 
-        clientPair.appClient.send("createTAg 1\0" + tag0.toString());
+        clientPair.appClient.createTag(1, tag0);
         String createdTag = clientPair.appClient.getBody(3);
         Tag tag = JsonParser.parseTag(createdTag, 0);
         assertNotNull(tag);

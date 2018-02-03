@@ -598,7 +598,7 @@ public class TimerTest extends IntegrationBase {
         //assigning 2 devices on 1 tag.
         tag0.deviceIds = new int[] {0, 1};
 
-        clientPair.appClient.send("createTag 1\0" + tag0.toString());
+        clientPair.appClient.createTag(1, tag0);
         String createdTag = clientPair.appClient.getBody();
         Tag tag = JsonParser.parseTag(createdTag, 0);
         assertNotNull(tag);

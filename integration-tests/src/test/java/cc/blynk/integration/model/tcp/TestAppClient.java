@@ -5,6 +5,7 @@ import cc.blynk.client.handlers.decoders.AppClientMessageDecoder;
 import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.protocol.handlers.encoders.AppMessageEncoder;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -85,6 +86,10 @@ public class TestAppClient extends AppClient {
                 );
             }
         };
+    }
+
+    public void createTag(int dashId, Tag tag) {
+        send("createTag " + dashId + BODY_SEPARATOR + tag.toString());
     }
 
     public void createDevice(int dashId, Device device) {

@@ -59,7 +59,7 @@ public class TagCommandsTest extends IntegrationBase {
     public void testAddNewTag() throws Exception {
         Tag tag0 = new Tag(100_000, "Tag1");
 
-        clientPair.appClient.send("createTAg 1\0" + tag0.toString());
+        clientPair.appClient.createTag(1, tag0);
         String createdTag = clientPair.appClient.getBody();
         Tag tag = JsonParser.parseTag(createdTag, 0);
         assertNotNull(tag);
@@ -82,7 +82,7 @@ public class TagCommandsTest extends IntegrationBase {
     public void testUpdateExistingDevice() throws Exception {
         Tag tag0 = new Tag(100_000, "Tag1");
 
-        clientPair.appClient.send("createTAg 1\0" + tag0.toString());
+        clientPair.appClient.createTag(1, tag0);
         String createdTag = clientPair.appClient.getBody();
         Tag tag = JsonParser.parseTag(createdTag, 0);
         assertNotNull(tag);
@@ -121,7 +121,7 @@ public class TagCommandsTest extends IntegrationBase {
     public void testUpdateTagWithSameName() throws Exception {
         Tag tag0 = new Tag(100_000, "Tag1");
 
-        clientPair.appClient.send("createTag 1\0" + tag0.toString());
+        clientPair.appClient.createTag(1, tag0);
         String createdTag = clientPair.appClient.getBody();
         Tag tag = JsonParser.parseTag(createdTag, 0);
         assertNotNull(tag);
@@ -132,7 +132,7 @@ public class TagCommandsTest extends IntegrationBase {
 
         Tag tag1 = new Tag(100_001, "Tag1");
 
-        clientPair.appClient.send("createTag 1\0" + tag1.toString());
+        clientPair.appClient.createTag(1, tag1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND)));
     }
 
@@ -141,7 +141,7 @@ public class TagCommandsTest extends IntegrationBase {
     public void testDeletedNewlyAddedTag() throws Exception {
         Tag tag0 = new Tag(100_000, "My Dashboard");
 
-        clientPair.appClient.send("createTag 1\0" + tag0.toString());
+        clientPair.appClient.createTag(1, tag0);
         String createdTag = clientPair.appClient.getBody();
         Tag tag = JsonParser.parseTag(createdTag, 0);
         assertNotNull(tag);
@@ -196,7 +196,7 @@ public class TagCommandsTest extends IntegrationBase {
         //assigning 2 devices on 1 tag.
         tag0.deviceIds = new int[] {0, 1};
 
-        clientPair.appClient.send("createTag 1\0" + tag0.toString());
+        clientPair.appClient.createTag(1, tag0);
         String createdTag = clientPair.appClient.getBody();
         Tag tag = JsonParser.parseTag(createdTag, 0);
         assertNotNull(tag);

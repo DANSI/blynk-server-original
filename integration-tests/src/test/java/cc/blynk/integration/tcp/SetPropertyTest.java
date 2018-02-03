@@ -91,7 +91,7 @@ public class SetPropertyTest extends IntegrationBase {
     public void testSetWidgetPropertyIsNotRestoredForTagWidgetAfterOverriding() throws Exception {
         Tag tag0 = new Tag(100_000, "Tag1", new int[] {0});
 
-        clientPair.appClient.send("createTag 1\0" + tag0.toString());
+        clientPair.appClient.createTag(1, tag0);
         String createdTag = clientPair.appClient.getBody();
         Tag tag = JsonParser.parseTag(createdTag, 0);
         assertNotNull(tag);

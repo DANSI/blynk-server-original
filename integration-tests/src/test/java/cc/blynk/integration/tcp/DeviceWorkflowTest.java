@@ -271,7 +271,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         Tag tag = new Tag(100_000, "My New Tag");
         tag.deviceIds = new int[] {1};
 
-        clientPair.appClient.send("createTag 1\0" + tag.toString());
+        clientPair.appClient.createTag(1, tag);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createTag(1, tag)));
 
         clientPair.appClient.send("createWidget 1\0{\"id\":188, \"width\":1, \"height\":1, \"deviceId\":100000, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":33, \"value\":1}");
