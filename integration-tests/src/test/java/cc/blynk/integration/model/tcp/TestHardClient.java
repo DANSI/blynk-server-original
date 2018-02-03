@@ -81,6 +81,10 @@ public class TestHardClient extends BaseClient {
         send("login " + token);
     }
 
+    public void setProperty(int pin, String property, String value) {
+        send("setProperty " + pin + " " + property + " " + value);
+    }
+
     public void send(String line) {
         send(produceMessageBaseOnUserInput(line, ++msgId));
     }

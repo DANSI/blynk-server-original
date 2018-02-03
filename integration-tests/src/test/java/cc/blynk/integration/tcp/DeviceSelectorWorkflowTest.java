@@ -360,7 +360,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         assertEqualDevice(device0, devices[0]);
         assertEqualDevice(device1, devices[1]);
 
-        clientPair.hardwareClient.send("setProperty 89 label 123");
+        clientPair.hardwareClient.setProperty(89, "label", "123");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1, "1-0 89 label 123")));
     }
 
@@ -407,7 +407,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         assertEqualDevice(device0, devices[0]);
         assertEqualDevice(device1, devices[1]);
 
-        clientPair.hardwareClient.send("setProperty 88 label 123");
+        clientPair.hardwareClient.setProperty(88, "label", "123");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1, "1-0 88 label 123")));
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
@@ -417,7 +417,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(hardwareConnected(1, "1-1")));
 
-        hardClient2.send("setProperty 88 label 124");
+        hardClient2.setProperty(88, "label", "124");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(2, "1-1 88 label 124")));
 
         clientPair.appClient.send("hardware 1 vu 200000 1");

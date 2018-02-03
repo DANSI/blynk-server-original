@@ -95,8 +95,16 @@ public class TestAppClient extends AppClient {
         send("createTag " + dashId + BODY_SEPARATOR + tag.toString());
     }
 
+    public void updateTag(int dashId, Tag tag) {
+        send("updateTag " + dashId + BODY_SEPARATOR + tag.toString());
+    }
+
     public void createDevice(int dashId, Device device) {
         send("createDevice " + dashId + BODY_SEPARATOR + device.toString());
+    }
+
+    public void updateDevice(int dashId, Device device) {
+        send("updateDevice " + dashId + BODY_SEPARATOR + device.toString());
     }
 
     public void createWidget(int dashId, Widget widget) throws Exception {
@@ -133,6 +141,14 @@ public class TestAppClient extends AppClient {
 
     public void updateDash(String dashJson) {
         send("updateDash " + dashJson);
+    }
+
+    public void deleteDash(int dashId) {
+        send("deleteDash " + dashId);
+    }
+
+    public void deleteTag(int dashId, int tagId) {
+        send("deleteTag " + dashId + BODY_SEPARATOR + tagId);
     }
 
     public void createDash(DashBoard dashBoard) {

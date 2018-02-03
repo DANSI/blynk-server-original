@@ -301,7 +301,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
 
         tag.deviceIds = new int[] {0, 1};
 
-        clientPair.appClient.send("updateTag 1\0" + tag.toString());
+        clientPair.appClient.updateTag(1, tag);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         clientPair.appClient.send("hardware 1-100000 dw 33 10");
@@ -482,7 +482,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         hardClient2.login(device.token);
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        clientPair.appClient.send("deleteDash 1");
+        clientPair.appClient.deleteDash(1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         assertTrue(clientPair.hardwareClient.isClosed());

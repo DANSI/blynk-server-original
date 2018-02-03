@@ -94,7 +94,7 @@ public class TagCommandsTest extends IntegrationBase {
 
         tag0 = new Tag(100_000, "TagUPDATED");
 
-        clientPair.appClient.send("updateTag 1\0" + tag0.toString());
+        clientPair.appClient.updateTag(1, tag0);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.reset();
@@ -113,7 +113,7 @@ public class TagCommandsTest extends IntegrationBase {
     public void testUpdateNonExistingTag() throws Exception {
         Tag tag0 = new Tag(100_000, "Tag1");
 
-        clientPair.appClient.send("updateTag 1\0" + tag0.toString());
+        clientPair.appClient.updateTag(1, tag0);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND)));
     }
 
@@ -158,7 +158,7 @@ public class TagCommandsTest extends IntegrationBase {
 
         assertEqualTag(tag0, tags[0]);
 
-        clientPair.appClient.send("deleteTag 1\0" + tag0.id);
+        clientPair.appClient.deleteTag(1, tag0.id);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
 

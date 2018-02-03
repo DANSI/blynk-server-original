@@ -73,7 +73,7 @@ public class SetPropertyTest extends IntegrationBase {
         assertNotNull(widget);
         assertEquals("Some Text", widget.label);
 
-        clientPair.hardwareClient.send("setProperty 4 label MyNewLabel");
+        clientPair.hardwareClient.setProperty(4, "label", "MyNewLabel");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1, "1-0 4 label MyNewLabel")));
 
@@ -111,7 +111,7 @@ public class SetPropertyTest extends IntegrationBase {
         clientPair.appClient.updateWidget(1, slider);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
 
-        clientPair.hardwareClient.send("setProperty 4 label MyNewLabel");
+        clientPair.hardwareClient.setProperty(4, "label", "MyNewLabel");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1, "1-0 4 label MyNewLabel")));
 
@@ -133,8 +133,8 @@ public class SetPropertyTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, "{\"id\":102, \"width\":1, \"height\":1, \"x\":5, \"y\":0, \"tabId\":0, \"onLabel\":\"On\", \"offLabel\":\"Off\" , \"type\":\"BUTTON\", \"pinType\":\"VIRTUAL\", \"pin\":17}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        clientPair.hardwareClient.send("setProperty 17 onLabel вкл");
-        clientPair.hardwareClient.send("setProperty 17 offLabel выкл");
+        clientPair.hardwareClient.setProperty(17, "onLabel", "вкл");
+        clientPair.hardwareClient.setProperty(17, "offLabel", "выкл");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1, "1-0 17 onLabel вкл")));
@@ -159,7 +159,7 @@ public class SetPropertyTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, "{\"id\":102, \"width\":1, \"height\":1, \"x\":5, \"y\":0, \"tabId\":0, \"label\":\"Some Text\", \"type\":\"PLAYER\", \"pinType\":\"VIRTUAL\", \"pin\":17}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        clientPair.hardwareClient.send("setProperty 17 isOnPlay true");
+        clientPair.hardwareClient.setProperty(17, "isOnPlay", "true");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1, "1-0 17 isOnPlay true")));
 
@@ -180,7 +180,7 @@ public class SetPropertyTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, "{\"id\":102, \"width\":1, \"height\":1, \"x\":5, \"y\":0, \"tabId\":0, \"label\":\"Some Text\", \"type\":\"MENU\", \"pinType\":\"VIRTUAL\", \"pin\":17}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        clientPair.hardwareClient.send("setProperty 17 labels label1 label2 label3");
+        clientPair.hardwareClient.setProperty(17, "labels", "label1 label2 label3");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1, "1-0 17 labels label1 label2 label3")));
 
@@ -204,7 +204,7 @@ public class SetPropertyTest extends IntegrationBase {
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
         assertEquals(widget.label, "Some Text");
 
-        clientPair.hardwareClient.send("setProperty 4 YYY MyNewLabel");
+        clientPair.hardwareClient.setProperty(4, "YYY", "MyNewLabel");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND_BODY)));
 
         clientPair.appClient.send("loadProfileGzipped");
@@ -222,7 +222,7 @@ public class SetPropertyTest extends IntegrationBase {
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
         assertEquals(widget.x, 1);
 
-        clientPair.hardwareClient.send("setProperty 4 x 0");
+        clientPair.hardwareClient.setProperty(4, "x", "0");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND_BODY)));
 
         clientPair.appClient.send("loadProfileGzipped");
@@ -240,13 +240,13 @@ public class SetPropertyTest extends IntegrationBase {
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
         assertEquals(widget.x, 1);
 
-        clientPair.hardwareClient.send("setProperty 4 url 0");
+        clientPair.hardwareClient.setProperty(4, "url", "0");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND_BODY)));
     }
 
     @Test
     public void testSetColorForWidget() throws Exception {
-        clientPair.hardwareClient.send("setProperty 4 color #23C48E");
+        clientPair.hardwareClient.setProperty(4, "color", "#23C48E");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1, "1-0 4 color #23C48E")));
 
@@ -261,8 +261,8 @@ public class SetPropertyTest extends IntegrationBase {
 
     @Test
     public void setMinMaxProperty() throws Exception {
-        clientPair.hardwareClient.send("setProperty 4 min 10");
-        clientPair.hardwareClient.send("setProperty 4 max 20");
+        clientPair.hardwareClient.setProperty(4, "min", "10");
+        clientPair.hardwareClient.setProperty(4, "max", "20");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1, "1-0 4 min 10")));
@@ -280,8 +280,8 @@ public class SetPropertyTest extends IntegrationBase {
 
     @Test
     public void setMinMaxPropertyFloat() throws Exception {
-        clientPair.hardwareClient.send("setProperty 4 min 10.1");
-        clientPair.hardwareClient.send("setProperty 4 max 20.2");
+        clientPair.hardwareClient.setProperty(4, "min", "10.1");
+        clientPair.hardwareClient.setProperty(4, "max", "20.2");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1, "1-0 4 min 10.1")));
@@ -299,8 +299,8 @@ public class SetPropertyTest extends IntegrationBase {
 
     @Test
     public void setMinMaxWrongPropertyFloat() throws Exception {
-        clientPair.hardwareClient.send("setProperty 4 min 10.11-1");
-        clientPair.hardwareClient.send("setProperty 4 max 20.22-2");
+        clientPair.hardwareClient.setProperty(4, "min", "10.11-1");
+        clientPair.hardwareClient.setProperty(4, "max", "20.22-2");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(illegalCommandBody(1)));
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(illegalCommandBody(2)));
         verify(clientPair.appClient.responseMock, after(50).never()).channelRead(any(), any());
@@ -312,7 +312,7 @@ public class SetPropertyTest extends IntegrationBase {
         clientPair.appClient.deactivate(1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        clientPair.hardwareClient.send("setProperty 4 color #23C48E");
+        clientPair.hardwareClient.setProperty(4, "color", "#23C48E");
         verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(ok(1)));
         verify(clientPair.appClient.responseMock, after(500).never()).channelRead(any(), eq(setProperty(1, "1 4 color #23C48E")));
     }
@@ -322,7 +322,7 @@ public class SetPropertyTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, "{\"id\":102, \"width\":1, \"height\":1, \"x\":5, \"y\":0, \"tabId\":0, \"label\":\"Some Text\", \"type\":\"VIDEO\", \"pinType\":\"VIRTUAL\", \"pin\":17}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        clientPair.hardwareClient.send("setProperty 17 url http://123.com");
+        clientPair.hardwareClient.setProperty(17, "url", "http://123.com");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1, "1-0 17 url http://123.com")));
 
@@ -340,7 +340,7 @@ public class SetPropertyTest extends IntegrationBase {
 
     @Test
     public void testPropertyIsNotRestoredAfterWidgetCreated() throws Exception {
-        clientPair.hardwareClient.send("setProperty 122 label new");
+        clientPair.hardwareClient.setProperty(122, "label", "new");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.createWidget(1, "{\"id\":102, \"width\":1, \"height\":1, \"x\":5, \"y\":0, \"tabId\":0, \"label\":\"Some Text\", \"type\":\"VIDEO\", \"pinType\":\"VIRTUAL\", \"pin\":122}");
@@ -359,7 +359,7 @@ public class SetPropertyTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, "{\"id\":102, \"width\":1, \"height\":1, \"x\":5, \"y\":0, \"tabId\":0, \"label\":\"Some Text\", \"type\":\"VIDEO\", \"pinType\":\"VIRTUAL\", \"pin\":17}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        clientPair.hardwareClient.send("setProperty 17 url http://123.com");
+        clientPair.hardwareClient.setProperty(17, "url", "http://123.com");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1, "1-0 17 url http://123.com")));
 

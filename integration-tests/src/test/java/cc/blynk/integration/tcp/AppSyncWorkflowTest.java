@@ -337,7 +337,7 @@ public class AppSyncWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, OK)));
 
-        clientPair.hardwareClient.send("setProperty 88 label newLabel");
+        clientPair.hardwareClient.setProperty(88, "label", "newLabel");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1, "1-0 88 label newLabel")));
 
         clientPair.appClient.reset();

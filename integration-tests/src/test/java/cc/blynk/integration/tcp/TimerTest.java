@@ -477,7 +477,7 @@ public class TimerTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, timer);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        clientPair.appClient.send("deleteDash 1");
+        clientPair.appClient.deleteDash(1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         verify(clientPair.hardwareClient.responseMock, after(2500).times(0)).channelRead(any(), any());

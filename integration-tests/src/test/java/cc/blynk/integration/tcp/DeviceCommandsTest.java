@@ -15,7 +15,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND_BODY;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -84,7 +83,7 @@ public class DeviceCommandsTest extends IntegrationBase {
         Device device0 = new Device(0, "My Dashboard Updated", "UNO");
         device0.status = Status.ONLINE;
 
-        clientPair.appClient.send("updateDevice 1\0" + device0.toString());
+        clientPair.appClient.updateDevice(1, device0);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.reset();
@@ -103,8 +102,8 @@ public class DeviceCommandsTest extends IntegrationBase {
     public void testUpdateNonExistingDevice() throws Exception {
         Device device = new Device(100, "My Dashboard Updated", "UNO");
 
-        clientPair.appClient.send("updateDevice 1\0" + device.toString());
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND_BODY)));
+        clientPair.appClient.updateDevice(1, device);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(illegalCommandBody(1)));
     }
 
     @Test
@@ -140,8 +139,8 @@ public class DeviceCommandsTest extends IntegrationBase {
         device0.name = "My Dashboard UPDATED";
         device0.token = "123";
 
-        clientPair.appClient.send("updateDevice 1\0" + device0.toString());
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+        clientPair.appClient.updateDevice(1, device0);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         clientPair.appClient.reset();
 

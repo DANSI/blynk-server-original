@@ -92,7 +92,7 @@ public class SyncWorkflowTest extends IntegrationBase {
 
     @Test
     public void testHardSyncReturnNoSetPropertyCommands() throws Exception {
-        clientPair.hardwareClient.send("setProperty 44 label hello");
+        clientPair.hardwareClient.setProperty(44, "label", "hello");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1, "1-0 44 label hello")));
         clientPair.hardwareClient.reset();

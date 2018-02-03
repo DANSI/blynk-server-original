@@ -509,7 +509,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         clientPair.appClient.createDash(dashBoard);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
 
-        clientPair.appClient.send("deleteDash 2");
+        clientPair.appClient.deleteDash(2);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
 
         clientPair.appClient.send("loadProfileGzipped 1");
@@ -561,7 +561,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         clientPair.appClient.createDash(dashBoard);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
 
-        clientPair.appClient.send("deleteDash 1");
+        clientPair.appClient.deleteDash(1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
 
         clientPair.appClient.send("loadProfileGzipped");

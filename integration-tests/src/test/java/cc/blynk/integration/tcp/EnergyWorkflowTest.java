@@ -86,7 +86,7 @@ public class EnergyWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("getEnergy");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, GET_ENERGY, "2000")));
 
-        clientPair.appClient.send("deleteDash 2");
+        clientPair.appClient.deleteDash(2);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, OK)));
 
         clientPair.appClient.send("getEnergy");
@@ -120,7 +120,7 @@ public class EnergyWorkflowTest extends IntegrationBase {
         clientPair.appClient.createWidget(2, "{\"id\":7, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":2}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(8, ENERGY_LIMIT)));
 
-        clientPair.appClient.send("deleteDash 2");
+        clientPair.appClient.deleteDash(2);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(9, OK)));
 
         clientPair.appClient.send("getEnergy");

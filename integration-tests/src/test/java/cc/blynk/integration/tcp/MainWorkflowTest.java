@@ -466,10 +466,10 @@ public class MainWorkflowTest extends IntegrationBase {
 
         clientPair.hardwareClient.send("ping");
 
-        clientPair.appClient.send("deleteDash 1");
+        clientPair.appClient.deleteDash(1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
 
-        clientPair.appClient.send("deleteDash 1");
+        clientPair.appClient.deleteDash(1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(6, ILLEGAL_COMMAND)));
 
         Profile responseProfile;
@@ -513,7 +513,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void testHardwareChannelClosedOnDashRemoval() throws Exception {
-        clientPair.appClient.send("deleteDash 1");
+        clientPair.appClient.deleteDash(1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         assertTrue(clientPair.hardwareClient.isClosed());
@@ -562,7 +562,7 @@ public class MainWorkflowTest extends IntegrationBase {
         String sharedToken = clientPair.appClient.getBody();
         assertNotNull(sharedToken);
 
-        clientPair.appClient.send("deleteDash 10");
+        clientPair.appClient.deleteDash(10);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         //todo on delete also close existing connections?
