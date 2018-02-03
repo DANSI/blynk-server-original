@@ -174,7 +174,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         Device device1 = new Device(1, "My Device", "ESP8266");
         device1.status = Status.OFFLINE;
 
-        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        clientPair.appClient.createDevice(1, device1);
         device1 = JsonParser.parseDevice(clientPair.appClient.getBody(1), 0);
         assertNotNull(device1);
         assertEquals(1, device1.id);
@@ -218,7 +218,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         Device device0 = new Device(0, "My Dashboard", "UNO");
         device0.status = Status.ONLINE;
 
-        clientPair.appClient.send("createDevice 10\0" + device0.toString());
+        clientPair.appClient.createDevice(10, device0);
         String createdDevice = clientPair.appClient.getBody(2);
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
@@ -283,7 +283,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         Device device0 = new Device(0, "My Dashboard", "UNO");
         device0.status = Status.ONLINE;
 
-        clientPair.appClient.send("createDevice 10\0" + device0.toString());
+        clientPair.appClient.createDevice(1, device0);
         String createdDevice = clientPair.appClient.getBody(2);
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
@@ -402,7 +402,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         Device device0 = new Device(0, "My Device", "UNO");
         device0.status = Status.ONLINE;
 
-        clientPair.appClient.send("createDevice 10\0" + device0.toString());
+        clientPair.appClient.createDevice(1,  device0);
         String createdDevice = clientPair.appClient.getBody(2);
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);

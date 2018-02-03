@@ -134,7 +134,7 @@ public class BridgeWorkflowTest extends IntegrationBase {
         Device device1 = new Device(1, "My Device", "ESP8266");
         device1.status = Status.OFFLINE;
 
-        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        clientPair.appClient.createDevice(1, device1);
         String createdDevice = clientPair.appClient.getBody();
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
@@ -408,7 +408,7 @@ public class BridgeWorkflowTest extends IntegrationBase {
         Device device1 = new Device(1, "My Device", "ESP8266");
         device1.status = Status.OFFLINE;
 
-        appClient.send("createDevice 1\0" + device1.toString());
+        appClient.createDevice(1, device1);
         String createdDevice = appClient.getBody();
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);

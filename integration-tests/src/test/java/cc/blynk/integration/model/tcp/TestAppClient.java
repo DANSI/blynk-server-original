@@ -4,6 +4,7 @@ import cc.blynk.client.core.AppClient;
 import cc.blynk.client.handlers.decoders.AppClientMessageDecoder;
 import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.SimpleClientHandler;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.handlers.encoders.AppMessageEncoder;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -22,6 +23,7 @@ import java.util.Random;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_CLONE_CODE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
+import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
@@ -83,6 +85,10 @@ public class TestAppClient extends AppClient {
                 );
             }
         };
+    }
+
+    public void createDevice(int dashId, Device device) {
+        send("createDevice " + dashId + BODY_SEPARATOR + device.toString());
     }
 
     public void send(String line) {

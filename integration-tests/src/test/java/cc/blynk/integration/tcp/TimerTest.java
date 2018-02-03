@@ -579,7 +579,7 @@ public class TimerTest extends IntegrationBase {
         //creating new device
         Device device1 = new Device(1, "My Device", "ESP8266");
 
-        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        clientPair.appClient.createDevice(1, device1);
         String createdDevice = clientPair.appClient.getBody();
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);

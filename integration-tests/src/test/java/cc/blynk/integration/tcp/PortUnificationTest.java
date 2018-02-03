@@ -67,7 +67,7 @@ public class PortUnificationTest extends IntegrationBase {
         appClient.send("createDash {\"id\":1, \"createdAt\":1, \"name\":\"test board\"}\"");
 
         Device device1 = new Device(1, "My Device", "ESP8266");
-        appClient.send("createDevice 1\0" + device1.toString());
+        appClient.createDevice(1, device1);
 
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));

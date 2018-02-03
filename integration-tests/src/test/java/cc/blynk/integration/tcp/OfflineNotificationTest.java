@@ -63,7 +63,7 @@ public class OfflineNotificationTest extends IntegrationBase {
         Device device2 = new Device(1, "My Device", "ESP8266");
         device2.status = Status.OFFLINE;
 
-        clientPair.appClient.send("createDevice 1\0" + device2.toString());
+        clientPair.appClient.createDevice(1, device2);
         String createdDevice = clientPair.appClient.getBody();
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
@@ -106,7 +106,7 @@ public class OfflineNotificationTest extends IntegrationBase {
         Device device2 = new Device(1, "My Device", "ESP8266");
         device2.status = Status.OFFLINE;
 
-        clientPair.appClient.send("createDevice 1\0" + device2.toString());
+        clientPair.appClient.createDevice(1, device2);
         String createdDevice = clientPair.appClient.getBody();
         Device device = JsonParser.parseDevice(createdDevice, 0);
         TestCase.assertNotNull(device);
@@ -164,7 +164,7 @@ public class OfflineNotificationTest extends IntegrationBase {
         Device device2 = new Device(1, "My Device", "ESP8266");
         device2.status = Status.OFFLINE;
 
-        clientPair.appClient.send("createDevice 1\0" + device2.toString());
+        clientPair.appClient.createDevice(1, device2);
         String createdDevice = clientPair.appClient.getBody(3);
         Device device = JsonParser.parseDevice(createdDevice, 0);
         TestCase.assertNotNull(device);

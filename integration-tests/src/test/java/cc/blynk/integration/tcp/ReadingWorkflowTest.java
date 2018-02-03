@@ -124,7 +124,7 @@ public class ReadingWorkflowTest extends IntegrationBase {
     public void testSendReadForMultipleDevices() throws Exception {
         Device device2 = new Device(2, "My Device", "ESP8266");
 
-        clientPair.appClient.send("createDevice 1\0" + device2.toString());
+        clientPair.appClient.createDevice(1, device2);
         String createdDevice = clientPair.appClient.getBody();
 
         device2 = JsonParser.parseDevice(createdDevice, 0);
@@ -156,7 +156,7 @@ public class ReadingWorkflowTest extends IntegrationBase {
     public void testSendReadForDeviceSelector() throws Exception {
         Device device2 = new Device(2, "My Device", "ESP8266");
 
-        clientPair.appClient.send("createDevice 1\0" + device2.toString());
+        clientPair.appClient.createDevice(1, device2);
         String createdDevice = clientPair.appClient.getBody();
 
         device2 = JsonParser.parseDevice(createdDevice, 0);
@@ -195,7 +195,7 @@ public class ReadingWorkflowTest extends IntegrationBase {
     public void testSendReadForMultipleDevices2() throws Exception {
         Device device2 = new Device(2, "My Device", "ESP8266");
 
-        clientPair.appClient.send("createDevice 1\0" + device2.toString());
+        clientPair.appClient.createDevice(1, device2);
         String createdDevice = clientPair.appClient.getBody();
 
         device2 = JsonParser.parseDevice(createdDevice, 0);
@@ -252,7 +252,7 @@ public class ReadingWorkflowTest extends IntegrationBase {
     public void testSendReadOnlyForOnlineApp() throws Exception {
         Device device2 = new Device(2, "My Device", "ESP8266");
 
-        clientPair.appClient.send("createDevice 1\0" + device2.toString());
+        clientPair.appClient.createDevice(1, device2);
         String createdDevice = clientPair.appClient.getBody();
 
         device2 = JsonParser.parseDevice(createdDevice, 0);

@@ -563,7 +563,7 @@ public class SyncWorkflowTest extends IntegrationBase {
 
         Device device1 = new Device(1, "My Device", "ESP8266");
 
-        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        clientPair.appClient.createDevice(1, device1);
         String createdDevice = clientPair.appClient.getBody(2);
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
@@ -596,7 +596,7 @@ public class SyncWorkflowTest extends IntegrationBase {
     public void testSyncForMultiDevicesNoWidget() throws Exception {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
-        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        clientPair.appClient.createDevice(1, device1);
         String createdDevice = clientPair.appClient.getBody();
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);

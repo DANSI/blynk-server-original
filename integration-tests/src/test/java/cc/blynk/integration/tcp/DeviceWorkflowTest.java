@@ -78,7 +78,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         Device device1 = new Device(1, "My Device", "ESP8266");
         device1.status = Status.OFFLINE;
 
-        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        clientPair.appClient.createDevice(1, device1);
         String createdDevice = clientPair.appClient.getBody();
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
@@ -121,7 +121,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
     public void testDeviceWentOfflineMessage() throws Exception {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
-        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        clientPair.appClient.createDevice(1, device1);
         String createdDevice = clientPair.appClient.getBody();
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
@@ -148,7 +148,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
     public void testSendHardwareCommandToAppFromMultipleDevices() throws Exception {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
-        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        clientPair.appClient.createDevice(1, device1);
         String createdDevice = clientPair.appClient.getBody();
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
@@ -183,7 +183,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
 
         Device device1 = new Device(1, "My Device", "ESP8266");
 
-        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        clientPair.appClient.createDevice(1, device1);
         String createdDevice = clientPair.appClient.getBody(2);
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
@@ -210,7 +210,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
 
         Device device1 = new Device(1, "My Device", "ESP8266");
 
-        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        clientPair.appClient.createDevice(1, device1);
         String createdDevice = clientPair.appClient.getBody(2);
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
@@ -250,7 +250,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
     public void testActivateForMultiDevices() throws Exception {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
-        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        clientPair.appClient.createDevice(1, device1);
         String createdDevice = clientPair.appClient.getBody();
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
@@ -279,7 +279,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
 
         Device device1 = new Device(1, "My Device", "ESP8266");
 
-        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        clientPair.appClient.createDevice(1, device1);
         String createdDevice = clientPair.appClient.getBody(3);
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
@@ -316,7 +316,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
 
         Device device1 = new Device(1, "My Device", "ESP8266");
 
-        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        clientPair.appClient.createDevice(1, device1);
         String createdDevice = clientPair.appClient.getBody(2);
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
@@ -348,7 +348,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         Device device0 = new Device(0, "My Dashboard", "UNO");
         Device device1 = new Device(1, "My Device", "ESP8266");
 
-        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        clientPair.appClient.createDevice(1, device1);
         String createdDevice = clientPair.appClient.getBody();
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
@@ -469,7 +469,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
     public void testHardwareChannelClosedOnDashRemoval() throws Exception {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
-        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        clientPair.appClient.createDevice(1, device1);
         String createdDevice = clientPair.appClient.getBody();
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
@@ -493,7 +493,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
     public void testHardwareChannelClosedOnDeviceRemoval() throws Exception {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
-        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        clientPair.appClient.createDevice(1, device1);
         String createdDevice = clientPair.appClient.getBody();
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);

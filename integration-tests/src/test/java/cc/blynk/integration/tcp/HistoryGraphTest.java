@@ -257,7 +257,7 @@ public class HistoryGraphTest extends IntegrationBase {
     public void testGetGraphDataForTagAndForEnhancedGraph1StreamWithoutData() throws Exception {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
-        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        clientPair.appClient.createDevice(1, device1);
         String createdDevice = clientPair.appClient.getBody();
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
@@ -325,7 +325,7 @@ public class HistoryGraphTest extends IntegrationBase {
     public void testGetGraphDataForTagAndForEnhancedGraphMAX() throws Exception {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
-        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        clientPair.appClient.createDevice(1, device1);
         String createdDevice = clientPair.appClient.getBody();
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
@@ -395,7 +395,7 @@ public class HistoryGraphTest extends IntegrationBase {
     public void testGetGraphDataForTagAndForEnhancedGraphMIN() throws Exception {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
-        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        clientPair.appClient.createDevice(1, device1);
         String createdDevice = clientPair.appClient.getBody();
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
@@ -465,7 +465,7 @@ public class HistoryGraphTest extends IntegrationBase {
     public void testGetGraphDataForTagAndForEnhancedGraphSUM() throws Exception {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
-        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        clientPair.appClient.createDevice(1, device1);
         String createdDevice = clientPair.appClient.getBody();
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
@@ -535,7 +535,7 @@ public class HistoryGraphTest extends IntegrationBase {
     public void testGetGraphDataForTagAndForEnhancedGraphAVG() throws Exception {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
-        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        clientPair.appClient.createDevice(1, device1);
         String createdDevice = clientPair.appClient.getBody();
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
@@ -605,7 +605,7 @@ public class HistoryGraphTest extends IntegrationBase {
     public void testGetGraphDataForTagAndForEnhancedGraphMEDIAN() throws Exception {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
-        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        clientPair.appClient.createDevice(1, device1);
         String createdDevice = clientPair.appClient.getBody();
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
@@ -676,14 +676,14 @@ public class HistoryGraphTest extends IntegrationBase {
         Device device1 = new Device(1, "My Device", "ESP8266");
         Device device2 = new Device(2, "My Device", "ESP8266");
 
-        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        clientPair.appClient.createDevice(1, device1);
         String createdDevice = clientPair.appClient.getBody();
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
 
-        clientPair.appClient.send("createDevice 1\0" + device2.toString());
+        clientPair.appClient.createDevice(1, device2);
         createdDevice = clientPair.appClient.getBody(2);
         device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
@@ -1472,7 +1472,7 @@ public class HistoryGraphTest extends IntegrationBase {
         Device device1 = new Device(1, "My Device", "ESP8266");
         device1.status = Status.OFFLINE;
 
-        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        clientPair.appClient.createDevice(1, device1);
         String createdDevice = clientPair.appClient.getBody();
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
@@ -1550,7 +1550,7 @@ public class HistoryGraphTest extends IntegrationBase {
         Device device1 = new Device(1, "My Device", "ESP8266");
         device1.status = Status.OFFLINE;
 
-        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        clientPair.appClient.createDevice(1, device1);
         String createdDevice = clientPair.appClient.getBody();
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
@@ -1636,7 +1636,7 @@ public class HistoryGraphTest extends IntegrationBase {
         Device device1 = new Device(1, "My Device", "ESP8266");
         device1.status = Status.OFFLINE;
 
-        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        clientPair.appClient.createDevice(1, device1);
         String createdDevice = clientPair.appClient.getBody();
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
@@ -1839,7 +1839,7 @@ public class HistoryGraphTest extends IntegrationBase {
         Device device1 = new Device(1, "My Device", "ESP8266");
         device1.status = Status.OFFLINE;
 
-        clientPair.appClient.send("createDevice 1\0" + device1.toString());
+        clientPair.appClient.createDevice(1, device1);
         String createdDevice = clientPair.appClient.getBody();
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
