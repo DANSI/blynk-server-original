@@ -6,7 +6,6 @@ import cc.blynk.server.api.http.AppAndHttpsServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.ui.table.Row;
 import cc.blynk.server.core.model.widgets.ui.table.Table;
 import cc.blynk.server.hardware.HardwareServer;
@@ -69,7 +68,7 @@ public class TableCommandsTest extends IntegrationBase {
         table.height = 2;
         table.width = 2;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(table));
+        clientPair.appClient.createWidget(1, table);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 123 clr");
@@ -171,7 +170,7 @@ public class TableCommandsTest extends IntegrationBase {
         table.height = 2;
         table.width = 2;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(table));
+        clientPair.appClient.createWidget(1, table);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 123 clr");
@@ -222,7 +221,7 @@ public class TableCommandsTest extends IntegrationBase {
         table.width = 2;
         table.height = 2;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(table));
+        clientPair.appClient.createWidget(1, table);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 123 clr");
@@ -259,7 +258,7 @@ public class TableCommandsTest extends IntegrationBase {
         table.width = 2;
         table.height = 2;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(table));
+        clientPair.appClient.createWidget(1, table);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 123 clr");

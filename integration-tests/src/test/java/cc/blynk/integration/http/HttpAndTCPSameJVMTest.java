@@ -177,7 +177,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         rtc.height = 1;
         rtc.width = 2;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(rtc));
+        clientPair.appClient.createWidget(1, rtc);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         reset(clientPair.appClient.responseMock);
@@ -200,7 +200,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         eventor.height = 1;
         eventor.width = 2;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        clientPair.appClient.createWidget(1, eventor);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         reset(clientPair.appClient.responseMock);
@@ -240,7 +240,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         });
         eventor.id = 1000;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        clientPair.appClient.createWidget(1, eventor);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         verify(clientPair.appClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1-0 vw 4 1"))));
@@ -280,7 +280,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         timer.startTime = curTime + 1;
         timer.stopTime = curTime + 1;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
+        clientPair.appClient.createWidget(1, timer);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         verify(clientPair.hardwareClient.responseMock, timeout(2500).times(2)).channelRead(any(), any());
@@ -309,7 +309,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
 
     @Test
     public void testChangePinValueViaAppAndHardwareForWrongPWMButton() throws Exception {
-        clientPair.appClient.send("createWidget 1\0{\"type\":\"BUTTON\",\"id\":1000,\"x\":0,\"y\":0,\"color\":616861439,\"width\":2,\"height\":2,\"label\":\"Relay\",\"pinType\":\"DIGITAL\",\"pin\":18,\"pwmMode\":true,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"value\":\"1\",\"pushMode\":false}");
+        clientPair.appClient.createWidget(1, "{\"type\":\"BUTTON\",\"id\":1000,\"x\":0,\"y\":0,\"color\":616861439,\"width\":2,\"height\":2,\"label\":\"Relay\",\"pinType\":\"DIGITAL\",\"pin\":18,\"pwmMode\":true,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"value\":\"1\",\"pushMode\":false}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.reset();
@@ -561,7 +561,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         clientPair.appClient.send("getToken 1");
         String token = clientPair.appClient.getBody();
 
-        clientPair.appClient.send("createWidget 1\0{\"id\":222, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"TERMINAL\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
+        clientPair.appClient.createWidget(1, "{\"id\":222, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"TERMINAL\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
         HttpPut request = new HttpPut(httpServerUrl + token + "/pin/V100");
@@ -600,7 +600,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         table.height = 2;
         table.width = 2;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(table));
+        clientPair.appClient.createWidget(1, table);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("getToken 1");
@@ -635,7 +635,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         rgb.height = 2;
         rgb.width = 2;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(rgb));
+        clientPair.appClient.createWidget(1, rgb);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("getToken 1");
@@ -662,7 +662,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         rgb.height = 2;
         rgb.width = 2;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(rgb));
+        clientPair.appClient.createWidget(1, rgb);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("getToken 1");
@@ -688,7 +688,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
                 new DataStream((byte) 45, PinType.VIRTUAL)
         };
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(historyGraph));
+        clientPair.appClient.createWidget(1, historyGraph);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         ValueDisplay valueDisplay = new ValueDisplay();
@@ -698,7 +698,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         valueDisplay.pin = 44;
         valueDisplay.pinType = PinType.VIRTUAL;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(valueDisplay));
+        clientPair.appClient.createWidget(1, valueDisplay);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         ValueDisplay valueDisplay2 = new ValueDisplay();
@@ -708,7 +708,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         valueDisplay2.pin = 45;
         valueDisplay2.pinType = PinType.VIRTUAL;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(valueDisplay2));
+        clientPair.appClient.createWidget(1, valueDisplay2);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
 
         clientPair.appClient.send("getToken 1");
@@ -737,7 +737,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         webHook.pin = 44;
         webHook.pinType = PinType.VIRTUAL;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(webHook));
+        clientPair.appClient.createWidget(1, webHook);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         ValueDisplay valueDisplay = new ValueDisplay();
@@ -747,7 +747,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         valueDisplay.pin = 44;
         valueDisplay.pinType = PinType.VIRTUAL;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(valueDisplay));
+        clientPair.appClient.createWidget(1, valueDisplay);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         clientPair.appClient.send("getToken 1");

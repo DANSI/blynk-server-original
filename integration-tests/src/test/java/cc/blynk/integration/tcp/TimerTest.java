@@ -101,7 +101,7 @@ public class TimerTest extends IntegrationBase {
                 new Rule(dataStream, timerTime, null, new BaseAction[] {setPinAction}, true)
         });
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        clientPair.appClient.createWidget(1, eventor);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         verify(clientPair.appClient.responseMock, timeout(3000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1-0 vw 1 1"))));
@@ -129,7 +129,7 @@ public class TimerTest extends IntegrationBase {
                 new Rule(dataStream, timerTime, null, new BaseAction[] {setPinAction}, true)
         });
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        clientPair.appClient.createWidget(1, eventor);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         verify(clientPair.appClient.responseMock, timeout(3000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1-0 vw 1 1"))));
@@ -180,7 +180,7 @@ public class TimerTest extends IntegrationBase {
                 rule
         });
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        clientPair.appClient.createWidget(1, eventor);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
@@ -212,7 +212,7 @@ public class TimerTest extends IntegrationBase {
                 rule
         });
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        clientPair.appClient.createWidget(1, eventor);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
@@ -261,7 +261,7 @@ public class TimerTest extends IntegrationBase {
                 rule
         });
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        clientPair.appClient.createWidget(1, eventor);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         verify(clientPair.appClient.responseMock, after(700).never()).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1-0 vw 1 1"))));
@@ -284,7 +284,7 @@ public class TimerTest extends IntegrationBase {
         int curTime = localDateTime.toSecondOfDay();
         timer.startTime = curTime + 1;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
+        clientPair.appClient.createWidget(1, timer);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         verify(clientPair.hardwareClient.responseMock, timeout(1500).times(1)).channelRead(any(), any());
@@ -307,7 +307,7 @@ public class TimerTest extends IntegrationBase {
         int curTime = localDateTime.toSecondOfDay();
         timer.stopTime = curTime + 1;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
+        clientPair.appClient.createWidget(1, timer);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         verify(clientPair.hardwareClient.responseMock, timeout(1500).times(1)).channelRead(any(), any());
@@ -332,7 +332,7 @@ public class TimerTest extends IntegrationBase {
         timer.startTime = curTime + 1;
         timer.stopTime = curTime + 2;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
+        clientPair.appClient.createWidget(1, timer);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         verify(clientPair.hardwareClient.responseMock, timeout(2500).times(2)).channelRead(any(), any());
@@ -359,7 +359,7 @@ public class TimerTest extends IntegrationBase {
         timer.startTime = curTime + 1;
         timer.stopTime = curTime + 2;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
+        clientPair.appClient.createWidget(1, timer);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("deleteWidget 1 112");
@@ -384,13 +384,13 @@ public class TimerTest extends IntegrationBase {
         int curTime = localDateTime.toSecondOfDay();
         timer.startTime = curTime + 1;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
+        clientPair.appClient.createWidget(1, timer);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         timer.id = 113;
         timer.startValue = "2";
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
+        clientPair.appClient.createWidget(1, timer);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         verify(clientPair.hardwareClient.responseMock, timeout(2500).times(2)).channelRead(any(), any());
@@ -416,7 +416,7 @@ public class TimerTest extends IntegrationBase {
         timer.startTime = curTime + 1;
         timer.stopTime = curTime + 1;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
+        clientPair.appClient.createWidget(1, timer);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         verify(clientPair.hardwareClient.responseMock, timeout(2500).times(2)).channelRead(any(), any());
@@ -442,7 +442,7 @@ public class TimerTest extends IntegrationBase {
         timer.startTime = curTime + 1;
         timer.stopTime = curTime + 2;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
+        clientPair.appClient.createWidget(1, timer);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         timer.startValue = "11";
@@ -474,7 +474,7 @@ public class TimerTest extends IntegrationBase {
         timer.startTime = curTime + 1;
         timer.stopTime = curTime + 2;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
+        clientPair.appClient.createWidget(1, timer);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("deleteDash 1");
@@ -621,7 +621,7 @@ public class TimerTest extends IntegrationBase {
         int curTime = localDateTime.toSecondOfDay();
         timer.startTime = curTime + 1;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
+        clientPair.appClient.createWidget(1, timer);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 1"))));

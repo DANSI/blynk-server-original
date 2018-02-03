@@ -202,7 +202,7 @@ public class EventorTest extends IntegrationBase {
     public void testSimpleRule1() throws Exception {
         Eventor eventor = oneRuleEventor("if v1 > 37 then setpin v2 123");
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        clientPair.appClient.createWidget(1, eventor);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 1 38");
@@ -215,7 +215,7 @@ public class EventorTest extends IntegrationBase {
     public void testInactiveEventsNotTriggered() throws Exception {
         Eventor eventor = oneRuleEventor("if v1 > 37 then setpin v2 123", false);
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        clientPair.appClient.createWidget(1, eventor);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 1 38");
@@ -228,7 +228,7 @@ public class EventorTest extends IntegrationBase {
     public void testSimpleRule1AndDashUpdatedValue() throws Exception {
         Eventor eventor = oneRuleEventor("if v1 > 37 then setpin v4 123");
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        clientPair.appClient.createWidget(1, eventor);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 1 38");
@@ -249,7 +249,7 @@ public class EventorTest extends IntegrationBase {
     public void testSimpleRule2() throws Exception {
         Eventor eventor = oneRuleEventor("if v1 >= 37 then setpin v2 123");
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        clientPair.appClient.createWidget(1, eventor);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 1 37");
@@ -262,7 +262,7 @@ public class EventorTest extends IntegrationBase {
     public void testSimpleRule3() throws Exception {
         Eventor eventor = oneRuleEventor("if v1 <= 37 then setpin v2 123");
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        clientPair.appClient.createWidget(1, eventor);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 1 37");
@@ -275,7 +275,7 @@ public class EventorTest extends IntegrationBase {
     public void testSimpleRule4() throws Exception {
         Eventor eventor = oneRuleEventor("if v1 = 37 then setpin v2 123");
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        clientPair.appClient.createWidget(1, eventor);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 1 37");
@@ -288,7 +288,7 @@ public class EventorTest extends IntegrationBase {
     public void testSimpleRule5() throws Exception {
         Eventor eventor = oneRuleEventor("if v1 < 37 then setpin v2 123");
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        clientPair.appClient.createWidget(1, eventor);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 1 36");
@@ -301,7 +301,7 @@ public class EventorTest extends IntegrationBase {
     public void testSimpleRule6() throws Exception {
         Eventor eventor = oneRuleEventor("if v1 != 37 then setpin v2 123");
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        clientPair.appClient.createWidget(1, eventor);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 1 36");
@@ -319,7 +319,7 @@ public class EventorTest extends IntegrationBase {
 
         Eventor eventor = new Eventor(new Rule[] {rule});
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        clientPair.appClient.createWidget(1, eventor);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 1 11");
@@ -337,7 +337,7 @@ public class EventorTest extends IntegrationBase {
 
         Eventor eventor = new Eventor(new Rule[] {rule});
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        clientPair.appClient.createWidget(1, eventor);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 1 9");
@@ -350,7 +350,7 @@ public class EventorTest extends IntegrationBase {
     public void testSimpleRule8Notify() throws Exception {
         Eventor eventor = oneRuleEventor("if v1 = 37 then notify Yo!!!!!");
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        clientPair.appClient.createWidget(1, eventor);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 1 37");
@@ -368,7 +368,7 @@ public class EventorTest extends IntegrationBase {
     public void testSimpleRule8NotifyAndFormat() throws Exception {
         Eventor eventor = oneRuleEventor("if v1 = 37 then notify Temperatureis:/pin/.");
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        clientPair.appClient.createWidget(1, eventor);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 1 37");
@@ -386,7 +386,7 @@ public class EventorTest extends IntegrationBase {
     public void testSimpleRule9Twit() throws Exception {
         Eventor eventor = oneRuleEventor("if v1 = 37 then twit Yo!!!!!");
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        clientPair.appClient.createWidget(1, eventor);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 1 37");
@@ -399,10 +399,10 @@ public class EventorTest extends IntegrationBase {
     public void testSimpleRule8Email() throws Exception {
         Eventor eventor = oneRuleEventor("if v1 = 37 then mail Yo!!!!!");
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        clientPair.appClient.createWidget(1, eventor);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        clientPair.appClient.send("createWidget 1\0{\"id\":432, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"type\":\"EMAIL\"}");
+        clientPair.appClient.createWidget(1, "{\"id\":432, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"type\":\"EMAIL\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
         clientPair.hardwareClient.send("hardware vw 1 37");
@@ -416,10 +416,10 @@ public class EventorTest extends IntegrationBase {
     public void testSimpleRule8EmailAndFormat() throws Exception {
         Eventor eventor = oneRuleEventor("if v1 = 37 then mail Yo/pin/!!!!!");
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        clientPair.appClient.createWidget(1, eventor);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        clientPair.appClient.send("createWidget 1\0{\"id\":432, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"type\":\"EMAIL\"}");
+        clientPair.appClient.createWidget(1, "{\"id\":432, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"type\":\"EMAIL\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
         clientPair.hardwareClient.send("hardware vw 1 37");
@@ -433,7 +433,7 @@ public class EventorTest extends IntegrationBase {
     public void testSimpleRuleCreateUpdateConditionWorks() throws Exception {
         Eventor eventor = oneRuleEventor("if v1 >= 37 then setpin v2 123");
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        clientPair.appClient.createWidget(1, eventor);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 1 37");
@@ -464,7 +464,7 @@ public class EventorTest extends IntegrationBase {
 
         Eventor eventor = oneRuleEventor("if v1 > 37 then setpin d9 1");
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        clientPair.appClient.createWidget(1, eventor);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("activate 1");
@@ -481,7 +481,7 @@ public class EventorTest extends IntegrationBase {
     public void testTriggerOnlyOnceOnCondition() throws Exception {
         Eventor eventor = oneRuleEventor("if v1 < 37 then setpin v2 123");
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        clientPair.appClient.createWidget(1, eventor);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 1 36");
@@ -526,7 +526,7 @@ public class EventorTest extends IntegrationBase {
 
         Eventor eventor = oneRuleEventor("if v1 < 37 then setpin v2 123");
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        clientPair.appClient.createWidget(1, eventor);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 1 36");
@@ -553,7 +553,7 @@ public class EventorTest extends IntegrationBase {
                 SetPinActionType.CUSTOM
         );
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        clientPair.appClient.createWidget(1, eventor);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("activate 1");
@@ -569,7 +569,7 @@ public class EventorTest extends IntegrationBase {
     public void testSimpleRule2WorksFromAppSide() throws Exception {
         Eventor eventor = oneRuleEventor("if v1 >= 37 then setpin v2 123");
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        clientPair.appClient.createWidget(1, eventor);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("hardware 1-0 vw 1 37");
@@ -590,7 +590,7 @@ public class EventorTest extends IntegrationBase {
 
         Eventor eventor = new Eventor(new Rule[] {rule});
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        clientPair.appClient.createWidget(1, eventor);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 1 38");
@@ -607,7 +607,7 @@ public class EventorTest extends IntegrationBase {
         Eventor eventor = oneRuleEventor("if v1 != 37 then setpin v2 123");
         eventor.deviceId = 1;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        clientPair.appClient.createWidget(1, eventor);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 1 36");
@@ -626,7 +626,7 @@ public class EventorTest extends IntegrationBase {
                 new Rule(triggerStream, null, new StringEqual("abc"), new BaseAction[] {setPinAction}, true)
         });
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        clientPair.appClient.createWidget(1, eventor);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 1 abc");
@@ -645,7 +645,7 @@ public class EventorTest extends IntegrationBase {
                 new Rule(triggerStream, null, new StringNotEqual("abc"), new BaseAction[] {setPinAction}, true)
         });
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        clientPair.appClient.createWidget(1, eventor);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 1 ABC");
@@ -664,7 +664,7 @@ public class EventorTest extends IntegrationBase {
                 new Rule(triggerStream, null, new StringEqual("abc"), new BaseAction[] {setPinAction}, true)
         });
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        clientPair.appClient.createWidget(1, eventor);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 1 ABC");

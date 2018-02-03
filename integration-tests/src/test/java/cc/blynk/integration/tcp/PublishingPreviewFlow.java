@@ -283,7 +283,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         Device device0 = new Device(0, "My Dashboard", "UNO");
         device0.status = Status.ONLINE;
 
-        clientPair.appClient.createDevice(1, device0);
+        clientPair.appClient.createDevice(10, device0);
         String createdDevice = clientPair.appClient.getBody(2);
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
@@ -306,7 +306,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         deviceTiles.height = 100;
 
         //creating manually widget for child project
-        clientPair.appClient.send("createWidget 10\0" + MAPPER.writeValueAsString(deviceTiles));
+        clientPair.appClient.createWidget(10, deviceTiles);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
 
         TileTemplate tileTemplate = new TileTemplate(1, null, null, "123",
@@ -319,7 +319,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         //creating manually widget for parent project
         clientPair.appClient.send("addEnergy " + "10000" + "\0" + "1370-3990-1414-55681");
 
-        clientPair.appClient.send("createWidget 1\0" + MAPPER.writeValueAsString(deviceTiles));
+        clientPair.appClient.createWidget(1, deviceTiles);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(7)));
 
         tileTemplate = new TileTemplate(1, null, null, "123",
@@ -402,7 +402,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         Device device0 = new Device(0, "My Device", "UNO");
         device0.status = Status.ONLINE;
 
-        clientPair.appClient.createDevice(1,  device0);
+        clientPair.appClient.createDevice(10, device0);
         String createdDevice = clientPair.appClient.getBody(2);
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);

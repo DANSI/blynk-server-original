@@ -6,6 +6,8 @@ import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
+import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.protocol.handlers.encoders.AppMessageEncoder;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -94,6 +96,14 @@ public class TestAppClient extends AppClient {
 
     public void createDevice(int dashId, Device device) {
         send("createDevice " + dashId + BODY_SEPARATOR + device.toString());
+    }
+
+    public void createWidget(int dashId, Widget widget) throws Exception {
+        createWidget(dashId, JsonParser.MAPPER.writeValueAsString(widget));
+    }
+
+    public void createWidget(int dashId, String widgetJson) {
+        send("createWidget " + dashId + BODY_SEPARATOR + widgetJson);
     }
 
     public void send(String line) {

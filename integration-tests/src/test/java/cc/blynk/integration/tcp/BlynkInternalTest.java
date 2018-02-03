@@ -55,8 +55,8 @@ public class BlynkInternalTest extends IntegrationBase {
 
     @Test
     public void testGetRTC() throws Exception {
-        clientPair.appClient.send(("createWidget 1\0{\"type\":\"RTC\",\"id\":99, \"pin\":99, \"pinType\":\"VIRTUAL\", " +
-                "\"x\":0,\"y\":0,\"width\":0,\"height\":0}"));
+        clientPair.appClient.createWidget(1, "{\"type\":\"RTC\",\"id\":99, \"pin\":99, \"pinType\":\"VIRTUAL\", " +
+                "\"x\":0,\"y\":0,\"width\":0,\"height\":0}");
 
         clientPair.hardwareClient.send("internal rtc");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), any());

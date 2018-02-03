@@ -6,7 +6,6 @@ import cc.blynk.server.api.http.AppAndHttpsServer;
 import cc.blynk.server.api.http.HardwareAndHttpAPIServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.others.webhook.Header;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
@@ -108,7 +107,7 @@ public class WebhookTest extends IntegrationBase {
         webHook.pin = 123;
         webHook.pinType = PinType.VIRTUAL;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(webHook));
+        clientPair.appClient.createWidget(1, webHook);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 123 10");
@@ -124,7 +123,7 @@ public class WebhookTest extends IntegrationBase {
         webHook.pin = 123;
         webHook.pinType = PinType.VIRTUAL;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(webHook));
+        clientPair.appClient.createWidget(1, webHook);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 123 10");
@@ -142,7 +141,7 @@ public class WebhookTest extends IntegrationBase {
         webHook.pin = 123;
         webHook.pinType = PinType.VIRTUAL;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(webHook));
+        clientPair.appClient.createWidget(1, webHook);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("hardware 1 vw 123 10");
@@ -165,7 +164,7 @@ public class WebhookTest extends IntegrationBase {
         webHook.width = 2;
         webHook.height = 1;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(webHook));
+        clientPair.appClient.createWidget(1, webHook);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 123 10");
@@ -192,7 +191,7 @@ public class WebhookTest extends IntegrationBase {
         webHook.width = 2;
         webHook.height = 1;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(webHook));
+        clientPair.appClient.createWidget(1, webHook);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 123 10");
@@ -215,7 +214,7 @@ public class WebhookTest extends IntegrationBase {
         webHook.width = 2;
         webHook.height = 1;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(webHook));
+        clientPair.appClient.createWidget(1, webHook);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 123 " + b("10 11 12"));
@@ -254,7 +253,7 @@ public class WebhookTest extends IntegrationBase {
         webHook.width = 2;
         webHook.height = 1;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(webHook));
+        clientPair.appClient.createWidget(1, webHook);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 123 " + b("0 1 2 3 4 5 6 7 8 9"));
@@ -283,7 +282,7 @@ public class WebhookTest extends IntegrationBase {
         webHook.width = 2;
         webHook.height = 1;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(webHook));
+        clientPair.appClient.createWidget(1, webHook);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 123 10");
@@ -311,7 +310,7 @@ public class WebhookTest extends IntegrationBase {
         webHook.width = 2;
         webHook.height = 1;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(webHook));
+        clientPair.appClient.createWidget(1, webHook);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 123 10 11");
@@ -345,7 +344,7 @@ public class WebhookTest extends IntegrationBase {
         webHook.width = 2;
         webHook.height = 1;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(webHook));
+        clientPair.appClient.createWidget(1, webHook);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 123 10");
@@ -372,7 +371,7 @@ public class WebhookTest extends IntegrationBase {
         webHook.width = 2;
         webHook.height = 1;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(webHook));
+        clientPair.appClient.createWidget(1, webHook);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 123 " + b("10 11 12"));
@@ -401,7 +400,7 @@ public class WebhookTest extends IntegrationBase {
         webHook.width = 2;
         webHook.height = 1;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(webHook));
+        clientPair.appClient.createWidget(1, webHook);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 123 10");
@@ -428,7 +427,7 @@ public class WebhookTest extends IntegrationBase {
         webHook.width = 2;
         webHook.height = 1;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(webHook));
+        clientPair.appClient.createWidget(1, webHook);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.hardwareClient.send("hardware vw 123 10");
@@ -478,7 +477,7 @@ public class WebhookTest extends IntegrationBase {
         webHook.width = 2;
         webHook.height = 1;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(webHook));
+        clientPair.appClient.createWidget(1, webHook);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         //125564119 is id of project with 4ae3851817194e2596cf1b7103603ef8 token
@@ -506,7 +505,7 @@ public class WebhookTest extends IntegrationBase {
         webHook.width = 2;
         webHook.height = 1;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(webHook));
+        clientPair.appClient.createWidget(1, webHook);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("hardware 1 vw 123 10");
@@ -559,17 +558,17 @@ public class WebhookTest extends IntegrationBase {
 
 
         webHook.url = "http://adasd.com";
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(webHook));
+        clientPair.appClient.createWidget(1, webHook);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         webHook.id = 222;
         webHook.url = "https://adasd.com";
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(webHook));
+        clientPair.appClient.createWidget(1, webHook);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         webHook.id = 333;
         webHook.url = "Http://adasd.com";
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(webHook));
+        clientPair.appClient.createWidget(1, webHook);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
     }
 
@@ -585,7 +584,7 @@ public class WebhookTest extends IntegrationBase {
         webHook.width = 2;
         webHook.height = 1;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(webHook));
+        clientPair.appClient.createWidget(1, webHook);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("hardware 1 vw 123 " + httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124");

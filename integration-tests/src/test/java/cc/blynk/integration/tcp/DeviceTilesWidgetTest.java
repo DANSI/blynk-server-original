@@ -93,7 +93,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         deviceTiles.width = 50;
         deviceTiles.height = 100;
 
-        clientPair.appClient.send("createWidget 1\0" + MAPPER.writeValueAsString(deviceTiles));
+        clientPair.appClient.createWidget(1, deviceTiles);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         TileTemplate tileTemplate = new TileTemplate(1, null, null, "123",
@@ -124,7 +124,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         deviceTiles.width = 50;
         deviceTiles.height = 100;
 
-        clientPair.appClient.send("createWidget 1\0" + MAPPER.writeValueAsString(deviceTiles));
+        clientPair.appClient.createWidget(1, deviceTiles);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         TileTemplate tileTemplate = new TileTemplate(1, null, null, "123",
@@ -167,7 +167,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         deviceTiles.width = 50;
         deviceTiles.height = 100;
 
-        clientPair.appClient.send("createWidget 1\0" + MAPPER.writeValueAsString(deviceTiles));
+        clientPair.appClient.createWidget(1, deviceTiles);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         TileTemplate tileTemplate = new TileTemplate(0, null, null, "123",
@@ -212,7 +212,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         deviceTiles.width = 50;
         deviceTiles.height = 100;
 
-        clientPair.appClient.send("createWidget 1\0" + MAPPER.writeValueAsString(deviceTiles));
+        clientPair.appClient.createWidget(1, deviceTiles);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         TileTemplate tileTemplate = new TileTemplate(1, null, null, "123",
@@ -292,7 +292,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         deviceTiles.width = 50;
         deviceTiles.height = 100;
 
-        clientPair.appClient.send("createWidget 1\0" + MAPPER.writeValueAsString(deviceTiles));
+        clientPair.appClient.createWidget(1, deviceTiles);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         TileTemplate tileTemplate = new TileTemplate(1, null, null, "123",
@@ -380,7 +380,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         deviceTiles.width = 50;
         deviceTiles.height = 100;
 
-        clientPair.appClient.send("createWidget 1\0" + MAPPER.writeValueAsString(deviceTiles));
+        clientPair.appClient.createWidget(1, deviceTiles);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         TileTemplate tileTemplate = new TileTemplate(1, null, null, "123",
@@ -503,7 +503,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         deviceTiles.width = 50;
         deviceTiles.height = 100;
 
-        clientPair.appClient.send("createWidget 1\0" + MAPPER.writeValueAsString(deviceTiles));
+        clientPair.appClient.createWidget(1, deviceTiles);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         TileTemplate tileTemplate = new TileTemplate(1, null, null, "123",
@@ -581,7 +581,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         deviceTiles.width = 50;
         deviceTiles.height = 100;
 
-        clientPair.appClient.send("createWidget 1\0" + MAPPER.writeValueAsString(deviceTiles));
+        clientPair.appClient.createWidget(1, deviceTiles);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         TileTemplate tileTemplate = new TileTemplate(1, null, null, "123",
@@ -631,7 +631,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         deviceTiles.width = 50;
         deviceTiles.height = 100;
 
-        clientPair.appClient.send("createWidget 1\0" + MAPPER.writeValueAsString(deviceTiles));
+        clientPair.appClient.createWidget(1, deviceTiles);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         int[] deviceIds = new int[] {0};
@@ -671,7 +671,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         deviceTiles.width = 50;
         deviceTiles.height = 100;
 
-        clientPair.appClient.send("createWidget 1\0" + MAPPER.writeValueAsString(deviceTiles));
+        clientPair.appClient.createWidget(1, deviceTiles);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         int[] deviceIds = new int[] {0};
@@ -756,7 +756,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
                 tileTemplate
         };
 
-        clientPair.appClient.send("createWidget 1\0" + MAPPER.writeValueAsString(deviceTiles));
+        clientPair.appClient.createWidget(1, deviceTiles);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("getWidget 1\0" + widgetId);
@@ -796,7 +796,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
                 tileTemplate
         };
 
-        clientPair.appClient.send("createWidget 1\0" + MAPPER.writeValueAsString(deviceTiles));
+        clientPair.appClient.createWidget(1, deviceTiles);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         tileTemplate = new TileTemplate(1, null, new int[] {0}, "123",
@@ -834,7 +834,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         deviceTiles.width = 50;
         deviceTiles.height = 100;
 
-        clientPair.appClient.send("createWidget 1\0" + MAPPER.writeValueAsString(deviceTiles));
+        clientPair.appClient.createWidget(1, deviceTiles);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         int[] deviceIds = new int[] {0};
@@ -876,7 +876,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         deviceTiles.width = 50;
         deviceTiles.height = 100;
 
-        clientPair.appClient.send("createWidget 1\0" + MAPPER.writeValueAsString(deviceTiles));
+        clientPair.appClient.createWidget(1, deviceTiles);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         int[] deviceIds = new int[] {0};
@@ -918,7 +918,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         deviceTiles.width = 50;
         deviceTiles.height = 100;
 
-        clientPair.appClient.send("createWidget 1\0" + MAPPER.writeValueAsString(deviceTiles));
+        clientPair.appClient.createWidget(1, deviceTiles);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("getEnergy");
@@ -931,13 +931,13 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
                 + MAPPER.writeValueAsString(tileTemplate));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
 
-        clientPair.appClient.send("createWidget " + b("1 21321 1 ") + "{\"id\":100, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":2}");
+        clientPair.appClient.createWidget(1, b("21321 1 ") + "{\"id\":100, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":2}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
 
         clientPair.appClient.send("getEnergy");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(5, GET_ENERGY, "2400")));
 
-        clientPair.appClient.send("createWidget " + b("1 21321 1 ") + "{\"id\":101, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":3}");
+        clientPair.appClient.createWidget(1, b("21321 1 ") + "{\"id\":101, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":3}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(6)));
 
         clientPair.appClient.send("getEnergy");
@@ -967,7 +967,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         deviceTiles.width = 50;
         deviceTiles.height = 100;
 
-        clientPair.appClient.send("createWidget 1\0" + MAPPER.writeValueAsString(deviceTiles));
+        clientPair.appClient.createWidget(1, deviceTiles);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         TileTemplate tileTemplate = new TileTemplate(1, null, null, "123",
@@ -977,10 +977,10 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
                 + MAPPER.writeValueAsString(tileTemplate));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
-        clientPair.appClient.send("createWidget " + b("1 21321 1 ") + "{\"id\":100, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":2}");
+        clientPair.appClient.createWidget(1, b("21321 1 ") + "{\"id\":100, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":2}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
 
-        clientPair.appClient.send("createWidget " + b("1 21321 1 ") + "{\"id\":100, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":2}");
+        clientPair.appClient.createWidget(1, b("21321 1 ") + "{\"id\":100, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":2}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(notAllowed(4)));
 
         clientPair.appClient.send("updateWidget 1\0" + "{\"id\":100, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 3\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":3}");

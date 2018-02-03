@@ -151,7 +151,7 @@ public class HistoryGraphTest extends IntegrationBase {
                 graphDataStream4
         };
 
-        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         clientPair.appClient.reset();
 
@@ -209,7 +209,7 @@ public class HistoryGraphTest extends IntegrationBase {
                 graphDataStream4
         };
 
-        appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        appClient.createWidget(1, enhancedHistoryGraph);
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         appClient.reset();
 
@@ -299,7 +299,7 @@ public class HistoryGraphTest extends IntegrationBase {
                 graphDataStream2
         };
 
-        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
         clientPair.appClient.reset();
 
@@ -369,7 +369,7 @@ public class HistoryGraphTest extends IntegrationBase {
                 graphDataStream
         };
 
-        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
         clientPair.appClient.reset();
 
@@ -439,7 +439,7 @@ public class HistoryGraphTest extends IntegrationBase {
                 graphDataStream
         };
 
-        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
         clientPair.appClient.reset();
 
@@ -509,7 +509,7 @@ public class HistoryGraphTest extends IntegrationBase {
                 graphDataStream
         };
 
-        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
         clientPair.appClient.reset();
 
@@ -579,7 +579,7 @@ public class HistoryGraphTest extends IntegrationBase {
                 graphDataStream
         };
 
-        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
         clientPair.appClient.reset();
 
@@ -649,7 +649,7 @@ public class HistoryGraphTest extends IntegrationBase {
                 graphDataStream
         };
 
-        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
         clientPair.appClient.reset();
 
@@ -732,7 +732,7 @@ public class HistoryGraphTest extends IntegrationBase {
                 graphDataStream
         };
 
-        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
         clientPair.appClient.reset();
 
@@ -778,7 +778,7 @@ public class HistoryGraphTest extends IntegrationBase {
                 graphDataStream
         };
 
-        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("getenhanceddata 1" + b(" 432 DAY"));
@@ -811,7 +811,7 @@ public class HistoryGraphTest extends IntegrationBase {
                 graphDataStream
         };
 
-        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         clientPair.appClient.reset();
 
@@ -861,7 +861,7 @@ public class HistoryGraphTest extends IntegrationBase {
                 graphDataStream2
         };
 
-        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         clientPair.appClient.reset();
 
@@ -909,7 +909,7 @@ public class HistoryGraphTest extends IntegrationBase {
                 graphDataStream
         };
 
-        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         clientPair.appClient.reset();
 
@@ -937,7 +937,7 @@ public class HistoryGraphTest extends IntegrationBase {
                 graphDataStream
         };
 
-        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         clientPair.appClient.reset();
 
@@ -1010,7 +1010,7 @@ public class HistoryGraphTest extends IntegrationBase {
                 graphDataStream
         };
 
-        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("getenhanceddata 1" + b(" 432 LIVE"));
@@ -1039,7 +1039,7 @@ public class HistoryGraphTest extends IntegrationBase {
                 graphDataStream
         };
 
-        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("getenhanceddata 1" + b(" 432 LIVE"));
@@ -1070,7 +1070,7 @@ public class HistoryGraphTest extends IntegrationBase {
         clientPair.hardwareClient.send("hardware vw 88 111");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(3, b("1-0 vw 88 111"))));
 
-        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
 
         clientPair.appClient.send("getenhanceddata 1" + b(" 432 LIVE"));
@@ -1111,7 +1111,7 @@ public class HistoryGraphTest extends IntegrationBase {
                 graphDataStream
         };
 
-        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         clientPair.appClient.reset();
 
@@ -1233,7 +1233,7 @@ public class HistoryGraphTest extends IntegrationBase {
                 graphDataStream
         };
 
-        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         clientPair.appClient.reset();
 
@@ -1285,7 +1285,7 @@ public class HistoryGraphTest extends IntegrationBase {
                 graphDataStream
         };
 
-        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         clientPair.appClient.reset();
 
@@ -1339,7 +1339,7 @@ public class HistoryGraphTest extends IntegrationBase {
                 graphDataStream
         };
 
-        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         clientPair.appClient.reset();
 
@@ -1378,7 +1378,7 @@ public class HistoryGraphTest extends IntegrationBase {
                 graphDataStream
         };
 
-        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         clientPair.appClient.reset();
 
@@ -1398,7 +1398,7 @@ public class HistoryGraphTest extends IntegrationBase {
                 graphDataStream
         };
 
-        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("deleteEnhancedData 1\0" + "432");
@@ -1479,7 +1479,7 @@ public class HistoryGraphTest extends IntegrationBase {
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
 
-        clientPair.appClient.send("createWidget 1\0{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
+        clientPair.appClient.createWidget(1, "{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
         EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
@@ -1492,7 +1492,7 @@ public class HistoryGraphTest extends IntegrationBase {
                 graphDataStream
         };
 
-        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
 
         clientPair.appClient.reset();
@@ -1557,7 +1557,7 @@ public class HistoryGraphTest extends IntegrationBase {
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
 
-        clientPair.appClient.send("createWidget 1\0{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
+        clientPair.appClient.createWidget(1, "{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
 
         clientPair.appClient.send("updateWidget 1\0" + "{\n" +
@@ -1643,7 +1643,7 @@ public class HistoryGraphTest extends IntegrationBase {
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
 
-        clientPair.appClient.send("createWidget 1\0{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
+        clientPair.appClient.createWidget(1, "{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         clientPair.appClient.reset();
@@ -1686,7 +1686,7 @@ public class HistoryGraphTest extends IntegrationBase {
         assertTrue(Files.exists(pinReportingDataPath4));
 
         //creating widget just to make user profile "updated"
-        clientPair.appClient.send("createWidget 1\0{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
+        clientPair.appClient.createWidget(1, "{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         cleaner.run();
@@ -1717,7 +1717,7 @@ public class HistoryGraphTest extends IntegrationBase {
                 graphDataStream3,
         };
 
-        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         String tempDir = holder.props.getProperty("data.folder");
@@ -1769,7 +1769,7 @@ public class HistoryGraphTest extends IntegrationBase {
         deviceTiles.width = 50;
         deviceTiles.height = 100;
 
-        clientPair.appClient.send("createWidget 1\0" + MAPPER.writeValueAsString(deviceTiles));
+        clientPair.appClient.createWidget(1, deviceTiles);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         int[] deviceIds = new int[] {0};
@@ -1846,7 +1846,7 @@ public class HistoryGraphTest extends IntegrationBase {
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
 
-        clientPair.appClient.send("createWidget 1\0{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"value\":0, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
+        clientPair.appClient.createWidget(1, "{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"value\":0, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         HistoryGraphUnusedPinDataCleanerWorker cleaner = new HistoryGraphUnusedPinDataCleanerWorker(holder.userDao, holder.reportingDao);
@@ -1867,7 +1867,7 @@ public class HistoryGraphTest extends IntegrationBase {
                 graphDataStream3,
         };
 
-        clientPair.appClient.send("createWidget 1" + "\0" + JsonParser.toJson(enhancedHistoryGraph));
+        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
 
         String tempDir = holder.props.getProperty("data.folder");

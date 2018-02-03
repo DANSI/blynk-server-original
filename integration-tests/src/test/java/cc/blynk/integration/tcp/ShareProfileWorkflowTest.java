@@ -461,7 +461,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
                 rule
         };
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
+        clientPair.appClient.createWidget(1, eventor);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("getShareToken 1");
