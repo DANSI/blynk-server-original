@@ -28,8 +28,8 @@ public class ReportingTruncateWorker implements Runnable {
     private static final Logger log = LogManager.getLogger(ReportingTruncateWorker.class);
 
     private final ReportingDao reportingDao;
-    //storing minute points only for 1 week
-    private final static int MAX_RECORD_COUNT = 24 * 60 * 7;
+    //storing minute points only for 30 days
+    private final static int MAX_RECORD_COUNT = 30 * 24 * 60;
 
     public ReportingTruncateWorker(ReportingDao reportingDao) {
         this.reportingDao = reportingDao;
