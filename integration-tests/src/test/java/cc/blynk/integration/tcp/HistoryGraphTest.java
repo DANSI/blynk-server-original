@@ -1962,33 +1962,33 @@ public class HistoryGraphTest extends IntegrationBase {
                 ReportingDao.generateFilename(1, 0, PinType.VIRTUAL.pintTypeChar, (byte) 7, GraphGranularityType.HOURLY.label));
 
         //write max amount of data for 1 week + 1 point
-        for (int i = 0; i < 7 * 24 * 60 + 1; i++) {
+        for (int i = 0; i < 30 * 24 * 60 + 1; i++) {
             FileUtils.write(pinReportingDataPath1, 1.11D, i);
             FileUtils.write(pinReportingDataPath3, 1.11D, i);
         }
 
-        assertEquals((7 * 24 * 60 + 1) * ReportingUtil.REPORTING_RECORD_SIZE, Files.size(pinReportingDataPath1));
+        assertEquals((30 * 24 * 60 + 1) * ReportingUtil.REPORTING_RECORD_SIZE, Files.size(pinReportingDataPath1));
         assertEquals(16, Files.size(pinReportingDataPath2));
-        assertEquals((7 * 24 * 60 + 1) * ReportingUtil.REPORTING_RECORD_SIZE, Files.size(pinReportingDataPath3));
+        assertEquals((30 * 24 * 60 + 1) * ReportingUtil.REPORTING_RECORD_SIZE, Files.size(pinReportingDataPath3));
         truncateWorker.run();
 
         //expecting truncated file here
-        assertEquals(7 * 24 * 60 * ReportingUtil.REPORTING_RECORD_SIZE, Files.size(pinReportingDataPath1));
+        assertEquals(30 * 24 * 60 * ReportingUtil.REPORTING_RECORD_SIZE, Files.size(pinReportingDataPath1));
         assertEquals(16, Files.size(pinReportingDataPath2));
-        assertEquals((7 * 24 * 60 + 1) * ReportingUtil.REPORTING_RECORD_SIZE, Files.size(pinReportingDataPath3));
+        assertEquals((30 * 24 * 60 + 1) * ReportingUtil.REPORTING_RECORD_SIZE, Files.size(pinReportingDataPath3));
 
         //check truncate is correct
-        ByteBuffer bb = FileUtils.read(pinReportingDataPath1, 7 * 24 * 60);
+        ByteBuffer bb = FileUtils.read(pinReportingDataPath1, 30 * 24 * 60);
         bb.flip();
 
-        for (int i = 1; i < 7 * 24 * 60 + 1; i++) {
+        for (int i = 1; i < 30 * 24 * 60 + 1; i++) {
             assertEquals(1.11D, bb.getDouble(), 0.001D);
             assertEquals(i, bb.getLong());
         }
 
-        bb = FileUtils.read(pinReportingDataPath3, 7 * 24 * 60 + 1);
+        bb = FileUtils.read(pinReportingDataPath3, 30 * 24 * 60 + 1);
         bb.flip();
-        for (int i = 0; i < 7 * 24 * 60 + 1; i++) {
+        for (int i = 0; i < 30 * 24 * 60 + 1; i++) {
             assertEquals(1.11D, bb.getDouble(), 0.001D);
             assertEquals(i, bb.getLong());
         }
