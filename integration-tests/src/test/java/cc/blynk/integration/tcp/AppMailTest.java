@@ -19,7 +19,6 @@ import static cc.blynk.server.core.protocol.enums.Response.QUOTA_LIMIT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.after;
-import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.startsWith;
@@ -59,7 +58,7 @@ public class AppMailTest extends IntegrationBase {
         TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
         appClient.start();
         appClient.login("dima@mail.ua", "1");
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        appClient.verifyResult(ok(1));
 
         appClient.send("email 1");
         verify(mailWrapper, timeout(1000)).sendText(eq(DEFAULT_TEST_USER), eq("Auth Token for My Dashboard project and device My Device"), startsWith("Auth Token : "));
@@ -70,7 +69,7 @@ public class AppMailTest extends IntegrationBase {
         TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
         appClient.start();
         appClient.login("dima@mail.ua", "1");
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        appClient.verifyResult(ok(1));
 
         appClient.send("email 1 0");
         verify(mailWrapper, timeout(1000)).sendText(eq(DEFAULT_TEST_USER), eq("Auth Token for My Dashboard project and device My Device"), startsWith("Auth Token : "));
@@ -81,7 +80,7 @@ public class AppMailTest extends IntegrationBase {
         TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
         appClient.start();
         appClient.login("dima@mail.ua", "1");
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("getDevices 1");
         String response = clientPair.appClient.getBody();
@@ -114,7 +113,7 @@ public class AppMailTest extends IntegrationBase {
         TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
         appClient.start();
         appClient.login("dima@mail.ua", "1");
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        appClient.verifyResult(ok(1));
 
         Device device1 = new Device(1, "My Device2", "ESP8266");
 

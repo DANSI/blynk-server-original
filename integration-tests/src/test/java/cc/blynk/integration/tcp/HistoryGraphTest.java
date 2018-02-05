@@ -184,7 +184,7 @@ public class HistoryGraphTest extends IntegrationBase {
         TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
         appClient.start();
         appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.18.0");
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        appClient.verifyResult(ok(1));
 
         String tempDir = holder.props.getProperty("data.folder");
 
@@ -208,7 +208,7 @@ public class HistoryGraphTest extends IntegrationBase {
         };
 
         appClient.createWidget(1, enhancedHistoryGraph);
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        appClient.verifyResult(ok(1));
         appClient.reset();
 
         Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);

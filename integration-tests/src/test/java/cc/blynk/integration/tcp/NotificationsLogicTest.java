@@ -67,13 +67,13 @@ public class NotificationsLogicTest extends IntegrationBase {
         appClient.start();
 
         appClient.register("test@test.com", "1");
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        appClient.verifyResult(ok(1));
 
         appClient.login("test@test.com", "1", "Android", "RC13");
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        appClient.verifyResult(ok(2));
 
         appClient.createDash("{\"id\":1, \"createdAt\":1, \"name\":\"test board\"}");
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+        appClient.verifyResult(ok(3));
 
         appClient.send("addPushToken 1\0uid\0token");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(notAllowed(4)));
@@ -134,10 +134,10 @@ public class NotificationsLogicTest extends IntegrationBase {
         appClient.start();
 
         appClient.login(DEFAULT_TEST_USER, "1", "iOS", "1.10.2");
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        appClient.verifyResult(ok(1));
 
         appClient.send("addPushToken 1\0uid2\0token2");
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        appClient.verifyResult(ok(2));
 
         appClient.reset();
 
@@ -163,7 +163,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.stop();
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(deviceOffline(0, "1-0")));
+        clientPair.appClient.verifyResult(deviceOffline(0, "1-0"));
     }
 
     @Test
@@ -203,7 +203,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
+        clientPair.appClient.verifyResult(createDevice(1, device));
 
         clientPair.appClient.send("getToken 1-1");
         String token = clientPair.appClient.getBody(2);
@@ -211,11 +211,11 @@ public class NotificationsLogicTest extends IntegrationBase {
         TestHardClient newHardClient = new TestHardClient("localhost", tcpHardPort);
         newHardClient.start();
         newHardClient.login(token);
-        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(hardwareConnected(1, "1-1")));
+        newHardClient.verifyResult(ok(1));
+        clientPair.appClient.verifyResult(hardwareConnected(1, "1-1"));
 
         newHardClient.stop();
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(deviceOffline(0, "1-1")));
+        clientPair.appClient.verifyResult(deviceOffline(0, "1-1"));
     }
 
     @Test
@@ -317,16 +317,16 @@ public class NotificationsLogicTest extends IntegrationBase {
         TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
         appClient.start();
         appClient.login("dima@mail.ua", "1", "Android", "1.10.4");
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        appClient.verifyResult(ok(1));
 
         TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
         hardClient.start();
 
         hardClient.login(token);
-        verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        hardClient.verifyResult(ok(1));
 
         appClient.send("addPushToken 1\0uid\0token");
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        appClient.verifyResult(ok(2));
 
         hardClient.stop().await();
 
@@ -353,10 +353,10 @@ public class NotificationsLogicTest extends IntegrationBase {
         TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
         appClient.start();
         appClient.login("dima@mail.ua", "1", "Android", "1.10.4");
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        appClient.verifyResult(ok(1));
 
         appClient.send("addPushToken 1\0uid2\0token2");
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        appClient.verifyResult(ok(2));
 
         clientPair.appClient.send("logout uid");
         clientPair.appClient.verifyResult(ok(3));
@@ -386,10 +386,10 @@ public class NotificationsLogicTest extends IntegrationBase {
         TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
         appClient.start();
         appClient.login("dima@mail.ua", "1", "Android", "1.10.4");
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        appClient.verifyResult(ok(1));
 
         appClient.send("addPushToken 1\0uid2\0token2");
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        appClient.verifyResult(ok(2));
 
         clientPair.appClient.send("logout");
         clientPair.appClient.verifyResult(ok(3));
@@ -419,10 +419,10 @@ public class NotificationsLogicTest extends IntegrationBase {
         appClient.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
         appClient.send("addPushToken 1\0uid2\0token2");
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        appClient.verifyResult(ok(2));
 
         appClient.send("logout uid2");
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+        appClient.verifyResult(ok(3));
 
         clientPair.hardwareClient.stop().await();
 
@@ -474,7 +474,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         TestHardClient newHardClient = new TestHardClient("localhost", tcpHardPort);
         newHardClient.start();
         newHardClient.login(token);
-        verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        newHardClient.verifyResult(ok(1));
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
         verify(gcmWrapper, after(1500).never()).send(objectArgumentCaptor.capture(), any(), any());
@@ -536,14 +536,14 @@ public class NotificationsLogicTest extends IntegrationBase {
         appClient.start();
 
         appClient.login(DEFAULT_TEST_USER, "1", "iOS", "1.10.2");
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        appClient.verifyResult(ok(1));
 
         clientPair.appClient.deleteWidget(1, 9);
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.stop();
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(deviceOffline(0, "1-0")));
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(deviceOffline(0, "1-0")));
+        clientPair.appClient.verifyResult(deviceOffline(0, "1-0"));
+        appClient.verifyResult(deviceOffline(0, "1-0"));
     }
 
 

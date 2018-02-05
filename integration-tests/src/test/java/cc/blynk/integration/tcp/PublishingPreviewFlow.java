@@ -22,8 +22,6 @@ import cc.blynk.server.core.model.widgets.outputs.TextAlignment;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileMode;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
-import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.db.model.FlashedToken;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.notifications.mail.QrHolder;
@@ -43,7 +41,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static cc.blynk.server.core.model.serialization.JsonParser.MAPPER;
-import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -192,7 +189,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         assertEquals(2, devices.length);
 
         clientPair.appClient.send("emailQr 1\0" + app.id);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         QrHolder[] qrHolders = makeQRs(devices, 1, true);
 
@@ -232,7 +229,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
 
 
         clientPair.appClient.send("emailQr 10\0" + app.id);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(4)));
+        clientPair.appClient.verifyResult(ok(4));
 
         QrHolder[] qrHolders = makeQRs(new Device[] {device}, 10, false);
         StringBuilder sb = new StringBuilder();
@@ -288,7 +285,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(2, device.toString())));
+        clientPair.appClient.verifyResult(createDevice(2, device));
 
         clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"AppPreview\",\"icon\":\"myIcon\",\"projectIds\":[10]}");
         App app = JsonParser.parseApp(clientPair.appClient.getBody(3), 0);
@@ -331,7 +328,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
 
 
         clientPair.appClient.send("emailQr 10\0" + app.id);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(9)));
+        clientPair.appClient.verifyResult(ok(9));
 
         QrHolder[] qrHolders = makeQRs(new Device[] {device}, 10, false);
         StringBuilder sb = new StringBuilder();
@@ -342,10 +339,10 @@ public class PublishingPreviewFlow extends IntegrationBase {
         appClient2.start();
 
         appClient2.register("test@blynk.cc", "a", app.id);
-        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
+        appClient2.verifyResult(ok(1));
 
         appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
-        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
+        appClient2.verifyResult(ok(2));
 
         appClient2.send("loadProfileGzipped");
         Profile profile = parseProfile(appClient2.getBody(3));
@@ -361,11 +358,11 @@ public class PublishingPreviewFlow extends IntegrationBase {
                 TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null);
         appClient2.send("updateTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
-        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
+        appClient2.verifyResult(ok(4));
 
 
         clientPair.appClient.send("updateFace 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(10)));
+        clientPair.appClient.verifyResult(ok(10));
 
         appClient2.send("loadProfileGzipped");
         profile = parseProfile(appClient2.getBody(5));
@@ -407,7 +404,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(2, device.toString())));
+        clientPair.appClient.verifyResult(createDevice(2, device));
 
         clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"AppPreview\",\"icon\":\"myIcon\",\"projectIds\":[10]}");
         App app = JsonParser.parseApp(clientPair.appClient.getBody(3), 0);
@@ -416,7 +413,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
 
 
         clientPair.appClient.send("emailQr 10\0" + app.id);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(4)));
+        clientPair.appClient.verifyResult(ok(4));
 
         QrHolder[] qrHolders = makeQRs(new Device[] {device}, 10, false);
         StringBuilder sb = new StringBuilder();
@@ -427,10 +424,10 @@ public class PublishingPreviewFlow extends IntegrationBase {
         appClient2.start();
 
         appClient2.register("test@blynk.cc", "a", app.id);
-        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
+        appClient2.verifyResult(ok(1));
 
         appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
-        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
+        appClient2.verifyResult(ok(2));
 
         appClient2.send("loadProfileGzipped");
         profile = parseProfile(appClient2.getBody(3));
@@ -484,7 +481,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         assertEquals(1, devices.length);
 
         clientPair.appClient.send("emailQr 1\0" + app.id);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         QrHolder[] qrHolders = makeQRs(devices, 1, false);
 
@@ -518,7 +515,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         assertEquals(1, dashBoard.id);
 
         clientPair.appClient.send("loadProfileGzipped 2");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(7, ILLEGAL_COMMAND)));
+        clientPair.appClient.verifyResult(illegalCommand(7));
     }
 
     @Test
@@ -536,7 +533,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         assertEquals(1, devices.length);
 
         clientPair.appClient.send("emailQr 1\0" + app.id);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         QrHolder[] qrHolders = makeQRs(devices, 1, false);
 
@@ -586,10 +583,10 @@ public class PublishingPreviewFlow extends IntegrationBase {
         appClient2.start();
 
         appClient2.register("test@blynk.cc", "a", app.id);
-        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
+        appClient2.verifyResult(ok(1));
 
         appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
-        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
+        appClient2.verifyResult(ok(2));
 
         appClient2.send("loadProfileGzipped 1");
         DashBoard dashBoard = JsonParser.parseDashboard(appClient2.getBody(3), 0);
@@ -603,11 +600,11 @@ public class PublishingPreviewFlow extends IntegrationBase {
         hardClient1.start();
 
         hardClient1.login(device.token);
-        verify(hardClient1.responseMock, timeout(2000)).channelRead(any(), eq(ok(1)));
-        verify(appClient2.responseMock, timeout(2000)).channelRead(any(), eq(hardwareConnected(1, "1-0")));
+        hardClient1.verifyResult(ok(1));
+        appClient2.verifyResult(hardwareConnected(1, "1-0"));
 
         hardClient1.send("hardware vw 1 100");
-        verify(appClient2.responseMock, timeout(2000)).channelRead(any(), eq(new HardwareMessage(2, b("1-0 vw 1 100"))));
+        appClient2.verifyResult(hardware(2, "1-0 vw 1 100"));
     }
 
     @Test
@@ -620,10 +617,8 @@ public class PublishingPreviewFlow extends IntegrationBase {
         clientPair.hardwareClient.send("hardware dw 1 abc");
         clientPair.hardwareClient.send("hardware vw 77 123");
 
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(),
-                eq(new HardwareMessage(1, b("1-0 dw 1 abc"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(),
-                eq(new HardwareMessage(2, b("1-0 vw 77 123"))));
+        clientPair.appClient.verifyResult(hardware(1, "1-0 dw 1 abc"));
+        clientPair.appClient.verifyResult(hardware(2, "1-0 vw 77 123"));
 
         clientPair.appClient.send("loadProfileGzipped 1");
         DashBoard dashBoard = JsonParser.parseDashboard(clientPair.appClient.getBody(4), 0);
@@ -643,7 +638,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         assertEquals(1, devices.length);
 
         clientPair.appClient.send("emailQr 1\0" + app.id);
-        verify(clientPair.appClient.responseMock, timeout(1500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         QrHolder[] qrHolders = makeQRs(devices, 1, false);
 
@@ -651,10 +646,10 @@ public class PublishingPreviewFlow extends IntegrationBase {
         appClient2.start();
 
         appClient2.register("test@blynk.cc", "a", app.id);
-        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
+        appClient2.verifyResult(ok(1));
 
         appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
-        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
+        appClient2.verifyResult(ok(2));
 
         appClient2.send("loadProfileGzipped " + qrHolders[0].token + "\0" + 1 + "\0" + DEFAULT_TEST_USER + "\0" + AppNameUtil.BLYNK);
         dashBoard = JsonParser.parseDashboard(appClient2.getBody(3), 0);
@@ -677,11 +672,11 @@ public class PublishingPreviewFlow extends IntegrationBase {
         hardClient1.start();
 
         hardClient1.login(token);
-        verify(hardClient1.responseMock, timeout(2000)).channelRead(any(), eq(ok(1)));
-        verify(appClient2.responseMock, timeout(2000)).channelRead(any(), eq(hardwareConnected(1, "1-0")));
+        hardClient1.verifyResult(ok(1));
+        appClient2.verifyResult(hardwareConnected(1, "1-0"));
 
         hardClient1.send("hardware vw 1 100");
-        verify(appClient2.responseMock, timeout(2000)).channelRead(any(), eq(new HardwareMessage(2, b("1-0 vw 1 100"))));
+        appClient2.verifyResult(hardware(2, "1-0 vw 1 100"));
     }
 
     private QrHolder[] makeQRs(Device[] devices, int dashId, boolean onlyFirst) throws Exception {

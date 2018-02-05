@@ -391,13 +391,13 @@ public class BridgeWorkflowTest extends IntegrationBase {
         appClient.start();
 
         appClient.register("test@test.com", "1");
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        appClient.verifyResult(ok(1));
 
         appClient.login("test@test.com", "1", "Android", "RC13");
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        appClient.verifyResult(ok(2));
 
         appClient.createDash("{\"id\":1, \"createdAt\":1, \"name\":\"test board\"}");
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+        appClient.verifyResult(ok(3));
 
         appClient.reset();
 

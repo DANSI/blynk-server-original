@@ -325,10 +325,10 @@ public class HttpsAdminServerTest extends BaseTest {
         TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
         appClient.start();
         appClient.login(DEFAULT_TEST_USER, "1","iOS", "1.10.2");
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        appClient.verifyResult(ok(1));
 
         appClient.activate(1);
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        appClient.verifyResult(ok(2));
 
         clientPair.hardwareClient.send("hardware vw 1 112");
         verify(appClient.responseMock, after(500).never()).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 112"))));

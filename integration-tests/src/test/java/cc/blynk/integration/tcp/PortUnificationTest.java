@@ -52,8 +52,8 @@ public class PortUnificationTest extends IntegrationBase {
 
         appClient.register(DEFAULT_TEST_USER, "1");
         appClient.login(DEFAULT_TEST_USER, "1", "Android", "1.10.4");
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        appClient.verifyResult(ok(1));
+        appClient.verifyResult(ok(2));
     }
 
     @Test
@@ -69,9 +69,9 @@ public class PortUnificationTest extends IntegrationBase {
         Device device1 = new Device(1, "My Device", "ESP8266");
         appClient.createDevice(1, device1);
 
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+        appClient.verifyResult(ok(1));
+        appClient.verifyResult(ok(2));
+        appClient.verifyResult(ok(3));
 
         String createdDevice = appClient.getBody(4);
         Device device = JsonParser.parseDevice(createdDevice, 0);

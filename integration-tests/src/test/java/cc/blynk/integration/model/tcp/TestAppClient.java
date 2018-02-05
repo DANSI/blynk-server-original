@@ -54,6 +54,14 @@ public class TestAppClient extends BaseTestAppClient {
         this.nioEventLoopGroup = nioEventLoopGroup;
     }
 
+    public Device getDevice() throws Exception {
+        return getDevice(1);
+    }
+
+    public Device getDevice(int expectedMessageOrder) throws Exception {
+        return JsonParser.parseDevice(getBody(expectedMessageOrder), 0);
+    }
+
     public String getBody() throws Exception {
         return getBody(1);
     }

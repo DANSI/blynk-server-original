@@ -18,7 +18,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
@@ -108,7 +107,7 @@ public class BlynkInternalTest extends IntegrationBase {
         appClient.start();
 
         appClient.login(DEFAULT_TEST_USER, "1", "Android", "1.13.3");
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.verifyResult(internal(7777, "acon"));
     }
