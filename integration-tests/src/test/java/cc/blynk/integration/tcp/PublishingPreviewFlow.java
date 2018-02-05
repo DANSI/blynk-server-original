@@ -307,7 +307,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         clientPair.appClient.verifyResult(ok(4));
 
         TileTemplate tileTemplate = new TileTemplate(1, null, null, "123",
-                TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null);
+                TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null, null);
 
         clientPair.appClient.send("createTemplate " + b("10 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
@@ -320,7 +320,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         clientPair.appClient.verifyResult(ok(7));
 
         tileTemplate = new TileTemplate(1, null, null, "123",
-                TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null);
+                TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null, null);
 
         clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
@@ -355,7 +355,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         assertTrue(dashBoard.widgets[0] instanceof DeviceTiles);
 
         tileTemplate = new TileTemplate(1, null, new int[] {0}, "123",
-                TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null);
+                TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null, null);
         appClient2.send("updateTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
         appClient2.verifyResult(ok(4));
@@ -665,7 +665,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         assertNull(device.token);
 
         appClient2.reset();
-        appClient2.send("getToken 1-" + device.id);
+        appClient2.getToken(1, device.id);
         String token = appClient2.getBody();
 
         TestHardClient hardClient1 = new TestHardClient("localhost", tcpHardPort);

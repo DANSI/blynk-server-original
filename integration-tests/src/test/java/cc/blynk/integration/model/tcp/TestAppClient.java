@@ -9,10 +9,10 @@ import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.protocol.handlers.encoders.AppMessageEncoder;
+import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.stats.GlobalStats;
-import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.properties.ServerProperties;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -28,6 +28,7 @@ import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_CLONE_C
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
+import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
@@ -64,6 +65,12 @@ public class TestAppClient extends BaseTestAppClient {
 
     public String getBody() throws Exception {
         return getBody(1);
+    }
+
+    public BinaryMessage getBinaryBody() throws Exception {
+        ArgumentCaptor<BinaryMessage> objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
+        verify(responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
+        return objectArgumentCaptor.getValue();
     }
 
     public String getBody(int expectedMessageOrder) throws Exception {
@@ -190,7 +197,15 @@ public class TestAppClient extends BaseTestAppClient {
     }
 
     public void sync(int dashId, int deviceId) {
-        send("appsync " + dashId + StringUtils.DEVICE_SEPARATOR + deviceId);
+        send("appsync " + dashId + DEVICE_SEPARATOR + deviceId);
+    }
+
+    public void getToken(int dashId, int deviceId) {
+        send("getToken " + dashId + DEVICE_SEPARATOR + deviceId);
+    }
+
+    public void getToken(int dashId) {
+        send("getToken " + dashId);
     }
 
     public void send(String line) {

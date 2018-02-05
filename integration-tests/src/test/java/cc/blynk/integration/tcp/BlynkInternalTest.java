@@ -73,7 +73,7 @@ public class BlynkInternalTest extends IntegrationBase {
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token2 = clientPair.appClient.getBody();
         hardClient2.login(token2);
         hardClient2.verifyResult(ok(1));

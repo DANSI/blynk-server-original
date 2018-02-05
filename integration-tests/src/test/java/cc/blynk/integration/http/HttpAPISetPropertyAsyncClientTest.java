@@ -78,7 +78,7 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
 
     @Test
     public void testChangeLabelPropertyViaGet() throws Exception {
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
         Future<Response> f = httpclient.prepareGet(httpsServerUrl + token + "/update/v4?label=My-New-Label").execute();
@@ -97,7 +97,7 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
 
     @Test
     public void testChangeColorPropertyViaGet() throws Exception {
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
         Future<Response> f = httpclient.prepareGet(httpsServerUrl + token + "/update/v4?color=%23000000").execute();
@@ -116,7 +116,7 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
 
     @Test
     public void testChangeOnLabelPropertyViaGet() throws Exception {
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
         clientPair.appClient.reset();
         clientPair.appClient.updateWidget(1, "{\"id\":1, \"width\":1, \"height\":1,  \"x\":1, \"y\":1, \"label\":\"Some Text\", \"type\":\"BUTTON\",         \"pinType\":\"VIRTUAL\", \"pin\":1, \"value\":\"1\"}");
@@ -139,7 +139,7 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
 
     @Test
     public void testChangeOffLabelPropertyViaGet() throws Exception {
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
         clientPair.appClient.reset();
         clientPair.appClient.updateWidget(1, "{\"id\":1, \"width\":1, \"height\":1, \"x\":1, \"y\":1, \"label\":\"Some Text\", \"type\":\"BUTTON\",         \"pinType\":\"VIRTUAL\", \"pin\":1, \"value\":\"1\"}");

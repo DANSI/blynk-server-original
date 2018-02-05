@@ -85,7 +85,7 @@ public class WebSocketTest extends IntegrationBase {
     public void testSyncBetweenWebSocketsAndAppWorks() throws Exception {
         clientPair.appClient.reset();
         clientPair.hardwareClient.reset();
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
         WebSocketClient webSocketClient = new WebSocketClient("localhost", tcpWebSocketPort, HardwareAndHttpAPIServer.WEBSOCKET_PATH, false);

@@ -175,7 +175,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
         TestHardClient newHardClient = new TestHardClient("localhost", tcpHardPort);
@@ -205,7 +205,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
 
-        clientPair.appClient.send("getToken 1-1");
+        clientPair.appClient.getToken(1, 1);
         String token = clientPair.appClient.getBody(2);
 
         TestHardClient newHardClient = new TestHardClient("localhost", tcpHardPort);
@@ -304,7 +304,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         clientPair.appClient.updateDash(profile.getDashById(1));
         clientPair.appClient.verifyResult(ok(1));
 
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody(2);
 
         clientPair.appClient.send("logout");
@@ -347,7 +347,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         clientPair.appClient.updateDash(profile.getDashById(1));
         clientPair.appClient.verifyResult(ok(1));
 
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody(2);
 
         TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
@@ -380,7 +380,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         clientPair.appClient.updateDash(profile.getDashById(1));
         clientPair.appClient.verifyResult(ok(1));
 
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody(2);
 
         TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
@@ -468,7 +468,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         channelFuture.await();
 
 
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody(2);
 
         TestHardClient newHardClient = new TestHardClient("localhost", tcpHardPort);

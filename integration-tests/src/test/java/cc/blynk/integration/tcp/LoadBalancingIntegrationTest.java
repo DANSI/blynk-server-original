@@ -336,7 +336,7 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
         appClient.verifyResult(new ResponseMessage(4, DEVICE_NOT_IN_NETWORK));
 
         appClient.reset();
-        appClient.send("getToken 1");
+        appClient.getToken(1);
 
         String token = appClient.getBody();
         assertNotNull(token);

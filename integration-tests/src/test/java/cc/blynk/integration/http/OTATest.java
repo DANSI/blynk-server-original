@@ -112,7 +112,7 @@ public class OTATest extends BaseTest {
 
     @Test
     public void testInitiateOTA() throws Exception {
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
         HttpGet request = new HttpGet(httpsAdminServerUrl + "/ota/start?token=" + token);
@@ -128,7 +128,7 @@ public class OTATest extends BaseTest {
 
     @Test
     public void testInitiateOTAWithFileName() throws Exception {
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
         HttpGet request = new HttpGet(httpsAdminServerUrl + "/ota/start?fileName=test.bin" + "&token=" + token);
@@ -153,7 +153,7 @@ public class OTATest extends BaseTest {
 
     @Test
     public void testImprovedUploadMethod() throws Exception {
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
         HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start?token=" + token);
@@ -194,7 +194,7 @@ public class OTATest extends BaseTest {
 
     @Test
     public void testOTAFailedWhenNoDevice() throws Exception {
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
         clientPair.hardwareClient.stop();
@@ -277,7 +277,7 @@ public class OTATest extends BaseTest {
 
     @Test
     public void testImprovedUploadMethodAndCheckOTAStatusForDeviceThatNeverWasOnline() throws Exception {
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
         HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start?token=" + token);
@@ -332,7 +332,7 @@ public class OTATest extends BaseTest {
         clientPair.hardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
         clientPair.hardwareClient.verifyResult(ok(1));
 
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
         HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start?token=" + token);
@@ -588,7 +588,7 @@ public class OTATest extends BaseTest {
         String responseUrl = "http://127.0.0.1:18080" + path;
         verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
 
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
         TestHardClient newHardwareClient = new TestHardClient("localhost", tcpHardPort);
@@ -632,7 +632,7 @@ public class OTATest extends BaseTest {
         String responseUrl = "http://127.0.0.1:18080" + path;
         verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
 
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
         TestHardClient newHardwareClient = new TestHardClient("localhost", tcpHardPort);
@@ -676,7 +676,7 @@ public class OTATest extends BaseTest {
         String responseUrl = "http://127.0.0.1:18080" + path;
         verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
 
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
         TestHardClient newHardwareClient = new TestHardClient("localhost", tcpHardPort);

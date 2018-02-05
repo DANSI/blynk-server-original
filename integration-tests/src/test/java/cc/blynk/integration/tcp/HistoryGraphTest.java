@@ -110,9 +110,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
         clientPair.appClient.send("getgraphdata 1 d 8 24 h");
 
-        ArgumentCaptor<BinaryMessage> objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
-        BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
+        BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
         byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
@@ -1788,7 +1786,8 @@ public class HistoryGraphTest extends IntegrationBase {
                 new Widget[] {
                         enhancedHistoryGraph
                 },
-                deviceIds, "123", TileMode.PAGE, "ESP8266", new DataStream((byte) 1, PinType.VIRTUAL), null, null, 0, TextAlignment.LEFT, false, false, null);
+                deviceIds, "123", TileMode.PAGE, "ESP8266", new DataStream((byte) 1, PinType.VIRTUAL),
+                null, null, 0, TextAlignment.LEFT, false, false, null, null);
 
         clientPair.appClient.send("createTemplate " + b("1 " + deviceTiles.id + " ")
                 + MAPPER.writeValueAsString(tileTemplate));

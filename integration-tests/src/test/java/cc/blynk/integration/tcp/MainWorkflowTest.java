@@ -520,16 +520,16 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.createDash("{\"id\":10, \"name\":\"test board\"}");
         clientPair.appClient.verifyResult(ok(1));
 
-        clientPair.appClient.send("getToken 10");
+        clientPair.appClient.getToken(10);
         String token = clientPair.appClient.getBody(2);
         assertNotNull(token);
 
-        clientPair.appClient.send("getToken 10-0");
+        clientPair.appClient.getToken(10, 0);
         String token2 = clientPair.appClient.getBody(3);
         assertNotNull(token2);
         assertEquals(token, token2);
 
-        clientPair.appClient.send("getToken " + b("10 0"));
+        clientPair.appClient.getToken(10, 0);
         token2 = clientPair.appClient.getBody(4);
         assertNotNull(token2);
         assertEquals(token, token2);
@@ -537,7 +537,7 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.createDash("{\"id\":11, \"name\":\"test board\"}");
         clientPair.appClient.verifyResult(ok(5));
 
-        clientPair.appClient.send("getToken " + b("11 0"));
+        clientPair.appClient.getToken(11, 0);
         token2 = clientPair.appClient.getBody(6);
         assertNotNull(token2);
         assertNotEquals(token, token2);
@@ -549,7 +549,7 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("getToken 10");
+        clientPair.appClient.getToken(10);
         String token = clientPair.appClient.getBody();
         assertNotNull(token);
 
@@ -699,7 +699,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.reset();
 
-        clientPair.appClient.send("getToken 2");
+        clientPair.appClient.getToken(2);
         String token2 = clientPair.appClient.getBody();
         hardClient2.login(token2);
         hardClient2.verifyResult(ok(1));
@@ -1054,7 +1054,7 @@ public class MainWorkflowTest extends IntegrationBase {
     public void testClosedConnectionWhenNotLogged() throws Exception {
         TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
         appClient2.start();
-        appClient2.send("getToken 1");
+        appClient2.getToken(1);
         verify(appClient2.responseMock, after(600).never()).channelRead(any(), any());
         assertTrue(appClient2.isClosed());
 
@@ -1124,7 +1124,7 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
         clientPair.appClient.reset();
 
-        clientPair.appClient.send("getToken 2");
+        clientPair.appClient.getToken(2);
 
         //getting token for second GetTokenMessage
         String token = clientPair.appClient.getBody();

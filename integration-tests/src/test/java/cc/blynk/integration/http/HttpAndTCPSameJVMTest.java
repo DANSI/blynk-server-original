@@ -115,7 +115,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
 
         reset(clientPair.appClient.responseMock);
 
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
         HttpGet request = new HttpGet(httpServerUrl + token + "/pin/v10");
@@ -145,7 +145,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
 
         reset(clientPair.appClient.responseMock);
 
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
         HttpGet request = new HttpGet(httpServerUrl + token + "/pin/v4");
@@ -180,7 +180,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
 
         reset(clientPair.appClient.responseMock);
 
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
         HttpGet request = new HttpGet(httpServerUrl + token + "/rtc");
@@ -203,7 +203,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
 
         reset(clientPair.appClient.responseMock);
 
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
         HttpPut request = new HttpPut(httpServerUrl + token + "/pin/v100");
@@ -247,7 +247,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
 
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
         HttpGet requestGET = new HttpGet(httpServerUrl + token + "/pin/v4");
@@ -290,7 +290,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7777, HARDWARE, b("1-0 vw 4 0"))));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
         HttpGet requestGET = new HttpGet(httpServerUrl + token + "/pin/v4");
@@ -311,7 +311,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
         HttpGet requestGET = new HttpGet(httpServerUrl + token + "/pin/d18");
@@ -336,7 +336,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
 
     @Test
     public void testChangePinValueViaHttpAPI() throws Exception {
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
         HttpPut request = new HttpPut(httpServerUrl + token + "/pin/v4");
@@ -362,7 +362,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
 
     @Test
     public void testIsHardwareAndAppConnected() throws Exception {
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
         HttpGet request = new HttpGet(httpServerUrl + token + "/isHardwareConnected");
@@ -386,7 +386,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
 
     @Test
     public void testIsHardwareAndAppDisconnected() throws Exception {
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
         clientPair.stop();
@@ -414,7 +414,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
 
     @Test
     public void testIsHardwareConnecteedWithMultiDevices() throws Exception {
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
         HttpGet request = new HttpGet(httpServerUrl + token + "/isHardwareConnected");
@@ -491,7 +491,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
 
     @Test
     public void testChangePinValueViaHttpAPIAndNoActiveProject() throws Exception {
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
         clientPair.appClient.reset();
 
@@ -514,7 +514,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
 
     @Test
     public void testChangeLCDPinValueViaHttpAPIAndValueChanged() throws Exception {
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
         HttpPut request = new HttpPut(httpServerUrl + token + "/pin/v0");
@@ -540,7 +540,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
 
     @Test
     public void testChangePinValueViaHttpAPIAndNoWidgetSinglePinValue() throws Exception {
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
         HttpPut request = new HttpPut(httpServerUrl + token + "/pin/v31");
@@ -556,7 +556,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
 
     @Test
     public void testChangePinValueViaHttpAPIAndForTerminal() throws Exception {
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
         clientPair.appClient.createWidget(1, "{\"id\":222, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"TERMINAL\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
@@ -575,7 +575,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
 
     @Test
     public void testChangePinValueViaHttpAPIAndNoWidgetMultiPinValue() throws Exception {
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
         HttpPut request = new HttpPut(httpServerUrl + token + "/pin/v31");
@@ -601,7 +601,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, table);
         clientPair.appClient.verifyResult(ok(1));
 
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody(2);
         HttpGet updateTableRow = new HttpGet(httpServerUrl + token + "/update/v123?value=add&value=2&value=Martes&value=120Kwh");
         try (CloseableHttpResponse response = httpclient.execute(updateTableRow)) {
@@ -611,7 +611,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
 
     @Test
     public void sendMultiValueToAppViaHttpApi() throws Exception {
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
         HttpGet updateTableRow = new HttpGet(httpServerUrl + token + "/update/V1?value=110&value=230&value=330");
@@ -636,7 +636,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, rgb);
         clientPair.appClient.verifyResult(ok(1));
 
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody(2);
 
         HttpGet updateTableRow = new HttpGet(httpServerUrl + token + "/update/V101?value=110&value=230&value=330");
@@ -663,7 +663,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, rgb);
         clientPair.appClient.verifyResult(ok(1));
 
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody(2);
 
         HttpGet updateTableRow = new HttpGet(httpServerUrl + token + "/update/V101?value=110&value=230&value=330");
@@ -709,7 +709,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, valueDisplay2);
         clientPair.appClient.verifyResult(ok(3));
 
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody(4);
 
         clientPair.hardwareClient.send("hardware vw 44 123");
@@ -748,7 +748,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, valueDisplay);
         clientPair.appClient.verifyResult(ok(2));
 
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody(3);
 
         clientPair.hardwareClient.send("hardware vw 44 123");

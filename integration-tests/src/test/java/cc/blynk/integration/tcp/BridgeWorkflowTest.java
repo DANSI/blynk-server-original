@@ -11,26 +11,18 @@ import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
-import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.utils.TokenGeneratorUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.List;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_CONNECTED;
 import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -179,13 +171,8 @@ public class BridgeWorkflowTest extends IntegrationBase {
 
     @Test
     public void testCorrectWorkflow2HardsDifferentToken() throws Exception {
-        clientPair.appClient.send("getToken 2");
-
-        ArgumentCaptor<Object> objectArgumentCaptor = ArgumentCaptor.forClass(Object.class);
-        verify(clientPair.appClient.responseMock, timeout(2000).times(1)).channelRead(any(), objectArgumentCaptor.capture());
-
-        List<Object> arguments = objectArgumentCaptor.getAllValues();
-        String token2 = ((StringMessage) arguments.get(0)).body;
+        clientPair.appClient.getToken(2);
+        String token = clientPair.appClient.getBody();
 
         clientPair.appClient.activate(2);
         clientPair.appClient.verifyResult(new ResponseMessage(2, DEVICE_NOT_IN_NETWORK));
@@ -194,11 +181,11 @@ public class BridgeWorkflowTest extends IntegrationBase {
         //creating 1 new hard client
         TestHardClient hardClient1 = new TestHardClient("localhost", tcpHardPort);
         hardClient1.start();
-        hardClient1.login(token2);
+        hardClient1.login(token);
         hardClient1.verifyResult(ok(1));
         hardClient1.reset();
 
-        clientPair.hardwareClient.send("bridge 1 i " + token2);
+        clientPair.hardwareClient.send("bridge 1 i " + token);
         clientPair.hardwareClient.verifyResult(ok(1));
         clientPair.hardwareClient.send("bridge 1 aw 11 11");
         hardClient1.verifyResult(bridge(2, "aw 11 11"));
@@ -208,30 +195,25 @@ public class BridgeWorkflowTest extends IntegrationBase {
 
     @Test
     public void testCorrectWorkflow3HardsDifferentToken() throws Exception {
-        clientPair.appClient.send("getToken 2");
-
-        ArgumentCaptor<Object> objectArgumentCaptor = ArgumentCaptor.forClass(Object.class);
-        verify(clientPair.appClient.responseMock, timeout(2000).times(1)).channelRead(any(), objectArgumentCaptor.capture());
-
-        List<Object> arguments = objectArgumentCaptor.getAllValues();
-        String token2 = ((StringMessage) arguments.get(0)).body;
+        clientPair.appClient.getToken(2);
+        String token = clientPair.appClient.getBody();
         clientPair.appClient.reset();
 
         //creating 2 new hard clients
         TestHardClient hardClient1 = new TestHardClient("localhost", tcpHardPort);
         hardClient1.start();
-        hardClient1.login(token2);
+        hardClient1.login(token);
         hardClient1.verifyResult(ok(1));
         hardClient1.reset();
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
-        hardClient2.login(token2);
+        hardClient2.login(token);
         hardClient2.verifyResult(ok(1));
         hardClient2.reset();
 
 
-        clientPair.hardwareClient.send("bridge 1 i " + token2);
+        clientPair.hardwareClient.send("bridge 1 i " + token);
         clientPair.hardwareClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("bridge 1 aw 11 11");
@@ -244,15 +226,11 @@ public class BridgeWorkflowTest extends IntegrationBase {
 
     @Test
     public void testCorrectWorkflow4HardsDifferentToken() throws Exception {
-        clientPair.appClient.send("getToken 2");
-        clientPair.appClient.send("getToken 3");
+        clientPair.appClient.getToken(2);
+        String token2 = clientPair.appClient.getBody(1);
 
-        ArgumentCaptor<Object> objectArgumentCaptor = ArgumentCaptor.forClass(Object.class);
-        verify(clientPair.appClient.responseMock, timeout(2000).times(2)).channelRead(any(), objectArgumentCaptor.capture());
-
-        List<Object> arguments = objectArgumentCaptor.getAllValues();
-        String token2 = ((StringMessage) arguments.get(0)).body;
-        String token3 = ((StringMessage) arguments.get(1)).body;
+        clientPair.appClient.getToken(3);
+        String token3 = clientPair.appClient.getBody(2);
 
         //creating 2 new hard clients
         TestHardClient hardClient1 = new TestHardClient("localhost", tcpHardPort);
@@ -270,7 +248,7 @@ public class BridgeWorkflowTest extends IntegrationBase {
         TestHardClient hardClient3 = new TestHardClient("localhost", tcpHardPort);
         hardClient3.start();
         hardClient3.login(token3);
-        verify(hardClient3.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
+        hardClient3.verifyResult(ok(1));
         hardClient3.reset();
 
 
@@ -290,30 +268,25 @@ public class BridgeWorkflowTest extends IntegrationBase {
 
     @Test
     public void testCorrectWorkflow3HardsDifferentTokenAndSync() throws Exception {
-        clientPair.appClient.send("getToken 2");
-
-        ArgumentCaptor<Object> objectArgumentCaptor = ArgumentCaptor.forClass(Object.class);
-        verify(clientPair.appClient.responseMock, timeout(2000).times(1)).channelRead(any(), objectArgumentCaptor.capture());
-
-        List<Object> arguments = objectArgumentCaptor.getAllValues();
-        String token2 = ((StringMessage) arguments.get(0)).body;
+        clientPair.appClient.getToken(2);
+        String token = clientPair.appClient.getBody();
         clientPair.appClient.reset();
 
         //creating 2 new hard clients
         TestHardClient hardClient1 = new TestHardClient("localhost", tcpHardPort);
         hardClient1.start();
-        hardClient1.login(token2);
+        hardClient1.login(token);
         hardClient1.verifyResult(ok(1));
         hardClient1.reset();
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
-        hardClient2.login(token2);
+        hardClient2.login(token);
         hardClient2.verifyResult(ok(1));
         hardClient2.reset();
 
 
-        clientPair.hardwareClient.send("bridge 1 i " + token2);
+        clientPair.hardwareClient.send("bridge 1 i " + token);
         clientPair.hardwareClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("bridge 1 aw 11 11");
@@ -331,15 +304,11 @@ public class BridgeWorkflowTest extends IntegrationBase {
 
     @Test
     public void testCorrectWorkflow4HardsDifferentTokenAndSync() throws Exception {
-        clientPair.appClient.send("getToken 2");
-        clientPair.appClient.send("getToken 3");
+        clientPair.appClient.getToken(2);
+        String token2 = clientPair.appClient.getBody(1);
 
-        ArgumentCaptor<Object> objectArgumentCaptor = ArgumentCaptor.forClass(Object.class);
-        verify(clientPair.appClient.responseMock, timeout(2000).times(2)).channelRead(any(), objectArgumentCaptor.capture());
-
-        List<Object> arguments = objectArgumentCaptor.getAllValues();
-        String token2 = ((StringMessage) arguments.get(0)).body;
-        String token3 = ((StringMessage) arguments.get(1)).body;
+        clientPair.appClient.getToken(3);
+        String token3 = clientPair.appClient.getBody(2);
 
         //creating 2 new hard clients
         TestHardClient hardClient1 = new TestHardClient("localhost", tcpHardPort);
@@ -357,7 +326,7 @@ public class BridgeWorkflowTest extends IntegrationBase {
         TestHardClient hardClient3 = new TestHardClient("localhost", tcpHardPort);
         hardClient3.start();
         hardClient3.login(token3);
-        verify(hardClient3.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
+        hardClient3.verifyResult(ok(1));
         hardClient3.reset();
 
 

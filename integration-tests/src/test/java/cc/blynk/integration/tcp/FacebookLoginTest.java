@@ -18,10 +18,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -122,14 +119,9 @@ public class FacebookLoginTest extends IntegrationBase {
 
         saveProfile(appClient, profile.dashBoards);
 
-        appClient.activate( dashId);
-        appClient.send("getToken " + dashId);
-
-        ArgumentCaptor<Object> objectArgumentCaptor = ArgumentCaptor.forClass(Object.class);
-        verify(appClient.responseMock, timeout(2000).times(4 + profile.dashBoards.length + expectedSyncCommandsCount)).channelRead(any(), objectArgumentCaptor.capture());
-
-        List<Object> arguments = objectArgumentCaptor.getAllValues();
-        String token = getGetTokenMessage(arguments).body;
+        appClient.activate(dashId);
+        appClient.getToken(dashId);
+        String token = appClient.getBody(4 + profile.dashBoards.length + expectedSyncCommandsCount);
 
         hardClient.login(token);
         verify(hardClient.responseMock, timeout(2000)).channelRead(any(), eq(ok(1)));

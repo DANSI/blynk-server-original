@@ -515,7 +515,7 @@ public class EventorTest extends IntegrationBase {
         TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
         hardClient.start();
 
-        clientPair.appClient.send("getToken 1");
+        clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
         hardClient.login(token);
         verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
