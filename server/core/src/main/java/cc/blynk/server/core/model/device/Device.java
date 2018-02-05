@@ -32,6 +32,8 @@ public class Device implements Target {
 
     public volatile DeviceOtaInfo deviceOtaInfo;
 
+    public volatile String iconName;
+
     public boolean isNotValid() {
         return boardType == null || boardType.isEmpty() || boardType.length() > 50
                 || (name != null && name.length() > 50);
@@ -70,6 +72,7 @@ public class Device implements Target {
         this.name = newDevice.name;
         this.boardType = newDevice.boardType;
         this.connectionType = newDevice.connectionType;
+        this.iconName = newDevice.iconName;
         //that's fine. leave this fields as it is. It cannot be update from app client.
         //this.hardwareInfo = newDevice.hardwareInfo;
         //this.deviceOtaInfo = newDevice.deviceOtaInfo;
