@@ -8,6 +8,7 @@ import cc.blynk.server.api.http.AppAndHttpsServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
+import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -327,9 +328,9 @@ public class BridgeWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(produce(2, HARDWARE, b("2 aw 11 11"))));
 
 
-        hardClient1.send("hardsync ar 11");
+        hardClient1.sync(PinType.ANALOG, 11);
         verify(hardClient1.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("aw 11 11"))));
-        hardClient2.send("hardsync ar 11");
+        hardClient2.sync(PinType.ANALOG, 11);
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("aw 11 11"))));
     }
 
@@ -378,13 +379,13 @@ public class BridgeWorkflowTest extends IntegrationBase {
         clientPair.hardwareClient.send("bridge 2 aw 13 13");
         verify(hardClient3.responseMock, timeout(500)).channelRead(any(), eq(produce(4, BRIDGE, b("aw 13 13"))));
 
-        hardClient1.send("hardsync vr 11");
+        hardClient1.sync(PinType.VIRTUAL, 11);
         verify(hardClient1.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("vw 11 12"))));
-        hardClient2.send("hardsync vr 11");
+        hardClient2.sync(PinType.VIRTUAL, 11);
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("vw 11 12"))));
-        hardClient3.send("hardsync ar 13");
+        hardClient3.sync(PinType.ANALOG, 13);
         verify(hardClient3.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("aw 13 13"))));
-        hardClient3.send("hardsync ar 13");
+        hardClient3.sync(PinType.ANALOG, 13);
         verify(hardClient3.responseMock, never()).channelRead(any(), eq(produce(2, HARDWARE, b("aw 13 13"))));
     }
 

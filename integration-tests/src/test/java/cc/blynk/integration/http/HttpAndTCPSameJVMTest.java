@@ -9,7 +9,6 @@ import cc.blynk.server.api.http.HardwareAndHttpAPIServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.controls.RGB;
 import cc.blynk.server.core.model.widgets.controls.Timer;
@@ -47,6 +46,7 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import static cc.blynk.server.core.model.enums.PinType.VIRTUAL;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
@@ -232,7 +232,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
                 DateTimeUtils.UTC
         );
 
-        DataStream dataStream = new DataStream((byte) 4, PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((byte) 4, VIRTUAL);
         SetPinAction setPinAction = new SetPinAction(dataStream, "1", SetPinActionType.CUSTOM);
 
         Eventor eventor = new Eventor(new Rule[] {
@@ -269,7 +269,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         timer.id = 112;
         timer.x = 1;
         timer.y = 1;
-        timer.pinType = PinType.VIRTUAL;
+        timer.pinType = VIRTUAL;
         timer.pin = 4;
         timer.width = 2;
         timer.height = 1;
@@ -350,7 +350,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
                 assertEquals(200, response.getStatusLine().getStatusCode());
             }
 
-            clientPair.hardwareClient.send("hardsync " + b("vr 4"));
+            clientPair.hardwareClient.sync(VIRTUAL, 4);
             verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(i + 1, HARDWARE, b("vw 4 " + i))));
 
             try (CloseableHttpResponse response = httpclient.execute(getRequest)) {
@@ -594,7 +594,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
     public void tableSetValueViaHttpApi() throws Exception {
         Table table = new Table();
         table.pin = 123;
-        table.pinType = PinType.VIRTUAL;
+        table.pinType = VIRTUAL;
         table.isClickableRows = true;
         table.isReoderingAllowed = true;
         table.height = 2;
@@ -629,7 +629,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
     public void sendMultiValueToAppViaHttpApi2() throws Exception {
         RGB rgb = new RGB();
         rgb.dataStreams = new DataStream[] {
-                new DataStream((byte) 101, PinType.VIRTUAL)
+                new DataStream((byte) 101, VIRTUAL)
         };
         rgb.splitMode = false;
         rgb.height = 2;
@@ -654,9 +654,9 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
     public void sendMultiValueToAppViaHttpApi3() throws Exception {
         RGB rgb = new RGB();
         rgb.dataStreams = new DataStream[] {
-                new DataStream((byte) 101, PinType.VIRTUAL),
-                new DataStream((byte) 102, PinType.VIRTUAL),
-                new DataStream((byte) 103, PinType.VIRTUAL)
+                new DataStream((byte) 101, VIRTUAL),
+                new DataStream((byte) 102, VIRTUAL),
+                new DataStream((byte) 103, VIRTUAL)
         };
         rgb.splitMode = false;
         rgb.height = 2;
@@ -684,8 +684,8 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         historyGraph.width = 2;
         historyGraph.height = 2;
         historyGraph.dataStreams = new DataStream[] {
-                new DataStream((byte) 44, PinType.VIRTUAL),
-                new DataStream((byte) 45, PinType.VIRTUAL)
+                new DataStream((byte) 44, VIRTUAL),
+                new DataStream((byte) 45, VIRTUAL)
         };
 
         clientPair.appClient.createWidget(1, historyGraph);
@@ -696,7 +696,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         valueDisplay.height = 2;
         valueDisplay.width = 2;
         valueDisplay.pin = 44;
-        valueDisplay.pinType = PinType.VIRTUAL;
+        valueDisplay.pinType = VIRTUAL;
 
         clientPair.appClient.createWidget(1, valueDisplay);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
@@ -706,7 +706,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         valueDisplay2.height = 2;
         valueDisplay2.width = 2;
         valueDisplay2.pin = 45;
-        valueDisplay2.pinType = PinType.VIRTUAL;
+        valueDisplay2.pinType = VIRTUAL;
 
         clientPair.appClient.createWidget(1, valueDisplay2);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
@@ -735,7 +735,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         webHook.width = 2;
         webHook.height = 2;
         webHook.pin = 44;
-        webHook.pinType = PinType.VIRTUAL;
+        webHook.pinType = VIRTUAL;
 
         clientPair.appClient.createWidget(1, webHook);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
@@ -745,7 +745,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         valueDisplay.height = 2;
         valueDisplay.width = 2;
         valueDisplay.pin = 44;
-        valueDisplay.pinType = PinType.VIRTUAL;
+        valueDisplay.pinType = VIRTUAL;
 
         clientPair.appClient.createWidget(1, valueDisplay);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));

@@ -661,12 +661,12 @@ public class TimerTest extends IntegrationBase {
 
         verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("vw 5 1"))));
         clientPair.hardwareClient.reset();
-        clientPair.hardwareClient.send("hardSync vr 5");
+        clientPair.hardwareClient.sync(PinType.VIRTUAL, 5);
         verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(1, HARDWARE, b("vw 5 1"))));
 
         verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("vw 5 0"))));
 
-        clientPair.hardwareClient.send("hardSync vr 5");
+        clientPair.hardwareClient.sync(PinType.VIRTUAL, 5);
         verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 5 0"))));
 
     }

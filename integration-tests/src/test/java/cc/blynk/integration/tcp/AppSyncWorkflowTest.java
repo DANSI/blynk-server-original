@@ -67,7 +67,7 @@ public class AppSyncWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("appsync 1");
+        clientPair.appClient.sync(1);
 
         verify(clientPair.appClient.responseMock, timeout(500).times(13)).channelRead(any(), any());
 
@@ -103,7 +103,7 @@ public class AppSyncWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 10 p x y 10"))));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("appsync 1");
+        clientPair.appClient.sync(1);
 
         verify(clientPair.appClient.responseMock, timeout(500).times(12)).channelRead(any(), any());
 
@@ -189,7 +189,7 @@ public class AppSyncWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1-0 vw 20 p 0 0 Hello"))));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("1-0 vw 20 p 0 1 World"))));
 
-        clientPair.appClient.send("appsync 1");
+        clientPair.appClient.sync(1);
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 20 p 0 0 Hello"))));
@@ -214,7 +214,7 @@ public class AppSyncWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(6, HARDWARE, b("1-0 vw 20 p 0 5 H6"))));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7, HARDWARE, b("1-0 vw 20 p 0 6 H7"))));
 
-        clientPair.appClient.send("appsync 1");
+        clientPair.appClient.sync(1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 20 p 0 1 H2"))));
@@ -227,7 +227,7 @@ public class AppSyncWorkflowTest extends IntegrationBase {
 
     @Test
     public void testActivateAndGetSync() throws Exception {
-        clientPair.appClient.send("appsync 1");
+        clientPair.appClient.sync(1);
 
         verify(clientPair.appClient.responseMock, timeout(500).times(11)).channelRead(any(), any());
 
@@ -252,7 +252,7 @@ public class AppSyncWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 125 1"))));
         clientPair.appClient.reset();
 
-        clientPair.appClient.send("appsync 1");
+        clientPair.appClient.sync(1);
 
         verify(clientPair.appClient.responseMock, timeout(500).times(12)).channelRead(any(), any());
 
@@ -279,7 +279,7 @@ public class AppSyncWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(2, b("1-0 vw 125 2"))));
         clientPair.appClient.reset();
 
-        clientPair.appClient.send("appsync 1");
+        clientPair.appClient.sync(1);
 
         verify(clientPair.appClient.responseMock, timeout(500).times(12)).channelRead(any(), any());
 
@@ -300,7 +300,7 @@ public class AppSyncWorkflowTest extends IntegrationBase {
 
     @Test
     public void testActivateAndGetSyncForSpecificDeviceId() throws Exception {
-        clientPair.appClient.send("appsync 1-0");
+        clientPair.appClient.sync(1, 0);
 
         verify(clientPair.appClient.responseMock, timeout(500).times(11)).channelRead(any(), any());
 
@@ -342,7 +342,7 @@ public class AppSyncWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.reset();
 
-        clientPair.appClient.send("appsync 1");
+        clientPair.appClient.sync(1);
 
         verify(clientPair.appClient.responseMock, timeout(500).times(12)).channelRead(any(), any());
 
@@ -372,7 +372,7 @@ public class AppSyncWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.reset();
 
-        clientPair.appClient.send("appsync 1-0");
+        clientPair.appClient.sync(1, 0);
 
         verify(clientPair.appClient.responseMock, timeout(500).times(12)).channelRead(any(), any());
 
@@ -393,7 +393,7 @@ public class AppSyncWorkflowTest extends IntegrationBase {
 
     @Test
     public void testActivateAndGetSyncForNonExistingDeviceId() throws Exception {
-        clientPair.appClient.send("appsync 1-1");
+        clientPair.appClient.sync(1, 1);
 
         verify(clientPair.appClient.responseMock, timeout(500).times(1)).channelRead(any(), any());
 
@@ -421,7 +421,7 @@ public class AppSyncWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("appsync 1-1");
+        clientPair.appClient.sync(1, 1);
 
         verify(clientPair.appClient.responseMock, timeout(500).times(3)).channelRead(any(), any());
 

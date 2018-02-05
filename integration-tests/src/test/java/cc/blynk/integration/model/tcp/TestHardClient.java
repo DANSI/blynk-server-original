@@ -4,6 +4,7 @@ import cc.blynk.client.core.BaseClient;
 import cc.blynk.client.handlers.decoders.ClientMessageDecoder;
 import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.SimpleClientHandler;
+import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Random;
 
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
+import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
@@ -83,6 +85,18 @@ public class TestHardClient extends BaseClient {
 
     public void setProperty(int pin, String property, String value) {
         send("setProperty " + pin + " " + property + " " + value);
+    }
+
+    public void sync() {
+        send("hardsync");
+    }
+
+    public void sync(PinType pinType, int pin) {
+        send("hardsync " + pinType.pintTypeChar + "r" + BODY_SEPARATOR + pin);
+    }
+
+    public void sync(PinType pinType, int pin1, int pin2) {
+        send("hardsync " + pinType.pintTypeChar + "r" + BODY_SEPARATOR + pin1 + BODY_SEPARATOR + pin2);
     }
 
     public void send(String line) {

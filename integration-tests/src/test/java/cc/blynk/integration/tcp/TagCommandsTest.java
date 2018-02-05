@@ -7,6 +7,7 @@ import cc.blynk.server.api.http.AppAndHttpsServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
+import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
@@ -210,15 +211,15 @@ public class TagCommandsTest extends IntegrationBase {
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(3, b("vw 88 100"))));
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(3, b("vw 88 100"))));
 
-        clientPair.hardwareClient.send("hardsync vr 88");
+        clientPair.hardwareClient.sync(PinType.VIRTUAL, 88);
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("vw 88 100"))));
 
-        hardClient2.send("hardsync vr 88");
+        hardClient2.sync(PinType.VIRTUAL, 88);
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(2, b("vw 88 100"))));
 
         clientPair.appClient.reset();
 
-        clientPair.appClient.send("appSync 1");
+        clientPair.appClient.sync(1);
 
         verify(clientPair.appClient.responseMock, timeout(1000).times(14)).channelRead(any(), any());
 

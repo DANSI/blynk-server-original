@@ -78,7 +78,7 @@ public class SyncWorkflowTest extends IntegrationBase {
 
     @Test
     public void testHardSyncReturnHardwareCommands() throws Exception {
-        clientPair.hardwareClient.send("hardsync");
+        clientPair.hardwareClient.sync();
         verify(clientPair.hardwareClient.responseMock, timeout(1000).times(8)).channelRead(any(), any());
         verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("dw 1 1"))));
         verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("dw 2 1"))));
@@ -102,7 +102,7 @@ public class SyncWorkflowTest extends IntegrationBase {
 
     @Test
     public void testHardSyncReturnNothingNoWidgetOnPin() throws Exception {
-        clientPair.hardwareClient.send("hardsync vr 22");
+        clientPair.hardwareClient.sync(PinType.VIRTUAL, 22);
         verify(clientPair.hardwareClient.responseMock, after(400).never()).channelRead(any(), any());
     }
 
@@ -110,12 +110,12 @@ public class SyncWorkflowTest extends IntegrationBase {
     public void testHardSyncReturnValueForNoWidgetOnVirtualPin() throws Exception {
         clientPair.hardwareClient.send("hardware vw 67 100");
 
-        clientPair.hardwareClient.send("hardsync vr 67");
+        clientPair.hardwareClient.sync(PinType.VIRTUAL, 67);
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 67 100"))));
 
         clientPair.hardwareClient.reset();
 
-        clientPair.hardwareClient.send("hardsync");
+        clientPair.hardwareClient.sync();
         verify(clientPair.hardwareClient.responseMock, timeout(1000).times(9)).channelRead(any(), any());
         verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("dw 1 1"))));
         verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("dw 2 1"))));
@@ -132,12 +132,12 @@ public class SyncWorkflowTest extends IntegrationBase {
     public void testHardSyncReturnValueForNoWidgetOnAnalogPin() throws Exception {
         clientPair.hardwareClient.send("hardware aw 66 100");
 
-        clientPair.hardwareClient.send("hardsync ar 66");
+        clientPair.hardwareClient.sync(PinType.ANALOG, 66);
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("aw 66 100"))));
 
         clientPair.hardwareClient.reset();
 
-        clientPair.hardwareClient.send("hardsync");
+        clientPair.hardwareClient.sync();
         verify(clientPair.hardwareClient.responseMock, timeout(1000).times(9)).channelRead(any(), any());
         verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("dw 1 1"))));
         verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("dw 2 1"))));
@@ -152,7 +152,7 @@ public class SyncWorkflowTest extends IntegrationBase {
 
     @Test
     public void testHardSyncReturn1HardwareCommand() throws Exception {
-        clientPair.hardwareClient.send("hardsync vr 4");
+        clientPair.hardwareClient.sync(PinType.VIRTUAL, 4);
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("vw 4 244"))));
     }
 
@@ -281,7 +281,7 @@ public class SyncWorkflowTest extends IntegrationBase {
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        clientPair.hardwareClient.send("hardsync vr 99");
+        clientPair.hardwareClient.sync(PinType.VIRTUAL, 99);
 
         LocalDateTime dt = LocalDateTime.now();
         ZonedDateTime zdt = dt.atZone(zoneId);
@@ -384,7 +384,7 @@ public class SyncWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("hardware 1-0 vw " + b("99 82800 82860 Europe/Kiev 1"));
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 99 82800 82860 Europe/Kiev 1"))));
 
-        clientPair.hardwareClient.send("hardsync vr 99");
+        clientPair.hardwareClient.sync(PinType.VIRTUAL, 99);
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(produce(1, HARDWARE, b("vw 99 82800 82860 Europe/Kiev 1"))));
 
         clientPair.appClient.reset();
@@ -405,7 +405,7 @@ public class SyncWorkflowTest extends IntegrationBase {
         Timer timer = (Timer) widget;
         timer.value = "100500";
 
-        clientPair.hardwareClient.send("hardsync dr 5");
+        clientPair.hardwareClient.sync(PinType.DIGITAL, 5);
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("dw 5 100500"))));
 
         Thread thread = new Thread(() -> {
@@ -415,12 +415,12 @@ public class SyncWorkflowTest extends IntegrationBase {
         thread.start();
         thread.join();
 
-        clientPair.hardwareClient.send("hardsync dr 5");
+        clientPair.hardwareClient.sync(PinType.DIGITAL, 5);
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("dw 5 200300"))));
 
         clientPair.hardwareClient.reset();
 
-        clientPair.hardwareClient.send("hardsync");
+        clientPair.hardwareClient.sync();
         verify(clientPair.hardwareClient.responseMock, timeout(1000).times(8)).channelRead(any(), any());
         verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("dw 1 1"))));
         verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("dw 2 1"))));
@@ -516,7 +516,7 @@ public class SyncWorkflowTest extends IntegrationBase {
         clientPair.hardwareClient.send("hardware vw 100 101");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 100 101"))));
 
-        clientPair.hardwareClient.send("hardsync vr 100");
+        clientPair.hardwareClient.sync(PinType.VIRTUAL, 100);
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(2, b("vw 100 101"))));
     }
 
@@ -531,7 +531,7 @@ public class SyncWorkflowTest extends IntegrationBase {
         clientPair.hardwareClient.send("hardware vw 101 101");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(2, b("1-0 vw 101 101"))));
 
-        clientPair.hardwareClient.send("hardsync vr 100 101");
+        clientPair.hardwareClient.sync(PinType.VIRTUAL, 100, 101);
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(3, b("vw 100 100"))));
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(3, b("vw 101 101"))));
     }
@@ -577,7 +577,7 @@ public class SyncWorkflowTest extends IntegrationBase {
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         hardClient2.reset();
 
-        clientPair.hardwareClient.send("hardsync");
+        clientPair.hardwareClient.sync();
         verify(clientPair.hardwareClient.responseMock, timeout(1000).times(8)).channelRead(any(), any());
         verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("dw 1 1"))));
         verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("dw 2 1"))));
@@ -588,7 +588,7 @@ public class SyncWorkflowTest extends IntegrationBase {
         verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("aw 30 3"))));
         verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(1, HARDWARE, b("vw 13 60 143 158"))));
 
-        hardClient2.send("hardsync");
+        hardClient2.sync();
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("vw 4 1"))));
     }
 
@@ -614,7 +614,7 @@ public class SyncWorkflowTest extends IntegrationBase {
         clientPair.hardwareClient.send("hardware vw 119 1");
         hardClient2.send("hardware vw 119 1");
 
-        clientPair.hardwareClient.send("hardsync");
+        clientPair.hardwareClient.sync();
         verify(clientPair.hardwareClient.responseMock, timeout(1000).times(9)).channelRead(any(), any());
         verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(2, HARDWARE, b("dw 1 1"))));
         verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(2, HARDWARE, b("dw 2 1"))));
@@ -626,7 +626,7 @@ public class SyncWorkflowTest extends IntegrationBase {
         verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 13 60 143 158"))));
         verify(clientPair.hardwareClient.responseMock, timeout(100)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 119 1"))));
 
-        hardClient2.send("hardsync");
+        hardClient2.sync();
         verify(hardClient2.responseMock, timeout(100)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 119 1"))));
     }
 

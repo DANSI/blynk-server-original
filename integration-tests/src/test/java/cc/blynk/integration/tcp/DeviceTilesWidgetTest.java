@@ -459,7 +459,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         assertNull(deviceTile2.dataStream.value);
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("appSync 1-0");
+        clientPair.appClient.sync(1, 0);
 
         verify(clientPair.appClient.responseMock, timeout(500).times(13)).channelRead(any(), any());
 
@@ -533,7 +533,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("appSync 1-0");
+        clientPair.appClient.sync(1, 0);
 
         verify(clientPair.appClient.responseMock, timeout(500).times(11)).channelRead(any(), any());
 
@@ -611,7 +611,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("appSync 1-1");
+        clientPair.appClient.sync(1, 1);
 
         verify(clientPair.appClient.responseMock, timeout(500).times(1)).channelRead(any(), any());
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));

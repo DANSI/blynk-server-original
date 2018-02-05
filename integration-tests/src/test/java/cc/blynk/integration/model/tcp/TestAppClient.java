@@ -13,6 +13,7 @@ import cc.blynk.server.core.protocol.handlers.encoders.AppMessageEncoder;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.stats.GlobalStats;
+import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.properties.ServerProperties;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -177,6 +178,14 @@ public class TestAppClient extends AppClient {
 
     public void login(String email, String pass, String os, String version, String appName) {
         send("login " + email + " " + pass + " " + os + " " + version + " " + appName);
+    }
+
+    public void sync(int dashId) {
+        send("appsync " + dashId);
+    }
+
+    public void sync(int dashId, int deviceId) {
+        send("appsync " + dashId + StringUtils.DEVICE_SEPARATOR + deviceId);
     }
 
     public void send(String line) {
