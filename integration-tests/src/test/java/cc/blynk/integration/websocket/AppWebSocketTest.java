@@ -7,7 +7,6 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.AppAndHttpsServer;
 import cc.blynk.server.api.http.HardwareAndHttpAPIServer;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.utils.properties.GCMProperties;
 import cc.blynk.utils.properties.MailProperties;
@@ -21,7 +20,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
 
-import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.timeout;
@@ -77,7 +75,7 @@ public class AppWebSocketTest extends IntegrationBase {
         webSocketClient.send("login " + DEFAULT_TEST_USER + " 1");
         verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         webSocketClient.send("ping");
-        verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+        verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
     }
 
 

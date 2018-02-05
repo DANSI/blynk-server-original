@@ -7,7 +7,6 @@ import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import org.junit.After;
 import org.junit.Before;
@@ -15,13 +14,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -63,7 +57,7 @@ public class DeviceCommandsTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
+        clientPair.appClient.verifyResult(createDevice(1, device));
 
         clientPair.appClient.reset();
 
@@ -84,7 +78,7 @@ public class DeviceCommandsTest extends IntegrationBase {
         device0.status = Status.ONLINE;
 
         clientPair.appClient.updateDevice(1, device0);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.reset();
 
@@ -103,7 +97,7 @@ public class DeviceCommandsTest extends IntegrationBase {
         Device device = new Device(100, "My Dashboard Updated", "UNO");
 
         clientPair.appClient.updateDevice(1, device);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(illegalCommandBody(1)));
+        clientPair.appClient.verifyResult(illegalCommandBody(1));
     }
 
     @Test
@@ -140,7 +134,7 @@ public class DeviceCommandsTest extends IntegrationBase {
         device0.token = "123";
 
         clientPair.appClient.updateDevice(1, device0);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         clientPair.appClient.reset();
 
@@ -169,7 +163,7 @@ public class DeviceCommandsTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
+        clientPair.appClient.verifyResult(createDevice(1, device));
 
         clientPair.appClient.reset();
 
@@ -184,8 +178,7 @@ public class DeviceCommandsTest extends IntegrationBase {
         assertEqualDevice(device1, devices[1]);
 
         clientPair.appClient.send("deleteDevice 1\0" + device1.id);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
-
+        clientPair.appClient.verifyResult(ok(2));
 
         clientPair.appClient.reset();
 

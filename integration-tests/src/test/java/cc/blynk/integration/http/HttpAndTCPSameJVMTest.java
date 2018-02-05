@@ -23,7 +23,6 @@ import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.model.widgets.outputs.HistoryGraph;
 import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
 import cc.blynk.server.core.model.widgets.ui.table.Table;
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.utils.DateTimeUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -48,7 +47,6 @@ import java.util.concurrent.TimeUnit;
 
 import static cc.blynk.server.core.model.enums.PinType.VIRTUAL;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static cc.blynk.server.workers.timer.TimerWorker.TIMER_MSG_ID;
 import static org.junit.Assert.assertEquals;
@@ -178,7 +176,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         rtc.width = 2;
 
         clientPair.appClient.createWidget(1, rtc);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         reset(clientPair.appClient.responseMock);
 
@@ -201,7 +199,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         eventor.width = 2;
 
         clientPair.appClient.createWidget(1, eventor);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         reset(clientPair.appClient.responseMock);
 
@@ -215,9 +213,9 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("1-0 vw 100 37"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("vw 100 37"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 123"))));
+        clientPair.appClient.verifyResult(hardware(111, "1-0 vw 100 37"));
+        clientPair.hardwareClient.verifyResult(hardware(111, "vw 100 37"));
+        clientPair.hardwareClient.verifyResult(hardware(888, "vw 2 123"));
     }
 
     @Test
@@ -241,7 +239,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         eventor.id = 1000;
 
         clientPair.appClient.createWidget(1, eventor);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         verify(clientPair.appClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1-0 vw 4 1"))));
         verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("vw 4 1"))));
@@ -281,7 +279,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         timer.stopTime = curTime + 1;
 
         clientPair.appClient.createWidget(1, timer);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         verify(clientPair.hardwareClient.responseMock, timeout(2500).times(2)).channelRead(any(), any());
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7777, HARDWARE, b("vw 4 1"))));
@@ -310,7 +308,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
     @Test
     public void testChangePinValueViaAppAndHardwareForWrongPWMButton() throws Exception {
         clientPair.appClient.createWidget(1, "{\"type\":\"BUTTON\",\"id\":1000,\"x\":0,\"y\":0,\"color\":616861439,\"width\":2,\"height\":2,\"label\":\"Relay\",\"pinType\":\"DIGITAL\",\"pin\":18,\"pwmMode\":true,\"rangeMappingOn\":false,\"min\":0,\"max\":0,\"value\":\"1\",\"pushMode\":false}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("getToken 1");
@@ -459,7 +457,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         hardClient2.start();
 
         hardClient2.login(devices[1].token);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        hardClient2.verifyResult(ok(1));
 
         clientPair.stop();
 
@@ -498,7 +496,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.deactivate(1);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         HttpPut request = new HttpPut(httpServerUrl + token + "/pin/v31");
 
@@ -511,7 +509,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, after(400).never()).channelRead(any(), eq(produce(111, HARDWARE, b("1 vw 31 100"))));
 
         clientPair.appClient.activate(1);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
     }
 
     @Test
@@ -562,7 +560,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         String token = clientPair.appClient.getBody();
 
         clientPair.appClient.createWidget(1, "{\"id\":222, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"TERMINAL\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         HttpPut request = new HttpPut(httpServerUrl + token + "/pin/V100");
 
@@ -601,7 +599,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         table.width = 2;
 
         clientPair.appClient.createWidget(1, table);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("getToken 1");
         String token = clientPair.appClient.getBody(2);
@@ -636,7 +634,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         rgb.width = 2;
 
         clientPair.appClient.createWidget(1, rgb);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("getToken 1");
         String token = clientPair.appClient.getBody(2);
@@ -663,7 +661,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         rgb.width = 2;
 
         clientPair.appClient.createWidget(1, rgb);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("getToken 1");
         String token = clientPair.appClient.getBody(2);
@@ -689,7 +687,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         };
 
         clientPair.appClient.createWidget(1, historyGraph);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         ValueDisplay valueDisplay = new ValueDisplay();
         valueDisplay.id = 101;
@@ -699,7 +697,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         valueDisplay.pinType = VIRTUAL;
 
         clientPair.appClient.createWidget(1, valueDisplay);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         ValueDisplay valueDisplay2 = new ValueDisplay();
         valueDisplay2.id = 102;
@@ -709,7 +707,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         valueDisplay2.pinType = VIRTUAL;
 
         clientPair.appClient.createWidget(1, valueDisplay2);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+        clientPair.appClient.verifyResult(ok(3));
 
         clientPair.appClient.send("getToken 1");
         String token = clientPair.appClient.getBody(4);
@@ -738,7 +736,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         webHook.pinType = VIRTUAL;
 
         clientPair.appClient.createWidget(1, webHook);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         ValueDisplay valueDisplay = new ValueDisplay();
         valueDisplay.id = 101;
@@ -748,7 +746,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         valueDisplay.pinType = VIRTUAL;
 
         clientPair.appClient.createWidget(1, valueDisplay);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         clientPair.appClient.send("getToken 1");
         String token = clientPair.appClient.getBody(3);

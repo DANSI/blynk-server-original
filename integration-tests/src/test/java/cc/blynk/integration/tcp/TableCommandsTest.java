@@ -69,7 +69,7 @@ public class TableCommandsTest extends IntegrationBase {
         table.width = 2;
 
         clientPair.appClient.createWidget(1, table);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 123 clr");
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(0)).channelRead(any(), any());
@@ -171,7 +171,7 @@ public class TableCommandsTest extends IntegrationBase {
         table.width = 2;
 
         clientPair.appClient.createWidget(1, table);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 123 clr");
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(0)).channelRead(any(), any());
@@ -222,7 +222,7 @@ public class TableCommandsTest extends IntegrationBase {
         table.height = 2;
 
         clientPair.appClient.createWidget(1, table);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 123 clr");
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(0)).channelRead(any(), any());
@@ -259,7 +259,7 @@ public class TableCommandsTest extends IntegrationBase {
         table.height = 2;
 
         clientPair.appClient.createWidget(1, table);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 123 clr");
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(0)).channelRead(any(), any());

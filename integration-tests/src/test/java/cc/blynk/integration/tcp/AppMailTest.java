@@ -15,8 +15,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
-import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
 import static cc.blynk.server.core.protocol.enums.Response.QUOTA_LIMIT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -125,7 +123,7 @@ public class AppMailTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
+        clientPair.appClient.verifyResult(createDevice(1, device));
 
         clientPair.appClient.send("getDevices 1");
         String response = clientPair.appClient.getBody(2);
@@ -159,11 +157,11 @@ public class AppMailTest extends IntegrationBase {
 
         //adding email widget
         clientPair.appClient.createWidget(1, "{\"id\":432, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"type\":\"EMAIL\"}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("email to subj body");
         verify(mailWrapper, after(500).never()).sendHtml(eq("to"), eq("subj"), eq("body"));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND)));
+        clientPair.hardwareClient.verifyResult(illegalCommand(1));
     }
 
     @Test
@@ -172,18 +170,18 @@ public class AppMailTest extends IntegrationBase {
 
         //no email widget
         clientPair.hardwareClient.send("email to subj body");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NOT_ALLOWED)));
+        clientPair.hardwareClient.verifyResult(notAllowed(1));
 
         //adding email widget
         clientPair.appClient.createWidget(1, "{\"id\":432, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"type\":\"EMAIL\"}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("email to@to.com subj body");
         verify(mailWrapper, timeout(500)).sendHtml(eq("to@to.com"), eq("subj"), eq("body"));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.hardwareClient.verifyResult(ok(2));
 
         clientPair.hardwareClient.send("email to@to.com subj body");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, QUOTA_LIMIT)));
+        clientPair.hardwareClient.verifyResult(new ResponseMessage(3, QUOTA_LIMIT));
     }
 
     @Test
@@ -192,11 +190,11 @@ public class AppMailTest extends IntegrationBase {
 
         //adding email widget
         clientPair.appClient.createWidget(1, "{\"id\":432, \"contentType\":\"TEXT_PLAIN\", \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"type\":\"EMAIL\"}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("email to@to.com subj body");
         verify(mailWrapper, timeout(500)).sendText(eq("to@to.com"), eq("subj"), eq("body"));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.hardwareClient.verifyResult(ok(1));
     }
 
     @Test
@@ -205,11 +203,11 @@ public class AppMailTest extends IntegrationBase {
 
         //adding email widget
         clientPair.appClient.createWidget(1, "{\"id\":432, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"to\":\"test@mail.ua\", \"type\":\"EMAIL\"}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("email subj body");
         verify(mailWrapper, timeout(500)).sendHtml(eq("test@mail.ua"), eq("subj"), eq("body"));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.hardwareClient.verifyResult(ok(1));
     }
 
     @Test
@@ -218,11 +216,11 @@ public class AppMailTest extends IntegrationBase {
 
         //adding email widget
         clientPair.appClient.createWidget(1, "{\"id\":432, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"width\":1, \"height\":1, \"type\":\"EMAIL\"}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("email subj body");
         verify(mailWrapper, timeout(500)).sendHtml(eq("dima@mail.ua"), eq("subj"), eq("body"));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.hardwareClient.verifyResult(ok(1));
     }
 
 }

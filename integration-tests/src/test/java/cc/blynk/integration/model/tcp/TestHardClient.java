@@ -1,6 +1,5 @@
 package cc.blynk.integration.model.tcp;
 
-import cc.blynk.client.core.BaseClient;
 import cc.blynk.client.handlers.decoders.ClientMessageDecoder;
 import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.SimpleClientHandler;
@@ -29,9 +28,7 @@ import static org.mockito.Mockito.verify;
  * Created by Dmitriy Dumanskiy.
  * Created on 1/31/2015.
  */
-public class TestHardClient extends BaseClient {
-
-    public final SimpleClientHandler responseMock;
+public class TestHardClient extends BaseTestHardwareClient {
 
     private int msgId;
 
@@ -43,7 +40,6 @@ public class TestHardClient extends BaseClient {
         super(host, port, Mockito.mock(Random.class));
         this.nioEventLoopGroup = nioEventLoopGroup;
 
-        this.responseMock = Mockito.mock(SimpleClientHandler.class);
         this.msgId = 0;
     }
 

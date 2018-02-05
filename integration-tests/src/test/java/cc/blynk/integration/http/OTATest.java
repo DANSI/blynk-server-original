@@ -330,7 +330,7 @@ public class OTATest extends BaseTest {
     @Test
     public void testImprovedUploadMethodAndCheckOTAStatusForDeviceThatWasOnline() throws Exception {
         clientPair.hardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.hardwareClient.verifyResult(ok(1));
 
         clientPair.appClient.send("getToken 1");
         String token = clientPair.appClient.getBody();
@@ -379,7 +379,7 @@ public class OTATest extends BaseTest {
         assertEquals(System.currentTimeMillis(), device.deviceOtaInfo.otaUpdateAt, 5000);
 
         clientPair.hardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 112"));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.hardwareClient.verifyResult(ok(2));
 
         clientPair.appClient.send("getDevices 1");
         response = clientPair.appClient.getBody(3);
@@ -470,7 +470,7 @@ public class OTATest extends BaseTest {
         verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
 
         clientPair.hardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 123"));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.hardwareClient.verifyResult(ok(1));
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
         clientPair.hardwareClient.reset();
 
@@ -488,7 +488,7 @@ public class OTATest extends BaseTest {
         assertEquals("123", devices[0].hardwareInfo.build);
 
         clientPair.hardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build ") + "Aug 14 2017 20:31:49");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.hardwareClient.verifyResult(ok(1));
         verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
 
     }
@@ -529,7 +529,7 @@ public class OTATest extends BaseTest {
         }
 
         clientPair.hardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.hardwareClient.verifyResult(ok(1));
         verify(clientPair.hardwareClient.responseMock, never()).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
     }
 

@@ -21,7 +21,6 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK;
-import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
@@ -115,13 +114,13 @@ public class MultiAppTest extends IntegrationBase {
         verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
         appClient.login(email, pass, "Android", "1.10.4", appName);
         //we should wait until login finished. Only after that we can send commands
-        verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+        verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
 
         DashBoard dash = new DashBoard();
         dash.id = 1;
         dash.name = "test";
         appClient.createDash(dash);
-        verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(3, OK)));
+        verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(3)));
         appClient.activate(1);
         verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(4, DEVICE_NOT_IN_NETWORK)));
 

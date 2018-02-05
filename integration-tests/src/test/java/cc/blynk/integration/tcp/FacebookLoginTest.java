@@ -11,7 +11,6 @@ import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import io.netty.channel.ChannelFuture;
 import org.junit.After;
@@ -24,7 +23,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
 
-import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -120,7 +118,7 @@ public class FacebookLoginTest extends IntegrationBase {
         appClient.send("login " + user + "\0" + facebookAuthToken + "\0" + "Android" + "\0" + "1.10.4" + "\0" + "facebook");
         verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
         appClient.send("addEnergy " + 10000 + "\0" + "123456");
-        verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+        verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
 
         saveProfile(appClient, profile.dashBoards);
 

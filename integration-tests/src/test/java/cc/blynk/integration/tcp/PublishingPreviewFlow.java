@@ -101,7 +101,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         assertEquals(1, devices.length);
 
         clientPair.appClient.send("emailQr 1\0" + app.id);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         QrHolder[] qrHolders = makeQRs(devices, 1, false);
         StringBuilder sb = new StringBuilder();
@@ -131,7 +131,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         assertEquals(1, devices.length);
 
         clientPair.appClient.send("emailQr 1\0" + app.id);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         QrHolder[] qrHolders = makeQRs(devices, 1, false);
         StringBuilder sb = new StringBuilder();
@@ -162,7 +162,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         assertEquals(1, devices.length);
 
         clientPair.appClient.send("emailQr 1\0" + app.id);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         QrHolder[] qrHolders = makeQRs(devices, 1, false);
 
@@ -202,7 +202,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
     @Test
     public void testFaceEditNotAllowedHasNoChild() throws Exception {
         clientPair.appClient.send("updateFace 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(notAllowed(1)));
+        clientPair.appClient.verifyResult(notAllowed(1));
     }
 
     @Test
@@ -258,7 +258,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         assertEquals(0, dashBoard.widgets.length);
 
         clientPair.appClient.send("updateFace 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
+        clientPair.appClient.verifyResult(ok(5));
 
         appClient2.send("loadProfileGzipped");
         profile = parseProfile(appClient2.getBody(4));
@@ -307,27 +307,27 @@ public class PublishingPreviewFlow extends IntegrationBase {
 
         //creating manually widget for child project
         clientPair.appClient.createWidget(10, deviceTiles);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
+        clientPair.appClient.verifyResult(ok(4));
 
         TileTemplate tileTemplate = new TileTemplate(1, null, null, "123",
                 TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null);
 
         clientPair.appClient.send("createTemplate " + b("10 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
+        clientPair.appClient.verifyResult(ok(5));
 
         //creating manually widget for parent project
         clientPair.appClient.send("addEnergy " + "10000" + "\0" + "1370-3990-1414-55681");
 
         clientPair.appClient.createWidget(1, deviceTiles);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(7)));
+        clientPair.appClient.verifyResult(ok(7));
 
         tileTemplate = new TileTemplate(1, null, null, "123",
                 TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null);
 
         clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(8)));
+        clientPair.appClient.verifyResult(ok(8));
 
 
         clientPair.appClient.send("emailQr 10\0" + app.id);
@@ -397,7 +397,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         dashBoard.devices = null;
 
         clientPair.appClient.createDash(dashBoard);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         Device device0 = new Device(0, "My Device", "UNO");
         device0.status = Status.ONLINE;
@@ -442,13 +442,13 @@ public class PublishingPreviewFlow extends IntegrationBase {
         assertEquals(16, dashBoard.widgets.length);
 
         clientPair.appClient.send("addPushToken 1\0uid1\0token1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
+        clientPair.appClient.verifyResult(ok(5));
 
         clientPair.appClient.updateWidget(1, "{\"id\":10, \"height\":2, \"width\":1, \"x\":22, \"y\":23, \"username\":\"pupkin@gmail.com\", \"token\":\"token\", \"secret\":\"secret\", \"type\":\"TWITTER\"}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(6)));
+        clientPair.appClient.verifyResult(ok(6));
 
         clientPair.appClient.send("updateFace 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(7)));
+        clientPair.appClient.verifyResult(ok(7));
 
         appClient2.send("loadProfileGzipped");
         profile = parseProfile(appClient2.getBody(4));
@@ -507,10 +507,10 @@ public class PublishingPreviewFlow extends IntegrationBase {
         dashBoard.isPreview = true;
 
         clientPair.appClient.createDash(dashBoard);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
+        clientPair.appClient.verifyResult(ok(4));
 
         clientPair.appClient.deleteDash(2);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
+        clientPair.appClient.verifyResult(ok(5));
 
         clientPair.appClient.send("loadProfileGzipped 1");
         dashBoard = JsonParser.parseDashboard(clientPair.appClient.getBody(6), 0);
@@ -559,10 +559,10 @@ public class PublishingPreviewFlow extends IntegrationBase {
         dashBoard.isPreview = true;
 
         clientPair.appClient.createDash(dashBoard);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
+        clientPair.appClient.verifyResult(ok(4));
 
         clientPair.appClient.deleteDash(1);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
+        clientPair.appClient.verifyResult(ok(5));
 
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = JsonParser.parseProfileFromString(clientPair.appClient.getBody(6));

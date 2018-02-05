@@ -17,6 +17,7 @@ import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetServerMessage;
+import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.properties.ServerProperties;
 import com.fasterxml.jackson.databind.ObjectReader;
@@ -28,6 +29,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
+import static cc.blynk.server.core.protocol.enums.Command.BRIDGE;
 import static cc.blynk.server.core.protocol.enums.Command.CONNECT_REDIRECT;
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_TAG;
@@ -110,6 +112,10 @@ public abstract class IntegrationBase extends BaseTest {
         return new ResponseMessage(msgId, OK);
     }
 
+    public static StringMessage bridge(int msgId, String body) {
+        return new StringMessage(msgId, BRIDGE, b(body));
+    }
+
     public static StringMessage internal(int msgId, String body) {
         return new StringMessage(msgId, BLYNK_INTERNAL, b(body));
     }
@@ -139,7 +145,11 @@ public abstract class IntegrationBase extends BaseTest {
     }
 
     public static StringMessage appSync(int msgId, String body) {
-        return new StringMessage(msgId, APP_SYNC, body);
+        return new StringMessage(msgId, APP_SYNC, b(body));
+    }
+
+    public static StringMessage hardware(int msgId, String body) {
+        return new HardwareMessage(msgId, b(body));
     }
 
     public static StringMessage appSync(String body) {
@@ -226,7 +236,7 @@ public abstract class IntegrationBase extends BaseTest {
         int rand = ThreadLocalRandom.current().nextInt();
         appClient.send("addEnergy " + energy + "\0" + String.valueOf(rand));
         //we should wait until login finished. Only after that we can send commands
-        verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+        verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
 
         saveProfile(appClient, profile.dashBoards);
 

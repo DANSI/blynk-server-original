@@ -9,7 +9,6 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import org.junit.After;
@@ -18,8 +17,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
-import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -96,7 +93,7 @@ public class TagCommandsTest extends IntegrationBase {
         tag0 = new Tag(100_000, "TagUPDATED");
 
         clientPair.appClient.updateTag(1, tag0);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.reset();
 
@@ -115,7 +112,7 @@ public class TagCommandsTest extends IntegrationBase {
         Tag tag0 = new Tag(100_000, "Tag1");
 
         clientPair.appClient.updateTag(1, tag0);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(illegalCommand(1)));
     }
 
     @Test
@@ -134,7 +131,7 @@ public class TagCommandsTest extends IntegrationBase {
         Tag tag1 = new Tag(100_001, "Tag1");
 
         clientPair.appClient.createTag(1, tag1);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(illegalCommand(1)));
     }
 
 
@@ -160,7 +157,7 @@ public class TagCommandsTest extends IntegrationBase {
         assertEqualTag(tag0, tags[0]);
 
         clientPair.appClient.deleteTag(1, tag0.id);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
 
         clientPair.appClient.reset();
@@ -189,7 +186,7 @@ public class TagCommandsTest extends IntegrationBase {
         hardClient2.start();
 
         hardClient2.login(device.token);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        hardClient2.verifyResult(ok(1));
         clientPair.appClient.reset();
 
         //creating new tag
@@ -205,7 +202,7 @@ public class TagCommandsTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createTag(1, tag)));
 
         clientPair.appClient.createWidget(1, "{\"id\":88, \"width\":1, \"height\":1, \"deviceId\":100000, \"x\":0, \"y\":0, \"label\":\"Button\", \"type\":\"BUTTON\", \"pinType\":\"VIRTUAL\", \"pin\":88}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         clientPair.appClient.send("hardware 1-100000 vw 88 100");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(3, b("vw 88 100"))));
@@ -223,7 +220,7 @@ public class TagCommandsTest extends IntegrationBase {
 
         verify(clientPair.appClient.responseMock, timeout(1000).times(14)).channelRead(any(), any());
 
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 dw 1 1"))));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 dw 2 1"))));

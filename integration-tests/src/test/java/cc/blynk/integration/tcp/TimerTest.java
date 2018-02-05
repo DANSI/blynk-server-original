@@ -20,7 +20,6 @@ import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinActionType;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.NotifyAction;
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.enums.Priority;
@@ -39,9 +38,6 @@ import java.time.ZonedDateTime;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.core.protocol.enums.Response.OK;
-import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static cc.blynk.server.workers.timer.TimerWorker.TIMER_MSG_ID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -102,10 +98,10 @@ public class TimerTest extends IntegrationBase {
         });
 
         clientPair.appClient.createWidget(1, eventor);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
-        verify(clientPair.appClient.responseMock, timeout(3000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1-0 vw 1 1"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(3000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("vw 1 1"))));
+        verify(clientPair.appClient.responseMock, timeout(3000)).channelRead(any(), eq(hardware(TIMER_MSG_ID, "1-0 vw 1 1")));
+        verify(clientPair.hardwareClient.responseMock, timeout(3000)).channelRead(any(), eq(hardware(TIMER_MSG_ID, "vw 1 1")));
     }
 
 
@@ -130,10 +126,10 @@ public class TimerTest extends IntegrationBase {
         });
 
         clientPair.appClient.createWidget(1, eventor);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
-        verify(clientPair.appClient.responseMock, timeout(3000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1-0 vw 1 1"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(3000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("vw 1 1"))));
+        verify(clientPair.appClient.responseMock, timeout(3000)).channelRead(any(), eq(hardware(TIMER_MSG_ID, "1-0 vw 1 1")));
+        verify(clientPair.hardwareClient.responseMock, timeout(3000)).channelRead(any(), eq(hardware(TIMER_MSG_ID, "vw 1 1")));
 
         clientPair.appClient.reset();
         clientPair.hardwareClient.reset();
@@ -151,10 +147,10 @@ public class TimerTest extends IntegrationBase {
         });
 
         clientPair.appClient.updateWidget(1, eventor);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
-        verify(clientPair.appClient.responseMock, after(1500).never()).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1-0 vw 1 1"))));
-        verify(clientPair.hardwareClient.responseMock, after(1500).never()).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("vw 1 1"))));
+        verify(clientPair.appClient.responseMock, after(1500).never()).channelRead(any(), eq(hardware(TIMER_MSG_ID, "1-0 vw 1 1")));
+        verify(clientPair.hardwareClient.responseMock, after(1500).never()).channelRead(any(), eq(hardware(TIMER_MSG_ID, "vw 1 1")));
     }
 
     @Test
@@ -181,14 +177,14 @@ public class TimerTest extends IntegrationBase {
         });
 
         clientPair.appClient.createWidget(1, eventor);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
 
-        verify(clientPair.appClient.responseMock, timeout(2100)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1-0 vw 1 1"))));
-        verify(clientPair.appClient.responseMock, timeout(2100)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1-0 vw 2 2"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(2100)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("vw 1 1"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(2100)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("vw 2 2"))));
+        verify(clientPair.appClient.responseMock, timeout(2100)).channelRead(any(), eq(hardware(TIMER_MSG_ID, "1-0 vw 1 1")));
+        verify(clientPair.appClient.responseMock, timeout(2100)).channelRead(any(), eq(hardware(TIMER_MSG_ID, "1-0 vw 2 2")));
+        verify(clientPair.hardwareClient.responseMock, timeout(2100)).channelRead(any(), eq(hardware(TIMER_MSG_ID, "vw 1 1")));
+        verify(clientPair.hardwareClient.responseMock, timeout(2100)).channelRead(any(), eq(hardware(TIMER_MSG_ID, "vw 2 2")));
     }
 
     @Test
@@ -213,7 +209,7 @@ public class TimerTest extends IntegrationBase {
         });
 
         clientPair.appClient.createWidget(1, eventor);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
         verify(gcmWrapper, timeout(2000).times(1)).send(objectArgumentCaptor.capture(), any(), any());
@@ -222,8 +218,8 @@ public class TimerTest extends IntegrationBase {
         String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Hello", 1).toJson();
         assertEquals(expectedJson, message.toJson());
 
-        verify(clientPair.appClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1-0 vw 1 1"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("vw 1 1"))));
+        verify(clientPair.appClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(TIMER_MSG_ID, "1-0 vw 1 1")));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(TIMER_MSG_ID, "vw 1 1")));
     }
 
     @Test
@@ -262,10 +258,10 @@ public class TimerTest extends IntegrationBase {
         });
 
         clientPair.appClient.createWidget(1, eventor);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
-        verify(clientPair.appClient.responseMock, after(700).never()).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1-0 vw 1 1"))));
-        verify(clientPair.hardwareClient.responseMock, after(700).never()).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("vw 1 1"))));
+        verify(clientPair.appClient.responseMock, after(700).never()).channelRead(any(), eq(hardware(TIMER_MSG_ID, "1-0 vw 1 1")));
+        verify(clientPair.hardwareClient.responseMock, after(700).never()).channelRead(any(), eq(hardware(TIMER_MSG_ID, "vw 1 1")));
     }
 
     @Test
@@ -285,10 +281,10 @@ public class TimerTest extends IntegrationBase {
         timer.startTime = curTime + 1;
 
         clientPair.appClient.createWidget(1, timer);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         verify(clientPair.hardwareClient.responseMock, timeout(1500).times(1)).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 1"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "dw 5 1")));
     }
 
     @Test
@@ -308,10 +304,10 @@ public class TimerTest extends IntegrationBase {
         timer.stopTime = curTime + 1;
 
         clientPair.appClient.createWidget(1, timer);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         verify(clientPair.hardwareClient.responseMock, timeout(1500).times(1)).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "dw 5 0")));
     }
 
     @Test
@@ -333,11 +329,11 @@ public class TimerTest extends IntegrationBase {
         timer.stopTime = curTime + 2;
 
         clientPair.appClient.createWidget(1, timer);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         verify(clientPair.hardwareClient.responseMock, timeout(2500).times(2)).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 0"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 1"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "dw 5 0")));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "dw 5 1")));
     }
 
 
@@ -360,10 +356,10 @@ public class TimerTest extends IntegrationBase {
         timer.stopTime = curTime + 2;
 
         clientPair.appClient.createWidget(1, timer);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.deleteWidget(1, 112);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         verify(clientPair.hardwareClient.responseMock, after(2500).never()).channelRead(any(), any());
     }
@@ -385,17 +381,17 @@ public class TimerTest extends IntegrationBase {
         timer.startTime = curTime + 1;
 
         clientPair.appClient.createWidget(1, timer);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         timer.id = 113;
         timer.startValue = "2";
 
         clientPair.appClient.createWidget(1, timer);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         verify(clientPair.hardwareClient.responseMock, timeout(2500).times(2)).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 1"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 2"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "dw 5 1")));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "dw 5 2")));
     }
 
     @Test
@@ -417,11 +413,11 @@ public class TimerTest extends IntegrationBase {
         timer.stopTime = curTime + 1;
 
         clientPair.appClient.createWidget(1, timer);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         verify(clientPair.hardwareClient.responseMock, timeout(2500).times(2)).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 0"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 1"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "dw 5 0")));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "dw 5 1")));
     }
 
     @Test
@@ -443,17 +439,17 @@ public class TimerTest extends IntegrationBase {
         timer.stopTime = curTime + 2;
 
         clientPair.appClient.createWidget(1, timer);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         timer.startValue = "11";
         timer.stopValue = "10";
 
         clientPair.appClient.updateWidget(1, timer);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         verify(clientPair.hardwareClient.responseMock, timeout(2500).times(2)).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 11"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 10"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "dw 5 11")));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "dw 5 10")));
     }
 
     @Test
@@ -475,10 +471,10 @@ public class TimerTest extends IntegrationBase {
         timer.stopTime = curTime + 2;
 
         clientPair.appClient.createWidget(1, timer);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.deleteDash(1);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         verify(clientPair.hardwareClient.responseMock, after(2500).times(0)).channelRead(any(), any());
     }
@@ -493,7 +489,7 @@ public class TimerTest extends IntegrationBase {
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
 
         clientPair.appClient.deactivate(1);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         Timer timer = new Timer();
         timer.id = 1;
@@ -514,25 +510,25 @@ public class TimerTest extends IntegrationBase {
         dashBoard.widgets = new Widget[] {timer};
 
         clientPair.appClient.updateDash(dashBoard);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         dashBoard.id = 2;
         clientPair.appClient.createDash(dashBoard);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+        clientPair.appClient.verifyResult(ok(3));
 
         clientPair.appClient.activate(1);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(4, OK)));
+        clientPair.appClient.verifyResult(ok(4));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("getToken 2");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), any());
         hardClient2.login(clientPair.appClient.getBody());
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        hardClient2.verifyResult(ok(1));
         hardClient2.reset();
 
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 1"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "dw 5 1")));
         clientPair.hardwareClient.reset();
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "dw 5 0")));
 
         verify(hardClient2.responseMock, never()).channelRead(any(), any());
         hardClient2.stop().awaitUninterruptibly();
@@ -543,7 +539,7 @@ public class TimerTest extends IntegrationBase {
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
 
         clientPair.appClient.deactivate(1);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         Timer timer = new Timer();
         timer.id = 1;
@@ -564,14 +560,14 @@ public class TimerTest extends IntegrationBase {
         dashBoard.widgets = new Widget[] {timer};
 
         clientPair.appClient.updateDash(dashBoard);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         clientPair.appClient.activate(1);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+        clientPair.appClient.verifyResult(ok(3));
 
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 1"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "dw 5 1")));
         clientPair.hardwareClient.reset();
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "dw 5 0")));
     }
 
     @Test
@@ -584,13 +580,13 @@ public class TimerTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
+        clientPair.appClient.verifyResult(createDevice(1, device));
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
         hardClient2.login(device.token);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        hardClient2.verifyResult(ok(1));
         clientPair.appClient.reset();
 
         //creating new tag
@@ -622,10 +618,10 @@ public class TimerTest extends IntegrationBase {
         timer.startTime = curTime + 1;
 
         clientPair.appClient.createWidget(1, timer);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 1"))));
-        verify(hardClient2.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 1"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "dw 5 1")));
+        verify(hardClient2.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "dw 5 1")));
     }
 
     @Test
@@ -633,7 +629,7 @@ public class TimerTest extends IntegrationBase {
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
 
         clientPair.appClient.deactivate(1);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         Timer timer = new Timer();
         timer.id = 1;
@@ -654,20 +650,20 @@ public class TimerTest extends IntegrationBase {
         dashBoard.widgets = new Widget[] {timer};
 
         clientPair.appClient.updateDash(dashBoard);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         clientPair.appClient.activate(1);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+        clientPair.appClient.verifyResult(ok(3));
 
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("vw 5 1"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "vw 5 1")));
         clientPair.hardwareClient.reset();
         clientPair.hardwareClient.sync(PinType.VIRTUAL, 5);
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(1, HARDWARE, b("vw 5 1"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(1, "vw 5 1")));
 
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("vw 5 0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "vw 5 0")));
 
         clientPair.hardwareClient.sync(PinType.VIRTUAL, 5);
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 5 0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(2, "vw 5 0")));
 
     }
 }

@@ -82,7 +82,7 @@ public class OfflineNotificationTest extends IntegrationBase {
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
         hardClient2.login(devices[1].token);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        hardClient2.verifyResult(ok(1));
 
         hardClient2.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100"));
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
@@ -125,7 +125,7 @@ public class OfflineNotificationTest extends IntegrationBase {
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
         hardClient2.login(devices[1].token);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        hardClient2.verifyResult(ok(1));
 
         hardClient2.send("internal " + b("ver 0.3.1 h-beat 1 buff-in 256 dev Arduino cpu ATmega328P con W5100"));
         verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
@@ -142,7 +142,7 @@ public class OfflineNotificationTest extends IntegrationBase {
         DashboardSettings settings = new DashboardSettings("New Name", true, Theme.BlynkLight, true, true, true);
 
         clientPair.appClient.send("updateSettings 1\0" + JsonParser.toJson(settings));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = parseProfile(clientPair.appClient.getBody(2));
@@ -182,12 +182,12 @@ public class OfflineNotificationTest extends IntegrationBase {
 
         settings = new DashboardSettings("New Name", true, Theme.BlynkLight, true, true, false);
         clientPair.appClient.send("updateSettings 1\0" + JsonParser.toJson(settings));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
+        clientPair.appClient.verifyResult(ok(5));
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
         hardClient2.login(devices[1].token);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        hardClient2.verifyResult(ok(1));
         hardClient2.stop();
 
         verify(clientPair.appClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(deviceOffline(0, b("1-1"))));

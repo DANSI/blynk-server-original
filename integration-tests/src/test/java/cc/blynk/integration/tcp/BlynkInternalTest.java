@@ -9,7 +9,6 @@ import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.device.HardwareInfo;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import org.junit.After;
 import org.junit.Before;
@@ -17,7 +16,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.eq;
@@ -79,11 +77,11 @@ public class BlynkInternalTest extends IntegrationBase {
         clientPair.appClient.send("getToken 1");
         String token2 = clientPair.appClient.getBody();
         hardClient2.login(token2);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        hardClient2.verifyResult(ok(1));
 
         hardClient2.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100"));
 
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+        hardClient2.verifyResult(ok(2));
 
         clientPair.appClient.reset();
 
@@ -104,7 +102,7 @@ public class BlynkInternalTest extends IntegrationBase {
     @Test
     public void appConnectedEvent() throws Exception {
         clientPair.appClient.updateDash("{\"id\":1, \"name\":\"test board\", \"isAppConnectedOn\":true}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
         appClient.start();
@@ -112,17 +110,17 @@ public class BlynkInternalTest extends IntegrationBase {
         appClient.login(DEFAULT_TEST_USER, "1", "Android", "1.13.3");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(internal(7777, "acon")));
+        clientPair.hardwareClient.verifyResult(internal(7777, "acon"));
     }
 
     @Test
     public void appDisconnectedEvent() throws Exception {
         clientPair.appClient.updateDash("{\"id\":1, \"name\":\"test board\", \"isAppConnectedOn\":true}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.stop().await();
 
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(internal(7777, "adis")));
+        clientPair.hardwareClient.verifyResult(internal(7777, "adis"));
     }
 
 }

@@ -108,7 +108,7 @@ public class WebhookTest extends IntegrationBase {
         webHook.pinType = PinType.VIRTUAL;
 
         clientPair.appClient.createWidget(1, webHook);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 123 10");
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
@@ -124,12 +124,12 @@ public class WebhookTest extends IntegrationBase {
         webHook.pinType = PinType.VIRTUAL;
 
         clientPair.appClient.createWidget(1, webHook);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 123 10");
         String expectedResponse = "vw" + StringUtils.BODY_SEPARATOR_STRING + "123" + StringUtils.BODY_SEPARATOR_STRING +
                 "{\"results\":{\"sunrise\":\"7:30:27 AM\",\"sunset\":\"5:14:34 PM\",\"solar_noon\":\"12:22:31 PM\",\"day_length\":\"09:44:07\",\"civil_twilight_begin\":\"7:01:53 AM\",\"civil_twilight_end\":\"5:43:08 PM\",\"nautical_twilight_begin\":\"6:29:39 AM\",\"nautical_twilight_end\":\"6:15:23 PM\",\"astronomical_twilight_begin\":\"5:58:15 AM\",\"astronomical_twilight_end\":\"6:46:46 PM\"},\"status\":\"OK\"}";
-        verify(clientPair.hardwareClient.responseMock, timeout(3000)).channelRead(any(), eq(produce(888, HARDWARE, expectedResponse)));
+        clientPair.hardwareClient.verifyResult(hardware(888, expectedResponse));
     }
 
     @Test
@@ -142,14 +142,14 @@ public class WebhookTest extends IntegrationBase {
         webHook.pinType = PinType.VIRTUAL;
 
         clientPair.appClient.createWidget(1, webHook);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("hardware 1 vw 123 10");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 123 10"))));
 
         String expectedResponse = "vw" + StringUtils.BODY_SEPARATOR_STRING + "123" + StringUtils.BODY_SEPARATOR_STRING +
                 "{\"results\":{\"sunrise\":\"7:30:27 AM\",\"sunset\":\"5:14:34 PM\",\"solar_noon\":\"12:22:31 PM\",\"day_length\":\"09:44:07\",\"civil_twilight_begin\":\"7:01:53 AM\",\"civil_twilight_end\":\"5:43:08 PM\",\"nautical_twilight_begin\":\"6:29:39 AM\",\"nautical_twilight_end\":\"6:15:23 PM\",\"astronomical_twilight_begin\":\"5:58:15 AM\",\"astronomical_twilight_end\":\"6:46:46 PM\"},\"status\":\"OK\"}";
-        verify(clientPair.hardwareClient.responseMock, timeout(3000)).channelRead(any(), eq(produce(888, HARDWARE, expectedResponse)));
+        clientPair.hardwareClient.verifyResult(hardware(888, expectedResponse));
     }
 
     @Test
@@ -165,7 +165,7 @@ public class WebhookTest extends IntegrationBase {
         webHook.height = 1;
 
         clientPair.appClient.createWidget(1, webHook);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 123 10");
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
@@ -192,7 +192,7 @@ public class WebhookTest extends IntegrationBase {
         webHook.height = 1;
 
         clientPair.appClient.createWidget(1, webHook);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 123 10");
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
@@ -215,7 +215,7 @@ public class WebhookTest extends IntegrationBase {
         webHook.height = 1;
 
         clientPair.appClient.createWidget(1, webHook);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 123 " + b("10 11 12"));
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
@@ -254,7 +254,7 @@ public class WebhookTest extends IntegrationBase {
         webHook.height = 1;
 
         clientPair.appClient.createWidget(1, webHook);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 123 " + b("0 1 2 3 4 5 6 7 8 9"));
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
@@ -283,7 +283,7 @@ public class WebhookTest extends IntegrationBase {
         webHook.height = 1;
 
         clientPair.appClient.createWidget(1, webHook);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 123 10");
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
@@ -311,7 +311,7 @@ public class WebhookTest extends IntegrationBase {
         webHook.height = 1;
 
         clientPair.appClient.createWidget(1, webHook);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 123 10 11");
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
@@ -345,7 +345,7 @@ public class WebhookTest extends IntegrationBase {
         webHook.height = 1;
 
         clientPair.appClient.createWidget(1, webHook);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 123 10");
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
@@ -372,7 +372,7 @@ public class WebhookTest extends IntegrationBase {
         webHook.height = 1;
 
         clientPair.appClient.createWidget(1, webHook);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 123 " + b("10 11 12"));
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
@@ -401,7 +401,7 @@ public class WebhookTest extends IntegrationBase {
         webHook.height = 1;
 
         clientPair.appClient.createWidget(1, webHook);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 123 10");
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
@@ -428,7 +428,7 @@ public class WebhookTest extends IntegrationBase {
         webHook.height = 1;
 
         clientPair.appClient.createWidget(1, webHook);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 123 10");
         verify(clientPair.hardwareClient.responseMock, after(500).times(0)).channelRead(any(), any());
@@ -478,11 +478,11 @@ public class WebhookTest extends IntegrationBase {
         webHook.height = 1;
 
         clientPair.appClient.createWidget(1, webHook);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         //125564119 is id of project with 4ae3851817194e2596cf1b7103603ef8 token
         clientPair.appClient.send("hardware 1 vw 123 10");
-        verify(clientPair.hardwareClient.responseMock, after(500).times(1)).channelRead(any(), eq(new HardwareMessage(2, b("vw 123 10"))));
+        verify(clientPair.hardwareClient.responseMock, after(500).times(1)).channelRead(any(), eq(hardware(2, "vw 123 10")));
 
         Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124").execute();
         Response response = f.get();
@@ -506,10 +506,10 @@ public class WebhookTest extends IntegrationBase {
         webHook.height = 1;
 
         clientPair.appClient.createWidget(1, webHook);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("hardware 1 vw 123 10");
-        verify(clientPair.hardwareClient.responseMock, after(500)).channelRead(any(), eq(new HardwareMessage(2, b("vw 123 10"))));
+        verify(clientPair.hardwareClient.responseMock, after(500)).channelRead(any(), eq(hardware(2, "vw 123 10")));
 
         Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124").execute();
         Response response = f.get();
@@ -520,7 +520,7 @@ public class WebhookTest extends IntegrationBase {
         assertEquals("10", values.get(0));
 
         clientPair.appClient.send("hardware 1 vw 123 11");
-        verify(clientPair.hardwareClient.responseMock, after(1000)).channelRead(any(), eq(new HardwareMessage(3, b("vw 123 11"))));
+        verify(clientPair.hardwareClient.responseMock, after(1000)).channelRead(any(), eq(hardware(3, "vw 123 11")));
 
         f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124").execute();
         response = f.get();
@@ -532,7 +532,7 @@ public class WebhookTest extends IntegrationBase {
 
 
         clientPair.appClient.send("hardware 1 vw 123 11");
-        verify(clientPair.hardwareClient.responseMock, after(500)).channelRead(any(), eq(new HardwareMessage(4, b("vw 123 11"))));
+        verify(clientPair.hardwareClient.responseMock, after(500)).channelRead(any(), eq(hardware(4, "vw 123 11")));
 
         f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124").execute();
         response = f.get();
@@ -559,17 +559,17 @@ public class WebhookTest extends IntegrationBase {
 
         webHook.url = "http://adasd.com";
         clientPair.appClient.createWidget(1, webHook);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         webHook.id = 222;
         webHook.url = "https://adasd.com";
         clientPair.appClient.createWidget(1, webHook);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         webHook.id = 333;
         webHook.url = "Http://adasd.com";
         clientPair.appClient.createWidget(1, webHook);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+        clientPair.appClient.verifyResult(ok(3));
     }
 
     @Test
@@ -585,7 +585,7 @@ public class WebhookTest extends IntegrationBase {
         webHook.height = 1;
 
         clientPair.appClient.createWidget(1, webHook);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("hardware 1 vw 123 " + httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124");
         verify(clientPair.hardwareClient.responseMock, after(500).times(1)).channelRead(any(), eq(

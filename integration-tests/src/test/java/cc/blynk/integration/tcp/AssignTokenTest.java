@@ -23,10 +23,6 @@ import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -65,7 +61,7 @@ public class AssignTokenTest extends IntegrationBase {
     @Test
     public void testNoTokenExists() throws Exception {
         clientPair.appClient.send("assignToken 1\0" + "123");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(notAllowed(1)));
+        clientPair.appClient.verifyResult(notAllowed(1));
     }
 
     @Test
@@ -77,10 +73,10 @@ public class AssignTokenTest extends IntegrationBase {
         dbManager.insertFlashedTokens(list);
 
         clientPair.appClient.send("assignToken 1\0" + flashedToken.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("assignToken 1\0" + flashedToken.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(notAllowed(2)));
+        clientPair.appClient.verifyResult(notAllowed(2));
     }
 
     @Test
@@ -92,13 +88,13 @@ public class AssignTokenTest extends IntegrationBase {
         dbManager.insertFlashedTokens(list);
 
         clientPair.appClient.send("assignToken 1\0" + flashedToken.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
         hardClient2.login(flashedToken.token);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        hardClient2.verifyResult(ok(1));
 
         clientPair.appClient.send("getDevices 1");
 

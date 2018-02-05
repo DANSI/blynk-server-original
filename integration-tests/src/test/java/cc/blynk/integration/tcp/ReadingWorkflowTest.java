@@ -79,7 +79,7 @@ public class ReadingWorkflowTest extends IntegrationBase {
     @Test
     public void testServerSendReadingCommandCorrectly() throws Exception {
         clientPair.appClient.createWidget(1, "{\"id\":155, \"frequency\":400, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"GAUGE\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.readingWidgetsWorker, 0, 500, TimeUnit.MILLISECONDS);
 
@@ -89,10 +89,10 @@ public class ReadingWorkflowTest extends IntegrationBase {
     @Test
     public void testServerDontSendReadingCommandsForNonActiveDash() throws Exception {
         clientPair.appClient.createWidget(1, "{\"id\":155, \"frequency\":400, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"GAUGE\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.deactivate(1);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.readingWidgetsWorker, 0, 500, TimeUnit.MILLISECONDS);
 
@@ -107,7 +107,7 @@ public class ReadingWorkflowTest extends IntegrationBase {
                 "{\"pin\":101,\"pinType\":\"VIRTUAL\",\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":1023}]," +
                 "\"advancedMode\":false,\"textLight\":false,\"textLightOn\":false,\"frequency\":900}");
 
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.readingWidgetsWorker, 0, 1000, TimeUnit.MILLISECONDS);
 
@@ -136,15 +136,15 @@ public class ReadingWorkflowTest extends IntegrationBase {
         hardClient2.start();
 
         hardClient2.login(device2.token);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        hardClient2.verifyResult(ok(1));
         clientPair.appClient.reset();
 
 
         clientPair.appClient.createWidget(1, "{\"id\":155, \"deviceId\":0, \"frequency\":400, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"GAUGE\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.createWidget(1, "{\"id\":156, \"deviceId\":2, \"frequency\":400, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"GAUGE\", \"pinType\":\"VIRTUAL\", \"pin\":101}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.readingWidgetsWorker, 0, 500, TimeUnit.MILLISECONDS);
 
@@ -168,14 +168,14 @@ public class ReadingWorkflowTest extends IntegrationBase {
         hardClient2.start();
 
         hardClient2.login(device2.token);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        hardClient2.verifyResult(ok(1));
         clientPair.appClient.reset();
 
         clientPair.appClient.createWidget(1, "{\"id\":200000, \"width\":1, \"value\":2, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.createWidget(1, "{\"id\":155, \"deviceId\":200000, \"frequency\":400, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"GAUGE\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.readingWidgetsWorker, 0, 500, TimeUnit.MILLISECONDS);
 
@@ -207,20 +207,20 @@ public class ReadingWorkflowTest extends IntegrationBase {
         hardClient2.start();
 
         hardClient2.login(device2.token);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        hardClient2.verifyResult(ok(1));
         clientPair.appClient.reset();
 
 
         clientPair.appClient.createWidget(1, "{\"id\":155, \"deviceId\":0, \"frequency\":400, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"GAUGE\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.createWidget(1, "{\"id\":156, \"deviceId\":0, \"frequency\":400, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"GAUGE\", \"pinType\":\"VIRTUAL\", \"pin\":101}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
 
         clientPair.appClient.createWidget(1, "{\"id\":157, \"deviceId\":2, \"frequency\":400, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"GAUGE\", \"pinType\":\"VIRTUAL\", \"pin\":102}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+        clientPair.appClient.verifyResult(ok(3));
         clientPair.appClient.createWidget(1, "{\"id\":158, \"deviceId\":2, \"frequency\":400, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"GAUGE\", \"pinType\":\"VIRTUAL\", \"pin\":103}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
+        clientPair.appClient.verifyResult(ok(4));
 
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.readingWidgetsWorker, 0, 500, TimeUnit.MILLISECONDS);
 
@@ -264,7 +264,7 @@ public class ReadingWorkflowTest extends IntegrationBase {
         hardClient2.start();
 
         hardClient2.login(device2.token);
-        verify(hardClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
+        hardClient2.verifyResult(ok(1));
         clientPair.appClient.reset();
 
 

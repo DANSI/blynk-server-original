@@ -16,7 +16,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
 import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND_BODY;
 import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
 import static org.mockito.Mockito.any;
@@ -57,13 +56,13 @@ public class WidgetWorkflowTest extends IntegrationBase {
     @Test
     public void testCorrectBehaviourOnWrongInput() throws Exception {
         clientPair.appClient.send("createWidget ");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(illegalCommand(1)));
 
         clientPair.appClient.send("createWidget 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, ILLEGAL_COMMAND)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(illegalCommand(2)));
 
         clientPair.appClient.send("createWidget 1" + "\0");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, ILLEGAL_COMMAND)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(illegalCommand(3)));
 
         clientPair.appClient.send("createWidget 1" + "\0" + "{}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(4, ILLEGAL_COMMAND_BODY)));
@@ -81,22 +80,22 @@ public class WidgetWorkflowTest extends IntegrationBase {
     @Test
     public void testCanCreateWebHookWithScheme() throws Exception {
         clientPair.appClient.createWidget(1, "{\"id\":1111, \"width\":1, \"height\":1,\"url\":\"http://123.com\",\"type\":\"WEBHOOK\"}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.createWidget(1, "{\"id\":1113, \"width\":1, \"height\":1,\"url\":\"https://123.com\",\"type\":\"WEBHOOK\"}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
     }
 
     @Test
     public void testWidgetAlreadyExists() throws Exception {
         clientPair.appClient.createWidget(1, "{\"id\":1, \"width\":1, \"height\":1,\"type\":\"BUTTON\"}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NOT_ALLOWED)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(notAllowed(1)));
     }
 
     @Test
     public void testWidgetWrongSize() throws Exception {
         clientPair.appClient.createWidget(1, "{\"id\":22222, \"width\":1, \"height\":0,\"type\":\"BUTTON\"}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NOT_ALLOWED)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(notAllowed(1)));
     }
 
     @Test
@@ -108,10 +107,10 @@ public class WidgetWorkflowTest extends IntegrationBase {
     @Test
     public void testCreateWidgetAndRemove() throws Exception {
         clientPair.appClient.createWidget(1, "{\"frequency\":1000,\"isAxisFlipOn\":false,\"color\":600084223,\"isDefaultColor\":true,\"rangeMappingOn\":false,\"pin\":-1,\"pwmMode\":false,\"deviceId\":0,\"height\":3,\"id\":82561,\"tabId\":1,\"type\":\"VERTICAL_LEVEL_DISPLAY\",\"width\":1,\"x\":0,\"y\":6,\"min\":0,\"max\":1023}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.deleteWidget(1, 82561);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
     }
 
     @Test
@@ -124,13 +123,13 @@ public class WidgetWorkflowTest extends IntegrationBase {
         deviceTiles.height = 100;
 
         clientPair.appClient.createWidget(1, deviceTiles);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.createWidget(1, "{\"frequency\":1000,\"isAxisFlipOn\":false,\"color\":600084223,\"isDefaultColor\":true,\"rangeMappingOn\":false,\"pin\":-1,\"pwmMode\":false,\"deviceId\":0,\"height\":3,\"id\":82561,\"tabId\":1,\"type\":\"VERTICAL_LEVEL_DISPLAY\",\"width\":1,\"x\":0,\"y\":6,\"min\":0,\"max\":1023}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         clientPair.appClient.deleteWidget(1, 82561);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+        clientPair.appClient.verifyResult(ok(3));
     }
 
 }

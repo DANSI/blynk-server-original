@@ -216,7 +216,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         DashboardSettings settings = new DashboardSettings(dash.name, true, Theme.Blynk, false, false, false);
 
         clientPair.appClient.send("updateSettings 2\0" + JsonParser.toJson(settings));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+        clientPair.appClient.verifyResult(ok(3));
 
         clientPair.appClient.send("getShareToken 2");
 
@@ -390,7 +390,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("sharing 1 off");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(2, SHARING, b("1 off"))));
     }
@@ -416,7 +416,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("sharing 1 off");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(2, SHARING, b("1 off"))));
         verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(produce(2, SHARING, b("1 off"))));
@@ -443,7 +443,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("sharing 1 off");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(2, SHARING, b("1 off"))));
         verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(produce(2, SHARING, b("1 off"))));
@@ -462,7 +462,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         };
 
         clientPair.appClient.createWidget(1, eventor);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("getShareToken 1");
 
@@ -481,8 +481,8 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 1 38"))));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, APP_SYNC, b("1 vw 1 38"))));
 
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 123"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("1-0 vw 2 123"))));
+        clientPair.hardwareClient.verifyResult(hardware(888, "vw 2 123"));
+        clientPair.appClient.verifyResult(hardware(888, "1-0 vw 2 123"));
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("1-0 vw 2 123"))));
     }
 
@@ -593,13 +593,13 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.deactivate(1);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(2, DEACTIVATE_DASHBOARD, "1")));
         verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(produce(2, DEACTIVATE_DASHBOARD, "1")));
 
         clientPair.appClient.activate(1);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+        clientPair.appClient.verifyResult(ok(3));
 
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(3, ACTIVATE_DASHBOARD, "1")));
         verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(produce(3, ACTIVATE_DASHBOARD, "1")));
@@ -625,7 +625,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("deactivate");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(2, DEACTIVATE_DASHBOARD, "")));
         verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(produce(2, DEACTIVATE_DASHBOARD, "")));
@@ -839,7 +839,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         dash.devices = new Device[] {device};
 
         clientPair.appClient.createDash(dash);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("getShareToken 333");
         String token = clientPair.appClient.getBody(2);

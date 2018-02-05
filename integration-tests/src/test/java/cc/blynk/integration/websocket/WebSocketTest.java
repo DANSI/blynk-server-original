@@ -6,7 +6,6 @@ import cc.blynk.integration.model.websocket.WebSocketClient;
 import cc.blynk.server.api.http.AppAndHttpsServer;
 import cc.blynk.server.api.http.HardwareAndHttpAPIServer;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import org.junit.After;
@@ -16,7 +15,6 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -70,7 +68,7 @@ public class WebSocketTest extends IntegrationBase {
         webSocketClient.send("login 4ae3851817194e2596cf1b7103603ef8");
         verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         webSocketClient.send("ping");
-        verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+        verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
     }
 
     @Test
@@ -80,7 +78,7 @@ public class WebSocketTest extends IntegrationBase {
         webSocketClient.send("login 4ae3851817194e2596cf1b7103603ef8");
         verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         webSocketClient.send("ping");
-        verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+        verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
     }
 
     @Test

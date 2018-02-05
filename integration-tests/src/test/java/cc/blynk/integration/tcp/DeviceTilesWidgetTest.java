@@ -94,14 +94,14 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         deviceTiles.height = 100;
 
         clientPair.appClient.createWidget(1, deviceTiles);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         TileTemplate tileTemplate = new TileTemplate(1, null, null, "123",
                 TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null);
 
         clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         clientPair.appClient.send("getWidget 1\0" + widgetId);
         deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(3), 0);
@@ -125,21 +125,21 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         deviceTiles.height = 100;
 
         clientPair.appClient.createWidget(1, deviceTiles);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         TileTemplate tileTemplate = new TileTemplate(1, null, null, "123",
                 TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null);
 
         clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         tileTemplate = new TileTemplate(1, null, new int[] {0}, "123",
                 TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null);
 
         clientPair.appClient.send("updateTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+        clientPair.appClient.verifyResult(ok(3));
 
 
         clientPair.appClient.send("getWidget 1\0" + widgetId);
@@ -168,14 +168,14 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         deviceTiles.height = 100;
 
         clientPair.appClient.createWidget(1, deviceTiles);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         TileTemplate tileTemplate = new TileTemplate(0, null, null, "123",
                 TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null);
 
         clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         clientPair.appClient.send("updateTemplate " + b("1 " + widgetId + " ")
                 + "{\"alignment\":\"LEFT\",\"color\":600084223,\"deviceIds\":[0],\"disableWhenOffline\":false," +
@@ -183,7 +183,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
                 "\"pin\":{\"max\":255,\"min\":0,\"pin\":5,\"pinType\":\"VIRTUAL\",\"pwmMode\":false," +
                 "\"rangeMappingOn\":false},\"showDeviceName\":true,\"valueName\":\"Temperature\"," +
                 "\"valueSuffix\":\"%\",\"widgets\":[]}}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+        clientPair.appClient.verifyResult(ok(3));
 
 
         clientPair.appClient.send("getWidget 1\0" + widgetId);
@@ -213,14 +213,14 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         deviceTiles.height = 100;
 
         clientPair.appClient.createWidget(1, deviceTiles);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         TileTemplate tileTemplate = new TileTemplate(1, null, null, "123",
                 TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null);
 
         clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         DataStream dataStream = new DataStream((byte) 1, PinType.VIRTUAL);
         tileTemplate = new TileTemplate(1, null, new int[] {0}, "123",
@@ -228,7 +228,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
 
         clientPair.appClient.send("updateTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+        clientPair.appClient.verifyResult(ok(3));
 
         clientPair.appClient.send("getWidget 1\0" + widgetId);
         deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(4), 0);
@@ -251,7 +251,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
 
         clientPair.appClient.send("updateTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
+        clientPair.appClient.verifyResult(ok(5));
 
         clientPair.appClient.send("getWidget 1\0" + widgetId);
         deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(6), 0);
@@ -279,7 +279,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device)));
+        clientPair.appClient.verifyResult(createDevice(1, device));
 
         clientPair.appClient.reset();
 
@@ -293,14 +293,14 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         deviceTiles.height = 100;
 
         clientPair.appClient.createWidget(1, deviceTiles);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         TileTemplate tileTemplate = new TileTemplate(1, null, null, "123",
                 TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null);
 
         clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         DataStream dataStream = new DataStream((byte) 1, PinType.VIRTUAL);
         tileTemplate = new TileTemplate(1, null, new int[] {0, 1}, "123",
@@ -308,7 +308,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
 
         clientPair.appClient.send("updateTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+        clientPair.appClient.verifyResult(ok(3));
 
         clientPair.appClient.send("getWidget 1\0" + widgetId);
         deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(4), 0);
@@ -335,7 +335,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
 
         clientPair.appClient.send("updateTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
+        clientPair.appClient.verifyResult(ok(5));
 
         clientPair.appClient.send("getWidget 1\0" + widgetId);
         deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(6), 0);
@@ -367,7 +367,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device)));
+        clientPair.appClient.verifyResult(createDevice(1, device));
 
         clientPair.appClient.reset();
 
@@ -381,14 +381,14 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         deviceTiles.height = 100;
 
         clientPair.appClient.createWidget(1, deviceTiles);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         TileTemplate tileTemplate = new TileTemplate(1, null, null, "123",
                 TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null);
 
         clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         DataStream dataStream = new DataStream((byte) 5, PinType.VIRTUAL);
 
@@ -411,7 +411,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
 
         clientPair.appClient.send("updateTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+        clientPair.appClient.verifyResult(ok(3));
 
         clientPair.appClient.send("getWidget 1\0" + widgetId);
         deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(4), 0);
@@ -463,7 +463,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
 
         verify(clientPair.appClient.responseMock, timeout(500).times(13)).channelRead(any(), any());
 
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 dw 1 1"))));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 dw 2 1"))));
@@ -490,7 +490,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device)));
+        clientPair.appClient.verifyResult(createDevice(1, device));
 
         clientPair.appClient.reset();
 
@@ -504,14 +504,14 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         deviceTiles.height = 100;
 
         clientPair.appClient.createWidget(1, deviceTiles);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         TileTemplate tileTemplate = new TileTemplate(1, null, null, "123",
                 TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null);
 
         clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         DataStream dataStream = new DataStream((byte) 5, PinType.VIRTUAL);
 
@@ -530,14 +530,14 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
 
         clientPair.appClient.send("updateTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+        clientPair.appClient.verifyResult(ok(3));
 
         clientPair.appClient.reset();
         clientPair.appClient.sync(1, 0);
 
         verify(clientPair.appClient.responseMock, timeout(500).times(11)).channelRead(any(), any());
 
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 dw 1 1"))));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 dw 2 1"))));
@@ -563,12 +563,12 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device)));
+        clientPair.appClient.verifyResult(createDevice(1, device));
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
         hardClient2.login(device.token);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        hardClient2.verifyResult(ok(1));
 
         clientPair.appClient.reset();
 
@@ -582,14 +582,14 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         deviceTiles.height = 100;
 
         clientPair.appClient.createWidget(1, deviceTiles);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         TileTemplate tileTemplate = new TileTemplate(1, null, null, "123",
                 TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null);
 
         clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         DataStream dataStream = new DataStream((byte) 5, PinType.VIRTUAL);
 
@@ -608,13 +608,13 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
 
         clientPair.appClient.send("updateTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+        clientPair.appClient.verifyResult(ok(3));
 
         clientPair.appClient.reset();
         clientPair.appClient.sync(1, 1);
 
         verify(clientPair.appClient.responseMock, timeout(500).times(1)).channelRead(any(), any());
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         verify(hardClient2.responseMock, timeout(2000)).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 77"))));
         verify(clientPair.hardwareClient.responseMock, never()).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 77"))));
@@ -632,7 +632,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         deviceTiles.height = 100;
 
         clientPair.appClient.createWidget(1, deviceTiles);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         int[] deviceIds = new int[] {0};
         DataStream dataStream = new DataStream((byte) 1, PinType.VIRTUAL);
@@ -642,7 +642,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
 
         clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         clientPair.appClient.send("getWidget 1\0" + widgetId);
         deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(3), 0);
@@ -672,7 +672,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         deviceTiles.height = 100;
 
         clientPair.appClient.createWidget(1, deviceTiles);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         int[] deviceIds = new int[] {0};
         DataStream dataStream = new DataStream((byte) 1, PinType.VIRTUAL);
@@ -682,7 +682,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
 
         clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         clientPair.appClient.send("getWidget 1\0" + widgetId);
         deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(3), 0);
@@ -703,7 +703,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         deviceTiles.tiles = null;
 
         clientPair.appClient.updateWidget(1, deviceTiles);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
+        clientPair.appClient.verifyResult(ok(4));
 
         clientPair.appClient.send("getWidget 1\0" + widgetId);
         deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(5), 0);
@@ -728,7 +728,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         createTemplateWithTiles();
 
         clientPair.appClient.send("deleteTemplate " + b("1 " + widgetId + " " + templateId));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
+        clientPair.appClient.verifyResult(ok(4));
 
         clientPair.appClient.send("getWidget 1\0" + widgetId);
         DeviceTiles deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(5), 0);
@@ -757,7 +757,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         };
 
         clientPair.appClient.createWidget(1, deviceTiles);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("getWidget 1\0" + widgetId);
         deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(2), 0);
@@ -769,7 +769,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
 
 
         clientPair.appClient.send("deleteTemplate " + b("1 " + widgetId + " " + tileTemplate.id));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+        clientPair.appClient.verifyResult(ok(3));
 
         clientPair.appClient.send("getWidget 1\0" + widgetId);
         deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(4), 0);
@@ -797,14 +797,14 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         };
 
         clientPair.appClient.createWidget(1, deviceTiles);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         tileTemplate = new TileTemplate(1, null, new int[] {0}, "123",
                 TileMode.PAGE, "ESP8266", new DataStream((byte) 1, PinType.VIRTUAL), null, null, 0, TextAlignment.LEFT, false, false, null);
 
         clientPair.appClient.send("updateTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
 
         clientPair.appClient.send("getWidget 1\0" + widgetId);
@@ -835,7 +835,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         deviceTiles.height = 100;
 
         clientPair.appClient.createWidget(1, deviceTiles);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         int[] deviceIds = new int[] {0};
 
@@ -859,7 +859,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
 
         clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         clientPair.appClient.send("getenhanceddata 1" + b(" 432 DAY"));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, NO_DATA)));
@@ -877,7 +877,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         deviceTiles.height = 100;
 
         clientPair.appClient.createWidget(1, deviceTiles);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         int[] deviceIds = new int[] {0};
 
@@ -901,7 +901,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
 
         clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         clientPair.appClient.send("getenhanceddata 1-0" + b(" 432 DAY"));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, NO_DATA)));
@@ -919,7 +919,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         deviceTiles.height = 100;
 
         clientPair.appClient.createWidget(1, deviceTiles);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("getEnergy");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, GET_ENERGY, "2600")));
@@ -929,22 +929,22 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
 
         clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+        clientPair.appClient.verifyResult(ok(3));
 
         clientPair.appClient.createWidget(1, b("21321 1 ") + "{\"id\":100, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":2}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
+        clientPair.appClient.verifyResult(ok(4));
 
         clientPair.appClient.send("getEnergy");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(5, GET_ENERGY, "2400")));
 
         clientPair.appClient.createWidget(1, b("21321 1 ") + "{\"id\":101, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":3}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(6)));
+        clientPair.appClient.verifyResult(ok(6));
 
         clientPair.appClient.send("getEnergy");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7, GET_ENERGY, "2200")));
 
         clientPair.appClient.deleteWidget(1, 101);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(8)));
+        clientPair.appClient.verifyResult(ok(8));
 
         clientPair.appClient.send("getEnergy");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(9, GET_ENERGY, "2400")));
@@ -968,23 +968,23 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         deviceTiles.height = 100;
 
         clientPair.appClient.createWidget(1, deviceTiles);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         TileTemplate tileTemplate = new TileTemplate(1, null, null, "123",
                 TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null);
 
         clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         clientPair.appClient.createWidget(1, b("21321 1 ") + "{\"id\":100, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":2}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+        clientPair.appClient.verifyResult(ok(3));
 
         clientPair.appClient.createWidget(1, b("21321 1 ") + "{\"id\":100, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":2}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(notAllowed(4)));
 
         clientPair.appClient.updateWidget(1, "{\"id\":100, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 3\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":3}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
+        clientPair.appClient.verifyResult(ok(5));
 
         clientPair.appClient.send("getWidget 1\0" + widgetId);
         deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(6), 0);

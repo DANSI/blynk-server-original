@@ -292,7 +292,7 @@ public class HttpsAdminServerTest extends BaseTest {
         login(admin.email, admin.pass);
 
         clientPair.appClient.deactivate(1);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         User user;
         HttpGet getUserRequest = new HttpGet(httpsAdminServerUrl + "/users/" + DEFAULT_TEST_USER + "-Blynk");
@@ -346,7 +346,7 @@ public class HttpsAdminServerTest extends BaseTest {
         hardClient2.start();
 
         hardClient2.login(devices[0].token);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        hardClient2.verifyResult(ok(1));
 
         hardClient2.send("hardware vw 1 112");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("1-0 vw 1 112"))));

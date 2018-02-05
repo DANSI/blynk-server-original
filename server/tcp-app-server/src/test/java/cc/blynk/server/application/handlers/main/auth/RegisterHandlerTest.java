@@ -117,7 +117,7 @@ public class RegisterHandlerTest {
         registerHandler.channelRead0(ctx, new RegisterMessage(1, email + "\0" + "1"));
 
         verify(userDao, times(0)).add(eq(email), eq("1"), eq(AppNameUtil.BLYNK));
-        //verify(ctx).writeAndFlush(eq(new ResponseMessage(1, NOT_ALLOWED)), any());
+        //verify(ctx).writeAndFlush(eq(notAllowed(1)), any());
     }
 
     @Test

@@ -23,16 +23,12 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
 
-import static cc.blynk.server.core.protocol.enums.Command.BRIDGE;
-import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_CONNECTED;
 import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK;
-import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 
@@ -67,25 +63,25 @@ public class BridgeWorkflowTest extends IntegrationBase {
     @Test
     public void testBridgeInitOk() throws Exception {
         clientPair.hardwareClient.send("bridge 1 i " + clientPair.token);
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.hardwareClient.verifyResult(ok(1));
     }
 
     @Test
     public void testBridgeInitIllegalCommand() throws Exception {
         clientPair.hardwareClient.send("bridge 1 i");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND)));
+        clientPair.hardwareClient.verifyResult(illegalCommand(1));
 
         clientPair.hardwareClient.send("bridge i");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, ILLEGAL_COMMAND)));
+        clientPair.hardwareClient.verifyResult(illegalCommand(2));
 
         clientPair.hardwareClient.send("bridge 1 auth_tone");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, ILLEGAL_COMMAND)));
+        clientPair.hardwareClient.verifyResult(illegalCommand(3));
 
         clientPair.hardwareClient.send("bridge 1");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(4, ILLEGAL_COMMAND)));
+        clientPair.hardwareClient.verifyResult(illegalCommand(4));
 
         clientPair.hardwareClient.send("bridge 1");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(5, ILLEGAL_COMMAND)));
+        clientPair.hardwareClient.verifyResult(illegalCommand(5));
     }
 
     @Test
@@ -94,40 +90,40 @@ public class BridgeWorkflowTest extends IntegrationBase {
         clientPair.hardwareClient.send("bridge 2 i " + clientPair.token);
         clientPair.hardwareClient.send("bridge 3 i " + clientPair.token);
         clientPair.hardwareClient.send("bridge 4 i " + clientPair.token);
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
+        clientPair.hardwareClient.verifyResult(ok(1));
+        clientPair.hardwareClient.verifyResult(ok(2));
+        clientPair.hardwareClient.verifyResult(ok(3));
+        clientPair.hardwareClient.verifyResult(ok(4));
 
         clientPair.hardwareClient.send("bridge 5 i " + clientPair.token);
         clientPair.hardwareClient.send("bridge 5 i " + clientPair.token);
         clientPair.hardwareClient.send("bridge 5 i " + clientPair.token);
         clientPair.hardwareClient.send("bridge 5 i " + clientPair.token);
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(6)));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(7)));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(8)));
+        clientPair.hardwareClient.verifyResult(ok(5));
+        clientPair.hardwareClient.verifyResult(ok(6));
+        clientPair.hardwareClient.verifyResult(ok(7));
+        clientPair.hardwareClient.verifyResult(ok(8));
     }
 
     @Test
     public void testBridgeInitAndOk() throws Exception {
         clientPair.hardwareClient.send("bridge 1 i " + clientPair.token);
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.hardwareClient.verifyResult(ok(1));
     }
 
     @Test
     public void testBridgeWithoutInit() throws Exception {
         clientPair.hardwareClient.send("bridge 1 aw 10 10");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(notAllowed(1)));
+        clientPair.hardwareClient.verifyResult(notAllowed(1));
     }
 
     @Test
     public void testBridgeInitAndSendNoOtherDevices() throws Exception {
         clientPair.hardwareClient.send("bridge 1 i " + clientPair.token);
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.hardwareClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("bridge 1 aw 10 10");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, DEVICE_NOT_IN_NETWORK)));
+        clientPair.hardwareClient.verifyResult(new ResponseMessage(2, DEVICE_NOT_IN_NETWORK));
     }
 
     @Test
@@ -140,7 +136,7 @@ public class BridgeWorkflowTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
+        clientPair.appClient.verifyResult(createDevice(1, device));
 
         clientPair.appClient.reset();
 
@@ -148,21 +144,21 @@ public class BridgeWorkflowTest extends IntegrationBase {
         TestHardClient hardClient1 = new TestHardClient("localhost", tcpHardPort);
         hardClient1.start();
         hardClient1.login(clientPair.token);
-        verify(hardClient1.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
+        hardClient1.verifyResult(ok(1));
         hardClient1.reset();
 
         clientPair.hardwareClient.send("bridge 1 i " + device.token);
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.hardwareClient.verifyResult(ok(1));
         clientPair.hardwareClient.send("bridge 1 aw 10 10");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, DEVICE_NOT_IN_NETWORK)));
+        clientPair.hardwareClient.verifyResult(new ResponseMessage(2, DEVICE_NOT_IN_NETWORK));
     }
 
     @Test
     public void testSecondTokenNotInitialized() throws Exception {
         clientPair.hardwareClient.send("bridge 1 i " + clientPair.token);
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.hardwareClient.verifyResult(ok(1));
         clientPair.hardwareClient.send("bridge 2 aw 10 10");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(notAllowed(2)));
+        clientPair.hardwareClient.verifyResult(notAllowed(2));
     }
 
     @Test
@@ -171,14 +167,14 @@ public class BridgeWorkflowTest extends IntegrationBase {
         TestHardClient hardClient1 = new TestHardClient("localhost", tcpHardPort);
         hardClient1.start();
         hardClient1.login(clientPair.token);
-        verify(hardClient1.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
+        hardClient1.verifyResult(ok(1));
         hardClient1.reset();
 
         clientPair.hardwareClient.send("bridge 1 i " + clientPair.token);
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.hardwareClient.verifyResult(ok(1));
         clientPair.hardwareClient.send("bridge 1 aw 10 10");
-        verify(hardClient1.responseMock, timeout(500)).channelRead(any(), eq(produce(2, BRIDGE, b("aw 10 10"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("1-0 aw 10 10"))));
+        hardClient1.verifyResult(bridge(2, "aw 10 10"));
+        clientPair.appClient.verifyResult(hardware(2, "1-0 aw 10 10"));
     }
 
     @Test
@@ -192,22 +188,22 @@ public class BridgeWorkflowTest extends IntegrationBase {
         String token2 = ((StringMessage) arguments.get(0)).body;
 
         clientPair.appClient.activate(2);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, DEVICE_NOT_IN_NETWORK)));
+        clientPair.appClient.verifyResult(new ResponseMessage(2, DEVICE_NOT_IN_NETWORK));
         clientPair.appClient.reset();
 
         //creating 1 new hard client
         TestHardClient hardClient1 = new TestHardClient("localhost", tcpHardPort);
         hardClient1.start();
         hardClient1.login(token2);
-        verify(hardClient1.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
+        hardClient1.verifyResult(ok(1));
         hardClient1.reset();
 
         clientPair.hardwareClient.send("bridge 1 i " + token2);
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.hardwareClient.verifyResult(ok(1));
         clientPair.hardwareClient.send("bridge 1 aw 11 11");
-        verify(hardClient1.responseMock, timeout(500)).channelRead(any(), eq(produce(2, BRIDGE, b("aw 11 11"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE_CONNECTED, "2-0")));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("2-0 aw 11 11"))));
+        hardClient1.verifyResult(bridge(2, "aw 11 11"));
+        clientPair.appClient.verifyResult(hardwareConnected(1, "2-0"));
+        clientPair.appClient.verifyResult(hardware(2, "2-0 aw 11 11"));
     }
 
     @Test
@@ -225,25 +221,25 @@ public class BridgeWorkflowTest extends IntegrationBase {
         TestHardClient hardClient1 = new TestHardClient("localhost", tcpHardPort);
         hardClient1.start();
         hardClient1.login(token2);
-        verify(hardClient1.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
+        hardClient1.verifyResult(ok(1));
         hardClient1.reset();
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
         hardClient2.login(token2);
-        verify(hardClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
+        hardClient2.verifyResult(ok(1));
         hardClient2.reset();
 
 
         clientPair.hardwareClient.send("bridge 1 i " + token2);
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.hardwareClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("bridge 1 aw 11 11");
-        verify(hardClient1.responseMock, timeout(500)).channelRead(any(), eq(produce(2, BRIDGE, b("aw 11 11"))));
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(2, BRIDGE, b("aw 11 11"))));
+        hardClient1.verifyResult(bridge(2, "aw 11 11"));
+        hardClient2.verifyResult(bridge(2, "aw 11 11"));
 
-        verify(clientPair.appClient.responseMock, timeout(500).times(2)).channelRead(any(), eq(produce(1, HARDWARE_CONNECTED, "2-0")));
-        verify(clientPair.appClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(produce(2, HARDWARE, b("2 aw 11 11"))));
+        clientPair.appClient.verifyResult(hardwareConnected(1, "2-0"), 2);
+        clientPair.appClient.never(hardware(2, "2 aw 11 11"));
     }
 
     @Test
@@ -262,13 +258,13 @@ public class BridgeWorkflowTest extends IntegrationBase {
         TestHardClient hardClient1 = new TestHardClient("localhost", tcpHardPort);
         hardClient1.start();
         hardClient1.login(token2);
-        verify(hardClient1.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
+        hardClient1.verifyResult(ok(1));
         hardClient1.reset();
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
         hardClient2.login(token2);
-        verify(hardClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
+        hardClient2.verifyResult(ok(1));
         hardClient2.reset();
 
         TestHardClient hardClient3 = new TestHardClient("localhost", tcpHardPort);
@@ -279,17 +275,17 @@ public class BridgeWorkflowTest extends IntegrationBase {
 
 
         clientPair.hardwareClient.send("bridge 1 i " + token2);
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.hardwareClient.verifyResult(ok(1));
         clientPair.hardwareClient.send("bridge 2 i " + token3);
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.hardwareClient.verifyResult(ok(1));
 
 
         clientPair.hardwareClient.send("bridge 1 aw 11 11");
-        verify(hardClient1.responseMock, timeout(500)).channelRead(any(), eq(produce(3, BRIDGE, b("aw 11 11"))));
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(3, BRIDGE, b("aw 11 11"))));
+        hardClient1.verifyResult(bridge(3, "aw 11 11"));
+        hardClient2.verifyResult(bridge(3, "aw 11 11"));
 
         clientPair.hardwareClient.send("bridge 2 aw 13 13");
-        verify(hardClient3.responseMock, timeout(500)).channelRead(any(), eq(produce(4, BRIDGE, b("aw 13 13"))));
+        hardClient3.verifyResult(bridge(4, "aw 13 13"));
     }
 
     @Test
@@ -307,31 +303,30 @@ public class BridgeWorkflowTest extends IntegrationBase {
         TestHardClient hardClient1 = new TestHardClient("localhost", tcpHardPort);
         hardClient1.start();
         hardClient1.login(token2);
-        verify(hardClient1.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
+        hardClient1.verifyResult(ok(1));
         hardClient1.reset();
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
         hardClient2.login(token2);
-        verify(hardClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
+        hardClient2.verifyResult(ok(1));
         hardClient2.reset();
 
 
         clientPair.hardwareClient.send("bridge 1 i " + token2);
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.hardwareClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("bridge 1 aw 11 11");
-        verify(hardClient1.responseMock, timeout(500)).channelRead(any(), eq(produce(2, BRIDGE, b("aw 11 11"))));
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(2, BRIDGE, b("aw 11 11"))));
+        hardClient1.verifyResult(bridge(2, "aw 11 11"));
+        hardClient2.verifyResult(bridge(2, "aw 11 11"));
 
-        verify(clientPair.appClient.responseMock, timeout(500).times(2)).channelRead(any(), eq(produce(1, HARDWARE_CONNECTED, "2-0")));
-        verify(clientPair.appClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(produce(2, HARDWARE, b("2 aw 11 11"))));
-
+        clientPair.appClient.verifyResult(produce(1, HARDWARE_CONNECTED, "2-0"), 2);
+        clientPair.appClient.never(hardware(2, "2 aw 11 11"));
 
         hardClient1.sync(PinType.ANALOG, 11);
-        verify(hardClient1.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("aw 11 11"))));
+        hardClient1.verifyResult(hardware(1, "aw 11 11"));
         hardClient2.sync(PinType.ANALOG, 11);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("aw 11 11"))));
+        hardClient2.verifyResult(hardware(1, "aw 11 11"));
     }
 
     @Test
@@ -350,13 +345,13 @@ public class BridgeWorkflowTest extends IntegrationBase {
         TestHardClient hardClient1 = new TestHardClient("localhost", tcpHardPort);
         hardClient1.start();
         hardClient1.login(token2);
-        verify(hardClient1.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
+        hardClient1.verifyResult(ok(1));
         hardClient1.reset();
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
         hardClient2.login(token2);
-        verify(hardClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
+        hardClient2.verifyResult(ok(1));
         hardClient2.reset();
 
         TestHardClient hardClient3 = new TestHardClient("localhost", tcpHardPort);
@@ -367,26 +362,26 @@ public class BridgeWorkflowTest extends IntegrationBase {
 
 
         clientPair.hardwareClient.send("bridge 1 i " + token2);
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.hardwareClient.verifyResult(ok(1));
         clientPair.hardwareClient.send("bridge 2 i " + token3);
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.hardwareClient.verifyResult(ok(1));
 
 
         clientPair.hardwareClient.send("bridge 1 vw 11 12");
-        verify(hardClient1.responseMock, timeout(500)).channelRead(any(), eq(produce(3, BRIDGE, b("vw 11 12"))));
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(3, BRIDGE, b("vw 11 12"))));
+        hardClient1.verifyResult(bridge(3, "vw 11 12"));
+        hardClient2.verifyResult(bridge(3, "vw 11 12"));
 
         clientPair.hardwareClient.send("bridge 2 aw 13 13");
-        verify(hardClient3.responseMock, timeout(500)).channelRead(any(), eq(produce(4, BRIDGE, b("aw 13 13"))));
+        hardClient3.verifyResult(bridge(4, "aw 13 13"));
 
         hardClient1.sync(PinType.VIRTUAL, 11);
-        verify(hardClient1.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("vw 11 12"))));
+        hardClient1.verifyResult(hardware(1, "vw 11 12"));
         hardClient2.sync(PinType.VIRTUAL, 11);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("vw 11 12"))));
+        hardClient2.verifyResult(hardware(1, "vw 11 12"));
         hardClient3.sync(PinType.ANALOG, 13);
-        verify(hardClient3.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("aw 13 13"))));
+        hardClient3.verifyResult(hardware(1, "aw 13 13"));
         hardClient3.sync(PinType.ANALOG, 13);
-        verify(hardClient3.responseMock, never()).channelRead(any(), eq(produce(2, HARDWARE, b("aw 13 13"))));
+        hardClient3.never(hardware(2, "aw 13 13"));
     }
 
     @Test
@@ -414,12 +409,12 @@ public class BridgeWorkflowTest extends IntegrationBase {
         Device device = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
+        appClient.verifyResult(createDevice(1, device));
 
         appClient.reset();
 
         clientPair.hardwareClient.send("bridge 1 i " + device.token);
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(notAllowed(1)));
+        clientPair.hardwareClient.verifyResult(notAllowed(1));
     }
 
 }

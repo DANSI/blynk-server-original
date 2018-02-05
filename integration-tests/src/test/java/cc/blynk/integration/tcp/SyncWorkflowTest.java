@@ -93,7 +93,7 @@ public class SyncWorkflowTest extends IntegrationBase {
     @Test
     public void testHardSyncReturnNoSetPropertyCommands() throws Exception {
         clientPair.hardwareClient.setProperty(44, "label", "hello");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.hardwareClient.verifyResult(ok(1));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1, "1-0 44 label hello")));
         clientPair.hardwareClient.reset();
 
@@ -164,16 +164,16 @@ public class SyncWorkflowTest extends IntegrationBase {
                 "{\"pin\":11,\"pinType\":\"VIRTUAL\",\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":1023, \"value\":\"11\"}]," +
                 "\"advancedMode\":false,\"textLight\":false,\"textLightOn\":false,\"frequency\":1000}");
 
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.reset();
         clientPair.appClient.activate(1);
 
         verify(clientPair.appClient.responseMock, timeout(500).times(13)).channelRead(any(), any());
 
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 10 10"))));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 10 10")));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 11 11"))));
 
 
@@ -197,7 +197,7 @@ public class SyncWorkflowTest extends IntegrationBase {
                 "{\"pin\":11,\"pinType\":\"VIRTUAL\",\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":1023}]," +
                 "\"advancedMode\":true,\"textLight\":false,\"textLightOn\":false,\"frequency\":1000}");
 
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 10 p x y 10");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 10 p x y 10"))));
@@ -207,7 +207,7 @@ public class SyncWorkflowTest extends IntegrationBase {
 
         verify(clientPair.appClient.responseMock, timeout(500).times(12)).channelRead(any(), any());
 
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 10 p x y 10"))));
 
@@ -249,7 +249,7 @@ public class SyncWorkflowTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, "{\"type\":\"RTC\",\"id\":99, " +
                 "\"x\":0,\"y\":0,\"width\":2,\"height\":1}");
 
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("internal rtc");
 
@@ -279,7 +279,7 @@ public class SyncWorkflowTest extends IntegrationBase {
                 "\"x\":0,\"y\":0,\"width\":1,\"height\":2," +
                 "\"tzName\":\"TZ\"}".replace("TZ", zoneId.toString()));
 
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.sync(PinType.VIRTUAL, 99);
 
@@ -325,7 +325,7 @@ public class SyncWorkflowTest extends IntegrationBase {
                 "\"x\":0,\"y\":0,\"width\":1,\"height\":1," +
                 "\"tzName\":\"TZ\"}".replace("TZ", zoneId.toString()));
 
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("internal rtc");
 
@@ -353,7 +353,7 @@ public class SyncWorkflowTest extends IntegrationBase {
                 "\"x\":0,\"y\":0,\"width\":1,\"height\":1," +
                 "\"tzName\":\"TZ\"}".replace("TZ", zoneId.toString()));
 
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("internal rtc");
 
@@ -379,7 +379,7 @@ public class SyncWorkflowTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, "{\"type\":\"TIME_INPUT\",\"id\":99, \"pin\":99, \"pinType\":\"VIRTUAL\", " +
                 "\"x\":0,\"y\":0,\"width\":2,\"height\":1}");
 
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("hardware 1-0 vw " + b("99 82800 82860 Europe/Kiev 1"));
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 99 82800 82860 Europe/Kiev 1"))));
@@ -444,7 +444,7 @@ public class SyncWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, GET_ENERGY, "7500")));
 
         clientPair.appClient.createWidget(1, "{\"id\":102, \"width\":1, \"height\":1, \"x\":5, \"y\":0, \"tabId\":0, \"label\":\"Some Text\", \"type\":\"TERMINAL\", \"pinType\":\"VIRTUAL\", \"pin\":17}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(3)));
+        clientPair.appClient.verifyResult(ok(3));
 
         clientPair.hardwareClient.send("hardware vw 17 a");
         clientPair.hardwareClient.send("hardware vw 17 b");
@@ -454,10 +454,10 @@ public class SyncWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, HARDWARE, b("1-0 vw 17 c"))));
 
         clientPair.appClient.deactivate(1);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(4)));
+        clientPair.appClient.verifyResult(ok(4));
 
         clientPair.appClient.activate(1);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
+        clientPair.appClient.verifyResult(ok(5));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 17 a"))));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 17 b"))));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 17 c"))));
@@ -472,7 +472,7 @@ public class SyncWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("1-0 vw 20 p 0 1 World"))));
 
         clientPair.appClient.activate(1);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 20 p 0 0 Hello"))));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 20 p 0 1 World"))));
@@ -497,7 +497,7 @@ public class SyncWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7, HARDWARE, b("1-0 vw 20 p 0 6 H7"))));
 
         clientPair.appClient.activate(1);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 20 p 0 1 H2"))));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 20 p 0 2 H3"))));
@@ -511,7 +511,7 @@ public class SyncWorkflowTest extends IntegrationBase {
     @Test
     public void testSyncWorksForGauge() throws Exception {
         clientPair.appClient.createWidget(1, "{\"id\":155, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"GAUGE\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 100 101");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 100 101"))));
@@ -523,7 +523,7 @@ public class SyncWorkflowTest extends IntegrationBase {
     @Test
     public void testSyncForMultiPins() throws Exception {
         clientPair.appClient.createWidget(1, "{\"id\":155, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"GAUGE\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 100 100");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 100 100"))));
@@ -542,7 +542,7 @@ public class SyncWorkflowTest extends IntegrationBase {
 
         verify(clientPair.appClient.responseMock, timeout(500).times(11)).channelRead(any(), any());
 
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 dw 1 1"))));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 dw 2 1"))));
@@ -559,7 +559,7 @@ public class SyncWorkflowTest extends IntegrationBase {
     @Test
     public void testSyncForMultiDevices() throws Exception {
         clientPair.appClient.createWidget(1, "{\"id\":188, \"width\":1, \"height\":1, \"deviceId\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"VIRTUAL\", \"pin\":4, \"value\":1}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         Device device1 = new Device(1, "My Device", "ESP8266");
 
@@ -574,7 +574,7 @@ public class SyncWorkflowTest extends IntegrationBase {
         hardClient2.start();
 
         hardClient2.login(device.token);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        hardClient2.verifyResult(ok(1));
         hardClient2.reset();
 
         clientPair.hardwareClient.sync();
@@ -607,7 +607,7 @@ public class SyncWorkflowTest extends IntegrationBase {
         hardClient2.start();
 
         hardClient2.login(device.token);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        hardClient2.verifyResult(ok(1));
         hardClient2.reset();
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE_CONNECTED, "1-1")));
 
