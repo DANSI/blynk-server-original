@@ -600,4 +600,29 @@ public class WebhookTest extends IntegrationBase {
         assertEquals("text", values.get(0));
     }
 
+    @Test
+    public void testWebhookWorksWithUrlPlaceholder2() throws Exception {
+        WebHook webHook = new WebHook();
+        webHook.url = "http://";
+        webHook.method = PUT;
+        webHook.headers = new Header[] {new Header("Content-Type", "application/json")};
+        webHook.pin = 123;
+        webHook.pinType = PinType.VIRTUAL;
+        webHook.width = 2;
+        webHook.height = 1;
+
+        clientPair.appClient.createWidget(1, webHook);
+        clientPair.appClient.verifyResult(ok(1));
+
+        clientPair.appClient.send("hardware 1 vw 123 1");
+        verify(clientPair.hardwareClient.responseMock, after(500).times(1)).channelRead(any(), eq(
+                new HardwareMessage(2, b("vw 123 1"))));
+
+        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124").execute();
+        Response response = f.get();
+
+        assertEquals(400, response.getStatusCode());
+        assertEquals("Requested pin doesn't exist in the app.", response.getResponseBody());
+    }
+
 }
