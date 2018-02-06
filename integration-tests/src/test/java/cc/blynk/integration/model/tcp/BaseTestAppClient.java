@@ -39,7 +39,7 @@ public abstract class BaseTestAppClient extends AppClient {
     }
 
     public void verifyResult(Object exceptedResult, int times) throws Exception {
-        verify(responseMock, timeout(500).times(times)).channelRead(any(), eq(exceptedResult));
+        verify(responseMock, timeout(1000).times(times)).channelRead(any(), eq(exceptedResult));
     }
 
     public void verifyResultAfter(int time, Object exceptedResult) throws Exception {

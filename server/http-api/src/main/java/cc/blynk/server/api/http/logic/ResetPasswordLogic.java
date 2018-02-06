@@ -122,7 +122,9 @@ public class ResetPasswordLogic extends BaseHttpHandler {
                 log.info("Error sending mail for {}. Reason : {}", trimmedEmail, e.getMessage());
                 response = badRequest("Error sending reset email.");
             }
-            ctx.writeAndFlush(response);
+            if (ctx.channel().isActive() && ctx.channel().isWritable()) {
+                ctx.writeAndFlush(response, ctx.voidPromise());
+            }
         });
 
         return noResponse();

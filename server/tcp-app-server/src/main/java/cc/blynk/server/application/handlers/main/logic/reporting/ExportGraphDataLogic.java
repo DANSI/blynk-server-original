@@ -143,7 +143,9 @@ public class ExportGraphDataLogic {
 
             } catch (Exception e) {
                 log.error("Error making csv file for data export. Reason {}", e.getMessage());
-                ctx.writeAndFlush(notificationError(msgId), ctx.voidPromise());
+                if (ctx.channel().isActive() && ctx.channel().isWritable()) {
+                    ctx.writeAndFlush(notificationError(msgId), ctx.voidPromise());
+                }
             }
         }
     }

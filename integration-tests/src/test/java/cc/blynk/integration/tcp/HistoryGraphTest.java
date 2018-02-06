@@ -813,9 +813,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
         clientPair.appClient.send("getenhanceddata 1" + b(" 432 DAY"));
 
-        ArgumentCaptor<BinaryMessage> objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
-        BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
+        BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
         byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());

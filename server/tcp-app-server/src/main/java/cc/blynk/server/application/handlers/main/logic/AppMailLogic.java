@@ -105,7 +105,9 @@ public class AppMailLogic {
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {
                 log.error("Error sending email auth token to user : {}. Error: {}", to, e.getMessage());
-                channel.writeAndFlush(notificationError(msgId), channel.voidPromise());
+                if (channel.isActive() && channel.isWritable()) {
+                    channel.writeAndFlush(notificationError(msgId), channel.voidPromise());
+                }
             }
         });
     }

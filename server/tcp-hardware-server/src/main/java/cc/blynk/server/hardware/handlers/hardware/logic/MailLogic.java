@@ -100,7 +100,9 @@ public class MailLogic extends NotificationBase {
             } catch (Exception e) {
                 log.error("Error sending email from hardware. From user {}, to : {}. Reason : {}",
                         email, to, e.getMessage());
-                channel.writeAndFlush(notificationError(msgId), channel.voidPromise());
+                if (channel.isActive() && channel.isWritable()) {
+                    channel.writeAndFlush(notificationError(msgId), channel.voidPromise());
+                }
             }
         });
     }

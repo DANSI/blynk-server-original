@@ -98,7 +98,9 @@ public class MailQRsLogic {
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {
                 log.error("Error sending dynamic email from application. For user {}. Error: ", to, e);
-                channel.writeAndFlush(notificationError(msgId), channel.voidPromise());
+                if (channel.isActive() && channel.isWritable()) {
+                    channel.writeAndFlush(notificationError(msgId), channel.voidPromise());
+                }
             }
         });
     }
