@@ -620,8 +620,8 @@ Blynk has a bunch of integration tests that require DB, so you have to skip test
         
 ### How Blynk Works?
 When hardware connects to Blynk cloud it opens either keep-alive ssl/tls connection on port 8441 or keep-alive plain 
-tcp/ip connection on port 8442. Blynk app opens mutual ssl/tls connection to Blynk Cloud on port 8443. Blynk Cloud is 
-responsible for forwarding messages between hardware and app. In both (app and hardware) connections Blynk uses  
+tcp/ip connection on port 8442. Blynk app opens mutual ssl/tls connection to Blynk Cloud on port 443 (9443 for local servers).
+Blynk Cloud is responsible for forwarding messages between hardware and app. In both (app and hardware) connections Blynk uses 
 own binary protocol described below.
 
 ### Blynk protocol
