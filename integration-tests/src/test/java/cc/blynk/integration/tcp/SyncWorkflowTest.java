@@ -10,7 +10,6 @@ import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.ui.TimeInput;
@@ -389,7 +388,7 @@ public class SyncWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = parseProfile(clientPair.appClient.getBody());
+        Profile profile = clientPair.appClient.getProfile();
         TimeInput timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(82800, timeInput.startAt);
@@ -437,7 +436,7 @@ public class SyncWorkflowTest extends IntegrationBase {
     @Test
     public void testTerminalSendsSyncOnActivate() throws Exception {
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = parseProfile(clientPair.appClient.getBody());
+        Profile profile = clientPair.appClient.getProfile();
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         clientPair.appClient.send("getEnergy");
@@ -564,8 +563,7 @@ public class SyncWorkflowTest extends IntegrationBase {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        String createdDevice = clientPair.appClient.getBody(2);
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+        Device device = clientPair.appClient.getDevice(2);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(2, device.toString())));
@@ -597,8 +595,7 @@ public class SyncWorkflowTest extends IntegrationBase {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));

@@ -72,7 +72,7 @@ public class FacebookLoginTest extends IntegrationBase {
         appClient.send("loadProfileGzipped");
         verify(appClient.responseMock, timeout(500)).channelRead(any(), any());
 
-        Profile profile = parseProfile(appClient.getBody());
+        Profile profile = appClient.getProfile();
         profile.dashBoards[0].updatedAt = 0;
         assertEquals(expected, profile.toString());
     }

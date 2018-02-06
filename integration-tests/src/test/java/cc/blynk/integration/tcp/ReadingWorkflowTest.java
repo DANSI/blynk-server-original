@@ -6,7 +6,6 @@ import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.api.http.AppAndHttpsServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import org.junit.After;
@@ -125,9 +124,8 @@ public class ReadingWorkflowTest extends IntegrationBase {
         Device device2 = new Device(2, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device2);
-        String createdDevice = clientPair.appClient.getBody();
+        device2 = clientPair.appClient.getDevice();
 
-        device2 = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device2);
         assertNotNull(device2.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device2.toString())));
@@ -157,9 +155,8 @@ public class ReadingWorkflowTest extends IntegrationBase {
         Device device2 = new Device(2, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device2);
-        String createdDevice = clientPair.appClient.getBody();
+        device2 = clientPair.appClient.getDevice();
 
-        device2 = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device2);
         assertNotNull(device2.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device2.toString())));
@@ -196,9 +193,8 @@ public class ReadingWorkflowTest extends IntegrationBase {
         Device device2 = new Device(2, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device2);
-        String createdDevice = clientPair.appClient.getBody();
+        device2 = clientPair.appClient.getDevice();
 
-        device2 = JsonParser.parseDevice(createdDevice, 0);
         assertNotNull(device2);
         assertNotNull(device2.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device2.toString())));
@@ -253,9 +249,8 @@ public class ReadingWorkflowTest extends IntegrationBase {
         Device device2 = new Device(2, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device2);
-        String createdDevice = clientPair.appClient.getBody();
 
-        device2 = JsonParser.parseDevice(createdDevice, 0);
+        device2 = clientPair.appClient.getDevice();
         assertNotNull(device2);
         assertNotNull(device2.token);
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(createDevice(1, device2.toString())));

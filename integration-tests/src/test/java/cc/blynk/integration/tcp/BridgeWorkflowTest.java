@@ -9,7 +9,6 @@ import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.utils.TokenGeneratorUtil;
@@ -124,8 +123,7 @@ public class BridgeWorkflowTest extends IntegrationBase {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+        Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -374,8 +372,7 @@ public class BridgeWorkflowTest extends IntegrationBase {
         device1.status = Status.OFFLINE;
 
         appClient.createDevice(1, device1);
-        String createdDevice = appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+        Device device = appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         appClient.verifyResult(createDevice(1, device));

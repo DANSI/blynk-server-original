@@ -76,9 +76,7 @@ public class CloneWorkFlowTest extends IntegrationBase {
         assertEquals(32, token.length());
 
         clientPair.appClient.send("getProjectByCloneCode " + token);
-        String dashJson = clientPair.appClient.getBody(2);
-        assertNotNull(dashJson);
-        DashBoard dashBoard = JsonParser.parseDashboard(dashJson, 0);
+        DashBoard dashBoard = clientPair.appClient.getDash(2);
         assertEquals("My Dashboard", dashBoard.name);
     }
 
@@ -98,9 +96,7 @@ public class CloneWorkFlowTest extends IntegrationBase {
         assertEquals(32, token.length());
 
         clientPair.appClient.send("getProjectByCloneCode " + token);
-        String dashJson = clientPair.appClient.getBody(2);
-        assertNotNull(dashJson);
-        DashBoard dashBoard = JsonParser.parseDashboard(dashJson, 0);
+        DashBoard dashBoard = clientPair.appClient.getDash(2);
         assertEquals("My Dashboard", dashBoard.name);
     }
 

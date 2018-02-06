@@ -88,8 +88,10 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(111, "1-0 4 label My-New-Label")));
 
         clientPair.appClient.reset();
+
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = parseProfile(clientPair.appClient.getBody());
+        Profile profile = clientPair.appClient.getProfile();
+
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
         assertNotNull(widget);
         assertEquals("My-New-Label", widget.label);
@@ -107,8 +109,10 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(111, "1-0 4 color #000000")));
 
         clientPair.appClient.reset();
+
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = parseProfile(clientPair.appClient.getBody());
+        Profile profile = clientPair.appClient.getProfile();
+
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
         assertNotNull(widget);
         assertEquals(255, widget.color);
@@ -130,7 +134,8 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = parseProfile(clientPair.appClient.getBody());
+        Profile profile = clientPair.appClient.getProfile();
+
         Button button = (Button) profile.dashBoards[0].findWidgetByPin(0, (byte) 1, PinType.VIRTUAL);
         assertNotNull(button);
         assertEquals("newOnButtonLabel", button.onLabel);
@@ -153,7 +158,8 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = parseProfile(clientPair.appClient.getBody());
+        Profile profile = clientPair.appClient.getProfile();
+
         Button button = (Button) profile.dashBoards[0].findWidgetByPin(0, (byte) 1, PinType.VIRTUAL);
         assertNotNull(button);
         assertEquals("newOffButtonLabel", button.offLabel);

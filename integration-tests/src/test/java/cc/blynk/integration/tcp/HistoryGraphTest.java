@@ -37,7 +37,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.BufferedReader;
@@ -233,9 +232,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
         appClient.reset();
         appClient.send("getenhanceddata 1" + b(" 432 THREE_MONTHS"));
-        ArgumentCaptor<BinaryMessage> objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
-        verify(appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
-        BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
+        BinaryMessage graphDataResponse = appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
         byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
@@ -254,8 +251,7 @@ public class HistoryGraphTest extends IntegrationBase {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
@@ -300,10 +296,7 @@ public class HistoryGraphTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getenhanceddata 1" + b(" 432 DAY"));
-
-        ArgumentCaptor<BinaryMessage> objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
-        BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
+        BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
         byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
@@ -322,8 +315,7 @@ public class HistoryGraphTest extends IntegrationBase {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -370,10 +362,7 @@ public class HistoryGraphTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getenhanceddata 1" + b(" 432 DAY"));
-
-        ArgumentCaptor<BinaryMessage> objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
-        BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
+        BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
         byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
@@ -392,8 +381,7 @@ public class HistoryGraphTest extends IntegrationBase {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
@@ -440,10 +428,7 @@ public class HistoryGraphTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getenhanceddata 1" + b(" 432 DAY"));
-
-        ArgumentCaptor<BinaryMessage> objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
-        BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
+        BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
         byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
@@ -462,8 +447,7 @@ public class HistoryGraphTest extends IntegrationBase {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
@@ -510,10 +494,7 @@ public class HistoryGraphTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getenhanceddata 1" + b(" 432 DAY"));
-
-        ArgumentCaptor<BinaryMessage> objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
-        BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
+        BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
         byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
@@ -532,8 +513,7 @@ public class HistoryGraphTest extends IntegrationBase {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
@@ -580,10 +560,7 @@ public class HistoryGraphTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getenhanceddata 1" + b(" 432 DAY"));
-
-        ArgumentCaptor<BinaryMessage> objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
-        BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
+        BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
         byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
@@ -602,8 +579,7 @@ public class HistoryGraphTest extends IntegrationBase {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
@@ -650,10 +626,7 @@ public class HistoryGraphTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getenhanceddata 1" + b(" 432 DAY"));
-
-        ArgumentCaptor<BinaryMessage> objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
-        BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
+        BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
         byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
@@ -673,15 +646,13 @@ public class HistoryGraphTest extends IntegrationBase {
         Device device2 = new Device(2, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+        Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
 
         clientPair.appClient.createDevice(1, device2);
-        createdDevice = clientPair.appClient.getBody(2);
-        device = JsonParser.parseDevice(createdDevice, 0);
+        device = clientPair.appClient.getDevice(2);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(2, device.toString())));
@@ -733,10 +704,7 @@ public class HistoryGraphTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getenhanceddata 1" + b(" 432 DAY"));
-
-        ArgumentCaptor<BinaryMessage> objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
-        BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
+        BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
         byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
@@ -860,10 +828,7 @@ public class HistoryGraphTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getenhanceddata 1" + b(" 432 DAY"));
-
-        ArgumentCaptor<BinaryMessage> objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
-        BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
+        BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
         byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
@@ -943,10 +908,7 @@ public class HistoryGraphTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getenhanceddata 1" + b(" 432 LIVE"));
-
-        ArgumentCaptor<BinaryMessage> objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
-        BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
+        BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
         byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
@@ -965,10 +927,7 @@ public class HistoryGraphTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getenhanceddata 1" + b(" 432 LIVE"));
-
-        objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
-        graphDataResponse = objectArgumentCaptor.getValue();
+        graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
         decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
@@ -1044,10 +1003,7 @@ public class HistoryGraphTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getenhanceddata 1" + b(" 432 LIVE"));
-
-        ArgumentCaptor<BinaryMessage> objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
-        BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
+        BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
         byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
@@ -1069,10 +1025,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
         clientPair.appClient.send("getenhanceddata 1" + b(" 432 LIVE"));
         clientPair.appClient.reset();
-
-        objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
-        graphDataResponse = objectArgumentCaptor.getValue();
+        graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
         decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
@@ -1117,10 +1070,7 @@ public class HistoryGraphTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getenhanceddata 1" + b(" 432 LIVE"));
-
-        ArgumentCaptor<BinaryMessage> objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
-        BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
+        BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
         byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
@@ -1139,10 +1089,7 @@ public class HistoryGraphTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getenhanceddata 1" + b(" 432 LIVE"));
-
-        objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
-        graphDataResponse = objectArgumentCaptor.getValue();
+        graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
         decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
@@ -1157,10 +1104,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("getenhanceddata 1" + b(" 432 LIVE 1"));
-
-        objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
-        graphDataResponse = objectArgumentCaptor.getValue();
+        graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
         decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
@@ -1178,10 +1122,7 @@ public class HistoryGraphTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(5000)).channelRead(any(), eq(new HardwareMessage(181, b("1 vw 88 419"))));
         clientPair.appClient.reset();
         clientPair.appClient.send("getenhanceddata 1" + b(" 432 LIVE 1"));
-
-        objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
-        graphDataResponse = objectArgumentCaptor.getValue();
+        graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
         decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
@@ -1232,10 +1173,7 @@ public class HistoryGraphTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getenhanceddata 1" + b(" 432 ONE_HOUR 1"));
-
-        ArgumentCaptor<BinaryMessage> objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
-        BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
+        BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
         byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
@@ -1284,10 +1222,7 @@ public class HistoryGraphTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getenhanceddata 1" + b(" 432 ONE_HOUR 1"));
-
-        ArgumentCaptor<BinaryMessage> objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
-        BinaryMessage graphDataResponse = objectArgumentCaptor.getValue();
+        BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
         byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
@@ -1467,8 +1402,7 @@ public class HistoryGraphTest extends IntegrationBase {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
@@ -1545,8 +1479,7 @@ public class HistoryGraphTest extends IntegrationBase {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
@@ -1631,8 +1564,7 @@ public class HistoryGraphTest extends IntegrationBase {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
@@ -1835,8 +1767,7 @@ public class HistoryGraphTest extends IntegrationBase {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));

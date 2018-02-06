@@ -4,6 +4,8 @@ import cc.blynk.client.handlers.decoders.AppClientMessageDecoder;
 import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -59,8 +61,40 @@ public class TestAppClient extends BaseTestAppClient {
         return getDevice(1);
     }
 
+    public Profile getProfile(int expectedMessageOrder) throws Exception {
+        return JsonParser.parseProfileFromString(getBody(expectedMessageOrder));
+    }
+
+    public Profile getProfile() throws Exception {
+        return getProfile(1);
+    }
+
     public Device getDevice(int expectedMessageOrder) throws Exception {
         return JsonParser.parseDevice(getBody(expectedMessageOrder), 0);
+    }
+
+    public Device[] getDevices() throws Exception {
+        return getDevices(1);
+    }
+
+    public Device[] getDevices(int expectedMessageOrder) throws Exception {
+        return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), Device[].class);
+    }
+
+    public App getApp(int expectedMessageOrder) throws Exception {
+        return JsonParser.parseApp(getBody(expectedMessageOrder), 0);
+    }
+
+    public App getApp() throws Exception {
+        return getApp(1);
+    }
+
+    public DashBoard getDash() throws Exception {
+        return getDash(1);
+    }
+
+    public DashBoard getDash(int expectedMessageOrder) throws Exception {
+        return JsonParser.parseDashboard(getBody(expectedMessageOrder), 0);
     }
 
     public String getBody() throws Exception {

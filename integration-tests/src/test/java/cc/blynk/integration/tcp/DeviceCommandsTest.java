@@ -6,7 +6,6 @@ import cc.blynk.server.api.http.AppAndHttpsServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
-import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.hardware.HardwareServer;
 import org.junit.After;
 import org.junit.Before;
@@ -53,8 +52,7 @@ public class DeviceCommandsTest extends IntegrationBase {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+        Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -62,9 +60,8 @@ public class DeviceCommandsTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody();
 
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
+        Device[] devices = clientPair.appClient.getDevices();
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -83,9 +80,8 @@ public class DeviceCommandsTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody();
+        Device[] devices = clientPair.appClient.getDevices();
 
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
         assertNotNull(devices);
         assertEquals(1, devices.length);
 
@@ -106,9 +102,8 @@ public class DeviceCommandsTest extends IntegrationBase {
         device0.status = Status.ONLINE;
 
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody();
 
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
+        Device[] devices = clientPair.appClient.getDevices();
         assertNotNull(devices);
         assertEquals(1, devices.length);
 
@@ -121,9 +116,8 @@ public class DeviceCommandsTest extends IntegrationBase {
         device0.status = Status.ONLINE;
 
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody();
 
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
+        Device[] devices = clientPair.appClient.getDevices();
         assertNotNull(devices);
         assertEquals(1, devices.length);
 
@@ -139,9 +133,8 @@ public class DeviceCommandsTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        response = clientPair.appClient.getBody();
+        devices = clientPair.appClient.getDevices();
 
-        devices = JsonParser.MAPPER.readValue(response, Device[].class);
         assertNotNull(devices);
         assertEquals(1, devices.length);
 
@@ -159,8 +152,7 @@ public class DeviceCommandsTest extends IntegrationBase {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+        Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -168,9 +160,8 @@ public class DeviceCommandsTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody();
 
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
+        Device[] devices = clientPair.appClient.getDevices();
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -183,8 +174,7 @@ public class DeviceCommandsTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        response = clientPair.appClient.getBody();
-        devices = JsonParser.MAPPER.readValue(response, Device[].class);
+        devices = clientPair.appClient.getDevices();
 
         assertNotNull(devices);
         assertEquals(1, devices.length);

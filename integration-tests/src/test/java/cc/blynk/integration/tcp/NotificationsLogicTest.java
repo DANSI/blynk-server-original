@@ -8,7 +8,6 @@ import cc.blynk.server.api.http.AppAndHttpsServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
@@ -85,7 +84,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = parseProfile(clientPair.appClient.getBody(2));
+        Profile profile = clientPair.appClient.getProfile(2);
 
         Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
         assertNotNull(notification);
@@ -102,7 +101,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = parseProfile(clientPair.appClient.getBody(2));
+        Profile profile = clientPair.appClient.getProfile(2);
 
         Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
         assertNotNull(notification);
@@ -116,7 +115,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         clientPair.appClient.verifyResult(ok(3));
 
         clientPair.appClient.send("loadProfileGzipped");
-        profile = parseProfile(clientPair.appClient.getBody(4));
+        profile = clientPair.appClient.getProfile(4);
 
         notification = profile.getDashById(1).getWidgetByType(Notification.class);
         assertNotNull(notification);
@@ -142,7 +141,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         appClient.reset();
 
         appClient.send("loadProfileGzipped");
-        Profile profile = parseProfile(appClient.getBody());
+        Profile profile = appClient.getProfile();
 
         Notification notification = profile.getDashById(1).getWidgetByType(Notification.class);
         assertNotNull(notification);
@@ -199,8 +198,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         Device device1 = new Device(1, "Name", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));

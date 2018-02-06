@@ -8,7 +8,6 @@ import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.device.Tag;
-import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.hardware.HardwareServer;
@@ -78,8 +77,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
@@ -87,9 +85,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody();
-
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
+        Device[] devices = clientPair.appClient.getDevices();
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -121,8 +117,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
@@ -148,8 +143,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
@@ -157,9 +151,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody();
-
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
+        Device[] devices = clientPair.appClient.getDevices();
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
@@ -183,8 +175,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        String createdDevice = clientPair.appClient.getBody(2);
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+        Device device = clientPair.appClient.getDevice(2);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(2, device.toString())));
@@ -210,8 +201,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        String createdDevice = clientPair.appClient.getBody(2);
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+        Device device = clientPair.appClient.getDevice(2);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(2, device.toString())));
@@ -250,8 +240,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
@@ -279,8 +268,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        String createdDevice = clientPair.appClient.getBody(3);
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+        Device device = clientPair.appClient.getDevice(3);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(3, device.toString())));
@@ -316,8 +304,8 @@ public class DeviceWorkflowTest extends IntegrationBase {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        String createdDevice = clientPair.appClient.getBody(2);
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+        Device device = clientPair.appClient.getDevice(2);
+
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(2, device.toString())));
@@ -348,8 +336,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
@@ -365,9 +352,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody();
-
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
+        Device[] devices = clientPair.appClient.getDevices();
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -379,9 +364,8 @@ public class DeviceWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("getDevices 1");
-        response = clientPair.appClient.getBody();
 
-        devices = JsonParser.MAPPER.readValue(response, Device[].class);
+        devices = clientPair.appClient.getDevices();
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -395,9 +379,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         device0.status = Status.ONLINE;
 
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody();
-
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
+        Device[] devices = clientPair.appClient.getDevices();
         assertNotNull(devices);
         assertEquals(1, devices.length);
 
@@ -407,9 +389,8 @@ public class DeviceWorkflowTest extends IntegrationBase {
         device0.status = Status.OFFLINE;
 
         clientPair.appClient.send("getDevices 1");
-        response = clientPair.appClient.getBody(2);
+        devices = clientPair.appClient.getDevices(2);
 
-        devices = JsonParser.MAPPER.readValue(response, Device[].class);
         assertNotNull(devices);
         assertEquals(1, devices.length);
 
@@ -421,9 +402,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
     public void testCorrectConnectTime() throws Exception {
         long now = System.currentTimeMillis();
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody();
-
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
+        Device[] devices = clientPair.appClient.getDevices();
         assertNotNull(devices);
         assertEquals(1, devices.length);
         assertEquals(now, devices[0].connectTime, 10000);
@@ -435,9 +414,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         device0.status = Status.ONLINE;
 
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody();
-
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
+        Device[] devices = clientPair.appClient.getDevices();
         assertNotNull(devices);
         assertEquals(1, devices.length);
 
@@ -454,9 +431,8 @@ public class DeviceWorkflowTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        response = clientPair.appClient.getBody();
+        devices = clientPair.appClient.getDevices();
 
-        devices = JsonParser.MAPPER.readValue(response, Device[].class);
         assertNotNull(devices);
         assertEquals(1, devices.length);
 
@@ -469,8 +445,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
@@ -493,8 +468,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(createDevice(1, device.toString())));

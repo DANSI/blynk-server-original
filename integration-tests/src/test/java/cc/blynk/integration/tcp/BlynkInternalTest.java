@@ -18,9 +18,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -56,8 +53,6 @@ public class BlynkInternalTest extends IntegrationBase {
                 "\"x\":0,\"y\":0,\"width\":0,\"height\":0}");
 
         clientPair.hardwareClient.send("internal rtc");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), any());
-
         String rtcResponse = clientPair.hardwareClient.getBody();
         assertNotNull(rtcResponse);
 
@@ -88,9 +83,7 @@ public class BlynkInternalTest extends IntegrationBase {
         HardwareInfo hardwareInfo = new HardwareInfo("0.3.1", "Arduino", "ATmega328P", "W5100", null, 10);
 
         clientPair.appClient.send("loadProfileGzipped");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), any());
-
-        Profile profile = parseProfile(clientPair.appClient.getBody());
+        Profile profile = clientPair.appClient.getProfile();
 
         assertEquals(JsonParser.toJson(hardwareInfo), JsonParser.toJson(profile.dashBoards[0].devices[0].hardwareInfo));
 

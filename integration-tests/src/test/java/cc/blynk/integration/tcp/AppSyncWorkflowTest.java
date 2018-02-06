@@ -7,7 +7,6 @@ import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
-import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.hardware.HardwareServer;
 import org.junit.After;
 import org.junit.Before;
@@ -125,7 +124,7 @@ public class AppSyncWorkflowTest extends IntegrationBase {
     @Test
     public void testTerminalSendsSyncOnActivate() throws Exception {
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = parseProfile(clientPair.appClient.getBody());
+        Profile profile = clientPair.appClient.getProfile();
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         clientPair.appClient.send("getEnergy");
@@ -154,7 +153,7 @@ public class AppSyncWorkflowTest extends IntegrationBase {
     @Test
     public void testTerminalStorageRemembersCommands() throws Exception {
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = parseProfile(clientPair.appClient.getBody());
+        Profile profile = clientPair.appClient.getProfile();
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         clientPair.appClient.send("getEnergy");
@@ -323,8 +322,7 @@ public class AppSyncWorkflowTest extends IntegrationBase {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+        Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device.toString()));
@@ -403,8 +401,7 @@ public class AppSyncWorkflowTest extends IntegrationBase {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+        Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));

@@ -8,7 +8,6 @@ import cc.blynk.server.api.http.AppAndHttpsServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
-import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.FlashedToken;
 import cc.blynk.server.hardware.HardwareServer;
@@ -98,9 +97,7 @@ public class AssignTokenTest extends IntegrationBase {
 
         clientPair.appClient.send("getDevices 1");
 
-        String response = clientPair.appClient.getBody(3);
-
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
+        Device[] devices = clientPair.appClient.getDevices(3);
         assertNotNull(devices);
         assertEquals(1, devices.length);
         assertEquals(flashedToken.token, devices[0].token);

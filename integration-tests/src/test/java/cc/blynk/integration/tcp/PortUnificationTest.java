@@ -7,7 +7,6 @@ import cc.blynk.server.api.http.AppAndHttpsServer;
 import cc.blynk.server.api.http.HardwareAndHttpAPIServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.serialization.JsonParser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -73,8 +72,7 @@ public class PortUnificationTest extends IntegrationBase {
         appClient.verifyResult(ok(2));
         appClient.verifyResult(ok(3));
 
-        String createdDevice = appClient.getBody(4);
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+        Device device = appClient.getDevice(4);
         assertNotNull(device);
         assertNotNull(device.token);
 

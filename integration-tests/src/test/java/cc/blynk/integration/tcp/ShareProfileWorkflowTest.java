@@ -117,8 +117,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         appClient2.send("loadProfileGzipped");
-        String serverProfileString = appClient2.getBody(2);
-        Profile serverProfile = JsonParser.parseProfileFromString(serverProfileString);
+        Profile serverProfile = appClient2.getProfile(2);
         DashBoard serverDash = serverProfile.dashBoards[0];
 
         Profile profile = parseProfile(readTestUserProfile());
@@ -136,7 +135,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         assertEquals(profile.dashBoards[0].toString(), serverDash.toString());
 
         clientPair.appClient.send("loadProfileGzipped");
-        profile = parseProfile(clientPair.appClient.getBody(2));
+        profile = clientPair.appClient.getProfile(2);
 
         profile.dashBoards[0].updatedAt = 0;
         Notification originalNotification = profile.dashBoards[0].getWidgetByType(Notification.class);
@@ -334,9 +333,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         verify(clientPair.hardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, HARDWARE, b("aw 3 1"))));
 
         clientPair.appClient.send("loadProfileGzipped");
-        String profileString = clientPair.appClient.getBody();
-        assertNotNull(profileString);
-        Profile profile = parseProfile(profileString);
+        Profile profile = clientPair.appClient.getProfile();
 
         OnePinWidget tmp = getWidgetByPin(profile, 3);
 
@@ -350,9 +347,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profileString = clientPair.appClient.getBody();
-        assertNotNull(profileString);
-        profile = parseProfile(profileString);
+        profile = clientPair.appClient.getProfile();
 
         tmp = getWidgetByPin(profile, 3);
 
@@ -365,9 +360,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profileString = clientPair.appClient.getBody();
-        assertNotNull(profileString);
-        profile = parseProfile(profileString);
+        profile = clientPair.appClient.getProfile();
 
         tmp = getWidgetByPin(profile, 3);
 
@@ -511,9 +504,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        String profileString = clientPair.appClient.getBody();
-        assertNotNull(profileString);
-        Profile profile = parseProfile(profileString);
+        Profile profile = clientPair.appClient.getProfile();
 
         OnePinWidget tmp = getWidgetByPin(profile, 3);
 
@@ -737,8 +728,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         appClient2.send("loadProfileGzipped");
-        String serverProfileString = appClient2.getBody(2);
-        Profile serverProfile = JsonParser.parseProfileFromString(serverProfileString);
+        Profile serverProfile = appClient2.getProfile(2);
         DashBoard dashboard = serverProfile.dashBoards[0];
 
         assertNotNull(dashboard);
@@ -760,8 +750,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         verify(appClient4.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         appClient4.send("loadProfileGzipped");
-        serverProfileString = appClient4.getBody(2);
-        serverProfile = JsonParser.parseProfileFromString(serverProfileString);
+        serverProfile = appClient4.getProfile(2);
         DashBoard serverDash = serverProfile.dashBoards[0];
 
         assertNotNull(dashboard);

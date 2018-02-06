@@ -9,7 +9,6 @@ import cc.blynk.server.api.http.HardwareAndHttpAPIServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.controls.RGB;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
@@ -438,8 +437,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        String createdDevice = clientPair.appClient.getBody(2);
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+        Device device = clientPair.appClient.getDevice(2);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(2, device.toString())));
@@ -447,9 +445,8 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        String deviceResponse = clientPair.appClient.getBody();
+        Device[] devices = clientPair.appClient.getDevices();
 
-        Device[] devices = JsonParser.MAPPER.readValue(deviceResponse, Device[].class);
         assertNotNull(devices);
         assertEquals(2, devices.length);
 

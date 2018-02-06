@@ -9,7 +9,6 @@ import cc.blynk.server.api.http.HardwareAndHttpAPIServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.hardware.HardwareServer;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.SHA256Util;
@@ -309,9 +308,8 @@ public class OTATest extends BaseTest {
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
 
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody(2);
 
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
+        Device[] devices = clientPair.appClient.getDevices(2);
         assertNotNull(devices);
         assertEquals(1, devices.length);
         Device device = devices[0];
@@ -364,9 +362,8 @@ public class OTATest extends BaseTest {
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
 
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody(2);
+        Device[] devices = clientPair.appClient.getDevices(2);
 
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
         assertNotNull(devices);
         assertEquals(1, devices.length);
 
@@ -382,9 +379,8 @@ public class OTATest extends BaseTest {
         clientPair.hardwareClient.verifyResult(ok(2));
 
         clientPair.appClient.send("getDevices 1");
-        response = clientPair.appClient.getBody(3);
+        devices = clientPair.appClient.getDevices(3);
 
-        devices = JsonParser.MAPPER.readValue(response, Device[].class);
         assertNotNull(devices);
         assertEquals(1, devices.length);
 
@@ -475,9 +471,8 @@ public class OTATest extends BaseTest {
         clientPair.hardwareClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody();
+        Device[] devices = clientPair.appClient.getDevices();
 
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
         assertNotNull(devices);
         assertEquals(1, devices.length);
         assertNotNull(devices[0].deviceOtaInfo);

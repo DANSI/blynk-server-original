@@ -86,15 +86,13 @@ public class PublishingPreviewFlow extends IntegrationBase {
     @Test
     public void testGetProjectByToken() throws Exception {
         clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"AppPreview\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
-        App app = JsonParser.parseApp(clientPair.appClient.getBody(), 0);
+        App app = clientPair.appClient.getApp();
         assertNotNull(app);
         assertNotNull(app.id);
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody();
-
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
+        Device[] devices = clientPair.appClient.getDevices();
         assertEquals(1, devices.length);
 
         clientPair.appClient.send("emailQr 1\0" + app.id);
@@ -106,9 +104,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.staticMailBody.replace("{project_name}", "My Dashboard").replace("{device_section}", sb.toString())), eq(qrHolders));
 
         clientPair.appClient.send("getProjectByToken " + qrHolders[0].token);
-        String body = clientPair.appClient.getBody(3);
-        assertNotNull(body);
-        DashBoard dashBoard = JsonParser.parseDashboard(body, 0);
+        DashBoard dashBoard = clientPair.appClient.getDash(3);
         assertNotNull(dashBoard);
         assertEquals(1, dashBoard.id);
     }
@@ -116,15 +112,13 @@ public class PublishingPreviewFlow extends IntegrationBase {
     @Test
     public void testSendStaticEmailForAppPublish() throws Exception {
         clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"AppPreview\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
-        App app = JsonParser.parseApp(clientPair.appClient.getBody(), 0);
+        App app = clientPair.appClient.getApp();
         assertNotNull(app);
         assertNotNull(app.id);
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody();
-
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
+        Device[] devices = clientPair.appClient.getDevices();
         assertEquals(1, devices.length);
 
         clientPair.appClient.send("emailQr 1\0" + app.id);
@@ -147,15 +141,13 @@ public class PublishingPreviewFlow extends IntegrationBase {
     @Test
     public void testSendDynamicEmailForAppPublish() throws Exception {
         clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"DYNAMIC\",\"color\":0,\"name\":\"AppPreview\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
-        App app = JsonParser.parseApp(clientPair.appClient.getBody(), 0);
+        App app = clientPair.appClient.getApp();
         assertNotNull(app);
         assertNotNull(app.id);
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody();
-
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
+        Device[] devices = clientPair.appClient.getDevices();
         assertEquals(1, devices.length);
 
         clientPair.appClient.send("emailQr 1\0" + app.id);
@@ -172,20 +164,18 @@ public class PublishingPreviewFlow extends IntegrationBase {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        device1 = JsonParser.parseDevice(clientPair.appClient.getBody(1), 0);
+        device1 = clientPair.appClient.getDevice();
         assertNotNull(device1);
         assertEquals(1, device1.id);
 
         clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"DYNAMIC\",\"color\":0,\"name\":\"AppPreview\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
-        App app = JsonParser.parseApp(clientPair.appClient.getBody(2), 0);
+        App app = clientPair.appClient.getApp(2);
         assertNotNull(app);
         assertNotNull(app.id);
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody();
-
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
+        Device[] devices = clientPair.appClient.getDevices();
         assertEquals(2, devices.length);
 
         clientPair.appClient.send("emailQr 1\0" + app.id);
@@ -216,14 +206,13 @@ public class PublishingPreviewFlow extends IntegrationBase {
         device0.status = Status.ONLINE;
 
         clientPair.appClient.createDevice(10, device0);
-        String createdDevice = clientPair.appClient.getBody(2);
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+        Device device = clientPair.appClient.getDevice(2);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(2, device.toString())));
 
         clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"AppPreview\",\"icon\":\"myIcon\",\"projectIds\":[10]}");
-        App app = JsonParser.parseApp(clientPair.appClient.getBody(3), 0);
+        App app = clientPair.appClient.getApp(3);
         assertNotNull(app);
         assertNotNull(app.id);
 
@@ -246,7 +235,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
 
         appClient2.send("loadProfileGzipped");
-        Profile profile = parseProfile(appClient2.getBody(3));
+        Profile profile = appClient2.getProfile(3);
         assertEquals(1, profile.dashBoards.length);
         dashBoard = profile.dashBoards[0];
         assertNotNull(dashBoard);
@@ -258,7 +247,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         clientPair.appClient.verifyResult(ok(5));
 
         appClient2.send("loadProfileGzipped");
-        profile = parseProfile(appClient2.getBody(4));
+        profile = appClient2.getProfile(4);
         assertEquals(1, profile.dashBoards.length);
         dashBoard = profile.dashBoards[0];
         assertNotNull(dashBoard);
@@ -281,14 +270,13 @@ public class PublishingPreviewFlow extends IntegrationBase {
         device0.status = Status.ONLINE;
 
         clientPair.appClient.createDevice(10, device0);
-        String createdDevice = clientPair.appClient.getBody(2);
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+        Device device = clientPair.appClient.getDevice(2);
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(2, device));
 
         clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"AppPreview\",\"icon\":\"myIcon\",\"projectIds\":[10]}");
-        App app = JsonParser.parseApp(clientPair.appClient.getBody(3), 0);
+        App app = clientPair.appClient.getApp(3);
         assertNotNull(app);
         assertNotNull(app.id);
 
@@ -345,7 +333,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         appClient2.verifyResult(ok(2));
 
         appClient2.send("loadProfileGzipped");
-        Profile profile = parseProfile(appClient2.getBody(3));
+        Profile profile = appClient2.getProfile(3);
         assertEquals(1, profile.dashBoards.length);
         dashBoard = profile.dashBoards[0];
         assertNotNull(dashBoard);
@@ -365,7 +353,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         clientPair.appClient.verifyResult(ok(10));
 
         appClient2.send("loadProfileGzipped");
-        profile = parseProfile(appClient2.getBody(5));
+        profile = appClient2.getProfile(5);
         assertEquals(1, profile.dashBoards.length);
         dashBoard = profile.dashBoards[0];
         assertNotNull(dashBoard);
@@ -400,14 +388,13 @@ public class PublishingPreviewFlow extends IntegrationBase {
         device0.status = Status.ONLINE;
 
         clientPair.appClient.createDevice(10, device0);
-        String createdDevice = clientPair.appClient.getBody(2);
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+        Device device = clientPair.appClient.getDevice(2);
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(2, device));
 
         clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"AppPreview\",\"icon\":\"myIcon\",\"projectIds\":[10]}");
-        App app = JsonParser.parseApp(clientPair.appClient.getBody(3), 0);
+        App app = clientPair.appClient.getApp(3);
         assertNotNull(app);
         assertNotNull(app.id);
 
@@ -430,7 +417,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         appClient2.verifyResult(ok(2));
 
         appClient2.send("loadProfileGzipped");
-        profile = parseProfile(appClient2.getBody(3));
+        profile = appClient2.getProfile(3);
         assertEquals(1, profile.dashBoards.length);
         dashBoard = profile.dashBoards[0];
         assertNotNull(dashBoard);
@@ -448,7 +435,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         clientPair.appClient.verifyResult(ok(7));
 
         appClient2.send("loadProfileGzipped");
-        profile = parseProfile(appClient2.getBody(4));
+        profile = appClient2.getProfile(4);
         assertEquals(1, profile.dashBoards.length);
         dashBoard = profile.dashBoards[0];
         assertNotNull(dashBoard);
@@ -469,15 +456,13 @@ public class PublishingPreviewFlow extends IntegrationBase {
     @Test
     public void testDeleteWorksForPreviewApp() throws Exception {
         clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"AppPreview\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
-        App app = JsonParser.parseApp(clientPair.appClient.getBody(), 0);
+        App app = clientPair.appClient.getApp();
         assertNotNull(app);
         assertNotNull(app.id);
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody();
-
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
+        Device[] devices = clientPair.appClient.getDevices();
         assertEquals(1, devices.length);
 
         clientPair.appClient.send("emailQr 1\0" + app.id);
@@ -491,7 +476,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
 
         clientPair.appClient.send("loadProfileGzipped " + qrHolders[0].token + " " + qrHolders[0].dashId + " " + DEFAULT_TEST_USER);
 
-        DashBoard dashBoard = JsonParser.parseDashboard(clientPair.appClient.getBody(3), 0);
+        DashBoard dashBoard = clientPair.appClient.getDash(3);
         assertNotNull(dashBoard);
         assertNotNull(dashBoard.devices);
         assertNull(dashBoard.devices[0].token);
@@ -510,7 +495,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         clientPair.appClient.verifyResult(ok(5));
 
         clientPair.appClient.send("loadProfileGzipped 1");
-        dashBoard = JsonParser.parseDashboard(clientPair.appClient.getBody(6), 0);
+        dashBoard = clientPair.appClient.getDash(6);
         assertNotNull(dashBoard);
         assertEquals(1, dashBoard.id);
 
@@ -521,15 +506,13 @@ public class PublishingPreviewFlow extends IntegrationBase {
     @Test
     public void testDeleteWorksForParentOfPreviewApp() throws Exception {
         clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"AppPreview\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
-        App app = JsonParser.parseApp(clientPair.appClient.getBody(), 0);
+        App app = clientPair.appClient.getApp();
         assertNotNull(app);
         assertNotNull(app.id);
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody();
-
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
+        Device[] devices = clientPair.appClient.getDevices();
         assertEquals(1, devices.length);
 
         clientPair.appClient.send("emailQr 1\0" + app.id);
@@ -543,7 +526,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
 
         clientPair.appClient.send("loadProfileGzipped " + qrHolders[0].token + " " + qrHolders[0].dashId + " " + DEFAULT_TEST_USER);
 
-        DashBoard dashBoard = JsonParser.parseDashboard(clientPair.appClient.getBody(3), 0);
+        DashBoard dashBoard = clientPair.appClient.getDash(3);
         assertNotNull(dashBoard);
         assertNotNull(dashBoard.devices);
         assertNull(dashBoard.devices[0].token);
@@ -562,20 +545,20 @@ public class PublishingPreviewFlow extends IntegrationBase {
         clientPair.appClient.verifyResult(ok(5));
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = JsonParser.parseProfileFromString(clientPair.appClient.getBody(6));
+        Profile profile = clientPair.appClient.getProfile(6);
         assertNotNull(profile);
         assertNotNull(profile.dashBoards);
         assertEquals(1, profile.dashBoards.length);
 
         clientPair.appClient.send("loadProfileGzipped 2");
-        response = clientPair.appClient.getBody(7);
+        String response = clientPair.appClient.getBody(7);
         assertNotNull(response);
     }
 
     @Test
     public void testExportedAppFlowWithOneDynamicTest() throws Exception {
         clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"DYNAMIC\",\"color\":0,\"name\":\"My App\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
-        App app = JsonParser.parseApp(clientPair.appClient.getBody(), 0);
+        App app = clientPair.appClient.getApp();
         assertNotNull(app);
         assertNotNull(app.id);
 
@@ -589,7 +572,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         appClient2.verifyResult(ok(2));
 
         appClient2.send("loadProfileGzipped 1");
-        DashBoard dashBoard = JsonParser.parseDashboard(appClient2.getBody(3), 0);
+        DashBoard dashBoard = appClient2.getDash(3);
         assertNotNull(dashBoard);
 
         Device device = dashBoard.devices[0];
@@ -610,7 +593,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
     @Test
     public void testFullDynamicAppFlow() throws Exception {
         clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"DYNAMIC\",\"color\":0,\"name\":\"My App\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
-        App app = JsonParser.parseApp(clientPair.appClient.getBody(), 0);
+        App app = clientPair.appClient.getApp();
         assertNotNull(app);
         assertNotNull(app.id);
 
@@ -621,7 +604,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         clientPair.appClient.verifyResult(hardware(2, "1-0 vw 77 123"));
 
         clientPair.appClient.send("loadProfileGzipped 1");
-        DashBoard dashBoard = JsonParser.parseDashboard(clientPair.appClient.getBody(4), 0);
+        DashBoard dashBoard = clientPair.appClient.getDash(4);
         assertNotNull(dashBoard);
         assertNotNull(dashBoard.pinsStorage);
         assertEquals(1, dashBoard.pinsStorage.size());
@@ -632,9 +615,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody();
-
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
+        Device[] devices = clientPair.appClient.getDevices();
         assertEquals(1, devices.length);
 
         clientPair.appClient.send("emailQr 1\0" + app.id);
@@ -652,7 +633,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         appClient2.verifyResult(ok(2));
 
         appClient2.send("loadProfileGzipped " + qrHolders[0].token + "\0" + 1 + "\0" + DEFAULT_TEST_USER + "\0" + AppNameUtil.BLYNK);
-        dashBoard = JsonParser.parseDashboard(appClient2.getBody(3), 0);
+        dashBoard = appClient2.getDash(3);
         assertNotNull(dashBoard);
         assertNotNull(dashBoard.pinsStorage);
         assertTrue(dashBoard.pinsStorage.isEmpty());

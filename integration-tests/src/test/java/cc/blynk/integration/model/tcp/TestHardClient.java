@@ -1,7 +1,6 @@
 package cc.blynk.integration.model.tcp;
 
 import cc.blynk.client.handlers.decoders.ClientMessageDecoder;
-import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
@@ -17,7 +16,6 @@ import org.mockito.Mockito;
 import java.util.List;
 import java.util.Random;
 
-import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.timeout;
@@ -54,8 +52,6 @@ public class TestHardClient extends BaseTestHardwareClient {
         MessageBase messageBase = arguments.get(expectedMessageOrder - 1);
         if (messageBase instanceof StringMessage) {
             return ((StringMessage) messageBase).body;
-        } else if (messageBase.command == LOAD_PROFILE_GZIPPED) {
-            return new String(BaseTest.decompress(messageBase.getBytes()));
         }
 
         throw new RuntimeException("Unexpected message");

@@ -45,4 +45,8 @@ public abstract class BaseTestAppClient extends AppClient {
     public void verifyResultAfter(int time, Object exceptedResult) throws Exception {
         verify(responseMock, after(time)).channelRead(any(), eq(exceptedResult));
     }
+
+    public void verifyAny() throws Exception {
+        verify(responseMock, timeout(500)).channelRead(any(), any());
+    }
 }

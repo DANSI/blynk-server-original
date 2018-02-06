@@ -235,7 +235,7 @@ public class EventorTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = parseProfile(clientPair.appClient.getBody());
+        Profile profile = clientPair.appClient.getProfile();
         assertNotNull(profile);
         OnePinWidget widget = (OnePinWidget) profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
         assertNotNull(widget);

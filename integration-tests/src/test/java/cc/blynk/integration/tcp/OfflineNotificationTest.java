@@ -64,16 +64,14 @@ public class OfflineNotificationTest extends IntegrationBase {
         device2.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device2);
-        String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+        Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
 
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody(2);
 
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
+        Device[] devices = clientPair.appClient.getDevices(2);
         TestCase.assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -107,16 +105,14 @@ public class OfflineNotificationTest extends IntegrationBase {
         device2.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device2);
-        String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+        Device device = clientPair.appClient.getDevice();
         TestCase.assertNotNull(device);
         TestCase.assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
 
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody(2);
 
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
+        Device[] devices = clientPair.appClient.getDevices(2);
         TestCase.assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -145,7 +141,7 @@ public class OfflineNotificationTest extends IntegrationBase {
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = parseProfile(clientPair.appClient.getBody(2));
+        Profile profile = clientPair.appClient.getProfile(2);
         DashBoard dashBoard = profile.dashBoards[0];
         assertNotNull(dashBoard);
         assertEquals(settings.name, dashBoard.name);
@@ -165,16 +161,14 @@ public class OfflineNotificationTest extends IntegrationBase {
         device2.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device2);
-        String createdDevice = clientPair.appClient.getBody(3);
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+        Device device = clientPair.appClient.getDevice(3);
         TestCase.assertNotNull(device);
         TestCase.assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(3, device));
 
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody(4);
 
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
+        Device[] devices = clientPair.appClient.getDevices(4);
         TestCase.assertNotNull(devices);
         assertEquals(2, devices.length);
 

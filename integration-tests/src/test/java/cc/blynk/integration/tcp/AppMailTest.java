@@ -6,7 +6,6 @@ import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.server.api.http.AppAndHttpsServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import org.junit.After;
@@ -83,9 +82,8 @@ public class AppMailTest extends IntegrationBase {
         appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody();
+        Device[] devices = clientPair.appClient.getDevices();
 
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
         assertEquals(1, devices.length);
 
         appClient.send("email 1");
@@ -118,16 +116,14 @@ public class AppMailTest extends IntegrationBase {
         Device device1 = new Device(1, "My Device2", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice, 0);
+        Device device = clientPair.appClient.getDevice();
+
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
 
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody(2);
-
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
+        Device[] devices = clientPair.appClient.getDevices(2);
 
         appClient.send("email 1");
 
