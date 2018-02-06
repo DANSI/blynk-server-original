@@ -58,7 +58,7 @@ messages between Blynk mobile application and various microcontroller boards and
 - Java 8/9 required (OpenJDK, Oracle) 
 - Any OS that can run java 
 - At least 30 MB of RAM (could be less with tuning)
-- Open ports 8443 (for app), 8442 (for hardware without ssl), 8441 (for hardware with ssl)
+- Open ports 9443 (for app), 8442 (for hardware without ssl), 8441 (for hardware with ssl)
 
 [Ubuntu java installation instruction](#install-java-for-ubuntu).
 
@@ -71,7 +71,7 @@ For Windows download Java [here](http://download.oracle.com/otn-pub/java/jdk/9+1
         java -version
         Output: java version "9"
 
-+ Run the server on default 'hardware port 8442' and default 'application port 8443' (SSL port)
++ Run the server on default 'hardware port 8442' and default 'application port 9443' (SSL port)
 
         java -jar server-0.30.3.jar -dataFolder /path
         
@@ -118,7 +118,7 @@ Go [here](https://www.google.com/settings/security/lesssecureapps) and then clic
    
         wget "https://github.com/blynkkk/blynk-server/releases/download/v0.30.3/server-0.30.3-java8.jar"
 
-+ Run the server on default 'hardware port 8442' and default 'application port 8443' (SSL port)
++ Run the server on default 'hardware port 8442' and default 'application port 9443' (SSL port)
 
         java -jar server-0.30.3-java8.jar -dataFolder /home/pi/Blynk        
         
