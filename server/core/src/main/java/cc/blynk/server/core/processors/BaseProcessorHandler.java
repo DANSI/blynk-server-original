@@ -34,6 +34,12 @@ public abstract class BaseProcessorHandler {
             webhookProcessor.process(session, dash, deviceId, pin, pinType, value, now);
         } catch (QuotaLimitException qle) {
             log.debug("User {} reached notification limit for eventor/webhook.", user.name);
+        } catch (IllegalArgumentException iae) {
+            if (iae.getMessage().contains("missing host")) {
+                log.debug("Error processing webhook for {}. Reason : {}", user.email, iae.getMessage());
+            } else {
+                log.error("Error processing eventor/webhook.", iae);
+            }
         } catch (Exception e) {
             log.error("Error processing eventor/webhook.", e);
         }
