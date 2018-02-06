@@ -128,7 +128,7 @@ public class ReadingWorkflowTest extends IntegrationBase {
 
         assertNotNull(device2);
         assertNotNull(device2.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device2.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device2)));
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
@@ -159,7 +159,7 @@ public class ReadingWorkflowTest extends IntegrationBase {
 
         assertNotNull(device2);
         assertNotNull(device2.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device2.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device2)));
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
@@ -197,7 +197,7 @@ public class ReadingWorkflowTest extends IntegrationBase {
 
         assertNotNull(device2);
         assertNotNull(device2.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device2.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device2)));
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
@@ -253,7 +253,7 @@ public class ReadingWorkflowTest extends IntegrationBase {
         device2 = clientPair.appClient.getDevice();
         assertNotNull(device2);
         assertNotNull(device2.token);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(createDevice(1, device2.toString())));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(createDevice(1, device2)));
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();

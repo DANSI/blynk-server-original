@@ -440,7 +440,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         Device device = clientPair.appClient.getDevice(2);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(2, device.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(2, device)));
 
         clientPair.appClient.reset();
 

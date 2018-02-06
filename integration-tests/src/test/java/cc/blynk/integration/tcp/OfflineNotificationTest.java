@@ -23,12 +23,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.after;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -83,14 +77,12 @@ public class OfflineNotificationTest extends IntegrationBase {
         hardClient2.verifyResult(ok(1));
 
         hardClient2.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100"));
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        hardClient2.verifyResult(ok(2));
 
         clientPair.hardwareClient.stop();
 
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(),
-                eq(deviceOffline(0, b("1-0"))));
-        verify(clientPair.appClient.responseMock, never()).channelRead(any(),
-                eq(deviceOffline(0, b("1-1"))));
+        clientPair.appClient.verifyResult(deviceOffline(0, "1-0"));
+        clientPair.appClient.never(deviceOffline(0, "1-1"));
 
         clientPair.appClient.reset();
         hardClient2.stop();
@@ -154,8 +146,7 @@ public class OfflineNotificationTest extends IntegrationBase {
 
         clientPair.hardwareClient.stop();
 
-        verify(clientPair.appClient.responseMock, after(500).never()).channelRead(any(),
-                eq(deviceOffline(0, b("1-0"))));
+        clientPair.appClient.neverAfter(500, deviceOffline(0, "1-0"));
 
         Device device2 = new Device(1, "My Device", "ESP8266");
         device2.status = Status.OFFLINE;

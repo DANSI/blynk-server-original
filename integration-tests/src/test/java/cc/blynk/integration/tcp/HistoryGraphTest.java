@@ -254,7 +254,7 @@ public class HistoryGraphTest extends IntegrationBase {
 Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
+        clientPair.appClient.verifyResult(createDevice(1, device));
 
         Tag tag0 = new Tag(100_000, "Tag1", new int[] {0,1});
 
@@ -384,7 +384,7 @@ Device device = clientPair.appClient.getDevice();
 Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
+        clientPair.appClient.verifyResult(createDevice(1, device));
 
         Tag tag0 = new Tag(100_000, "Tag1", new int[] {0,1});
 
@@ -450,7 +450,7 @@ Device device = clientPair.appClient.getDevice();
 Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
+        clientPair.appClient.verifyResult(createDevice(1, device));
 
         Tag tag0 = new Tag(100_000, "Tag1", new int[] {0,1});
 
@@ -516,7 +516,7 @@ Device device = clientPair.appClient.getDevice();
 Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
+        clientPair.appClient.verifyResult(createDevice(1, device));
 
         Tag tag0 = new Tag(100_000, "Tag1", new int[] {0,1});
 
@@ -582,7 +582,7 @@ Device device = clientPair.appClient.getDevice();
 Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
+        clientPair.appClient.verifyResult(createDevice(1, device));
 
         Tag tag0 = new Tag(100_000, "Tag1", new int[] {0,1});
 
@@ -649,13 +649,13 @@ Device device = clientPair.appClient.getDevice();
         Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
+        clientPair.appClient.verifyResult(createDevice(1, device));
 
         clientPair.appClient.createDevice(1, device2);
         device = clientPair.appClient.getDevice(2);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(2, device.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(2, device)));
 
         Tag tag0 = new Tag(100_000, "Tag1", new int[] {0, 1, 2});
 
@@ -1405,7 +1405,7 @@ Device device = clientPair.appClient.getDevice();
 Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
+        clientPair.appClient.verifyResult(createDevice(1, device));
 
         clientPair.appClient.createWidget(1, "{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
@@ -1482,7 +1482,7 @@ Device device = clientPair.appClient.getDevice();
 Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
+        clientPair.appClient.verifyResult(createDevice(1, device));
 
         clientPair.appClient.createWidget(1, "{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
@@ -1567,7 +1567,7 @@ Device device = clientPair.appClient.getDevice();
 Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
+        clientPair.appClient.verifyResult(createDevice(1, device));
 
         clientPair.appClient.createWidget(1, "{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         clientPair.appClient.verifyResult(ok(2));
@@ -1770,7 +1770,7 @@ Device device = clientPair.appClient.getDevice();
 Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
+        clientPair.appClient.verifyResult(createDevice(1, device));
 
         clientPair.appClient.createWidget(1, "{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"value\":0, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         clientPair.appClient.verifyResult(ok(2));

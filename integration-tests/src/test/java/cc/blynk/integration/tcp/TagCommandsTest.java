@@ -179,7 +179,7 @@ public class TagCommandsTest extends IntegrationBase {
 Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
+        clientPair.appClient.verifyResult(createDevice(1, device));
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
@@ -221,16 +221,16 @@ Device device = clientPair.appClient.getDevice();
 
         clientPair.appClient.verifyResult(ok(1));
 
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 dw 1 1"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 dw 2 1"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 aw 3 0"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 dw 5 1"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 4 244"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 aw 7 3"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 aw 30 3"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 0 89.888037459418"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 1 -58.74774244674501"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 13 60 143 158"))));
+        clientPair.appClient.verifyResult(appSync(b("1-0 dw 1 1")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 dw 2 1")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 aw 3 0")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 dw 5 1")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 4 244")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 aw 7 3")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 aw 30 3")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 0 89.888037459418")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 1 -58.74774244674501")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 13 60 143 158")));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 88 100"))));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 88 100"))));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-100000 vw 88 100"))));

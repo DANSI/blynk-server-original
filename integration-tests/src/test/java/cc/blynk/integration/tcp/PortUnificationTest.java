@@ -14,10 +14,6 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -81,6 +77,6 @@ public class PortUnificationTest extends IntegrationBase {
         hardClient.start();
 
         hardClient.login(device.token);
-        verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        hardClient.verifyResult(ok(1));
     }
 }

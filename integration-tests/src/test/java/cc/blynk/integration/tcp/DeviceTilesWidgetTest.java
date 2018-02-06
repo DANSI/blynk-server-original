@@ -23,7 +23,6 @@ import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileMode;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
-import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.hardware.HardwareServer;
 import org.junit.After;
 import org.junit.Before;
@@ -275,7 +274,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -362,7 +361,7 @@ Device device = clientPair.appClient.getDevice();
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -434,8 +433,8 @@ Device device = clientPair.appClient.getDevice();
 
         clientPair.hardwareClient.send("hardware vw 5 101");
         clientPair.hardwareClient.send("hardware vw 6 102");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 5 101"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(2, b("1-0 vw 6 102"))));
+        clientPair.appClient.verifyResult(hardware(1, "1-0 vw 5 101"));
+        clientPair.appClient.verifyResult(hardware(2, "1-0 vw 6 102"));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("getWidget 1\0" + widgetId);
@@ -463,19 +462,19 @@ Device device = clientPair.appClient.getDevice();
 
         clientPair.appClient.verifyResult(ok(1));
 
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 dw 1 1"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 dw 2 1"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 aw 3 0"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 dw 5 1"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 4 244"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 aw 7 3"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 aw 30 3"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 0 89.888037459418"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 1 -58.74774244674501"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 13 60 143 158"))));
+        clientPair.appClient.verifyResult(appSync(b("1-0 dw 1 1")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 dw 2 1")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 aw 3 0")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 dw 5 1")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 4 244")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 aw 7 3")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 aw 30 3")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 0 89.888037459418")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 1 -58.74774244674501")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 13 60 143 158")));
 
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(1111, b("1-0 vw 5 101"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(1111, b("1-0 vw 6 102"))));
+        clientPair.appClient.verifyResult(appSync(1111, b("1-0 vw 5 101")));
+        clientPair.appClient.verifyResult(appSync(1111, b("1-0 vw 6 102")));
     }
 
     @Test
@@ -484,7 +483,7 @@ Device device = clientPair.appClient.getDevice();
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -536,16 +535,16 @@ Device device = clientPair.appClient.getDevice();
 
         clientPair.appClient.verifyResult(ok(1));
 
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 dw 1 1"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 dw 2 1"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 aw 3 0"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 dw 5 1"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 4 244"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 aw 7 3"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 aw 30 3"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 0 89.888037459418"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 1 -58.74774244674501"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 13 60 143 158"))));
+        clientPair.appClient.verifyResult(appSync(b("1-0 dw 1 1")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 dw 2 1")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 aw 3 0")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 dw 5 1")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 4 244")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 aw 7 3")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 aw 30 3")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 0 89.888037459418")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 1 -58.74774244674501")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 13 60 143 158")));
 
         verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 77"))));
     }
@@ -556,7 +555,7 @@ Device device = clientPair.appClient.getDevice();
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -609,7 +608,7 @@ Device device = clientPair.appClient.getDevice();
         clientPair.appClient.reset();
         clientPair.appClient.sync(1, 1);
 
-        verify(clientPair.appClient.responseMock, timeout(500).times(1)).channelRead(any(), any());
+        clientPair.appClient.verifyAny();
         clientPair.appClient.verifyResult(ok(1));
 
         verify(hardClient2.responseMock, timeout(2000)).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 77"))));
@@ -858,7 +857,7 @@ Device device = clientPair.appClient.getDevice();
         clientPair.appClient.verifyResult(ok(2));
 
         clientPair.appClient.send("getenhanceddata 1" + b(" 432 DAY"));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, NO_DATA)));
+        clientPair.appClient.verifyResult(new ResponseMessage(3, NO_DATA));
     }
 
     @Test
@@ -900,7 +899,7 @@ Device device = clientPair.appClient.getDevice();
         clientPair.appClient.verifyResult(ok(2));
 
         clientPair.appClient.send("getenhanceddata 1-0" + b(" 432 DAY"));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, NO_DATA)));
+        clientPair.appClient.verifyResult(new ResponseMessage(3, NO_DATA));
     }
 
     @Test

@@ -29,7 +29,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -77,10 +76,10 @@ public class DeviceWorkflowTest extends IntegrationBase {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
+        clientPair.appClient.verifyResult(createDevice(1, device));
 
         clientPair.appClient.reset();
 
@@ -100,16 +99,16 @@ Device device = clientPair.appClient.getDevice();
         device1.status = Status.ONLINE;
 
         clientPair.appClient.send("hardware 1 vw 100 100");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(2, b("vw 100 100"))));
-        verify(hardClient2.responseMock, never()).channelRead(any(), eq(new HardwareMessage(2, b("vw 1 100"))));
+        clientPair.hardwareClient.verifyResult(hardware(2, "vw 100 100"));
+        hardClient2.never(hardware(2, "vw 1 100"));
 
         clientPair.appClient.send("hardware 1-0 vw 100 101");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(3, b("vw 100 101"))));
-        verify(hardClient2.responseMock, never()).channelRead(any(), eq(new HardwareMessage(3, b("vw 1 101"))));
+        clientPair.hardwareClient.verifyResult(hardware(3, "vw 100 101"));
+        hardClient2.never(hardware(3, "vw 1 101"));
 
         clientPair.appClient.send("hardware 1-1 vw 100 102");
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(4, b("vw 100 102"))));
-        verify(clientPair.hardwareClient.responseMock, never()).channelRead(any(), eq(new HardwareMessage(4, b("vw 100 102"))));
+        hardClient2.verifyResult(hardware(4, "vw 100 102"));
+        clientPair.hardwareClient.never(hardware(4, "vw 100 102"));
     }
 
     @Test
@@ -117,10 +116,10 @@ Device device = clientPair.appClient.getDevice();
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
+        clientPair.appClient.verifyResult(createDevice(1, device));
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
@@ -143,10 +142,10 @@ Device device = clientPair.appClient.getDevice();
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
+        clientPair.appClient.verifyResult(createDevice(1, device));
 
         clientPair.appClient.reset();
 
@@ -158,7 +157,7 @@ Device device = clientPair.appClient.getDevice();
 
         hardClient2.login(devices[1].token);
         hardClient2.verifyResult(ok(1));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(hardwareConnected(1, "1-1")));
+        clientPair.appClient.verifyResult(hardwareConnected(1, "1-1"));
 
         clientPair.hardwareClient.send("hardware vw 100 101");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 100 101"))));
@@ -178,14 +177,14 @@ Device device = clientPair.appClient.getDevice();
         Device device = clientPair.appClient.getDevice(2);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(2, device.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(2, device)));
 
         TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
         hardClient.start();
 
         hardClient.login(device.token);
-        verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(hardwareConnected(1, "1-1")));
+        hardClient.verifyResult(ok(1));
+        clientPair.appClient.verifyResult(hardwareConnected(1, "1-1"));
 
         String expectedBody = "pm 1 out";
         verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b(expectedBody))));
@@ -204,14 +203,14 @@ Device device = clientPair.appClient.getDevice();
         Device device = clientPair.appClient.getDevice(2);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(2, device.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(2, device)));
 
         TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
         hardClient.start();
 
         hardClient.login(device.token);
-        verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(hardwareConnected(1, "1-1")));
+        hardClient.verifyResult(ok(1));
+        clientPair.appClient.verifyResult(hardwareConnected(1, "1-1"));
 
         verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("pm 33 out"))));
         verify(hardClient.responseMock, times(2)).channelRead(any(), any());
@@ -243,7 +242,7 @@ Device device = clientPair.appClient.getDevice();
 Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
+        clientPair.appClient.verifyResult(createDevice(1, device));
 
         clientPair.appClient.deactivate(1);
         clientPair.appClient.verifyResult(ok(2));
@@ -271,8 +270,7 @@ Device device = clientPair.appClient.getDevice();
         Device device = clientPair.appClient.getDevice(3);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(3, device.toString())));
-
+        clientPair.appClient.verifyResult(createDevice(3, device));
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
@@ -308,7 +306,7 @@ Device device = clientPair.appClient.getDevice();
 
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(2, device.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(2, device)));
 
         clientPair.appClient.reset();
         clientPair.appClient.activate(1);
@@ -317,16 +315,16 @@ Device device = clientPair.appClient.getDevice();
 
         clientPair.appClient.verifyResult(ok(1));
 
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 dw 1 1"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 dw 2 1"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 aw 3 0"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 dw 5 1"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 4 244"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 aw 7 3"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 aw 30 3"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 0 89.888037459418"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 1 -58.74774244674501"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 13 60 143 158"))));
+        clientPair.appClient.verifyResult(appSync(b("1-0 dw 1 1")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 dw 2 1")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 aw 3 0")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 dw 5 1")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 4 244")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 aw 7 3")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 aw 30 3")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 0 89.888037459418")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 1 -58.74774244674501")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 13 60 143 158")));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-1 dw 33 1"))));
     }
 
@@ -339,7 +337,7 @@ Device device = clientPair.appClient.getDevice();
 Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
+        clientPair.appClient.verifyResult(createDevice(1, device));
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
@@ -445,10 +443,10 @@ Device device = clientPair.appClient.getDevice();
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device.toString())));
+        clientPair.appClient.verifyResult(createDevice(1, device));
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
@@ -471,7 +469,7 @@ Device device = clientPair.appClient.getDevice();
 Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(createDevice(1, device.toString())));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(createDevice(1, device)));
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
