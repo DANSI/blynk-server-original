@@ -45,16 +45,6 @@ public class AddEnergyLogic {
                     && transactionParts[1].length() == 16) {
                 return false;
             }
-
-            // fake example "51944AFD-1D24-4A22-A51F-93513A76CD28"
-            transactionParts = id.split("-");
-            if (transactionParts.length == 5 && transactionParts[0].length() == 8
-                    && transactionParts[1].length() == 4
-                    && transactionParts[2].length() == 4
-                    && transactionParts[3].length() == 4
-                    && transactionParts[4].length() == 12) {
-                return false;
-            }
         }
 
         return true;
@@ -70,7 +60,7 @@ public class AddEnergyLogic {
             user.addEnergy(energyAmountToAdd);
             response = ok(message.id);
         } else {
-            log.warn("Purchase with invalid transaction id '{}'. {}.", message.body, user.email);
+            log.debug("Purchase with invalid transaction id '{}'. {}.", message.body, user.email);
             response = notAllowed(message.id);
         }
         ctx.writeAndFlush(response, ctx.voidPromise());
