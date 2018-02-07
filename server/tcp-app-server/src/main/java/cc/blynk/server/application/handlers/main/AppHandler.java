@@ -310,7 +310,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 GetEnergyLogic.messageReceived(ctx, state.user, msg);
                 break;
             case ADD_ENERGY :
-                addEnergyLogic.messageReceived(ctx, state.user, msg);
+                addEnergyLogic.messageReceived(ctx, state, msg);
                 break;
 
             case UPDATE_PROJECT_SETTINGS :
