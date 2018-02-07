@@ -24,7 +24,7 @@ public class MailWrapper {
     }
 
     public void sendWelcomeEmailForNewUser(String to) throws Exception {
-        sendText(to, "Get started with Blynk", emailBody);
+        sendHtml(to, "Get started with Blynk", emailBody);
     }
 
     public void sendText(String to, String subj, String body) throws Exception {
