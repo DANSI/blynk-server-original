@@ -32,9 +32,9 @@ public class GraphDataStream {
 
     private final String mathFormula;
 
-    private final int yAxisMin;
+    private final float yAxisMin;
 
-    private final int yAxisMax;
+    private final float yAxisMax;
 
     private final boolean showYAxis;
 
@@ -57,8 +57,8 @@ public class GraphDataStream {
                            @JsonProperty("low") String low,
                            @JsonProperty("high") String high,
                            @JsonProperty("mathFormula") String mathFormula,
-                           @JsonProperty("yAxisMin") int yAxisMin,
-                           @JsonProperty("yAxisMax") int yAxisMax,
+                           @JsonProperty("yAxisMin") float yAxisMin,
+                           @JsonProperty("yAxisMax") float yAxisMax,
                            @JsonProperty("showYAxis") boolean showYAxis,
                            @JsonProperty("suffix") String suffix,
                            @JsonProperty("cubicSmoothingEnabled") boolean cubicSmoothingEnabled,

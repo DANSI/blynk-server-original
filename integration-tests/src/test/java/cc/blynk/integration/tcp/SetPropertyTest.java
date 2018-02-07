@@ -273,8 +273,8 @@ public class SetPropertyTest extends IntegrationBase {
         profile.dashBoards[0].updatedAt = 0;
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
-        assertEquals(10, ((OnePinWidget) widget).min);
-        assertEquals(20, ((OnePinWidget) widget).max);
+        assertEquals(10, ((OnePinWidget) widget).min, 0.0001);
+        assertEquals(20, ((OnePinWidget) widget).max, 0.0001);
     }
 
     @Test
@@ -292,8 +292,8 @@ public class SetPropertyTest extends IntegrationBase {
         profile.dashBoards[0].updatedAt = 0;
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
-        assertEquals(10, ((OnePinWidget) widget).min);
-        assertEquals(20, ((OnePinWidget) widget).max);
+        assertEquals(10.1, ((OnePinWidget) widget).min, 0.0001);
+        assertEquals(20.2, ((OnePinWidget) widget).max, 0.0001);
     }
 
     @Test
