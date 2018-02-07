@@ -1,6 +1,7 @@
 package cc.blynk.server.application.handlers.main.auth;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.dao.UserKey;
@@ -12,6 +13,7 @@ import cc.blynk.server.core.model.enums.ProvisionType;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.appllication.RegisterMessage;
+import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.StringUtils;
@@ -49,19 +51,24 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
     private final UserDao userDao;
     private final TokenManager tokenManager;
     private final TimerWorker timerWorker;
+    private final MailWrapper mailWrapper;
+    private final BlockingIOProcessor blockingIOProcessor;
     private final Set<String> allowedUsers;
 
     public RegisterHandler(Holder holder) {
         this(holder.userDao, holder.tokenManager, holder.timerWorker,
+                holder.mailWrapper, holder.blockingIOProcessor,
                 holder.props.getCommaSeparatedValueAsArray("allowed.users.list"));
     }
 
     //for tests only
-    RegisterHandler(UserDao userDao, TokenManager tokenManager, TimerWorker timerWorker, String[] allowedUsersArray) {
+    RegisterHandler(UserDao userDao, TokenManager tokenManager, TimerWorker timerWorker,
+                    MailWrapper mailWrapper, BlockingIOProcessor blockingIOProcessor, String[] allowedUsersArray) {
         this.userDao = userDao;
         this.tokenManager = tokenManager;
         this.timerWorker = timerWorker;
-
+        this.mailWrapper = mailWrapper;
+        this.blockingIOProcessor = blockingIOProcessor;
         if (allowedUsersArray != null && allowedUsersArray.length > 0
                 && allowedUsersArray[0] != null && !allowedUsersArray[0].isEmpty()) {
             allowedUsers = new HashSet<>(Arrays.asList(allowedUsersArray));
@@ -108,6 +115,17 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
         User newUser = userDao.add(email, pass, appName);
 
         log.info("Registered {}.", email);
+
+        //sending greeting email only for Blynk apps
+        if (AppNameUtil.BLYNK.equals(appName)) {
+            blockingIOProcessor.execute(() -> {
+                try {
+                    mailWrapper.sendWelcomeEmailForNewUser(email);
+                } catch (Exception e) {
+                    log.warn("Error sending greeting email for {}.", email);
+                }
+            });
+        }
 
         createProjectForExportedApp(newUser, appName, message.id);
 

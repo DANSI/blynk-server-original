@@ -1301,4 +1301,15 @@ public class MainWorkflowTest extends IntegrationBase {
                         "Your app is outdated. Please update to the latest app version. " +
                                 "Ignoring this notice may affect your projects.")));
     }
+
+    @Test
+    public void newUserReceivesGrettingEmail() throws Exception {
+        TestAppClient appClient1 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient1.start();
+
+        appClient1.register("test@blynk.cc", "a", "Blynk");
+        appClient1.verifyResult(ok(1));
+
+        verify(mailWrapper).sendWelcomeEmailForNewUser(eq("test@blynk.cc"));
+    }
 }
