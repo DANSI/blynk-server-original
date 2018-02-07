@@ -38,9 +38,9 @@ public class EnhancedHistoryGraph extends Widget {
 
     public boolean overrideYAxis;
 
-    public int yAxisMin;
+    public float yAxisMin;
 
-    public int yAxisMax;
+    public float yAxisMax;
 
     public boolean isPercentMaxMin;
 
