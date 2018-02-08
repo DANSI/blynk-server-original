@@ -27,7 +27,7 @@ public class HardwareSSLServer extends BaseServer {
 
         HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(holder, port);
         HardwareChannelStateHandler hardwareChannelStateHandler =
-                new HardwareChannelStateHandler(holder.sessionDao, holder.gcmWrapper);
+                new HardwareChannelStateHandler(holder);
         AlreadyLoggedHandler alreadyLoggedHandler = new AlreadyLoggedHandler();
 
         final int hardTimeoutSecs = holder.limits.hardwareIdleTimeout;

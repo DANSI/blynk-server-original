@@ -41,7 +41,7 @@ public class WebSocketsGenericLoginHandler extends SimpleChannelInboundHandler<L
     public WebSocketsGenericLoginHandler(Holder holder, int port) {
         this.hardTimeoutSecs = holder.limits.hardwareIdleTimeout;
         this.hardwareLoginHandler = new HardwareLoginHandler(holder, port);
-        this.hardwareChannelStateHandler = new HardwareChannelStateHandler(holder.sessionDao, holder.gcmWrapper);
+        this.hardwareChannelStateHandler = new HardwareChannelStateHandler(holder);
 
         this.appChannelStateHandler = new AppChannelStateHandler(holder.sessionDao);
         this.appLoginHandler = new AppLoginHandler(holder);

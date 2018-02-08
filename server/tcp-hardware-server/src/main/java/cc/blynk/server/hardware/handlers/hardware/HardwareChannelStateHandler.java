@@ -1,5 +1,6 @@
 package cc.blynk.server.hardware.handlers.hardware;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
@@ -35,9 +36,9 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
     private final SessionDao sessionDao;
     private final GCMWrapper gcmWrapper;
 
-    public HardwareChannelStateHandler(SessionDao sessionDao, GCMWrapper gcmWrapper) {
-        this.sessionDao = sessionDao;
-        this.gcmWrapper = gcmWrapper;
+    public HardwareChannelStateHandler(Holder holder) {
+        this.sessionDao = holder.sessionDao;
+        this.gcmWrapper = holder.gcmWrapper;
     }
 
     @Override

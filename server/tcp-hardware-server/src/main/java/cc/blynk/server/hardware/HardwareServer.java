@@ -28,7 +28,7 @@ public class HardwareServer extends BaseServer {
         final int hardTimeoutSecs = holder.limits.hardwareIdleTimeout;
         final HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(holder, port);
         final HardwareChannelStateHandler hardwareChannelStateHandler =
-                new HardwareChannelStateHandler(holder.sessionDao, holder.gcmWrapper);
+                new HardwareChannelStateHandler(holder);
         final AlreadyLoggedHandler alreadyLoggedHandler = new AlreadyLoggedHandler();
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {

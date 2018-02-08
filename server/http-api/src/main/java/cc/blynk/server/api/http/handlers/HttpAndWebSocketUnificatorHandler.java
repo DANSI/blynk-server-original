@@ -5,7 +5,7 @@ import cc.blynk.core.http.handlers.NoCacheStaticFile;
 import cc.blynk.core.http.handlers.NoMatchHandler;
 import cc.blynk.core.http.handlers.StaticFileHandler;
 import cc.blynk.core.http.handlers.UploadHandler;
-import cc.blynk.core.http.handlers.UrlReWriterHandler;
+import cc.blynk.core.http.handlers.url.UrlReWriterHandler;
 import cc.blynk.server.Holder;
 import cc.blynk.server.admin.http.handlers.IpFilterHandler;
 import cc.blynk.server.admin.http.logic.ConfigsLogic;

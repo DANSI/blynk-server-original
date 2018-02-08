@@ -31,7 +31,7 @@ public class HardwareAndHttpAPIServer extends BaseServer {
 
         final HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(holder, port);
         final HardwareChannelStateHandler hardwareChannelStateHandler =
-                new HardwareChannelStateHandler(holder.sessionDao, holder.gcmWrapper);
+                new HardwareChannelStateHandler(holder);
         final AlreadyLoggedHandler alreadyLoggedHandler = new AlreadyLoggedHandler();
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {

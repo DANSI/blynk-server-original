@@ -3,7 +3,7 @@ package cc.blynk.server.api.http.handlers;
 import cc.blynk.core.http.handlers.StaticFile;
 import cc.blynk.core.http.handlers.StaticFileEdsWith;
 import cc.blynk.core.http.handlers.StaticFileHandler;
-import cc.blynk.core.http.handlers.UrlReWriterHandler;
+import cc.blynk.core.http.handlers.url.UrlReWriterHandler;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.CSVGenerator;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
