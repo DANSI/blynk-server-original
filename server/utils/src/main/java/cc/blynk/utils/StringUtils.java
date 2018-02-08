@@ -28,6 +28,7 @@ public final class StringUtils {
     public static final Pattern GENERIC_PLACEHOLDER = Pattern.compile("%s", Pattern.LITERAL);
 
     public static final Pattern DATETIME_PATTERN =  Pattern.compile("/datetime_iso/", Pattern.LITERAL);
+    public static final String WEBSOCKET_PATH = "/websocket";
 
     private StringUtils() {
     }

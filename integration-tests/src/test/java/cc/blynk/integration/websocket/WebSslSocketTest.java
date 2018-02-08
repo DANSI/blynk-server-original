@@ -3,9 +3,9 @@ package cc.blynk.integration.websocket;
 import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.websocket.WebSocketClient;
 import cc.blynk.server.api.http.AppAndHttpsServer;
-import cc.blynk.server.api.http.HardwareAndHttpAPIServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
+import cc.blynk.utils.StringUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,7 +48,7 @@ public class WebSslSocketTest extends BaseTest {
 
     @Test
     public void testBasicWebSocketCommandsOk() throws Exception{
-        WebSocketClient webSocketClient = new WebSocketClient("localhost", sslWebSocketPort, HardwareAndHttpAPIServer.WEBSOCKET_PATH, true);
+        WebSocketClient webSocketClient = new WebSocketClient("localhost", sslWebSocketPort, StringUtils.WEBSOCKET_PATH, true);
         webSocketClient.start();
         webSocketClient.send("login 4ae3851817194e2596cf1b7103603ef8");
         verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));

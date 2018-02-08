@@ -8,6 +8,7 @@ import cc.blynk.server.api.http.HardwareAndHttpAPIServer;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.hardware.HardwareServer;
+import cc.blynk.utils.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -73,7 +74,7 @@ public class WebSocketTest extends IntegrationBase {
 
     @Test
     public void testBasicWebSocketCommandsOk() throws Exception{
-        WebSocketClient webSocketClient = new WebSocketClient("localhost", tcpWebSocketPort, HardwareAndHttpAPIServer.WEBSOCKET_PATH, false);
+        WebSocketClient webSocketClient = new WebSocketClient("localhost", tcpWebSocketPort, StringUtils.WEBSOCKET_PATH, false);
         webSocketClient.start();
         webSocketClient.send("login 4ae3851817194e2596cf1b7103603ef8");
         verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
@@ -88,7 +89,7 @@ public class WebSocketTest extends IntegrationBase {
         clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
-        WebSocketClient webSocketClient = new WebSocketClient("localhost", tcpWebSocketPort, HardwareAndHttpAPIServer.WEBSOCKET_PATH, false);
+        WebSocketClient webSocketClient = new WebSocketClient("localhost", tcpWebSocketPort, StringUtils.WEBSOCKET_PATH, false);
         webSocketClient.start();
         webSocketClient.send("login " + token);
         verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
@@ -104,7 +105,7 @@ public class WebSocketTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1-0 vw 4 3"))));
 
         clientPair.appClient.reset();
-        WebSocketClient webSocketClient2 = new WebSocketClient("localhost", tcpWebSocketPort, HardwareAndHttpAPIServer.WEBSOCKET_PATH, false);
+        WebSocketClient webSocketClient2 = new WebSocketClient("localhost", tcpWebSocketPort, StringUtils.WEBSOCKET_PATH, false);
         webSocketClient2.start();
         webSocketClient2.send("login " + token);
         verify(webSocketClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));

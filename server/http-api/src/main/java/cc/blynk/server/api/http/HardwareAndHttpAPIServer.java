@@ -19,7 +19,6 @@ import io.netty.channel.socket.SocketChannel;
 public class HardwareAndHttpAPIServer extends BaseServer {
 
     private final ChannelInitializer<SocketChannel> channelInitializer;
-    public static final String WEBSOCKET_PATH = "/websocket";
 
     public HardwareAndHttpAPIServer(Holder holder) {
         super(holder.props.getProperty("listen.address"),

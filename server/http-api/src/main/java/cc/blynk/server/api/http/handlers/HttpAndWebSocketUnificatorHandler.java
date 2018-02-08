@@ -13,7 +13,6 @@ import cc.blynk.server.admin.http.logic.HardwareStatsLogic;
 import cc.blynk.server.admin.http.logic.OTALogic;
 import cc.blynk.server.admin.http.logic.StatsLogic;
 import cc.blynk.server.admin.http.logic.UsersLogic;
-import cc.blynk.server.api.http.HardwareAndHttpAPIServer;
 import cc.blynk.server.api.http.logic.HttpAPILogic;
 import cc.blynk.server.api.http.logic.ResetPasswordLogic;
 import cc.blynk.server.api.http.logic.business.AdminAuthHandler;
@@ -25,6 +24,7 @@ import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.core.stats.GlobalStats;
+import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.properties.ServerProperties;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -121,8 +121,8 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
             return;
         } else if (uri.startsWith(rootPath)) {
             initAdminPipeline(ctx);
-        } else if (req.uri().startsWith(HardwareAndHttpAPIServer.WEBSOCKET_PATH)) {
-            initWebSocketPipeline(ctx, HardwareAndHttpAPIServer.WEBSOCKET_PATH);
+        } else if (req.uri().startsWith(StringUtils.WEBSOCKET_PATH)) {
+            initWebSocketPipeline(ctx, StringUtils.WEBSOCKET_PATH);
         } else {
             initHttpPipeline(ctx);
         }
