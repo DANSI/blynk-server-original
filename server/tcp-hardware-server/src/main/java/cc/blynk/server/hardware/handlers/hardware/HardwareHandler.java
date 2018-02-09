@@ -29,6 +29,7 @@ import static cc.blynk.server.core.protocol.enums.Command.PUSH_NOTIFICATION;
 import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
 import static cc.blynk.server.core.protocol.enums.Command.SMS;
 import static cc.blynk.server.core.protocol.enums.Command.TWEET;
+import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 
 
 /**
@@ -102,11 +103,16 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-        if (evt instanceof  BridgeForwardMessage) {
+        if (evt instanceof BridgeForwardMessage) {
             BridgeForwardMessage bridgeForwardMessage = (BridgeForwardMessage) evt;
             TokenValue tokenValue = bridgeForwardMessage.tokenValue;
-            hardware.messageReceived(ctx, bridgeForwardMessage.message,
-                    bridgeForwardMessage.userKey, tokenValue.user, tokenValue.dash, tokenValue.device.id);
+            try {
+                hardware.messageReceived(ctx, bridgeForwardMessage.message,
+                        bridgeForwardMessage.userKey, tokenValue.user, tokenValue.dash, tokenValue.device);
+            } catch (NumberFormatException nfe) {
+                log.debug("Error parsing number. {}", nfe.getMessage());
+                ctx.writeAndFlush(illegalCommand(bridgeForwardMessage.message.id), ctx.voidPromise());
+            }
         } else {
             ctx.fireUserEventTriggered(evt);
         }

@@ -168,6 +168,21 @@ public class BridgeWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void testWrongPinForBridge() throws Exception {
+        //creating 1 new hard client
+        TestHardClient hardClient1 = new TestHardClient("localhost", tcpHardPort);
+        hardClient1.start();
+        hardClient1.login(clientPair.token);
+        hardClient1.verifyResult(ok(1));
+        hardClient1.reset();
+
+        clientPair.hardwareClient.send("bridge 1 i " + clientPair.token);
+        clientPair.hardwareClient.verifyResult(ok(1));
+        clientPair.hardwareClient.send("bridge 1 vw 140 10");
+        clientPair.hardwareClient.verifyResult(illegalCommand(2));
+    }
+
+    @Test
     public void testCorrectWorkflow2HardsDifferentToken() throws Exception {
         clientPair.appClient.getToken(2);
         String token = clientPair.appClient.getBody();

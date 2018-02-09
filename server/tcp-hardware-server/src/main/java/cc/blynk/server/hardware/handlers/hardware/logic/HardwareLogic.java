@@ -7,6 +7,7 @@ import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.processors.BaseProcessorHandler;
 import cc.blynk.server.core.processors.WebhookProcessor;
@@ -49,11 +50,11 @@ public class HardwareLogic extends BaseProcessorHandler {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
-        messageReceived(ctx, message, state.userKey, state.user, state.dash, state.device.id);
+        messageReceived(ctx, message, state.userKey, state.user, state.dash, state.device);
     }
 
     public void messageReceived(ChannelHandlerContext ctx, StringMessage message,
-                                UserKey userKey, User user, DashBoard dash, int deviceId) {
+                                UserKey userKey, User user, DashBoard dash, Device device) {
         String body = message.body;
 
         //minimum command - "ar 1"
@@ -76,6 +77,7 @@ public class HardwareLogic extends BaseProcessorHandler {
             byte pin = Byte.parseByte(splitBody[1]);
             String value = splitBody[2];
             long now = System.currentTimeMillis();
+            int deviceId = device.id;
 
             reportingDao.process(user, dash, deviceId, pin, pinType, value, now);
             dash.update(deviceId, pin, pinType, value, now);

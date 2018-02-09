@@ -267,6 +267,12 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void testSendInvalidVirtualPin() throws Exception {
+        clientPair.hardwareClient.send("hardware vw 140 100");
+        clientPair.hardwareClient.verifyResult(illegalCommand(1));
+    }
+
+    @Test
     public void testNoEnergyDrainForBusinessApps() throws Exception {
         TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
 

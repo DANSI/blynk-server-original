@@ -4,7 +4,6 @@ import cc.blynk.server.core.protocol.exceptions.BaseServerException;
 import cc.blynk.server.core.protocol.exceptions.UnsupportedCommandException;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.DecoderException;
-import io.netty.handler.ssl.NotSslRecordException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -52,12 +51,8 @@ public interface DefaultExceptionHandler {
                 log.error("DecoderException.", cause);
             }
             ctx.close();
-        } else if (cause instanceof NotSslRecordException) {
-            log.debug("Not secure connection attempt detected. {}. IP {}",
-                    cause.getMessage(), ctx.channel().remoteAddress());
-            ctx.close();
         } else if (cause instanceof SSLException) {
-            log.warn("SSL exception. {}.", cause.getMessage());
+            log.debug("SSL exception. {}. {}", cause.getMessage(), ctx.channel().remoteAddress());
             ctx.close();
         } else if (cause instanceof IOException) {
             log.trace("Blynk server IOException.", cause);
