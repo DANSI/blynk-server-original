@@ -2,11 +2,11 @@ package cc.blynk.integration.http;
 
 import cc.blynk.integration.BaseTest;
 import cc.blynk.server.Holder;
-import cc.blynk.server.api.http.HardwareAndHttpAPIServer;
 import cc.blynk.server.api.http.pojo.EmailPojo;
 import cc.blynk.server.api.http.pojo.PushMessagePojo;
-import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.servers.BaseServer;
+import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.properties.GCMProperties;
 import cc.blynk.utils.properties.MailProperties;
 import cc.blynk.utils.properties.SmsProperties;

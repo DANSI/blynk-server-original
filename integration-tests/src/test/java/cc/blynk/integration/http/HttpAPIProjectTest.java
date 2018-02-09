@@ -1,14 +1,14 @@
 package cc.blynk.integration.http;
 
 import cc.blynk.integration.BaseTest;
-import cc.blynk.server.api.http.HardwareAndHttpAPIServer;
-import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
+import cc.blynk.server.servers.BaseServer;
+import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;

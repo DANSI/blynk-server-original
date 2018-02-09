@@ -1,13 +1,13 @@
 package cc.blynk.server.launcher;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.api.http.AppAndHttpsServer;
-import cc.blynk.server.api.http.HardwareAndHttpAPIServer;
-import cc.blynk.server.application.AppServer;
-import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.hardware.HardwareSSLServer;
-import cc.blynk.server.hardware.HardwareServer;
-import cc.blynk.server.hardware.MQTTHardwareServer;
+import cc.blynk.server.servers.BaseServer;
+import cc.blynk.server.servers.application.AppAndHttpsServer;
+import cc.blynk.server.servers.application.AppServer;
+import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
+import cc.blynk.server.servers.hardware.HardwareSSLServer;
+import cc.blynk.server.servers.hardware.HardwareServer;
+import cc.blynk.server.servers.hardware.MQTTHardwareServer;
 import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.JarUtil;
 import cc.blynk.utils.LoggerUtil;

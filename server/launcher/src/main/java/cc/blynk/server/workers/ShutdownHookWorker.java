@@ -1,7 +1,7 @@
 package cc.blynk.server.workers;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.BaseServer;
+import cc.blynk.server.servers.BaseServer;
 
 import java.util.concurrent.ScheduledExecutorService;
 

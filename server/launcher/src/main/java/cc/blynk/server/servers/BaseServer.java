@@ -1,4 +1,4 @@
-package cc.blynk.server.core;
+package cc.blynk.server.servers;
 
 import cc.blynk.server.transport.TransportTypeHolder;
 import io.netty.bootstrap.ServerBootstrap;

@@ -2,9 +2,9 @@ package cc.blynk.integration.websocket;
 
 import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.websocket.WebSocketClient;
-import cc.blynk.server.api.http.AppAndHttpsServer;
-import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
+import cc.blynk.server.servers.BaseServer;
+import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.utils.StringUtils;
 import org.junit.AfterClass;
 import org.junit.Before;

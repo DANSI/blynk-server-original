@@ -1,8 +1,8 @@
 package cc.blynk.integration.https;
 
 import cc.blynk.integration.BaseTest;
-import cc.blynk.server.api.http.HardwareAndHttpAPIServer;
-import cc.blynk.server.core.BaseServer;
+import cc.blynk.server.servers.BaseServer;
+import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.AppNameUtil;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;

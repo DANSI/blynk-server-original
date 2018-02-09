@@ -1,13 +1,13 @@
-package cc.blynk.server.api.http;
+package cc.blynk.server.servers.hardware;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.handlers.HttpAndHardwareUnificationHandler;
 import cc.blynk.server.api.http.handlers.HttpAndWebSocketUnificatorHandler;
 import cc.blynk.server.api.http.handlers.LetsEncryptHandler;
-import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.handlers.common.AlreadyLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareChannelStateHandler;
 import cc.blynk.server.hardware.handlers.hardware.auth.HardwareLoginHandler;
+import cc.blynk.server.servers.BaseServer;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 

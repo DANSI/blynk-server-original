@@ -2,14 +2,14 @@ package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
-import cc.blynk.server.api.http.AppAndHttpsServer;
-import cc.blynk.server.api.http.HardwareAndHttpAPIServer;
-import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.others.webhook.Header;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
-import cc.blynk.server.hardware.HardwareServer;
+import cc.blynk.server.servers.BaseServer;
+import cc.blynk.server.servers.application.AppAndHttpsServer;
+import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
+import cc.blynk.server.servers.hardware.HardwareServer;
 import cc.blynk.utils.StringUtils;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;

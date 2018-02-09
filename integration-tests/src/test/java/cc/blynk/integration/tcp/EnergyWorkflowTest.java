@@ -2,10 +2,10 @@ package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
-import cc.blynk.server.api.http.AppAndHttpsServer;
-import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
-import cc.blynk.server.hardware.HardwareServer;
+import cc.blynk.server.servers.BaseServer;
+import cc.blynk.server.servers.application.AppAndHttpsServer;
+import cc.blynk.server.servers.hardware.HardwareServer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

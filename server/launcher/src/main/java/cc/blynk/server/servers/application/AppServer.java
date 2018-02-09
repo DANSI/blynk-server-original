@@ -1,4 +1,4 @@
-package cc.blynk.server.application;
+package cc.blynk.server.servers.application;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.AppChannelStateHandler;
@@ -6,10 +6,10 @@ import cc.blynk.server.application.handlers.main.auth.AppLoginHandler;
 import cc.blynk.server.application.handlers.main.auth.GetServerHandler;
 import cc.blynk.server.application.handlers.main.auth.RegisterHandler;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareLoginHandler;
-import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
+import cc.blynk.server.servers.BaseServer;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.timeout.IdleStateHandler;
