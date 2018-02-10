@@ -74,24 +74,22 @@ public class WebhookProcessor extends NotificationBase {
 
     public void process(Session session, DashBoard dash, int deviceId, byte pin,
                         PinType pinType, String triggerValue, long now) {
-        WebHook widget = dash.findWebhookByPin(deviceId, pin, pinType);
-        if (widget == null) {
+        WebHook webhook = dash.findWebhookByPin(deviceId, pin, pinType);
+        if (webhook == null) {
             return;
         }
 
         checkIfNotificationQuotaLimitIsNotReached(now);
 
-        process(session, dash.id, deviceId, widget, triggerValue);
+        if (webhook.isNotFailed(webhookFailureLimit) && webhook.url != null) {
+            process(session, dash.id, deviceId, webhook, triggerValue);
+        }
     }
 
     private void process(Session session, int dashId, int deviceId,  WebHook webHook, String triggerValue) {
-        if (!webHook.isValid(webhookFailureLimit)) {
-            return;
-        }
-
         String newUrl = format(webHook.url, triggerValue, false);
 
-        if (WebHook.isNotValidUrl(newUrl)) {
+        if (!WebHook.isValidUrl(newUrl)) {
             return;
         }
 
@@ -161,7 +159,7 @@ public class WebhookProcessor extends NotificationBase {
         globalStats.mark(WEB_HOOKS);
     }
 
-    private String format(String data, String triggerValue, boolean doBlynkCheck) {
+    private static String format(String data, String triggerValue, boolean doBlynkCheck) {
         //this is an ugly hack to make it work with Blynk HTTP API.
         if (doBlynkCheck || !data.toLowerCase().contains("/pin/v")) {
             data = PIN_PATTERN.matcher(data).replaceFirst(triggerValue);
@@ -196,7 +194,7 @@ public class WebhookProcessor extends NotificationBase {
         return data;
     }
 
-    private void buildRequestBody(BoundRequestBuilder builder, String header, String body) {
+    private static void buildRequestBody(BoundRequestBuilder builder, String header, String body) {
         switch (header) {
             case APPLICATION_FORM_URLENCODED :
             case APPLICATION_JSON :

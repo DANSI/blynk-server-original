@@ -24,12 +24,12 @@ public class WebHook extends OnePinWidget {
 
     public transient volatile int failureCounter = 0;
 
-    public static boolean isNotValidUrl(String url) {
-        return url.isEmpty() || !url.regionMatches(true, 0, "http", 0, 4);
+    public static boolean isValidUrl(String url) {
+        return url != null && !url.isEmpty() && url.regionMatches(true, 0, "http", 0, 4);
     }
 
-    public boolean isValid(int webhookFailureLimit) {
-        return url != null && failureCounter < webhookFailureLimit;
+    public boolean isNotFailed(int webhookFailureLimit) {
+        return failureCounter < webhookFailureLimit;
     }
 
     //a bit ugly but as quick fix ok
