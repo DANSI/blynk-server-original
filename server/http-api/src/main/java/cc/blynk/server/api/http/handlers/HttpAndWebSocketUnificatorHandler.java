@@ -148,8 +148,7 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         pipeline.addLast(authCookieHandler);
         pipeline.addLast(cookieBasedUrlReWriterHandler);
 
-        pipeline.remove(StaticFileHandler.class);
-        pipeline.addLast(new StaticFileHandler(props, new NoCacheStaticFile("/static")));
+        pipeline.replace(StaticFileHandler.class, null, new StaticFileHandler(props, new NoCacheStaticFile("/static")));
 
         pipeline.addLast(otaLogic);
         pipeline.addLast(usersLogic);
@@ -169,12 +168,11 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
     }
 
     private void initHttpPipeline(ChannelHandlerContext ctx) {
-        ChannelPipeline pipeline = ctx.pipeline();
-        pipeline.addLast(resetPasswordLogic);
-        pipeline.addLast(httpAPILogic);
-
-        pipeline.addLast(noMatchHandler);
-        pipeline.remove(this);
+        ctx.pipeline()
+                .addLast(resetPasswordLogic)
+                .addLast(httpAPILogic)
+                .addLast(noMatchHandler)
+                .remove(this);
     }
 
     private void initWebSocketPipeline(ChannelHandlerContext ctx, String websocketPath) {

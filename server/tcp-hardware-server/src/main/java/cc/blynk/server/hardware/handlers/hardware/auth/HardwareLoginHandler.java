@@ -20,6 +20,7 @@ import cc.blynk.utils.structure.LRUCache;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -104,10 +105,12 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         Device device = tokenValue.device;
         DashBoard dash = tokenValue.dash;
 
-        ctx.pipeline().remove(this);
-        ctx.pipeline().remove(HardwareNotLoggedHandler.class);
         HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(user, tokenValue.dash, device);
-        ctx.pipeline().addLast("HHArdwareHandler", new HardwareHandler(holder, hardwareStateHolder));
+
+        ChannelPipeline pipeline = ctx.pipeline();
+        pipeline.remove(this);
+        pipeline.remove(HardwareNotLoggedHandler.class);
+        pipeline.addLast("HHArdwareHandler", new HardwareHandler(holder, hardwareStateHolder));
 
         Session session = holder.sessionDao.getOrCreateSessionByUser(
                 hardwareStateHolder.userKey, ctx.channel().eventLoop());
