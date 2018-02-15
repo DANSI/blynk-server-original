@@ -34,7 +34,6 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
 
-import java.net.InetSocketAddress;
 import java.util.NoSuchElementException;
 
 import static cc.blynk.core.http.Response.redirect;
@@ -130,13 +129,8 @@ public class HttpAndWebSocketUnificatorHandler extends ChannelInboundHandlerAdap
         ctx.fireChannelRead(msg);
     }
 
-    private boolean isIpNotAllowed(ChannelHandlerContext ctx) {
-        InetSocketAddress remoteAddress = (InetSocketAddress) ctx.channel().remoteAddress();
-        return !ipFilterHandler.accept(ctx, remoteAddress);
-    }
-
     private void initAdminPipeline(ChannelHandlerContext ctx) {
-        if (isIpNotAllowed(ctx)) {
+        if (!ipFilterHandler.accept(ctx)) {
             ctx.close();
             return;
         }
