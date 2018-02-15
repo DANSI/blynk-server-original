@@ -1,7 +1,6 @@
 package cc.blynk.server.api.http.handlers;
 
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
-import cc.blynk.utils.HttpUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
@@ -12,11 +11,14 @@ import org.apache.logging.log4j.Logger;
 import java.util.List;
 
 /**
+ * Base handler that detects protocol between http and blynk app protocol.
+ *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 15.02.18.
  */
-abstract class BaseHttpAndBlynkUnificationHandler extends ByteToMessageDecoder implements DefaultExceptionHandler {
+public abstract class BaseHttpAndBlynkUnificationHandler extends ByteToMessageDecoder
+        implements DefaultExceptionHandler {
 
     static final Logger log = LogManager.getLogger(BaseHttpAndBlynkUnificationHandler.class);
 
@@ -35,14 +37,29 @@ abstract class BaseHttpAndBlynkUnificationHandler extends ByteToMessageDecoder i
     }
 
     private ChannelPipeline buildPipeline(ChannelPipeline pipeline, long magic) {
-        if (HttpUtil.isHttp(magic)) {
+        if (isHttp(magic)) {
             return buildHttpPipeline(pipeline);
         }
         return buildBlynkPipeline(pipeline);
     }
 
+    /**
+     * See HttpSignatureTest for more details
+     */
+    private static boolean isHttp(long httpHeader4Bytes) {
+        return
+                httpHeader4Bytes == 1195725856L || // 'GET '
+                        httpHeader4Bytes == 1347375956L || // 'POST'
+                        httpHeader4Bytes == 1347769376L || // 'PUT '
+                        httpHeader4Bytes == 1212498244L || // 'HEAD'
+                        httpHeader4Bytes == 1330664521L || // 'OPTI'
+                        httpHeader4Bytes == 1346458691L || // 'PATC'
+                        httpHeader4Bytes == 1145392197L || // 'DELE'
+                        httpHeader4Bytes == 1414676803L || // 'TRAC'
+                        httpHeader4Bytes == 1129270862L;   // 'CONN'
+    }
+
     public abstract ChannelPipeline buildHttpPipeline(ChannelPipeline pipeline);
 
     public abstract ChannelPipeline buildBlynkPipeline(ChannelPipeline pipeline);
-
 }
