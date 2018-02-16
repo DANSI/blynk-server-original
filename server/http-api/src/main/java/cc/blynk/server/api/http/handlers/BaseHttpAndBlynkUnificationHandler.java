@@ -5,8 +5,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.ByteToMessageDecoder;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
@@ -19,8 +17,6 @@ import java.util.List;
  */
 public abstract class BaseHttpAndBlynkUnificationHandler extends ByteToMessageDecoder
         implements DefaultExceptionHandler {
-
-    static final Logger log = LogManager.getLogger(BaseHttpAndBlynkUnificationHandler.class);
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
@@ -49,17 +45,22 @@ public abstract class BaseHttpAndBlynkUnificationHandler extends ByteToMessageDe
     private static boolean isHttp(long httpHeader4Bytes) {
         return
                 httpHeader4Bytes == 1195725856L || // 'GET '
-                        httpHeader4Bytes == 1347375956L || // 'POST'
-                        httpHeader4Bytes == 1347769376L || // 'PUT '
-                        httpHeader4Bytes == 1212498244L || // 'HEAD'
-                        httpHeader4Bytes == 1330664521L || // 'OPTI'
-                        httpHeader4Bytes == 1346458691L || // 'PATC'
-                        httpHeader4Bytes == 1145392197L || // 'DELE'
-                        httpHeader4Bytes == 1414676803L || // 'TRAC'
-                        httpHeader4Bytes == 1129270862L;   // 'CONN'
+                httpHeader4Bytes == 1347375956L || // 'POST'
+                httpHeader4Bytes == 1347769376L || // 'PUT '
+                httpHeader4Bytes == 1212498244L || // 'HEAD'
+                httpHeader4Bytes == 1330664521L || // 'OPTI'
+                httpHeader4Bytes == 1346458691L || // 'PATC'
+                httpHeader4Bytes == 1145392197L || // 'DELE'
+                httpHeader4Bytes == 1414676803L || // 'TRAC'
+                httpHeader4Bytes == 1129270862L;   // 'CONN'
     }
 
     public abstract ChannelPipeline buildHttpPipeline(ChannelPipeline pipeline);
 
     public abstract ChannelPipeline buildBlynkPipeline(ChannelPipeline pipeline);
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        handleUnexpectedException(ctx, cause);
+    }
 }
