@@ -208,6 +208,10 @@ public class Holder implements Closeable {
         }
     }
 
+    public boolean isLocalRegion() {
+        return region.equals("local");
+    }
+
     @Override
     public void close() {
         this.reportingDao.close();
