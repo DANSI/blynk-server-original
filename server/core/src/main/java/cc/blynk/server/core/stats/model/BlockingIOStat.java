@@ -7,7 +7,7 @@ import cc.blynk.server.core.BlockingIOProcessor;
  * Created by Dmitriy Dumanskiy.
  * Created on 03.05.17.
  */
-public class BlockingIOStat {
+class BlockingIOStat {
 
     private final int messagingActiveTasks;
 
@@ -21,21 +21,36 @@ public class BlockingIOStat {
 
     private final long dbExecutedTasks;
 
+    private final int getServerActiveTasks;
 
-    public BlockingIOStat(BlockingIOProcessor blockingIOProcessor) {
-        this(blockingIOProcessor.messagingActiveTasks(), blockingIOProcessor.messagingExecutedTasks(),
-             blockingIOProcessor.historyActiveTasks(), blockingIOProcessor.historyExecutedTasks(),
-             blockingIOProcessor.dbActiveTasks(), blockingIOProcessor.dbExecutedTasks());
+    private final long getServerExecutedTasks;
+
+    BlockingIOStat(BlockingIOProcessor blockingIOProcessor) {
+        this(blockingIOProcessor.messagingExecutor.getQueue().size(),
+             blockingIOProcessor.messagingExecutor.getCompletedTaskCount(),
+
+             blockingIOProcessor.historyExecutor.getQueue().size(),
+             blockingIOProcessor.historyExecutor.getCompletedTaskCount(),
+
+             blockingIOProcessor.dbExecutor.getQueue().size(),
+             blockingIOProcessor.dbExecutor.getCompletedTaskCount(),
+
+             blockingIOProcessor.dbGetServerExecutor.getQueue().size(),
+             blockingIOProcessor.dbGetServerExecutor.getCompletedTaskCount()
+        );
     }
 
-    public BlockingIOStat(int messagingActiveTasks, long messagingExecutedTasks,
+    private BlockingIOStat(int messagingActiveTasks, long messagingExecutedTasks,
                           int historyActiveTasks, long historyExecutedTasks,
-                          int dbActiveTasks, long dbExecutedTasks) {
+                          int dbActiveTasks, long dbExecutedTasks,
+                          int getServerActiveTasks, long getServerExecutedTasks) {
         this.messagingActiveTasks = messagingActiveTasks;
         this.messagingExecutedTasks = messagingExecutedTasks;
         this.historyActiveTasks = historyActiveTasks;
         this.historyExecutedTasks = historyExecutedTasks;
         this.dbActiveTasks = dbActiveTasks;
         this.dbExecutedTasks = dbExecutedTasks;
+        this.getServerActiveTasks = getServerActiveTasks;
+        this.getServerExecutedTasks = getServerExecutedTasks;
     }
 }

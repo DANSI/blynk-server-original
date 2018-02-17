@@ -8,6 +8,7 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
+import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.db.DBManager;
@@ -24,6 +25,8 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.concurrent.RejectedExecutionException;
 
 import static cc.blynk.server.core.protocol.enums.Command.CONNECT_REDIRECT;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
@@ -125,33 +128,38 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
     }
 
     private void checkTokenOnOtherServer(ChannelHandlerContext ctx, String token, int msgId) {
-        blockingIOProcessor.executeDB(() -> {
-            //check cache first
-            LRUCache.CacheEntry cacheEntry = LRUCache.LOGIN_TOKENS_CACHE.get(token);
-
-            String server;
-            if (cacheEntry == null) {
-                log.debug("Checking invalid token in DB.");
-                server = dbManager.getServerByToken(token);
-                LRUCache.LOGIN_TOKENS_CACHE.put(token, new LRUCache.CacheEntry(server));
-                if (server != null) {
-                    log.info("Redirecting token '{}' to {}", token, server);
-                }
-            } else {
-                log.debug("Taking invalid token from cache.");
-                server = cacheEntry.value;
-            }
-
-            // no server found, that's means token is wrong.
-            if (server == null || server.equals(holder.host)) {
-                log.debug("HardwareLogic token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());
+        //check cache first
+        LRUCache.CacheEntry cacheEntry = LRUCache.LOGIN_TOKENS_CACHE.get(token);
+        if (cacheEntry == null) {
+            try {
+                blockingIOProcessor.executeDBGetServer(() -> {
+                    String server;
+                    log.debug("Checking invalid token in DB.");
+                    server = dbManager.getServerByToken(token);
+                    LRUCache.LOGIN_TOKENS_CACHE.put(token, new LRUCache.CacheEntry(server));
+                    // no server found, that's means token is wrong.
+                    sendRedirectResponse(ctx, token, server, msgId);
+                });
+            } catch (RejectedExecutionException ree) {
+                log.warn("Error in getServerByToken handler. Limit of tasks reached.");
                 ctx.writeAndFlush(invalidToken(msgId), ctx.voidPromise());
-            } else {
-                ctx.writeAndFlush(makeASCIIStringMessage(
-                        CONNECT_REDIRECT, msgId, server + BODY_SEPARATOR + listenPort),
-                        ctx.voidPromise());
             }
-        });
+        } else {
+            log.debug("Taking token from cache.");
+            sendRedirectResponse(ctx, token, cacheEntry.value, msgId);
+        }
+    }
+
+    private void sendRedirectResponse(ChannelHandlerContext ctx, String token, String server, int msgId) {
+        MessageBase response;
+        if (server == null || server.equals(holder.host)) {
+            log.debug("HardwareLogic token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());
+            response = invalidToken(msgId);
+        } else {
+            log.info("Redirecting token '{}' to {}", token, server);
+            response = makeASCIIStringMessage(CONNECT_REDIRECT, msgId, server + BODY_SEPARATOR + listenPort);
+        }
+        ctx.writeAndFlush(response, ctx.voidPromise());
     }
 
 }

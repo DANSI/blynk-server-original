@@ -224,7 +224,7 @@ public class DBManagerTest {
             map.clear();
         }
 
-        while (blockingIOProcessor.getActiveCount() > 0) {
+        while (blockingIOProcessor.messagingExecutor.getActiveCount() > 0) {
             Thread.sleep(100);
         }
 

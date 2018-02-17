@@ -18,13 +18,15 @@ import java.util.concurrent.TimeUnit;
 public class BlockingIOProcessor implements Closeable {
 
     //pool for messaging
-    private final ThreadPoolExecutor messagingExecutor;
+    public final ThreadPoolExecutor messagingExecutor;
 
     //DB pool is needed as in case DB goes down messaging still should work
-    private final ThreadPoolExecutor dbExecutor;
+    public final ThreadPoolExecutor dbExecutor;
+
+    public final ThreadPoolExecutor dbGetServerExecutor;
 
     //separate pool for history graph data
-    private final ThreadPoolExecutor historyExecutor;
+    public final ThreadPoolExecutor historyExecutor;
 
     public BlockingIOProcessor(int poolSize, int maxQueueSize) {
         this.messagingExecutor = new ThreadPoolExecutor(
@@ -38,7 +40,10 @@ public class BlockingIOProcessor implements Closeable {
         //local server doesn't use DB usually, so this thread may be not necessary
         this.dbExecutor.allowCoreThreadTimeOut(true);
 
-        this.historyExecutor = new ThreadPoolExecutor(poolSize / 2, poolSize, 2L,
+        this.dbGetServerExecutor = new ThreadPoolExecutor(poolSize / 3, poolSize / 3, 2L,
+                TimeUnit.MINUTES, new ArrayBlockingQueue<>(250));
+
+        this.historyExecutor = new ThreadPoolExecutor(poolSize / 4, poolSize / 2, 2L,
                 TimeUnit.MINUTES, new ArrayBlockingQueue<>(250));
     }
 
@@ -54,42 +59,15 @@ public class BlockingIOProcessor implements Closeable {
         historyExecutor.execute(task);
     }
 
+    public void executeDBGetServer(Runnable task) {
+        dbGetServerExecutor.execute(task);
+    }
+
     @Override
     public void close() {
         dbExecutor.shutdown();
         messagingExecutor.shutdown();
         historyExecutor.shutdown();
-    }
-
-    public int getActiveCount() {
-        return messagingExecutor.getActiveCount();
-    }
-
-
-
-    public int messagingActiveTasks() {
-        return messagingExecutor.getQueue().size();
-    }
-
-    public long messagingExecutedTasks() {
-        return messagingExecutor.getCompletedTaskCount();
-    }
-
-
-    public int historyActiveTasks() {
-        return historyExecutor.getQueue().size();
-    }
-
-    public long historyExecutedTasks() {
-        return historyExecutor.getCompletedTaskCount();
-    }
-
-
-    public int dbActiveTasks() {
-        return dbExecutor.getQueue().size();
-    }
-
-    public long dbExecutedTasks() {
-        return dbExecutor.getCompletedTaskCount();
+        dbGetServerExecutor.shutdown();
     }
 }
