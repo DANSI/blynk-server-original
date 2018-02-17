@@ -34,6 +34,7 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_CONNECTED;
 import static cc.blynk.server.internal.CommonByteBufUtil.invalidToken;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeASCIIStringMessage;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
+import static cc.blynk.server.internal.CommonByteBufUtil.serverError;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 
 /**
@@ -142,7 +143,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
                 });
             } catch (RejectedExecutionException ree) {
                 log.warn("Error in getServerByToken handler. Limit of tasks reached.");
-                ctx.writeAndFlush(invalidToken(msgId), ctx.voidPromise());
+                ctx.writeAndFlush(serverError(msgId), ctx.voidPromise());
             }
         } else {
             log.debug("Taking token from cache.");
