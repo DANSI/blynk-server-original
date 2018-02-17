@@ -133,12 +133,6 @@ public class AppAndHttpsServer extends BaseServer {
                 ChannelPipeline pipeline = ctx.pipeline();
 
                 pipeline.addLast(new UploadHandler(holder.props.jarPath, "/upload", "/static/ota"))
-                        .addLast("HttpChunkedWrite", new ChunkedWriteHandler())
-                        .addLast("HttpUrlMapper",
-                                new UrlReWriterHandler("/favicon.ico", "/static/favicon.ico"))
-                        .addLast("HttpStaticFile",
-                                new StaticFileHandler(holder.props, new StaticFile("/static"),
-                                        new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz")))
                         .addLast(new OTAHandler(holder, rootPath + "/ota/start", "/static/ota"))
                         .addLast(adminAuthHandler)
                         .addLast(authCookieHandler)
@@ -159,12 +153,6 @@ public class AppAndHttpsServer extends BaseServer {
 
             private void initHttpPipeline(ChannelHandlerContext ctx) {
                 ctx.pipeline()
-                        .addLast("HttpChunkedWrite", new ChunkedWriteHandler())
-                        .addLast("HttpUrlMapper",
-                                new UrlReWriterHandler("/favicon.ico", "/static/favicon.ico"))
-                        .addLast("HttpStaticFile",
-                                new StaticFileHandler(holder.props, new StaticFile("/static"),
-                                        new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz")))
                         .addLast(resetPasswordLogic)
                         .addLast(httpAPILogic)
                         .addLast(noMatchHandler)
@@ -176,12 +164,15 @@ public class AppAndHttpsServer extends BaseServer {
 
                 //websockets specific handlers
                 pipeline.addLast("WSWebSocketServerProtocolHandler",
-                        new WebSocketServerProtocolHandler(websocketPath, true));
-                pipeline.addLast("WSWebSocket", new WebSocketHandler(stats));
-                pipeline.addLast("WSMessageDecoder", new MessageDecoder(stats));
-                pipeline.addLast("WSSocketWrapper", new WebSocketWrapperEncoder());
-                pipeline.addLast("WSMessageEncoder", new MessageEncoder(stats));
-                pipeline.addLast("WSWebSocketGenericLoginHandler", genericLoginHandler);
+                        new WebSocketServerProtocolHandler(websocketPath, true))
+                        .addLast("WSWebSocket", new WebSocketHandler(stats))
+                        .addLast("WSMessageDecoder", new MessageDecoder(stats))
+                        .addLast("WSSocketWrapper", new WebSocketWrapperEncoder())
+                        .addLast("WSMessageEncoder", new MessageEncoder(stats))
+                        .addLast("WSWebSocketGenericLoginHandler", genericLoginHandler);
+                pipeline.remove(ChunkedWriteHandler.class);
+                pipeline.remove(UrlReWriterHandler.class);
+                pipeline.remove(StaticFileHandler.class);
                 pipeline.remove(this);
             }
         };
@@ -200,6 +191,12 @@ public class AppAndHttpsServer extends BaseServer {
                                 .addLast("HttpsServerKeepAlive", new HttpServerKeepAliveHandler())
                                 .addLast("HttpsObjectAggregator",
                                         new HttpObjectAggregator(holder.limits.webRequestMaxSize, true))
+                                .addLast("HttpChunkedWrite", new ChunkedWriteHandler())
+                                .addLast("HttpUrlMapper",
+                                        new UrlReWriterHandler("/favicon.ico", "/static/favicon.ico"))
+                                .addLast("HttpStaticFile",
+                                        new StaticFileHandler(holder.props, new StaticFile("/static"),
+                                                new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz")))
                                 .addLast("HttpsWebSocketUnificator", baseWebSocketUnificator);
                     }
 
