@@ -22,7 +22,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
 
 /**
  * The Blynk Project.
@@ -62,7 +61,7 @@ public class RealtimeStatsDBTest {
 
         SessionDao sessionDao = new SessionDao();
         UserDao userDao = new UserDao(new ConcurrentHashMap<>(), "test", "127.0.0.1");
-        BlockingIOProcessor blockingIOProcessor = mock(BlockingIOProcessor.class);
+        BlockingIOProcessor blockingIOProcessor = new BlockingIOProcessor(6, 1000);
 
         Stat stat = new Stat(sessionDao, userDao, blockingIOProcessor, new GlobalStats(), false);
         int i;
