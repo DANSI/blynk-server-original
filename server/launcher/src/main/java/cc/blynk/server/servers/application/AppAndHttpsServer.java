@@ -18,7 +18,6 @@ import cc.blynk.server.admin.http.logic.StatsLogic;
 import cc.blynk.server.admin.http.logic.UsersLogic;
 import cc.blynk.server.api.http.handlers.BaseHttpAndBlynkUnificationHandler;
 import cc.blynk.server.api.http.handlers.BaseWebSocketUnificator;
-import cc.blynk.server.api.http.handlers.LetsEncryptHandler;
 import cc.blynk.server.api.http.logic.HttpAPILogic;
 import cc.blynk.server.api.http.logic.ResetPasswordLogic;
 import cc.blynk.server.api.http.logic.business.AdminAuthHandler;
@@ -39,7 +38,6 @@ import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
 import cc.blynk.server.servers.BaseServer;
-import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -52,10 +50,9 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 
-import java.util.NoSuchElementException;
-
 import static cc.blynk.core.http.Response.redirect;
 import static cc.blynk.utils.StringUtils.BLYNK_LANDING;
+import static cc.blynk.utils.StringUtils.WEBSOCKET_PATH;
 
 /**
  * The Blynk Project.
@@ -118,8 +115,8 @@ public class AppAndHttpsServer extends BaseServer {
                     return;
                 } else if (uri.startsWith(rootPath)) {
                     initAdminPipeline(ctx);
-                } else if (req.uri().startsWith(StringUtils.WEBSOCKET_PATH)) {
-                    initWebSocketPipeline(ctx, StringUtils.WEBSOCKET_PATH);
+                } else if (uri.startsWith(WEBSOCKET_PATH)) {
+                    initWebSocketPipeline(ctx, WEBSOCKET_PATH);
                 } else {
                     initHttpPipeline(ctx);
                 }
@@ -135,33 +132,39 @@ public class AppAndHttpsServer extends BaseServer {
 
                 ChannelPipeline pipeline = ctx.pipeline();
 
-                pipeline.addLast(new UploadHandler(holder.props.jarPath, "/upload", "/static/ota"));
-                pipeline.addLast(adminAuthHandler);
-                pipeline.addLast(authCookieHandler);
-                pipeline.addLast(cookieBasedUrlReWriterHandler);
+                pipeline.addLast(new UploadHandler(holder.props.jarPath, "/upload", "/static/ota"))
+                        .addLast("HttpChunkedWrite", new ChunkedWriteHandler())
+                        .addLast("HttpUrlMapper",
+                                new UrlReWriterHandler("/favicon.ico", "/static/favicon.ico"))
+                        .addLast("HttpStaticFile",
+                                new StaticFileHandler(holder.props, new StaticFile("/static"),
+                                        new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz")))
+                        .addLast(new OTAHandler(holder, rootPath + "/ota/start", "/static/ota"))
+                        .addLast(adminAuthHandler)
+                        .addLast(authCookieHandler)
+                        .addLast(cookieBasedUrlReWriterHandler);
 
                 pipeline.remove(StaticFileHandler.class);
-                pipeline.addLast(new StaticFileHandler(holder.props, new NoCacheStaticFile("/static")));
-
-                pipeline.addLast(otaLogic);
-                pipeline.addLast(usersLogic);
-                pipeline.addLast(statsLogic);
-                pipeline.addLast(configsLogic);
-                pipeline.addLast(hardwareStatsLogic);
-
-                pipeline.addLast(resetPasswordLogic);
-                pipeline.addLast(httpAPILogic);
-                pipeline.addLast(noMatchHandler);
-                pipeline.remove(this);
-                try {
-                    pipeline.remove(LetsEncryptHandler.class);
-                } catch (NoSuchElementException nsee) {
-                    //ignoring. that's fine. https pipeline doesn't have LetsEncryptHandler
-                }
+                pipeline.addLast(new StaticFileHandler(holder.props, new NoCacheStaticFile("/static")))
+                        .addLast(otaLogic)
+                        .addLast(usersLogic)
+                        .addLast(statsLogic)
+                        .addLast(configsLogic)
+                        .addLast(hardwareStatsLogic)
+                        .addLast(resetPasswordLogic)
+                        .addLast(httpAPILogic)
+                        .addLast(noMatchHandler)
+                        .remove(this);
             }
 
             private void initHttpPipeline(ChannelHandlerContext ctx) {
                 ctx.pipeline()
+                        .addLast("HttpChunkedWrite", new ChunkedWriteHandler())
+                        .addLast("HttpUrlMapper",
+                                new UrlReWriterHandler("/favicon.ico", "/static/favicon.ico"))
+                        .addLast("HttpStaticFile",
+                                new StaticFileHandler(holder.props, new StaticFile("/static"),
+                                        new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz")))
                         .addLast(resetPasswordLogic)
                         .addLast(httpAPILogic)
                         .addLast(noMatchHandler)
@@ -180,14 +183,6 @@ public class AppAndHttpsServer extends BaseServer {
                 pipeline.addLast("WSMessageEncoder", new MessageEncoder(stats));
                 pipeline.addLast("WSWebSocketGenericLoginHandler", genericLoginHandler);
                 pipeline.remove(this);
-                pipeline.remove(ChunkedWriteHandler.class);
-                pipeline.remove(UrlReWriterHandler.class);
-                pipeline.remove(StaticFileHandler.class);
-                try {
-                    pipeline.remove(LetsEncryptHandler.class);
-                } catch (NoSuchElementException nsee) {
-                    //ignoring. that's fine. https pipeline doesn't have LetsEncryptHandler
-                }
             }
         };
 
@@ -205,14 +200,7 @@ public class AppAndHttpsServer extends BaseServer {
                                 .addLast("HttpsServerKeepAlive", new HttpServerKeepAliveHandler())
                                 .addLast("HttpsObjectAggregator",
                                         new HttpObjectAggregator(holder.limits.webRequestMaxSize, true))
-                                .addLast("HttpChunkedWrite", new ChunkedWriteHandler())
-                                .addLast("HttpUrlMapper",
-                                        new UrlReWriterHandler("/favicon.ico", "/static/favicon.ico"))
-                                .addLast("HttpStaticFile",
-                                        new StaticFileHandler(holder.props, new StaticFile("/static"),
-                                        new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz")))
-                                .addLast("HttpsWebSocketUnificator", baseWebSocketUnificator)
-                                .addLast(new OTAHandler(holder, rootPath + "/ota/start", "/static/ota"));
+                                .addLast("HttpsWebSocketUnificator", baseWebSocketUnificator);
                     }
 
                     @Override

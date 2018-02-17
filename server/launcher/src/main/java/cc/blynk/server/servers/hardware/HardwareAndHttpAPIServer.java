@@ -23,7 +23,6 @@ import cc.blynk.server.handlers.common.HardwareNotLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareChannelStateHandler;
 import cc.blynk.server.hardware.handlers.hardware.auth.HardwareLoginHandler;
 import cc.blynk.server.servers.BaseServer;
-import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -36,10 +35,9 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 
-import java.util.NoSuchElementException;
-
 import static cc.blynk.core.http.Response.redirect;
 import static cc.blynk.utils.StringUtils.BLYNK_LANDING;
+import static cc.blynk.utils.StringUtils.WEBSOCKET_PATH;
 
 /**
  * The Blynk Project.
@@ -86,8 +84,8 @@ public class HardwareAndHttpAPIServer extends BaseServer {
                         req.release();
                     }
                     return;
-                } else if (req.uri().startsWith(StringUtils.WEBSOCKET_PATH)) {
-                    initWebSocketPipeline(ctx, StringUtils.WEBSOCKET_PATH);
+                } else if (uri.startsWith(WEBSOCKET_PATH)) {
+                    initWebSocketPipeline(ctx, WEBSOCKET_PATH);
                 } else {
                     initHttpPipeline(ctx);
                 }
@@ -97,6 +95,11 @@ public class HardwareAndHttpAPIServer extends BaseServer {
 
             private void initHttpPipeline(ChannelHandlerContext ctx) {
                 ctx.pipeline()
+                        .addLast(letsEncryptHandler)
+                        .addLast("HttpChunkedWrite", new ChunkedWriteHandler())
+                        .addLast("HttpUrlMapper", new UrlReWriterHandler("/favicon.ico", "/static/favicon.ico"))
+                        .addLast("HttpStaticFile", new StaticFileHandler(holder.props, new StaticFile("/static"),
+                                        new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz")))
                         .addLast(resetPasswordLogic)
                         .addLast(httpAPILogic)
                         .addLast(noMatchHandler)
@@ -115,14 +118,6 @@ public class HardwareAndHttpAPIServer extends BaseServer {
                 pipeline.addLast("WSMessageEncoder", new MessageEncoder(stats));
                 pipeline.addLast("WSWebSocketGenericLoginHandler", genericLoginHandler);
                 pipeline.remove(this);
-                pipeline.remove(ChunkedWriteHandler.class);
-                pipeline.remove(UrlReWriterHandler.class);
-                pipeline.remove(StaticFileHandler.class);
-                try {
-                    pipeline.remove(LetsEncryptHandler.class);
-                } catch (NoSuchElementException nsee) {
-                    //ignoring. that's fine. https pipeline doesn't have LetsEncryptHandler
-                }
             }
         };
 
@@ -138,13 +133,6 @@ public class HardwareAndHttpAPIServer extends BaseServer {
                                         .addLast("HttpServerCodec", new HttpServerCodec())
                                         .addLast("HttpServerKeepAlive", new HttpServerKeepAliveHandler())
                                         .addLast("HttpObjectAggregator", new HttpObjectAggregator(maxWebLength, true))
-                                        .addLast(letsEncryptHandler)
-                                        .addLast("HttpChunkedWrite", new ChunkedWriteHandler())
-                                        .addLast("HttpUrlMapper",
-                                                new UrlReWriterHandler("/favicon.ico", "/static/favicon.ico"))
-                                        .addLast("HttpStaticFile",
-                                                new StaticFileHandler(holder.props, new StaticFile("/static"),
-                                                new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz")))
                                         .addLast("HttpWebSocketUnificator", baseWebSocketUnificator);
                             }
 
