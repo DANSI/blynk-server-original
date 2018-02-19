@@ -457,6 +457,14 @@ Device device = clientPair.appClient.getDevice();
         clientPair.appClient.deleteDash(1);
         clientPair.appClient.verifyResult(ok(2));
 
+        long tries = 0;
+        //waiting for channel to be closed.
+        //but only limited amount if time
+        while (!clientPair.hardwareClient.isClosed() && tries < 100) {
+            sleep(10);
+            tries++;
+        }
+
         assertTrue(clientPair.hardwareClient.isClosed());
         assertTrue(hardClient2.isClosed());
     }
