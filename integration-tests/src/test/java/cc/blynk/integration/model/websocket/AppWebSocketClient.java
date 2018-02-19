@@ -63,14 +63,12 @@ public final class AppWebSocketClient extends BaseTestAppClient {
     }
 
     private static WebSocketFrame produceWebSocketFrame(MessageBase msg) {
-        ByteBuf bb = ByteBufAllocator.DEFAULT.heapBuffer(7 + msg.length);
+        byte[] data = msg.getBytes();
+        ByteBuf bb = ByteBufAllocator.DEFAULT.heapBuffer(7 + data.length);
         bb.writeByte(msg.command);
         bb.writeShort(msg.id);
         bb.writeInt(msg.length);
-        byte[] data = msg.getBytes();
-        if (data != null) {
-            bb.writeBytes(data);
-        }
+        bb.writeBytes(data);
         return new BinaryWebSocketFrame(bb);
     }
 
@@ -80,10 +78,8 @@ public final class AppWebSocketClient extends BaseTestAppClient {
             @Override
             public void initChannel(SocketChannel ch) throws Exception {
                 ChannelPipeline p = ch.pipeline();
-                if (sslCtx != null) {
-                    p.addLast(sslCtx.newHandler(ch.alloc(), host, port));
-                }
                 p.addLast(
+                        sslCtx.newHandler(ch.alloc(), host, port),
                         new HttpClientCodec(),
                         new HttpObjectAggregator(8192),
                         handler,

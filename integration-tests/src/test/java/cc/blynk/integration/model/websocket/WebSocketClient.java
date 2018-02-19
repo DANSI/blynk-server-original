@@ -66,14 +66,12 @@ public final class WebSocketClient extends BaseClient {
     }
 
     private static WebSocketFrame produceWebSocketFrame(MessageBase msg) {
-        ByteBuf bb = ByteBufAllocator.DEFAULT.heapBuffer(5 + msg.length);
+        byte[] data = msg.getBytes();
+        ByteBuf bb = ByteBufAllocator.DEFAULT.heapBuffer(5 + data.length);
         bb.writeByte(msg.command);
         bb.writeShort(msg.id);
         bb.writeShort(msg.length);
-        byte[] data = msg.getBytes();
-        if (data != null) {
-            bb.writeBytes(data);
-        }
+        bb.writeBytes(data);
         return new BinaryWebSocketFrame(bb);
     }
 
