@@ -31,6 +31,7 @@ public final class StringUtils {
 
     public static final Pattern DATETIME_PATTERN =  Pattern.compile("/datetime_iso/", Pattern.LITERAL);
     public static final String WEBSOCKET_PATH = "/websocket";
+    public static final String WEBSOCKET_WEB_PATH = "/dashws";
 
     private StringUtils() {
     }
