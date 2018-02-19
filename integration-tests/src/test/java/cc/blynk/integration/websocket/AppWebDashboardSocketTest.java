@@ -20,10 +20,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Collections;
 
 import static cc.blynk.utils.StringUtils.WEBSOCKET_WEB_PATH;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -66,9 +62,10 @@ public class AppWebDashboardSocketTest extends IntegrationBase {
         AppWebSocketClient appWebSocketClient = new AppWebSocketClient("localhost", httpsPort, WEBSOCKET_WEB_PATH);
         appWebSocketClient.start();
         appWebSocketClient.login(DEFAULT_TEST_USER, "1");
-        verify(appWebSocketClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        appWebSocketClient.verifyResult(ok(1));
         appWebSocketClient.send("ping");
-        verify(appWebSocketClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        appWebSocketClient.verifyResult(ok(2));
     }
 
 

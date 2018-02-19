@@ -15,13 +15,13 @@
  */
 package cc.blynk.integration.model.websocket;
 
-import cc.blynk.client.core.BaseClient;
-import cc.blynk.integration.model.SimpleClientHandler;
+import cc.blynk.integration.model.tcp.BaseTestAppClient;
 import cc.blynk.server.core.protocol.handlers.decoders.AppMessageDecoder;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.utils.SHA256Util;
 import cc.blynk.utils.StringUtils;
+import cc.blynk.utils.properties.ServerProperties;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.ChannelInitializer;
@@ -38,20 +38,19 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslProvider;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
-import org.mockito.Mockito;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.Random;
 
-public final class AppWebSocketClient extends BaseClient {
+public final class AppWebSocketClient extends BaseTestAppClient {
 
-    public final SimpleClientHandler responseMock = Mockito.mock(SimpleClientHandler.class);
     private final SslContext sslCtx;
     private final WebSocketClientHandler handler;
     public int msgId = 0;
 
     public AppWebSocketClient(String host, int port, String path) throws Exception {
-        super(host, port, new Random());
+        super(host, port, new Random(), new ServerProperties(Collections.emptyMap()));
 
         URI uri = new URI("wss://" + host + ":" + port + path);
         this.sslCtx = SslContextBuilder.forClient()
@@ -76,7 +75,7 @@ public final class AppWebSocketClient extends BaseClient {
     }
 
     @Override
-    protected ChannelInitializer<SocketChannel> getChannelInitializer() {
+    public ChannelInitializer<SocketChannel> getChannelInitializer() {
         return new ChannelInitializer<SocketChannel> () {
             @Override
             public void initChannel(SocketChannel ch) throws Exception {
@@ -111,7 +110,7 @@ public final class AppWebSocketClient extends BaseClient {
     }
 
     public void login(String email, String pass) {
-        send("login " + email + StringUtils.BODY_SEPARATOR + SHA256Util.makeHash(email, pass));
+        send("login " + email + StringUtils.BODY_SEPARATOR + SHA256Util.makeHash(pass, email));
     }
 
     public void send(String line) {
