@@ -240,8 +240,8 @@ public abstract class IntegrationBase extends BaseTest {
 
         saveProfile(appClient, profile.dashBoards);
 
-        appClient.send("activate " + dashId);
-        appClient.send("getToken " + dashId);
+        appClient.activate(dashId);
+        appClient.getToken(dashId);
 
         ArgumentCaptor<Object> objectArgumentCaptor = ArgumentCaptor.forClass(Object.class);
         verify(appClient.responseMock, timeout(2000).times(5 + profile.dashBoards.length + expectedSyncCommandsCount)).channelRead(any(), objectArgumentCaptor.capture());

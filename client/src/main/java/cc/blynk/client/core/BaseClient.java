@@ -2,7 +2,6 @@ package cc.blynk.client.core;
 
 import cc.blynk.client.CommandParserUtil;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
-import cc.blynk.utils.SHA256Util;
 import cc.blynk.utils.properties.ServerProperties;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -31,8 +30,6 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_RESEND_FROM_BLUETOOTH;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
-import static cc.blynk.server.core.protocol.enums.Command.LOGIN;
-import static cc.blynk.server.core.protocol.enums.Command.REGISTER;
 import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
 import static cc.blynk.server.core.protocol.enums.Command.SHARE_LOGIN;
 import static cc.blynk.server.core.protocol.enums.Command.SHARING;
@@ -87,15 +84,6 @@ public abstract class BaseClient {
         }
 
         String body = input.length == 1 ? "" : input[1];
-        if (command == REGISTER || command == LOGIN) {
-            String[] userPass = body.split(" ", 3);
-            if (userPass.length > 1) {
-                String email = userPass[0];
-                String pass = userPass[1];
-                body = email + "\0" + SHA256Util.makeHash(pass, email)
-                        + (userPass.length == 3 ? "\0" + userPass[2].replaceAll(" ", "\0") : "");
-            }
-        }
 
         if (command == HARDWARE
                 || command == SHARE_LOGIN

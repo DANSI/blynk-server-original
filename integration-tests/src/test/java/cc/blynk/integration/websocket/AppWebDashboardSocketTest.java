@@ -2,12 +2,11 @@ package cc.blynk.integration.websocket;
 
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
-import cc.blynk.integration.model.websocket.WebSocketClient;
+import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.Holder;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
-import cc.blynk.server.servers.hardware.HardwareServer;
 import cc.blynk.utils.properties.GCMProperties;
 import cc.blynk.utils.properties.MailProperties;
 import cc.blynk.utils.properties.SmsProperties;
@@ -20,6 +19,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
 
+import static cc.blynk.utils.StringUtils.WEBSOCKET_WEB_PATH;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.timeout;
@@ -31,22 +31,17 @@ import static org.mockito.Mockito.verify;
  * Created on 13.01.16.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class AppWebSocketTest extends IntegrationBase {
+public class AppWebDashboardSocketTest extends IntegrationBase {
 
-    private static BaseServer webSocketServer;
     private static BaseServer hardwareServer;
     private static BaseServer appServer;
     private static ClientPair clientPair;
     private static Holder localHolder;
 
-    //web socket ports
-    public static int tcpWebSocketPort;
-
     @AfterClass
     public static void shutdown() throws Exception {
-        webSocketServer.close();
-        appServer.close();
         hardwareServer.close();
+        appServer.close();
         clientPair.stop();
         localHolder.close();
     }
@@ -61,21 +56,19 @@ public class AppWebSocketTest extends IntegrationBase {
                 new TwitterProperties(Collections.emptyMap()),
                 false
         );
-        tcpWebSocketPort = httpPort;
-        webSocketServer = new HardwareAndHttpAPIServer(localHolder).start();
+        hardwareServer = new HardwareAndHttpAPIServer(localHolder).start();
         appServer = new AppAndHttpsServer(localHolder).start();
-        hardwareServer = new HardwareServer(localHolder).start();
-        clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
+        clientPair = initAppAndHardPair(httpsPort, httpPort, properties);
     }
 
     @Test
-    public void testAppWebSocketlogin() throws Exception{
-        WebSocketClient webSocketClient = new WebSocketClient("localhost", tcpWebSocketPort, "/websockets", false);
-        webSocketClient.start();
-        webSocketClient.send("login " + DEFAULT_TEST_USER + " 1");
-        verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
-        webSocketClient.send("ping");
-        verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+    public void testAppWebDashSocketlogin() throws Exception{
+        AppWebSocketClient appWebSocketClient = new AppWebSocketClient("localhost", httpsPort, WEBSOCKET_WEB_PATH);
+        appWebSocketClient.start();
+        appWebSocketClient.login(DEFAULT_TEST_USER, "1");
+        verify(appWebSocketClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        appWebSocketClient.send("ping");
+        verify(appWebSocketClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
     }
 
 
