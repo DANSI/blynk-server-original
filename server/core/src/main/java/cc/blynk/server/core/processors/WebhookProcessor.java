@@ -5,7 +5,6 @@ import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.others.webhook.Header;
-import cc.blynk.server.core.model.widgets.others.webhook.SupportedWebhookMethod;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.stats.GlobalStats;
@@ -93,7 +92,7 @@ public class WebhookProcessor extends NotificationBase {
             return;
         }
 
-        BoundRequestBuilder builder = buildRequestMethod(webHook.method, newUrl);
+        BoundRequestBuilder builder = httpclient.prepare(webHook.method.name(), newUrl);
         if (webHook.headers != null) {
             for (Header header : webHook.headers) {
                 if (header.isValid()) {
@@ -204,21 +203,6 @@ public class WebhookProcessor extends NotificationBase {
                 break;
             default :
                 throw new IllegalArgumentException("Unsupported content-type for webhook.");
-        }
-    }
-
-    private BoundRequestBuilder buildRequestMethod(SupportedWebhookMethod method, String url) {
-        switch (method) {
-            case GET :
-                return httpclient.prepareGet(url);
-            case POST :
-                return httpclient.preparePost(url);
-            case PUT :
-                return httpclient.preparePut(url);
-            case DELETE :
-                return httpclient.prepareDelete(url);
-            default :
-                throw new IllegalArgumentException("Unsupported method type for webhook.");
         }
     }
 
