@@ -4,6 +4,7 @@ import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.stats.GlobalStats;
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 
@@ -14,6 +15,7 @@ import io.netty.handler.codec.MessageToByteEncoder;
  * Created by Dmitriy Dumanskiy.
  * Created on 18/1/2018.
  */
+@ChannelHandler.Sharable
 public class AppMessageEncoder extends MessageToByteEncoder<MessageBase> {
 
     private final GlobalStats stats;
