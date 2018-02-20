@@ -47,12 +47,12 @@ public class WebAppMessageDecoder extends ChannelInboundHandlerAdapter {
                 if (command == Command.RESPONSE) {
                     message = new ResponseMessage(messageId, (int) in.readUnsignedInt());
                 } else {
-                    int codeOrLength = (int) in.readUnsignedInt();
+                    int codeOrLength = in.capacity() - 3;
                     message = produce(messageId, command, (String) in.readCharSequence(codeOrLength, UTF_8));
                 }
 
                 log.trace("Incoming websocket msg {}", message);
-                //stats.markWebSocketAndBlynk(command);
+                stats.markWithoutGlobal(Command.WEB_SOCKETS);
                 ctx.fireChannelRead(message);
             } finally {
                 ReferenceCountUtil.release(msg);

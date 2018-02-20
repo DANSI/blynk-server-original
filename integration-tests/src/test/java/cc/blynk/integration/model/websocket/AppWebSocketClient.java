@@ -16,7 +16,7 @@
 package cc.blynk.integration.model.websocket;
 
 import cc.blynk.integration.model.tcp.BaseTestAppClient;
-import cc.blynk.server.core.protocol.handlers.decoders.AppMessageDecoder;
+import cc.blynk.server.core.protocol.handlers.decoders.WebAppMessageDecoder;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.utils.SHA256Util;
@@ -46,7 +46,7 @@ import java.util.Random;
 public final class AppWebSocketClient extends BaseTestAppClient {
 
     private final SslContext sslCtx;
-    private final WebSocketClientHandler handler;
+    private final AppWebSocketClientHandler appHandler;
     public int msgId = 0;
 
     public AppWebSocketClient(String host, int port, String path) throws Exception {
@@ -57,17 +57,16 @@ public final class AppWebSocketClient extends BaseTestAppClient {
                 .sslProvider(SslProvider.JDK)
                 .trustManager(InsecureTrustManagerFactory.INSTANCE)
                 .build();
-        this.handler = new WebSocketClientHandler(
+        this.appHandler = new AppWebSocketClientHandler(
                         WebSocketClientHandshakerFactory.newHandshaker(
                                 uri, WebSocketVersion.V13, null, false, new DefaultHttpHeaders()));
     }
 
     private static WebSocketFrame produceWebSocketFrame(MessageBase msg) {
         byte[] data = msg.getBytes();
-        ByteBuf bb = ByteBufAllocator.DEFAULT.buffer(7 + data.length);
+        ByteBuf bb = ByteBufAllocator.DEFAULT.buffer(3 + data.length);
         bb.writeByte(msg.command);
         bb.writeShort(msg.id);
-        bb.writeInt(msg.length);
         bb.writeBytes(data);
         return new BinaryWebSocketFrame(bb);
     }
@@ -82,8 +81,8 @@ public final class AppWebSocketClient extends BaseTestAppClient {
                         sslCtx.newHandler(ch.alloc(), host, port),
                         new HttpClientCodec(),
                         new HttpObjectAggregator(8192),
-                        handler,
-                        new AppMessageDecoder(new GlobalStats())
+                        appHandler,
+                        new WebAppMessageDecoder(new GlobalStats())
                 );
             }
         };
@@ -96,9 +95,9 @@ public final class AppWebSocketClient extends BaseTestAppClient {
     }
 
     private void startHandshake() {
-        handler.startHandshake(channel);
+        appHandler.startHandshake(channel);
         try {
-            handler.handshakeFuture().sync();
+            appHandler.handshakeFuture().sync();
             this.channel.pipeline().addLast(responseMock);
         } catch (Exception e) {
             log.error(e);

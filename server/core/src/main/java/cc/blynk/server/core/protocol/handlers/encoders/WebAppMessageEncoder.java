@@ -37,7 +37,6 @@ public class WebAppMessageEncoder extends ChannelOutboundHandlerAdapter {
                 out.writeInt(message.length);
             } else {
                 byte[] body = message.getBytes();
-                out.writeInt(body.length);
                 if (body.length > 0) {
                     out.writeBytes(body);
                 }
