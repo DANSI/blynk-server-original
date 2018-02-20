@@ -11,7 +11,6 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.ProvisionType;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.appllication.RegisterMessage;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.workers.timer.TimerWorker;
@@ -22,6 +21,8 @@ import cc.blynk.utils.validators.BlynkEmailValidator;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -45,8 +46,9 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
  * Created on 2/1/2015.
  */
 @ChannelHandler.Sharable
-public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage>
-        implements DefaultExceptionHandler {
+public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage> {
+
+    private static final Logger log = LogManager.getLogger(RegisterHandler.class);
 
     private final UserDao userDao;
     private final TokenManager tokenManager;

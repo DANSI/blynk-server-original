@@ -7,7 +7,6 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
@@ -48,9 +47,9 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
  */
 @ChannelHandler.Sharable
 public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
-        implements DefaultReregisterHandler, DefaultExceptionHandler {
+        implements DefaultReregisterHandler {
 
-    private static final Logger log = LogManager.getLogger(DefaultExceptionHandler.class);
+    private static final Logger log = LogManager.getLogger(HardwareLoginHandler.class);
 
     private static final int HARDWARE_PIN_MODE_MSG_ID = 1;
 

@@ -6,7 +6,6 @@ import cc.blynk.core.http.rest.URIDecoder;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
-import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.utils.AnnotationsUtil;
@@ -22,6 +21,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 
 import static cc.blynk.core.http.Response.serverError;
+import static cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler.handleUnexpectedException;
 
 /**
  * The Blynk Project.
@@ -29,7 +29,7 @@ import static cc.blynk.core.http.Response.serverError;
  * Created on 24.12.15.
  */
 public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter
-        implements DefaultReregisterHandler, DefaultExceptionHandler {
+        implements DefaultReregisterHandler {
 
     protected static final Logger log = LogManager.getLogger(BaseHttpHandler.class);
 

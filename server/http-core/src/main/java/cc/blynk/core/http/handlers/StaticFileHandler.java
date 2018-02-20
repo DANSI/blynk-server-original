@@ -1,6 +1,5 @@
 package cc.blynk.core.http.handlers;
 
-import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.utils.ContentTypeUtil;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.properties.ServerProperties;
@@ -41,6 +40,7 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import static cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler.handleGeneralException;
 import static io.netty.handler.codec.http.HttpHeaderNames.ACCESS_CONTROL_ALLOW_ORIGIN;
 import static io.netty.handler.codec.http.HttpHeaderNames.CACHE_CONTROL;
 import static io.netty.handler.codec.http.HttpHeaderNames.CONNECTION;
@@ -61,7 +61,7 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  * Created by Dmitriy Dumanskiy.
  * Created on 10.12.15.
  */
-public class StaticFileHandler extends ChannelInboundHandlerAdapter implements DefaultExceptionHandler {
+public class StaticFileHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger log = LogManager.getLogger(StaticFileHandler.class);
 

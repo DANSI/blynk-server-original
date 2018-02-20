@@ -40,9 +40,9 @@ import static io.netty.handler.codec.mqtt.MqttConnectReturnCode.CONNECTION_REFUS
  */
 @ChannelHandler.Sharable
 public class MqttHardwareLoginHandler extends SimpleChannelInboundHandler<MqttConnectMessage>
-        implements DefaultReregisterHandler, DefaultExceptionHandler {
+        implements DefaultReregisterHandler {
 
-    private static final Logger log = LogManager.getLogger(DefaultExceptionHandler.class);
+    private static final Logger log = LogManager.getLogger(MqttHardwareLoginHandler.class);
 
     private static final MqttConnAckMessage ACCEPTED = createConnAckMessage(MqttConnectReturnCode.CONNECTION_ACCEPTED);
 
@@ -107,7 +107,7 @@ public class MqttHardwareLoginHandler extends SimpleChannelInboundHandler<MqttCo
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        handleGeneralException(ctx, cause);
+        DefaultExceptionHandler.handleGeneralException(ctx, cause);
     }
 
 }

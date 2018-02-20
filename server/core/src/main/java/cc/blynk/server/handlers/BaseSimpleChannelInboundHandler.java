@@ -3,14 +3,17 @@ package cc.blynk.server.handlers;
 import cc.blynk.server.Limits;
 import cc.blynk.server.core.protocol.exceptions.BaseServerException;
 import cc.blynk.server.core.protocol.exceptions.QuotaLimitException;
-import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.session.StateHolderBase;
 import cc.blynk.server.core.stats.metrics.InstanceLoadMeter;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import static cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler.handleBaseServerException;
+import static cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler.handleGeneralException;
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 
 /**
@@ -18,8 +21,9 @@ import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/3/2015.
  */
-public abstract class BaseSimpleChannelInboundHandler<I> extends ChannelInboundHandlerAdapter
-        implements DefaultExceptionHandler {
+public abstract class BaseSimpleChannelInboundHandler<I> extends ChannelInboundHandlerAdapter {
+
+    protected static final Logger log = LogManager.getLogger(BaseSimpleChannelInboundHandler.class);
 
     /*
      * in case of consistent quota limit exceed during long term, sending warning response back to exceeding channel

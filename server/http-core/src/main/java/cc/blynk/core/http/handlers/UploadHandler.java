@@ -16,7 +16,6 @@
 package cc.blynk.core.http.handlers;
 
 import cc.blynk.core.http.Response;
-import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.HttpContent;
@@ -43,9 +42,10 @@ import java.nio.file.StandardCopyOption;
 import static cc.blynk.core.http.Response.badRequest;
 import static cc.blynk.core.http.Response.ok;
 import static cc.blynk.core.http.Response.serverError;
+import static cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler.handleGeneralException;
 
 
-public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> implements DefaultExceptionHandler {
+public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> {
 
     private static final Logger log = LogManager.getLogger(UploadHandler.class);
 

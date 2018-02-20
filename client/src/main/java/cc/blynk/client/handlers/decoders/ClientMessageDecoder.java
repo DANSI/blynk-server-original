@@ -28,7 +28,7 @@ import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produc
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
  */
-public class ClientMessageDecoder extends ByteToMessageDecoder implements DefaultExceptionHandler {
+public class ClientMessageDecoder extends ByteToMessageDecoder {
 
     protected static final Logger log = LogManager.getLogger(ClientMessageDecoder.class);
 
@@ -79,6 +79,6 @@ public class ClientMessageDecoder extends ByteToMessageDecoder implements Defaul
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        handleGeneralException(ctx, cause);
+        DefaultExceptionHandler.handleGeneralException(ctx, cause);
     }
 }

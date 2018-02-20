@@ -1,7 +1,6 @@
 package cc.blynk.client.handlers.decoders;
 
 import cc.blynk.server.core.protocol.enums.Command;
-import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.handlers.decoders.AppMessageDecoder;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
@@ -20,6 +19,7 @@ import static cc.blynk.server.core.protocol.enums.Command.GET_GRAPH_DATA_RESPONS
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_CLONE_CODE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
+import static cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler.handleGeneralException;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 
 /**
@@ -29,7 +29,7 @@ import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produc
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
  */
-public class AppClientMessageDecoder extends ByteToMessageDecoder implements DefaultExceptionHandler {
+public class AppClientMessageDecoder extends ByteToMessageDecoder {
 
     protected static final Logger log = LogManager.getLogger(AppClientMessageDecoder.class);
 

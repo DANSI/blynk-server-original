@@ -1,12 +1,13 @@
 package cc.blynk.server.api.http.handlers;
 
-import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.ByteToMessageDecoder;
 
 import java.util.List;
+
+import static cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler.handleUnexpectedException;
 
 /**
  * Base handler that detects protocol between http and blynk app protocol.
@@ -15,8 +16,7 @@ import java.util.List;
  * Created by Dmitriy Dumanskiy.
  * Created on 15.02.18.
  */
-public abstract class BaseHttpAndBlynkUnificationHandler extends ByteToMessageDecoder
-        implements DefaultExceptionHandler {
+public abstract class BaseHttpAndBlynkUnificationHandler extends ByteToMessageDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {

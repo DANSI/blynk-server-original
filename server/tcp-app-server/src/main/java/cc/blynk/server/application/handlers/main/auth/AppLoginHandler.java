@@ -8,7 +8,6 @@ import cc.blynk.server.core.model.auth.FacebookTokenResponse;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
@@ -30,6 +29,7 @@ import java.util.NoSuchElementException;
 
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
 import static cc.blynk.server.core.protocol.enums.Command.OUTDATED_APP_NOTIFICATION;
+import static cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler.handleGeneralException;
 import static cc.blynk.server.internal.CommonByteBufUtil.facebookUserLoginWithPass;
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeASCIIStringMessage;
@@ -51,7 +51,7 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
  */
 @ChannelHandler.Sharable
 public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
-        implements DefaultReregisterHandler, DefaultExceptionHandler {
+        implements DefaultReregisterHandler {
 
     private static final String URL = "https://graph.facebook.com/me?fields=email&access_token=";
     private static final Logger log = LogManager.getLogger(AppLoginHandler.class);

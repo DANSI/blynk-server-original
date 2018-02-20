@@ -1,11 +1,11 @@
 package cc.blynk.server.handlers.common;
 
-import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
+import static cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler.handleGeneralException;
 import static cc.blynk.server.internal.CommonByteBufUtil.alreadyRegistered;
 
 /**
@@ -14,7 +14,7 @@ import static cc.blynk.server.internal.CommonByteBufUtil.alreadyRegistered;
  * Created on 2/1/2015.
  */
 @ChannelHandler.Sharable
-public class AlreadyLoggedHandler extends SimpleChannelInboundHandler<LoginMessage> implements DefaultExceptionHandler {
+public class AlreadyLoggedHandler extends SimpleChannelInboundHandler<LoginMessage> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, LoginMessage msg) throws Exception {

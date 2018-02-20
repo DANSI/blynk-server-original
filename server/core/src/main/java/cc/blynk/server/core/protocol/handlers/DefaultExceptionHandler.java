@@ -17,11 +17,11 @@ import static cc.blynk.server.internal.CommonByteBufUtil.makeResponse;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/11/2015.
  */
-public interface DefaultExceptionHandler {
+public abstract class DefaultExceptionHandler {
 
-    Logger log = LogManager.getLogger(DefaultExceptionHandler.class);
+    private final static Logger log = LogManager.getLogger(DefaultExceptionHandler.class);
 
-    default void handleBaseServerException(ChannelHandlerContext ctx,
+    public static void handleBaseServerException(ChannelHandlerContext ctx,
                                            BaseServerException baseServerException, int msgId) {
         log.debug(baseServerException.getMessage());
         if (ctx.channel().isWritable()) {
@@ -29,7 +29,7 @@ public interface DefaultExceptionHandler {
         }
     }
 
-    default void handleGeneralException(ChannelHandlerContext ctx, Throwable cause) {
+    public static void handleGeneralException(ChannelHandlerContext ctx, Throwable cause) {
         if (cause instanceof BaseServerException) {
             BaseServerException baseServerException = (BaseServerException) cause;
             handleBaseServerException(ctx, baseServerException, baseServerException.msgId);
@@ -38,7 +38,7 @@ public interface DefaultExceptionHandler {
         }
     }
 
-    default void handleUnexpectedException(ChannelHandlerContext ctx, Throwable cause) {
+    public static void handleUnexpectedException(ChannelHandlerContext ctx, Throwable cause) {
         if (cause instanceof DecoderException) {
             Throwable t = cause.getCause();
             if (t instanceof UnsupportedCommandException) {
