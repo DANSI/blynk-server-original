@@ -159,6 +159,9 @@ public class AppAndHttpsServer extends BaseServer {
                         .addLast(httpAPILogic)
                         .addLast(noMatchHandler)
                         .remove(this);
+                if (log.isTraceEnabled()) {
+                    log.trace("Initialized admin pipeline. {}", ctx.pipeline().names());
+                }
             }
 
             private void initHttpPipeline(ChannelHandlerContext ctx) {
@@ -167,6 +170,9 @@ public class AppAndHttpsServer extends BaseServer {
                         .addLast(httpAPILogic)
                         .addLast(noMatchHandler)
                         .remove(this);
+                if (log.isTraceEnabled()) {
+                    log.trace("Initialized http pipeline. {}", ctx.pipeline().names());
+                }
             }
 
             private void initWebDashboardSocket(ChannelHandlerContext ctx) {
@@ -185,6 +191,9 @@ public class AppAndHttpsServer extends BaseServer {
                 pipeline.remove(UrlReWriterHandler.class);
                 pipeline.remove(StaticFileHandler.class);
                 pipeline.remove(this);
+                if (log.isTraceEnabled()) {
+                    log.trace("Initialized web dashboard pipeline. {}", ctx.pipeline().names());
+                }
             }
 
             private void initWebSocketPipeline(ChannelHandlerContext ctx, String websocketPath) {
@@ -202,6 +211,9 @@ public class AppAndHttpsServer extends BaseServer {
                 pipeline.remove(UrlReWriterHandler.class);
                 pipeline.remove(StaticFileHandler.class);
                 pipeline.remove(this);
+                if (log.isTraceEnabled()) {
+                    log.trace("Initialized secured hardware websocket pipeline. {}", ctx.pipeline().names());
+                }
             }
         };
 
