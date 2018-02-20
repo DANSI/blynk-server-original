@@ -28,4 +28,8 @@ public class HardwareNotLoggedHandler extends SimpleChannelInboundHandler<Messag
         ctx.close();
     }
 
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        handleGeneralException(ctx, cause);
+    }
 }
