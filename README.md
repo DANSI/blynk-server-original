@@ -58,7 +58,7 @@ messages between Blynk mobile application and various microcontroller boards and
 - Java 8/9 required (OpenJDK, Oracle) 
 - Any OS that can run java 
 - At least 30 MB of RAM (could be less with tuning)
-- Open ports 9443 (for app), 8442 (for hardware without ssl), 8441 (for hardware with ssl)
+- Open ports 9443 (for app), 8080 (for hardware without ssl), 8441 (for hardware with ssl)
 
 [Ubuntu java installation instruction](#install-java-for-ubuntu).
 
@@ -276,12 +276,12 @@ Available server options:
 + Blynk app, https, web sockets, admin port
         
         https.port=9443
-        
-        
-+ Hardware plain tcp/ip port
 
-        hardware.default.port=8442
-        
+
++ Http, hardware and web sockets port
+
+        http.port=8080
+
 
 + Hardware ssl/tls port (for hardware that supports SSL/TLS sockets)
 
@@ -295,11 +295,6 @@ Available server options:
         server.ssl.cert=./server_embedded.crt
         server.ssl.key=./server_embedded.pem
         server.ssl.key.pass=pupkin123
-        
-        
-+ Http and web sockets port
-        
-        http.port=8080
         
         
 + User profiles folder. Folder in which all users profiles will be stored. By default System.getProperty("java.io.tmpdir")/blynk used. Will be created if not exists
