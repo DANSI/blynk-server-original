@@ -64,7 +64,7 @@ public final class AppWebSocketClient extends BaseTestAppClient {
 
     private static WebSocketFrame produceWebSocketFrame(MessageBase msg) {
         byte[] data = msg.getBytes();
-        ByteBuf bb = ByteBufAllocator.DEFAULT.heapBuffer(7 + data.length);
+        ByteBuf bb = ByteBufAllocator.DEFAULT.buffer(7 + data.length);
         bb.writeByte(msg.command);
         bb.writeShort(msg.id);
         bb.writeInt(msg.length);

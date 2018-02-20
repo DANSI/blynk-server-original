@@ -33,8 +33,10 @@ import cc.blynk.server.application.handlers.sharing.auth.AppShareLoginHandler;
 import cc.blynk.server.core.dao.CSVGenerator;
 import cc.blynk.server.core.protocol.handlers.decoders.AppMessageDecoder;
 import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
+import cc.blynk.server.core.protocol.handlers.decoders.WebAppMessageDecoder;
 import cc.blynk.server.core.protocol.handlers.encoders.AppMessageEncoder;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
+import cc.blynk.server.core.protocol.handlers.encoders.WebAppMessageEncoder;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
 import cc.blynk.server.servers.BaseServer;
@@ -89,6 +91,9 @@ public class AppAndHttpsServer extends BaseServer {
         NoMatchHandler noMatchHandler = new NoMatchHandler();
         WebSocketHandler webSocketHandler = new WebSocketHandler(stats);
         WebSocketWrapperEncoder webSocketWrapperEncoder = new WebSocketWrapperEncoder();
+
+        WebAppMessageDecoder webAppMessageDecoder = new WebAppMessageDecoder(stats);
+        WebAppMessageEncoder webAppMessageEncoder = new WebAppMessageEncoder();
 
         //admin API handlers
         OTALogic otaLogic = new OTALogic(holder, rootPath);
@@ -171,10 +176,8 @@ public class AppAndHttpsServer extends BaseServer {
                 pipeline.addLast("AChannelState", appChannelStateHandler)
                         .addLast("WSWebSocketServerProtocolHandler",
                         new WebSocketServerProtocolHandler(WEBSOCKET_WEB_PATH))
-                        .addLast("WSWebSocket", webSocketHandler)
-                        .addLast("WSMessageDecoder", new AppMessageDecoder(stats))
-                        .addLast("WSSocketWrapper", webSocketWrapperEncoder)
-                        .addLast("WSMessageEncoder", new AppMessageEncoder(stats))
+                        .addLast("WSMessageDecoder", webAppMessageDecoder)
+                        .addLast("WSMessageEncoder", webAppMessageEncoder)
                         .addLast("AGetServer", getServerHandler)
                         .addLast("ALogin", appLoginHandler)
                         .addLast("ANotLogged", userNotLoggedHandler);

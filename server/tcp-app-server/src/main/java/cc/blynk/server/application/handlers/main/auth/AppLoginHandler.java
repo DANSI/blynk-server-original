@@ -19,12 +19,12 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.asynchttpclient.AsyncCompletionHandler;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.Response;
-import org.asynchttpclient.netty.handler.WebSocketHandler;
 
 import java.util.NoSuchElementException;
 
@@ -72,7 +72,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
             pipeline.remove(GetServerHandler.class);
 
             //app pipeline sepcific handlers
-            if (pipeline.get(WebSocketHandler.class) != null) {
+            if (pipeline.get(WebSocketServerProtocolHandler.class) == null) {
                 pipeline.remove(RegisterHandler.class);
                 pipeline.remove(AppShareLoginHandler.class);
             }
