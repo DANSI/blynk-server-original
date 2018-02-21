@@ -621,27 +621,38 @@ own binary protocol described below.
 
 ### Blynk protocol
 
-Blynk transfers binary messages with the following structure:
+
+#### Hardware side protocol
+
+Blynk transfers binary messages between the server and the hardware with the following structure:
 
 | Command       | Message Id    | Length/Status   | Body     |
 |:-------------:|:-------------:|:---------------:|:--------:|
 | 1 byte        | 2 bytes       | 2 bytes         | Variable |
 
+Command and Status definitions: [BlynkProtocolDefs.h](https://github.com/blynkkk/blynk-library/blob/7e942d661bc54ded310bf5d00edee737d0ca44d7/src/Blynk/BlynkProtocolDefs.h)
+
+
+#### Mobile app side protocol
+
+Blynk transfers binary messages between the server and mobile app with the following structure:
+
+| Command       | Message Id    | Length/Status   | Body     |
+|:-------------:|:-------------:|:---------------:|:--------:|
+| 1 byte        | 2 bytes       | 4 bytes         | Variable |
+
+
+#### Websockets web side protocol
+
+Blynk transfers binary messages between the server and websockets (for web) with the following structure:
+
+| Websocket header   | Command       | Message Id    | Body     |
+|:------------------:|:-------------:|:-------------:|:--------:|
+|                    | 1 byte        | 2 bytes       | Variable |
+
+
 Message Id and Length are [big endian](http://en.wikipedia.org/wiki/Endianness#Big-endian).
 Body has a command-specific format.
-
-Command and Status definitions: [BlynkProtocolDefs.h](https://github.com/blynkkk/blynk-library/blob/master/Blynk/BlynkProtocolDefs.h)
-
-Typical Blynk library knows how to send(S)/process(P):
-
-    S   BLYNK_CMD_LOGIN + auth token
-    SP  BLYNK_CMD_PING
-    SP  BLYNK_CMD_RESPONSE
-    SP  BLYNK_CMD_BRIDGE
-    SP  BLYNK_CMD_HARDWARE
-    S   BLYNK_CMD_TWEET
-    S   BLYNK_CMD_EMAIL
-    S   BLYNK_CMD_PUSH_NOTIFICATION
 
 ## Licensing
 [GNU GPL license](https://github.com/blynkkk/blynk-server/blob/master/license.txt)

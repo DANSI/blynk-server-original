@@ -24,11 +24,13 @@ import static cc.blynk.server.core.protocol.enums.Command.BRIDGE;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_SYNC;
+import static cc.blynk.server.core.protocol.enums.Command.LOGIN;
 import static cc.blynk.server.core.protocol.enums.Command.PING;
 import static cc.blynk.server.core.protocol.enums.Command.PUSH_NOTIFICATION;
 import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
 import static cc.blynk.server.core.protocol.enums.Command.SMS;
 import static cc.blynk.server.core.protocol.enums.Command.TWEET;
+import static cc.blynk.server.internal.CommonByteBufUtil.alreadyRegistered;
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 
 
@@ -97,6 +99,12 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
                 break;
             case SET_WIDGET_PROPERTY:
                 propertyLogic.messageReceived(ctx, state, msg);
+                break;
+            //may when firmware is bad written
+            case LOGIN:
+                if (ctx.channel().isWritable()) {
+                    ctx.writeAndFlush(alreadyRegistered(msg.id), ctx.voidPromise());
+                }
                 break;
         }
     }

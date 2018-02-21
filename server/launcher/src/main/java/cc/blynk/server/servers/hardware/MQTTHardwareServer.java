@@ -1,7 +1,7 @@
 package cc.blynk.server.servers.hardware;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.handlers.common.HardwareNotLoggedHandler;
+import cc.blynk.server.handlers.common.AlreadyLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareChannelStateHandler;
 import cc.blynk.server.hardware.handlers.hardware.mqtt.auth.MqttHardwareLoginHandler;
 import cc.blynk.server.servers.BaseServer;
@@ -26,6 +26,7 @@ public class MQTTHardwareServer extends BaseServer {
 
         int hardTimeoutSecs = holder.limits.hardwareIdleTimeout;
         MqttHardwareLoginHandler mqttHardwareLoginHandler = new MqttHardwareLoginHandler(holder);
+        AlreadyLoggedHandler alreadyLoggedHandler = new AlreadyLoggedHandler();
         HardwareChannelStateHandler hardwareChannelStateHandler =
                 new HardwareChannelStateHandler(holder);
 
@@ -38,7 +39,7 @@ public class MQTTHardwareServer extends BaseServer {
                     .addLast(new MqttDecoder())
                     .addLast(MqttEncoder.INSTANCE)
                     .addLast(mqttHardwareLoginHandler)
-                    .addLast(new HardwareNotLoggedHandler());
+                    .addLast(alreadyLoggedHandler);
             }
         };
 

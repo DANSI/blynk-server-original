@@ -233,6 +233,33 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void testDoubleLogin2() throws Exception {
+        clientPair.appClient.getToken(1);
+        String token = clientPair.appClient.getBody();
+
+        TestHardClient newHardwareClient = new TestHardClient("localhost", tcpHardPort);
+        newHardwareClient.start();
+        newHardwareClient.login(token);
+        newHardwareClient.login(token);
+        newHardwareClient.verifyResult(ok(1));
+        newHardwareClient.verifyResult(new ResponseMessage(2, USER_ALREADY_REGISTERED));
+    }
+
+    @Test
+    public void sendCommandBeforeLogin() throws Exception {
+        TestHardClient newHardwareClient = new TestHardClient("localhost", tcpHardPort);
+        newHardwareClient.start();
+        newHardwareClient.send("hardware vw 1 1");
+
+        long tries = 0;
+        while(!newHardwareClient.isClosed() && tries < 10) {
+            sleep(100);
+            tries++;
+        }
+        assertTrue(newHardwareClient.isClosed());
+    }
+
+    @Test
     public void testForwardBluetoothFromAppWorks() throws Exception {
         clientPair.appClient.createWidget(1, "{\"id\":743, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"STEP\", \"pwmMode\":true, \"pinType\":\"VIRTUAL\", \"pin\":67}");
         clientPair.appClient.verifyResult(ok(1));

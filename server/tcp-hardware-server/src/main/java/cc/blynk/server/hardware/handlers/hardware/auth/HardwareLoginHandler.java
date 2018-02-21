@@ -12,7 +12,7 @@ import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
-import cc.blynk.server.handlers.common.HardwareNotLoggedHandler;
+import cc.blynk.server.handlers.common.AlreadyLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareHandler;
 import cc.blynk.utils.IPUtils;
 import cc.blynk.utils.StringUtils;
@@ -112,7 +112,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
         ChannelPipeline pipeline = ctx.pipeline();
         pipeline.remove(this);
-        pipeline.remove(HardwareNotLoggedHandler.class);
+        pipeline.remove(AlreadyLoggedHandler.class);
         pipeline.addLast("HHArdwareHandler", new HardwareHandler(holder, hardwareStateHolder));
 
         Session session = holder.sessionDao.getOrCreateSessionByUser(

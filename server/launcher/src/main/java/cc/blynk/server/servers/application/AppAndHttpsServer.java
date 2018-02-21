@@ -37,7 +37,7 @@ import cc.blynk.server.core.protocol.handlers.encoders.AppMessageEncoder;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.core.protocol.handlers.encoders.WebAppMessageEncoder;
 import cc.blynk.server.core.stats.GlobalStats;
-import cc.blynk.server.handlers.common.HardwareNotLoggedHandler;
+import cc.blynk.server.handlers.common.AlreadyLoggedHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareChannelStateHandler;
 import cc.blynk.server.hardware.handlers.hardware.auth.HardwareLoginHandler;
@@ -111,6 +111,8 @@ public class AppAndHttpsServer extends BaseServer {
         AuthCookieHandler authCookieHandler = new AuthCookieHandler(holder.sessionDao);
         CookieBasedUrlReWriterHandler cookieBasedUrlReWriterHandler =
                 new CookieBasedUrlReWriterHandler(rootPath, "/static/admin.html", "/static/login.html");
+
+        AlreadyLoggedHandler alreadyLoggedHandler = new AlreadyLoggedHandler();
 
         BaseWebSocketUnificator baseWebSocketUnificator = new BaseWebSocketUnificator() {
             @Override
@@ -216,7 +218,7 @@ public class AppAndHttpsServer extends BaseServer {
                         .addLast("WSSocketWrapper", webSocketWrapperEncoder)
                         .addLast("WSMessageEncoder", new MessageEncoder(stats))
                         .addLast("WSLogin", hardwareLoginHandler)
-                        .addLast("WSNotLogged", new HardwareNotLoggedHandler());
+                        .addLast("WSNotLogged", alreadyLoggedHandler);
                 pipeline.remove(ChunkedWriteHandler.class);
                 pipeline.remove(UrlReWriterHandler.class);
                 pipeline.remove(StaticFileHandler.class);
