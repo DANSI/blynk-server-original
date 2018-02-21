@@ -651,6 +651,15 @@ Blynk transfers binary messages between the server and websockets (for web) with
 |                    | 1 byte        | 2 bytes       | Variable |
 
 
+When command code == 0, than message structure is next:
+
+| Websocket header   | Command       | Message Id    | Response code |
+|:------------------:|:-------------:|:-------------:|:-------------:|
+|                    | 1 byte        | 2 bytes       | 4 bytes       |
+
+[Possible response codes](https://github.com/blynkkk/blynk-server/blob/master/server/core/src/main/java/cc/blynk/server/core/protocol/enums/Response.java#L12).
+[Possible command codes](https://github.com/blynkkk/blynk-server/blob/master/server/core/src/main/java/cc/blynk/server/core/protocol/enums/Command.java#L12)
+
 Message Id and Length are [big endian](http://en.wikipedia.org/wiki/Endianness#Big-endian).
 Body has a command-specific format.
 
