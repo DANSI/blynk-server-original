@@ -22,7 +22,7 @@ public class HardwareNotLoggedHandler extends SimpleChannelInboundHandler<Messag
     protected void channelRead0(ChannelHandlerContext ctx, MessageBase msg) throws Exception {
         final long now = System.currentTimeMillis();
         if (now - lastLoggedTs > 1000) {
-            log.warn("Hardware not logged. {}. Closing.", ctx.channel().remoteAddress());
+            log.debug("Hardware not logged. {}. Closing.", ctx.channel().remoteAddress());
             this.lastLoggedTs = System.currentTimeMillis();
         }
         ctx.close();
