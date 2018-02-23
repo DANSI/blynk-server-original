@@ -108,6 +108,7 @@ import static cc.blynk.server.core.protocol.enums.Command.UPDATE_PROJECT_SETTING
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_WIDGET;
+import static cc.blynk.server.core.protocol.enums.Command.WEBAPP_HARDWARE;
 
 /**
  * The Blynk Project.
@@ -212,6 +213,9 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         switch (msg.command) {
             case HARDWARE :
                 hardwareApp.messageReceived(ctx, state, msg);
+                break;
+            case WEBAPP_HARDWARE :
+                //leave it empty for now
                 break;
             case HARDWARE_RESEND_FROM_BLUETOOTH :
                 hardwareResendFromBTLogic.messageReceived(ctx, state, msg);

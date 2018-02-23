@@ -6,6 +6,7 @@ import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.RegisterMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.ShareLoginMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
+import cc.blynk.server.core.protocol.model.messages.web.WebAppHardwareMessage;
 
 import static cc.blynk.server.core.protocol.enums.Command.ACTIVATE_DASHBOARD;
 import static cc.blynk.server.core.protocol.enums.Command.ADD_ENERGY;
@@ -73,6 +74,7 @@ import static cc.blynk.server.core.protocol.enums.Command.UPDATE_PROJECT_SETTING
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_WIDGET;
+import static cc.blynk.server.core.protocol.enums.Command.WEBAPP_HARDWARE;
 
 /**
  * The Blynk Project.
@@ -96,6 +98,8 @@ public final class MessageFactory {
                 return new HardwareMessage(messageId, body);
             case GET_SERVER :
                 return new GetServerMessage(messageId, body);
+            case WEBAPP_HARDWARE :
+                return new WebAppHardwareMessage(messageId, body);
             case APP_CONNECTED :
             case PING :
             case LOGOUT :
