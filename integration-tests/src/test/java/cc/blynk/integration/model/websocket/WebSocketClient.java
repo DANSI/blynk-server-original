@@ -70,7 +70,7 @@ public final class WebSocketClient extends BaseClient {
         ByteBuf bb = ByteBufAllocator.DEFAULT.heapBuffer(5 + data.length);
         bb.writeByte(msg.command);
         bb.writeShort(msg.id);
-        bb.writeShort(msg.length);
+        bb.writeShort(data.length);
         bb.writeBytes(data);
         return new BinaryWebSocketFrame(bb);
     }

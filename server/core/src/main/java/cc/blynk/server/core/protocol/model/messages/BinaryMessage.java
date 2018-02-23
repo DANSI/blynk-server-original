@@ -10,7 +10,7 @@ public class BinaryMessage extends MessageBase {
     private final byte[] data;
 
     public BinaryMessage(int messageId, short command, byte[] data) {
-        super(messageId, command, data.length);
+        super(messageId, command);
         this.data = data;
     }
 

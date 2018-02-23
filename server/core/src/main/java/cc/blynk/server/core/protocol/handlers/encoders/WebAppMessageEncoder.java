@@ -1,7 +1,7 @@
 package cc.blynk.server.core.protocol.handlers.encoders;
 
-import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
+import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.ChannelHandler;
@@ -33,8 +33,8 @@ public class WebAppMessageEncoder extends ChannelOutboundHandlerAdapter {
             out.writeByte(message.command);
             out.writeShort(message.id);
 
-            if (message.command == Command.RESPONSE) {
-                out.writeInt(message.length);
+            if (message instanceof ResponseMessage) {
+                out.writeInt(((ResponseMessage) message).code);
             } else {
                 byte[] body = message.getBytes();
                 if (body.length > 0) {

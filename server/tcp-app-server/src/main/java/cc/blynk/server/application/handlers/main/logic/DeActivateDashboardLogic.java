@@ -33,7 +33,7 @@ public class DeActivateDashboardLogic {
         User user = state.user;
 
         String sharedToken;
-        if (message.length > 0) {
+        if (message.body.length() > 0) {
             log.debug("DeActivating dash {} for user {}", message.body, user.email);
             int dashId = Integer.parseInt(message.body);
             DashBoard dashBoard = user.profile.getDashByIdOrThrow(dashId);

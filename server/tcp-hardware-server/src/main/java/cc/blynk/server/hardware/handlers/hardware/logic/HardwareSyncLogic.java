@@ -35,7 +35,7 @@ public final class HardwareSyncLogic {
         int deviceId = state.device.id;
         DashBoard dash = state.dash;
 
-        if (message.length == 0) {
+        if (message.body.length() == 0) {
             syncAll(ctx, message.id, dash, deviceId);
         } else {
             syncSpecificPins(ctx, message.body, message.id, dash, deviceId);

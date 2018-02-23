@@ -53,7 +53,7 @@ public class LoadProfileGzippedLogic {
         boolean isNewProtocol = state.isNewProtocol();
         int msgId = message.id;
 
-        if (message.length == 0) {
+        if (message.body.length() == 0) {
             Profile profile = state.user.profile;
             write(ctx, gzipProfile(profile), msgId, email, isNewProtocol);
             return;

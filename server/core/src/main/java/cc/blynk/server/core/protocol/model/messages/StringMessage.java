@@ -14,7 +14,7 @@ public class StringMessage extends MessageBase {
     private final Charset charset;
 
     public StringMessage(int messageId, short command, String body, Charset charset) {
-        super(messageId, command, body.length());
+        super(messageId, command);
         this.body = body;
         this.charset = charset;
     }

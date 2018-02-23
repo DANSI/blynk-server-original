@@ -28,7 +28,7 @@ public final class LoadSharedProfileGzippedLogic {
     public static void messageReceived(ChannelHandlerContext ctx, AppShareStateHolder state, StringMessage message) {
         byte[] data;
         User user = state.user;
-        if (message.length == 0) {
+        if (message.body.length() == 0) {
             DashBoard dash = user.profile.getDashByIdOrThrow(state.dashId);
             Profile profile = new Profile();
             profile.dashBoards = new DashBoard[] {dash};

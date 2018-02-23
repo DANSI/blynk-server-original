@@ -49,7 +49,7 @@ public class DeleteEnhancedGraphDataLogic {
         int dashId = Integer.parseInt(dashIdAndDeviceId[0]);
         long widgetId = Long.parseLong(messageParts[1]);
         int streamIndex = -1;
-        if (message.length == 3) {
+        if (message.body.length() == 3) {
             streamIndex = Integer.parseInt(messageParts[2]);
         }
         int targetId = -1;

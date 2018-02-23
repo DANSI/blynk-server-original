@@ -236,7 +236,7 @@ public class SyncWorkflowTest extends IntegrationBase {
         StringMessage hardMessage = arguments.get(0);
         assertEquals(1, hardMessage.id);
         assertEquals(Command.BLYNK_INTERNAL, hardMessage.command);
-        assertEquals(14, hardMessage.length);
+        assertEquals(14, hardMessage.body.length());
         String tsString = hardMessage.body.split("\0")[1];
         long ts = Long.valueOf(tsString);
 
@@ -261,7 +261,7 @@ public class SyncWorkflowTest extends IntegrationBase {
         StringMessage hardMessage = arguments.get(0);
         assertEquals(1, hardMessage.id);
         assertEquals(Command.BLYNK_INTERNAL, hardMessage.command);
-        assertEquals(14, hardMessage.length);
+        assertEquals(14, hardMessage.body.length());
         String tsString = hardMessage.body.split("\0")[1];
         long ts = Long.valueOf(tsString);
 
@@ -297,7 +297,7 @@ public class SyncWorkflowTest extends IntegrationBase {
         StringMessage hardMessage = arguments.get(0);
         assertEquals(1, hardMessage.id);
         assertEquals(HARDWARE, hardMessage.command);
-        assertEquals(16, hardMessage.length);
+        assertEquals(16, hardMessage.body.length());
         assertTrue(hardMessage.body.startsWith(b("vw 99")));
         String tsString = hardMessage.body.split("\0")[2];
         long ts = Long.valueOf(tsString);
@@ -337,7 +337,7 @@ public class SyncWorkflowTest extends IntegrationBase {
         StringMessage hardMessage = arguments.get(0);
         assertEquals(1, hardMessage.id);
         assertEquals(Command.BLYNK_INTERNAL, hardMessage.command);
-        assertEquals(14, hardMessage.length);
+        assertEquals(14, hardMessage.body.length());
         String tsString = hardMessage.body.split("\0")[1];
         long ts = Long.valueOf(tsString);
 
@@ -365,7 +365,7 @@ public class SyncWorkflowTest extends IntegrationBase {
         StringMessage hardMessage = arguments.get(0);
         assertEquals(1, hardMessage.id);
         assertEquals(Command.BLYNK_INTERNAL, hardMessage.command);
-        assertEquals(14, hardMessage.length);
+        assertEquals(14, hardMessage.body.length());
         String tsString = hardMessage.body.split("\0")[1];
         long ts = Long.valueOf(tsString);
 
