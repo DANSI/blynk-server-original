@@ -17,6 +17,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class BlockingIOProcessor implements Closeable {
 
+    private static final int MINIMUM_ALLOWED_POOL_SIZE = 3;
+
     //pool for messaging
     public final ThreadPoolExecutor messagingExecutor;
 
@@ -29,6 +31,8 @@ public class BlockingIOProcessor implements Closeable {
     public final ThreadPoolExecutor historyExecutor;
 
     public BlockingIOProcessor(int poolSize, int maxQueueSize) {
+        //pool size can't be less than 3.
+        poolSize = Math.max(MINIMUM_ALLOWED_POOL_SIZE, poolSize);
         this.messagingExecutor = new ThreadPoolExecutor(
                 poolSize / 4, poolSize / 3,
                 2L, TimeUnit.MINUTES,
