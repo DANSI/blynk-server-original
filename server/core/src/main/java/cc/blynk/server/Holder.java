@@ -209,4 +209,17 @@ public class Holder {
     public boolean isLocalRegion() {
         return region.equals("local");
     }
+
+    public void close() {
+        sessionDao.close();
+
+        transportTypeHolder.close();
+
+        reportingDao.close();
+
+        System.out.println("Stopping BlockingIOProcessor...");
+        blockingIOProcessor.close();
+        System.out.println("Stopping DBManager...");
+        dbManager.close();
+    }
 }

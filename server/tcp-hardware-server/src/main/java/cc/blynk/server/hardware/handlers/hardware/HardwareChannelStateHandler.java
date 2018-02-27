@@ -43,7 +43,6 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        log.info("AAAAAAAAAAAAAAAAAAAAAAAAA channelInactive");
         Channel hardwareChannel = ctx.channel();
         HardwareStateHolder state = getHardState(hardwareChannel);
         if (state != null) {
@@ -59,7 +58,6 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-        log.info("AAAAAAAAAAAAAAAAAAAAAAAAA userEventTriggered");
         if (evt instanceof IdleStateEvent) {
             log.trace("State handler. Hardware timeout disconnect. Event : {}. Closing.",
                     ((IdleStateEvent) evt).state());

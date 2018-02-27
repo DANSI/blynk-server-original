@@ -39,7 +39,7 @@ public class AppWebDashboardSocketTest extends IntegrationBase {
         hardwareServer.close();
         appServer.close();
         clientPair.stop();
-        close(localHolder);
+        localHolder.close();
     }
 
     @BeforeClass

@@ -143,25 +143,14 @@ public abstract class BaseTest {
         this.holder = new Holder(properties, twitterWrapper, mailWrapper, gcmWrapper, smsWrapper, "no-db.properties");
     }
 
-    public static void close(Holder holder) {
-        System.out.println("Stopping Transport Holder...");
-        holder.transportTypeHolder.close();
-        System.out.println("Stopping aggregator...");
-        holder.reportingDao.close();
-        System.out.println("Stopping BlockingIOProcessor...");
-        holder.blockingIOProcessor.close();
-        System.out.println("Stopping DBManager...");
-        holder.dbManager.close();
-    }
-
     @After
     public void closeTransport() {
-        close(holder);
+        holder.close();
     }
 
     @AfterClass
     public static void closeStaticTransport() {
-        close(staticHolder);
+        staticHolder.close();
     }
 
     public String getDataFolder() {

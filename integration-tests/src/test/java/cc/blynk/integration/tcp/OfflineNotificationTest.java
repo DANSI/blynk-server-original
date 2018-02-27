@@ -2,6 +2,7 @@ package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DashboardSettings;
@@ -203,5 +204,40 @@ public class OfflineNotificationTest extends IntegrationBase {
         sleep(2500);
 
         clientPair.appClient.verifyResult(deviceOffline(0, b("1-1")));
+    }
+
+    @Test
+    public void sessionDisconnectChangeState() throws Exception {
+        Device device2 = new Device(1, "My Device", "ESP8266");
+        device2.status = Status.OFFLINE;
+
+        clientPair.appClient.createDevice(1, device2);
+        clientPair.appClient.send("getDevices 1");
+
+        Device[] devices = clientPair.appClient.getDevices(2);
+        assertNotNull(devices);
+        assertEquals(2, devices.length);
+
+        assertEquals(1, devices[1].id);
+        assertEquals(0, devices[1].disconnectTime);
+
+        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
+        hardClient2.start();
+        hardClient2.login(devices[1].token);
+        hardClient2.verifyResult(ok(1));
+
+        holder.sessionDao.close();
+
+        TestAppClient testAppClient = new TestAppClient("localhost", tcpAppPort);
+        testAppClient.start();
+        testAppClient.login(DEFAULT_TEST_USER, "1");
+        testAppClient.verifyResult(ok(1));
+
+        testAppClient.send("getDevices 1");
+        devices = testAppClient.getDevices(2);
+        assertNotNull(devices);
+        assertEquals(2, devices.length);
+        assertEquals(1, devices[1].id);
+        assertEquals(System.currentTimeMillis(), devices[1].disconnectTime, 5000);
     }
 }

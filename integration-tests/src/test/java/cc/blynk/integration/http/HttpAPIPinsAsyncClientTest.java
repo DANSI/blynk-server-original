@@ -52,7 +52,7 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
     public static void shutdown() throws Exception {
         httpclient.close();
         httpServer.close();
-        close(localHolder);
+        localHolder.close();
     }
 
     @BeforeClass
