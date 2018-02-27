@@ -44,11 +44,20 @@ public class ShutdownHookWorker implements Runnable {
         System.out.println("Stopping scheduler...");
         scheduler.shutdown();
 
+        System.out.println("Stopping Transport Holder...");
+        holder.transportTypeHolder.close();
+
         System.out.println("Saving user profiles...");
         profileSaverWorker.close();
 
         System.out.println("Stopping aggregator...");
-        holder.close();
+        holder.reportingDao.close();
+
+        System.out.println("Stopping BlockingIOProcessor...");
+        holder.blockingIOProcessor.close();
+
+        System.out.println("Stopping DBManager...");
+        holder.dbManager.close();
 
         System.out.println("Done.");
     }
