@@ -48,7 +48,6 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         if (state != null) {
             Session session = sessionDao.userSession.get(state.userKey);
             if (session != null) {
-                session.removeHardChannel(hardwareChannel);
                 Device device = state.device;
                 log.trace("Hardware channel disconnect for {}, dashId {}, deviceId {}, token {}.",
                         state.userKey, state.dash.id, device.id, device.token);
