@@ -21,6 +21,7 @@ import cc.blynk.server.handlers.common.AlreadyLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareChannelStateHandler;
 import cc.blynk.server.hardware.handlers.hardware.auth.HardwareLoginHandler;
 import cc.blynk.server.servers.BaseServer;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -171,9 +172,9 @@ public class HardwareAndHttpAPIServer extends BaseServer {
     }
 
     @Override
-    public void close() {
+    public ChannelFuture close() {
         System.out.println("Shutting down HTTP API and WebSockets server...");
-        super.close();
+        return super.close();
     }
 
 }

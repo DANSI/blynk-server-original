@@ -10,6 +10,7 @@ import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
 import cc.blynk.server.servers.BaseServer;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.timeout.IdleStateHandler;
@@ -74,9 +75,9 @@ public class AppServer extends BaseServer {
     }
 
     @Override
-    public void close() {
+    public ChannelFuture close() {
         System.out.println("Shutting down Application SSL server...");
-        super.close();
+        return super.close();
     }
 
 }

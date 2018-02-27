@@ -42,6 +42,7 @@ import cc.blynk.server.handlers.common.UserNotLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareChannelStateHandler;
 import cc.blynk.server.hardware.handlers.hardware.auth.HardwareLoginHandler;
 import cc.blynk.server.servers.BaseServer;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -282,9 +283,9 @@ public class AppAndHttpsServer extends BaseServer {
     }
 
     @Override
-    public void close() {
+    public ChannelFuture close() {
         System.out.println("Shutting down HTTPS API, WebSockets and Admin server...");
-        super.close();
+        return super.close();
     }
 
 }

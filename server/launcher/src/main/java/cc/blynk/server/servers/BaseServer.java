@@ -11,7 +11,6 @@ import io.netty.channel.socket.SocketChannel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.Closeable;
 import java.net.InetSocketAddress;
 
 /**
@@ -21,7 +20,7 @@ import java.net.InetSocketAddress;
  * Created by Dmitriy Dumanskiy.
  * Created on 3/10/2015.
  */
-public abstract class BaseServer implements Closeable {
+public abstract class BaseServer {
 
     protected static final Logger log = LogManager.getLogger(BaseServer.class);
 
@@ -73,8 +72,7 @@ public abstract class BaseServer implements Closeable {
 
     protected abstract String getServerName();
 
-    @Override
-    public void close() {
-        cf.channel().close();
+    public ChannelFuture close() {
+        return cf.channel().close();
     }
 }

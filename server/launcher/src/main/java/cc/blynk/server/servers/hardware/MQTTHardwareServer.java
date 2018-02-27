@@ -5,6 +5,7 @@ import cc.blynk.server.handlers.common.AlreadyLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareChannelStateHandler;
 import cc.blynk.server.hardware.handlers.hardware.mqtt.auth.MqttHardwareLoginHandler;
 import cc.blynk.server.servers.BaseServer;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.mqtt.MqttDecoder;
@@ -57,9 +58,9 @@ public class MQTTHardwareServer extends BaseServer {
     }
 
     @Override
-    public void close() {
+    public ChannelFuture close() {
         System.out.println("Shutting down Mqtt hardware server...");
-        super.close();
+        return super.close();
     }
 
 }
