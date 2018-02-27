@@ -37,7 +37,7 @@ public class ShutdownHookWorker implements Runnable {
             try {
                 server.close();
             } catch (Throwable t) {
-                System.out.println("Error on serve shutdown : " + t.getCause());
+                System.out.println("Error on server shutdown : " + t.getCause());
             }
         }
 
