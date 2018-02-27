@@ -153,7 +153,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
             log.debug("HardwareLogic token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());
             response = invalidToken(msgId);
         } else {
-            log.info("Redirecting token '{}' to {}", token, server);
+            log.debug("Redirecting token '{}' to {}", token, server);
             response = makeASCIIStringMessage(CONNECT_REDIRECT, msgId, server + BODY_SEPARATOR + listenPort);
         }
         ctx.writeAndFlush(response, ctx.voidPromise());
