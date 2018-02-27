@@ -42,7 +42,7 @@ public class HttpAPIMetricsTest extends BaseTest {
     public static void shutdown() throws Exception {
         httpclient.close();
         httpServer.close();
-        localHolder.close();
+        close(localHolder);
     }
 
     @BeforeClass

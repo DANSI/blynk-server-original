@@ -81,8 +81,8 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
         appServer2.close();
         hardwareServer2.close();
 
-        holder.close();
-        holder2.close();
+        close(holder);
+        close(holder2);
 
         clientPair.stop();
     }

@@ -63,7 +63,7 @@ public class HttpAPIPinsTest extends BaseTest {
     public static void shutdown() throws Exception {
         httpclient.close();
         httpServer.close();
-        localHolder.close();
+        close(localHolder);
     }
 
     //----------------------------GET METHODS SECTION
