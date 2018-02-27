@@ -3,6 +3,7 @@ package cc.blynk.server.core.dao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.utils.FileUtils;
@@ -211,7 +212,7 @@ public class FileManager {
         for (DashBoard dashBoard : user.profile.dashBoards) {
             if (dashBoard.devices != null) {
                 for (Device device : dashBoard.devices) {
-                    device.status = null;
+                    device.status = Status.OFFLINE;
                 }
             }
 
