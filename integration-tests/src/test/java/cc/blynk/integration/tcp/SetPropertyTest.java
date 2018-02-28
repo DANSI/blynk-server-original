@@ -10,6 +10,7 @@ import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Button;
 import cc.blynk.server.core.model.widgets.controls.Slider;
+import cc.blynk.server.core.model.widgets.controls.Step;
 import cc.blynk.server.core.model.widgets.others.Player;
 import cc.blynk.server.core.model.widgets.others.Video;
 import cc.blynk.server.core.model.widgets.ui.Menu;
@@ -388,4 +389,26 @@ public class SetPropertyTest extends IntegrationBase {
         profile = clientPair.appClient.getProfile();
         assertEquals(0, profile.dashBoards[0].pinsStorage.size());
     }
+
+    @Test
+    public void testStepPropertyForStepWidget() throws Exception {
+        clientPair.appClient.createWidget(1, "{\"id\":102, \"width\":1, \"height\":1, \"x\":5, \"y\":0, \"tabId\":0, \"label\":\"Some Text\", \"type\":\"STEP\", \"pinType\":\"VIRTUAL\", \"pin\":17}");
+        clientPair.appClient.verifyResult(ok(1));
+
+        clientPair.hardwareClient.setProperty(17, "step", "1.1");
+        clientPair.hardwareClient.verifyResult(ok(1));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1, "1-0 17 step 1.1")));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfileGzipped");
+        Profile profile = clientPair.appClient.getProfile();
+
+        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 17, PinType.VIRTUAL);
+        assertNotNull(widget);
+        assertTrue(widget instanceof Step);
+        Step stepWidget = (Step) widget;
+
+        assertEquals(1.1, stepWidget.step, 0.00001);
+    }
+
 }

@@ -15,7 +15,8 @@ public enum WidgetProperty {
     MIN("min"),
     MAX("max"),
     IS_ON_PLAY("isOnPlay"),
-    URL("url");
+    URL("url"),
+    STEP("step");
 
     public final String label;
 
@@ -43,6 +44,8 @@ public enum WidgetProperty {
                 return IS_ON_PLAY;
             case "url" :
                 return URL;
+            case "step" :
+                return STEP;
             default:
                 return null;
         }
