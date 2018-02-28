@@ -4,6 +4,8 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
+import static cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler.handleUnexpectedException;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -15,4 +17,8 @@ public abstract class BaseWebSocketUnificator extends ChannelInboundHandlerAdapt
     @Override
     public abstract void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception;
 
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        handleUnexpectedException(ctx, cause);
+    }
 }
