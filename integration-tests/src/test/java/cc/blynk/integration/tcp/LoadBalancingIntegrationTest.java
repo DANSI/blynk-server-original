@@ -65,7 +65,7 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
         this.holder2 = new Holder(properties2, twitterWrapper, mailWrapper, gcmWrapper, smsWrapper, "db-test.properties");
         hardwareServer2 = new HardwareAndHttpAPIServer(holder2).start();
         appServer2 = new AppAndHttpsServer(holder2).start();
-        plainHardPort2 = properties2.getIntProperty("hardware.default.port");
+        plainHardPort2 = properties2.getIntProperty("http.port");
         tcpAppPort2 = properties2.getIntProperty("https.port");
 
         holder.dbManager.executeSQL("DELETE FROM users");

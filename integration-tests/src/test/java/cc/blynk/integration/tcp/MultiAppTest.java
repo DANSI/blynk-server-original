@@ -45,7 +45,6 @@ public class MultiAppTest extends IntegrationBase {
     @Before
     public void init() throws Exception {
         httpServer = new HardwareAndHttpAPIServer(holder).start();
-        hardwareServer = new HardwareAndHttpAPIServer(holder).start();
         appServer = new AppAndHttpsServer(holder).start();
         httpServerUrl = String.format("http://localhost:%s/", httpPort);
 
@@ -66,7 +65,6 @@ public class MultiAppTest extends IntegrationBase {
     public void shutdown() {
         httpServer.close();
         appServer.close();
-        hardwareServer.close();
         clientPair.stop();
     }
 

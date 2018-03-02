@@ -69,7 +69,7 @@ final class ArgumentsParser {
 
         if (hardPort != null) {
             Integer.parseInt(hardPort);
-            properties.put("hardware.default.port", hardPort);
+            properties.put("http.port", hardPort);
         }
 
         //todo remove
