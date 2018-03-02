@@ -8,7 +8,6 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
-import cc.blynk.server.servers.hardware.HardwareServer;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
@@ -34,7 +33,6 @@ import static org.junit.Assert.assertNotNull;
 public class CloneWorkFlowTest extends IntegrationBase {
 
     private BaseServer appServer;
-    private BaseServer hardwareServer;
     private BaseServer httpServer;
     private ClientPair clientPair;
 
@@ -44,7 +42,6 @@ public class CloneWorkFlowTest extends IntegrationBase {
 
         assertNotNull(holder.dbManager.getConnection());
 
-        this.hardwareServer = new HardwareServer(holder).start();
         this.appServer = new AppAndHttpsServer(holder).start();
         this.httpServer = new HardwareAndHttpAPIServer(holder).start();
 
@@ -55,7 +52,6 @@ public class CloneWorkFlowTest extends IntegrationBase {
     @After
     public void shutdown() {
         this.appServer.close();
-        this.hardwareServer.close();
         this.httpServer.close();
         this.clientPair.stop();
     }

@@ -22,7 +22,6 @@ import cc.blynk.server.core.model.widgets.ui.table.Table;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
-import cc.blynk.server.servers.hardware.HardwareServer;
 import cc.blynk.utils.DateTimeUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -67,7 +66,6 @@ import static org.mockito.Mockito.verify;
 public class HttpAndTCPSameJVMTest extends IntegrationBase {
 
     private BaseServer httpServer;
-    private BaseServer hardwareServer;
     private BaseServer appServer;
 
     private CloseableHttpClient httpclient;
@@ -79,7 +77,6 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
     public void shutdown() throws Exception {
         httpclient.close();
         httpServer.close();
-        hardwareServer.close();
         appServer.close();
         clientPair.stop();
     }
@@ -87,7 +84,6 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
     @Before
     public void init() throws Exception {
         httpServer = new HardwareAndHttpAPIServer(holder).start();
-        hardwareServer = new HardwareServer(holder).start();
         appServer = new AppAndHttpsServer(holder).start();
         httpServerUrl = String.format("http://localhost:%s/", httpPort);
         httpclient = HttpClients.createDefault();

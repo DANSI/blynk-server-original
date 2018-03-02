@@ -9,7 +9,6 @@ import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
-import cc.blynk.server.servers.hardware.HardwareServer;
 import cc.blynk.utils.StringUtils;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
@@ -50,7 +49,6 @@ public class WebhookTest extends IntegrationBase {
 
     private BaseServer httpServer;
     private BaseServer appServer;
-    private BaseServer hardwareServer;
     private ClientPair clientPair;
 
     private static AsyncHttpClient httpclient;
@@ -74,7 +72,6 @@ public class WebhookTest extends IntegrationBase {
     @Before
     public void init() throws Exception {
         httpServer = new HardwareAndHttpAPIServer(holder).start();
-        hardwareServer = new HardwareServer(holder).start();
         appServer = new AppAndHttpsServer(holder).start();
 
 
@@ -89,7 +86,6 @@ public class WebhookTest extends IntegrationBase {
     public void shutdown() {
         httpServer.close();
         appServer.close();
-        hardwareServer.close();
         clientPair.stop();
     }
 

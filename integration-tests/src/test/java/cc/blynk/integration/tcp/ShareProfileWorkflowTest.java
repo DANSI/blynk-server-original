@@ -23,7 +23,7 @@ import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinActi
 import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.GreaterThan;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
-import cc.blynk.server.servers.hardware.HardwareServer;
+import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -84,7 +84,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
-        this.hardwareServer = new HardwareServer(holder).start();
+        this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
         this.appServer = new AppAndHttpsServer(holder).start();
         this.clientPair = initAppAndHardPair();
     }

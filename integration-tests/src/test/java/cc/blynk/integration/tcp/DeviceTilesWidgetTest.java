@@ -23,7 +23,7 @@ import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
-import cc.blynk.server.servers.hardware.HardwareServer;
+import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -64,7 +64,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
-        hardwareServer = new HardwareServer(holder).start();
+        hardwareServer = new HardwareAndHttpAPIServer(holder).start();
         appServer = new AppAndHttpsServer(holder).start();
 
         if (clientPair == null) {

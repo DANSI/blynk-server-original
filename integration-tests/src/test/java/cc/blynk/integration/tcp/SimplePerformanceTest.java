@@ -7,7 +7,7 @@ import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
-import cc.blynk.server.servers.hardware.HardwareServer;
+import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.properties.ServerProperties;
 import io.netty.channel.nio.NioEventLoopGroup;
 import org.junit.After;
@@ -42,7 +42,7 @@ public class SimplePerformanceTest extends IntegrationBase {
     @Before
     public void init() throws Exception {
         this.sharedNioEventLoopGroup = new NioEventLoopGroup();
-        this.hardwareServer = new HardwareServer(holder).start();
+        this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
         this.appServer = new AppAndHttpsServer(holder).start();
     }
 

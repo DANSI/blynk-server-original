@@ -7,7 +7,6 @@ import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
-import cc.blynk.server.servers.hardware.HardwareServer;
 import cc.blynk.utils.StringUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -31,7 +30,6 @@ import static org.mockito.Mockito.verify;
 public class WebSocketTest extends IntegrationBase {
 
     private BaseServer webSocketServer;
-    private BaseServer hardwareServer;
     private BaseServer appServer;
     private ClientPair clientPair;
     //private static Holder localHolder;
@@ -43,7 +41,6 @@ public class WebSocketTest extends IntegrationBase {
     public void shutdown() throws Exception {
         webSocketServer.close();
         appServer.close();
-        hardwareServer.close();
         clientPair.stop();
         holder.close();
     }
@@ -53,7 +50,6 @@ public class WebSocketTest extends IntegrationBase {
         tcpWebSocketPort = httpPort;
         webSocketServer = new HardwareAndHttpAPIServer(holder).start();
         appServer = new AppAndHttpsServer(holder).start();
-        hardwareServer = new HardwareServer(holder).start();
         clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
     }
 

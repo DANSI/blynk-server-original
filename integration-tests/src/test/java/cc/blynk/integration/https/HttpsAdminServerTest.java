@@ -11,7 +11,6 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
-import cc.blynk.server.servers.hardware.HardwareServer;
 import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.SHA256Util;
 import org.apache.http.Header;
@@ -64,7 +63,6 @@ import static org.mockito.Mockito.verify;
 public class HttpsAdminServerTest extends BaseTest {
 
     private static BaseServer httpServer;
-    private BaseServer hardwareServer;
     private BaseServer httpAdminServer;
     private CloseableHttpClient httpclient;
     private String httpsAdminServerUrl;
@@ -77,14 +75,12 @@ public class HttpsAdminServerTest extends BaseTest {
     public void shutdown() {
         httpAdminServer.close();
         httpServer.close();
-        hardwareServer.close();
         clientPair.stop();
     }
 
     @Before
     public void init() throws Exception {
         this.httpAdminServer = new AppAndHttpsServer(holder).start();
-        hardwareServer = new HardwareServer(holder).start();
 
         httpsAdminServerUrl = String.format("https://localhost:%s/admin", httpsPort);
         httpServerUrl = String.format("http://localhost:%s/", httpPort);

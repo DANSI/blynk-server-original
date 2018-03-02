@@ -10,7 +10,7 @@ import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.FlashedToken;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
-import cc.blynk.server.servers.hardware.HardwareServer;
+import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.AppNameUtil;
 import org.junit.After;
 import org.junit.Before;
@@ -40,7 +40,7 @@ public class AssignTokenTest extends IntegrationBase {
     @Before
     public void init() throws Exception {
         Holder holder = new Holder(properties, twitterWrapper, mailWrapper, gcmWrapper, smsWrapper, "db-test.properties");
-        hardwareServer = new HardwareServer(holder).start();
+        hardwareServer = new HardwareAndHttpAPIServer(holder).start();
         appServer = new AppAndHttpsServer(holder).start();
         dbManager = holder.dbManager;
 

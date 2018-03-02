@@ -13,7 +13,7 @@ import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
-import cc.blynk.server.servers.hardware.HardwareServer;
+import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -58,7 +58,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
-        this.hardwareServer = new HardwareServer(holder).start();
+        this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
         this.appServer = new AppAndHttpsServer(holder).start();
 
         this.clientPair = initAppAndHardPair();

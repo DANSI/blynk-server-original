@@ -9,7 +9,6 @@ import cc.blynk.server.core.model.widgets.controls.Button;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
-import cc.blynk.server.servers.hardware.HardwareServer;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
@@ -42,7 +41,6 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
     private static AsyncHttpClient httpclient;
     private static String httpsServerUrl;
 
-    private static BaseServer hardwareServer;
     private static BaseServer appServer;
     private static ClientPair clientPair;
 
@@ -51,7 +49,6 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
         httpclient.close();
         httpServer.close();
         appServer.close();
-        hardwareServer.close();
         clientPair.stop();
     }
 
@@ -65,7 +62,6 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
                         .setKeepAlive(false)
                         .build()
         );
-        hardwareServer = new HardwareServer(staticHolder).start();
         appServer = new AppAndHttpsServer(staticHolder).start();
 
         clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);

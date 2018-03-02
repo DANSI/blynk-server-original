@@ -124,12 +124,11 @@ public abstract class BaseTest {
     public static void initProps() {
         properties = new ServerProperties(Collections.emptyMap());
 
-        //https.port is correct. new protocol is handled in https port
-        tcpAppPort = properties.getIntProperty("https.port");
-        tcpHardPort = properties.getIntProperty("hardware.default.port");
-
         httpPort = properties.getIntProperty("http.port");
         httpsPort = properties.getIntProperty("https.port");
+
+        tcpAppPort = httpsPort;
+        tcpHardPort = httpPort;
 
         staticHolder = new Holder(properties, mock(TwitterWrapper.class), mock(MailWrapper.class), mock(GCMWrapper.class), mock(SMSWrapper.class), "no-db.properties");
     }

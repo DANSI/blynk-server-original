@@ -11,7 +11,7 @@ import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.enums.Priority;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
-import cc.blynk.server.servers.hardware.HardwareServer;
+import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import io.netty.channel.ChannelFuture;
 import org.junit.After;
 import org.junit.Before;
@@ -46,7 +46,7 @@ public class NotificationsLogicTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
-        this.hardwareServer = new HardwareServer(holder).start();
+        this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
         this.appServer = new AppAndHttpsServer(holder).start();
 
         this.clientPair = initAppAndHardPair();

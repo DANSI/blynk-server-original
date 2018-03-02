@@ -24,7 +24,7 @@ import cc.blynk.server.db.model.FlashedToken;
 import cc.blynk.server.notifications.mail.QrHolder;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
-import cc.blynk.server.servers.hardware.HardwareServer;
+import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.AppNameUtil;
 import net.glxn.qrgen.core.image.ImageType;
 import net.glxn.qrgen.javase.QRCode;
@@ -69,7 +69,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
 
         assertNotNull(holder.dbManager.getConnection());
 
-        this.hardwareServer = new HardwareServer(holder).start();
+        this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
         this.appServer = new AppAndHttpsServer(holder).start();
 
         this.clientPair = initAppAndHardPair();

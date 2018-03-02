@@ -17,7 +17,7 @@ import cc.blynk.server.core.model.widgets.ui.Menu;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
-import cc.blynk.server.servers.hardware.HardwareServer;
+import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,7 +52,7 @@ public class SetPropertyTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
-        this.hardwareServer = new HardwareServer(holder).start();
+        this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
         this.appServer = new AppAndHttpsServer(holder).start();
         this.clientPair = initAppAndHardPair("user_profile_json.txt");
     }
