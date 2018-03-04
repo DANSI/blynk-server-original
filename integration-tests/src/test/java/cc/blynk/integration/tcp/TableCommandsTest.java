@@ -101,7 +101,7 @@ public class TableCommandsTest extends IntegrationBase {
         assertEquals(1, table.rows.size());
         row = table.rows.get(0);
         assertNotNull(row);
-        assertEquals(0, table.currentRowIndex);
+        assertEquals(2, table.currentRowIndex);
 
         clientPair.hardwareClient.send("hardware vw 123 add 1 Row1 row1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(4, HARDWARE, b("1-0 vw 123 add 1 Row1 row1"))));

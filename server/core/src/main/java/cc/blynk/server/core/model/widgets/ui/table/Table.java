@@ -22,7 +22,7 @@ public class Table extends OnePinWidget {
     @JsonSerialize(using = TableRowsSerializator.class)
     public final TableLimitedQueue<Row> rows = new TableLimitedQueue<>();
 
-    public int currentRowIndex;
+    public volatile int currentRowIndex;
 
     public boolean isReoderingAllowed;
 
@@ -71,7 +71,7 @@ public class Table extends OnePinWidget {
                         break;
                     case "pick" :
                         if (values.length > 1) {
-                            currentRowIndex = Math.min(Integer.parseInt(values[1]), rows.size() - 1);
+                            currentRowIndex = Integer.parseInt(values[1]);
                         }
                         break;
                     case "select" :
