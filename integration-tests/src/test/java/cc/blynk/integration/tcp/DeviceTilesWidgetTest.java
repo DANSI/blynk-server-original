@@ -16,6 +16,7 @@ import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
 import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphType;
+import cc.blynk.server.core.model.widgets.ui.Menu;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTile;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileMode;
@@ -30,6 +31,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
@@ -990,6 +993,61 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         assertEquals("123", deviceTiles.templates[0].name);
         assertNotNull(deviceTiles.templates[0].widgets[0]);
         assertEquals("Some Text 3", deviceTiles.templates[0].widgets[0].label);
+    }
+
+    @Test
+    public void testHugeWidgetIsCreatedWithinDeviceTiles() throws Exception {
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(1));
+
+        TileTemplate tileTemplate = new TileTemplate(1, null, null, "123",
+                TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null, null);
+
+        clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        clientPair.appClient.verifyResult(ok(2));
+
+        Menu menu = new Menu();
+        menu.id = 172652;
+        menu.x = 2;
+        menu.y = 34;
+        menu.color = 600084223;
+        menu.width = 6;
+        menu.height = 1;
+        menu.label = "Set Volume";
+        menu.deviceId = 252521;
+        menu.labels = new String[] {"Item1", "Item2"};
+
+        clientPair.appClient.createWidget(1, b("21321 1 ") + JsonParser.MAPPER.writeValueAsString(menu));
+        clientPair.appClient.verifyResult(ok(3));
+
+        List<String> list = new ArrayList<>();
+        for (float i = 0; i < 50; i += 0.1) {
+            list.add(String.valueOf(i));
+        }
+        menu.labels = list.toArray(new String[0]);
+
+        clientPair.appClient.updateWidget(1, JsonParser.MAPPER.writeValueAsString(menu));
+        clientPair.appClient.verifyResult(ok(4));
+
+        clientPair.appClient.send("getWidget 1\0" + widgetId);
+        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(5), 0);
+        assertNotNull(deviceTiles);
+        assertEquals(widgetId, deviceTiles.id);
+        assertNotNull(deviceTiles.templates);
+        assertEquals(1, deviceTiles.templates.length);
+        assertEquals("123", deviceTiles.templates[0].name);
+        assertNotNull(deviceTiles.templates[0].widgets[0]);
+        assertEquals(500, ((Menu) deviceTiles.templates[0].widgets[0]).labels.length);
     }
 
 }
