@@ -14,6 +14,8 @@ public class Slider extends OnePinWidget {
 
     public int frequency;
 
+    public int maximumFractionDigits;
+
     @Override
     public PinMode getModeType() {
         return PinMode.out;

@@ -1031,8 +1031,8 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.verifyResult(ok(3));
 
         List<String> list = new ArrayList<>();
-        for (float i = 0; i < 50; i += 0.1) {
-            list.add(String.valueOf(i));
+        for (float i = 0; i < 49.99; i += 0.1F) {
+            list.add(String.format("%.2f", i));
         }
         menu.labels = list.toArray(new String[0]);
 
