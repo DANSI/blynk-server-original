@@ -172,6 +172,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
         clonedDash.updatedAt = clonedDash.createdAt;
         clonedDash.isActive = true;
         clonedDash.eraseValues();
+        clonedDash.removeDevicesProvisionedFromDeviceTiles();
 
         clonedDash.addTimers(timerWorker, new UserKey(newUser));
 

@@ -341,6 +341,11 @@ public class PublishingPreviewFlow extends IntegrationBase {
         assertEquals(1, dashBoard.parentId);
         assertEquals(1, dashBoard.widgets.length);
         assertTrue(dashBoard.widgets[0] instanceof DeviceTiles);
+        deviceTiles = (DeviceTiles) dashBoard.getWidgetById(widgetId);
+        assertNotNull(deviceTiles.tiles);
+        assertNotNull(deviceTiles.templates);
+        assertEquals(0, deviceTiles.tiles.length);
+        assertEquals(1, deviceTiles.templates.length);
 
         tileTemplate = new TileTemplate(1, null, new int[] {0}, "123",
                 TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null, null);
@@ -368,6 +373,78 @@ public class PublishingPreviewFlow extends IntegrationBase {
         assertEquals(0, deviceTiles.tiles[0].deviceId);
         assertEquals(1, deviceTiles.tiles[0].templateId);
         assertEquals(1, deviceTiles.templates.length);
+    }
+
+    @Test
+    public void testDeviceTilesAreNotCopiedFromParentProjectOnCreationAndFaceUpdate() throws Exception {
+        DashBoard dashBoard = new DashBoard();
+        dashBoard.id = 10;
+        dashBoard.parentId = 1;
+        dashBoard.isPreview = true;
+        dashBoard.name = "Face Edit Test";
+
+        clientPair.appClient.createDash(dashBoard);
+
+        Device device0 = new Device(0, "My Dashboard", "UNO");
+        clientPair.appClient.createDevice(10, device0);
+        device0 = clientPair.appClient.getDevice(2);
+        clientPair.appClient.verifyResult(createDevice(2, device0));
+
+        Device device2 = new Device(2, "My Dashboard", "UNO");
+        clientPair.appClient.createDevice(10, device2);
+        device2 = clientPair.appClient.getDevice(3);
+        clientPair.appClient.verifyResult(createDevice(3, device2));
+
+        clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"AppPreview\",\"icon\":\"myIcon\",\"projectIds\":[10]}");
+        App app = clientPair.appClient.getApp(4);
+        assertNotNull(app);
+        assertNotNull(app.id);
+
+
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        //creating manually widget for child project
+        clientPair.appClient.createWidget(10, deviceTiles);
+        clientPair.appClient.verifyResult(ok(5));
+
+        TileTemplate tileTemplate = new TileTemplate(1, null, new int[] {2}, "123",
+                TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null, null);
+
+        clientPair.appClient.send("createTemplate " + b("10 " + widgetId + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        clientPair.appClient.verifyResult(ok(6));
+
+        clientPair.appClient.createWidget(10, "{\"id\":155, \"deviceId\":0, \"frequency\":400, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"GAUGE\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
+        clientPair.appClient.verifyResult(ok(7));
+
+        clientPair.appClient.send("emailQr 10\0" + app.id);
+        clientPair.appClient.verifyResult(ok(8));
+
+        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient2.start();
+
+        appClient2.register("test@blynk.cc", "a", app.id);
+        appClient2.verifyResult(ok(1));
+
+        appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
+        appClient2.verifyResult(ok(2));
+
+        appClient2.send("loadProfileGzipped");
+        Profile profile = appClient2.getProfile(3);
+        assertEquals(1, profile.dashBoards.length);
+        dashBoard = profile.dashBoards[0];
+        assertNotNull(dashBoard);
+        assertEquals(1, dashBoard.id);
+        assertEquals(1, dashBoard.parentId);
+        assertEquals(1, dashBoard.devices.length);
+        assertEquals(0, dashBoard.devices[0].id);
     }
 
     @Test

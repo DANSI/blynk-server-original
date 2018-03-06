@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static cc.blynk.server.core.model.widgets.AppSyncWidget.ANY_TARGET;
@@ -197,6 +198,24 @@ public class DashBoard {
             }
         }
         throw new IllegalCommandException("Device with passed id not found.");
+    }
+
+    public boolean hasWidgetsByDeviceId(int deviceId) {
+        for (Widget widget : widgets) {
+            if (widget instanceof OnePinWidget) {
+                OnePinWidget onePinWidget = (OnePinWidget) widget;
+                if (onePinWidget.deviceId == deviceId) {
+                    return true;
+                }
+            }
+            if (widget instanceof MultiPinWidget) {
+                MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
+                if (multiPinWidget.deviceId == deviceId) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -443,6 +462,14 @@ public class DashBoard {
             copy[i] = tagsToCopy[i].copy();
         }
         return copy;
+    }
+
+    //removes devices that has no widgets assigned to
+    //probably those devices were added via device tiles widget
+    public void removeDevicesProvisionedFromDeviceTiles() {
+        List<Device> list = new ArrayList<>(Arrays.asList(this.devices));
+        list.removeIf(device -> !hasWidgetsByDeviceId(device.id));
+        this.devices = list.toArray(new Device[list.size()]);
     }
 
     @Override
