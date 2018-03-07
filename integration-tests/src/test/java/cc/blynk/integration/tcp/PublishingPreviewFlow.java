@@ -424,9 +424,6 @@ public class PublishingPreviewFlow extends IntegrationBase {
         clientPair.appClient.createWidget(10, "{\"id\":155, \"deviceId\":0, \"frequency\":400, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"GAUGE\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
         clientPair.appClient.verifyResult(ok(7));
 
-        clientPair.appClient.send("emailQr 10\0" + app.id);
-        clientPair.appClient.verifyResult(ok(8));
-
         TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
         appClient2.start();
 
@@ -445,6 +442,13 @@ public class PublishingPreviewFlow extends IntegrationBase {
         assertEquals(1, dashBoard.parentId);
         assertEquals(1, dashBoard.devices.length);
         assertEquals(0, dashBoard.devices[0].id);
+        assertEquals(2, dashBoard.widgets.length);
+        assertTrue(dashBoard.widgets[0] instanceof DeviceTiles);
+        deviceTiles = (DeviceTiles) dashBoard.getWidgetById(widgetId);
+        assertNotNull(deviceTiles.tiles);
+        assertNotNull(deviceTiles.templates);
+        assertEquals(0, deviceTiles.tiles.length);
+        assertEquals(1, deviceTiles.templates.length);
     }
 
     @Test
