@@ -122,7 +122,7 @@ public class WebhookProcessor extends NotificationBase {
 
             @Override
             public Response onCompleted(Response response) throws Exception {
-                if (response.getStatusCode() == 200 || response.getStatusCode() == 302) {
+                if (isValidResponseCode(response.getStatusCode())) {
                     webHook.failureCounter = 0;
                     if (response.hasResponseBody()) {
                         //todo could be optimized with response.getResponseBodyAsByteBuffer()
@@ -152,6 +152,17 @@ public class WebhookProcessor extends NotificationBase {
             }
         });
         globalStats.mark(WEB_HOOKS);
+    }
+
+    private static boolean isValidResponseCode(int responseCode) {
+        switch (responseCode) {
+            case 200:
+            case 204:
+            case 302:
+                return true;
+            default:
+                return false;
+        }
     }
 
     private static String format(String data, String triggerValue, boolean doBlynkCheck) {
