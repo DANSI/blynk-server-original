@@ -139,7 +139,7 @@ public class HardwareAppShareLogic extends BaseProcessorHandler {
                     ctx.writeAndFlush(deviceNotInNetwork(message.id), ctx.voidPromise());
                 }
 
-                process(state.user, dash, targetId, session, pin, pinType, value, now);
+                processEventorAndWebhook(state.user, dash, targetId, session, pin, pinType, value, now);
                 break;
         }
     }

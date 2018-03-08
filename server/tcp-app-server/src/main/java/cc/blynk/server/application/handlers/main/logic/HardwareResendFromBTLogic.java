@@ -81,7 +81,7 @@ public class HardwareResendFromBTLogic extends BaseProcessorHandler {
             dash.update(deviceId, pin, pinType, value, now);
 
             Session session = sessionDao.userSession.get(state.userKey);
-            process(state.user, dash, deviceId, session, pin, pinType, value, now);
+            processEventorAndWebhook(state.user, dash, deviceId, session, pin, pinType, value, now);
         }
     }
 
