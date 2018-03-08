@@ -14,7 +14,7 @@ public enum GraphPeriod {
     ONE_HOUR(60, MINUTE),
     THREE_HOURS(3 * 60, MINUTE),
     SIX_HOURS(6 * 60, MINUTE),
-    TWELFTH_HOURS(12 * 60, MINUTE),
+    TWELVE_HOURS(12 * 60, MINUTE),
     DAY(24 * 60, MINUTE),
     THREE_DAYS(24 * 3, HOURLY),
     WEEK(24 * 7, HOURLY),
