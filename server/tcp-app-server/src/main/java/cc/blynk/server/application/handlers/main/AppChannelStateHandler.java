@@ -8,6 +8,7 @@ import cc.blynk.server.core.protocol.enums.Command;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.handler.timeout.IdleStateEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -48,6 +49,16 @@ public class AppChannelStateHandler extends ChannelInboundHandlerAdapter {
                     }
                 }
             }
+        }
+    }
+
+    @Override
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        if (evt instanceof IdleStateEvent) {
+            log.trace("State handler. App timeout disconnect. Event : {}. Closing.", ((IdleStateEvent) evt).state());
+            ctx.close();
+        } else {
+            ctx.fireUserEventTriggered(evt);
         }
     }
 
