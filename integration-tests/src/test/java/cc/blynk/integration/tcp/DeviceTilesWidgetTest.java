@@ -17,8 +17,8 @@ import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphType;
 import cc.blynk.server.core.model.widgets.ui.Menu;
-import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTile;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
+import cc.blynk.server.core.model.widgets.ui.tiles.Tile;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileMode;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
@@ -322,12 +322,12 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         assertEquals(2, deviceTiles.tiles.length);
 
         int deviceIdIndex = 0;
-        for (DeviceTile deviceTile : deviceTiles.tiles) {
-            assertEquals(deviceIdIndex++, deviceTile.deviceId);
-            assertEquals(tileTemplate.id, deviceTile.templateId);
-            assertNotNull(deviceTile.dataStream);
-            assertEquals(1, deviceTile.dataStream.pin);
-            assertEquals(PinType.VIRTUAL, deviceTile.dataStream.pinType);
+        for (Tile tile : deviceTiles.tiles) {
+            assertEquals(deviceIdIndex++, tile.deviceId);
+            assertEquals(tileTemplate.id, tile.templateId);
+            assertNotNull(tile.dataStream);
+            assertEquals(1, tile.dataStream.pin);
+            assertEquals(PinType.VIRTUAL, tile.dataStream.pinType);
         }
 
         dataStream = new DataStream((byte) 2, PinType.VIRTUAL);
@@ -349,12 +349,12 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         assertEquals(2, deviceTiles.tiles.length);
 
         deviceIdIndex = 0;
-        for (DeviceTile deviceTile : deviceTiles.tiles) {
-            assertEquals(deviceIdIndex++, deviceTile.deviceId);
-            assertEquals(tileTemplate.id, deviceTile.templateId);
-            assertNotNull(deviceTile.dataStream);
-            assertEquals(2, deviceTile.dataStream.pin);
-            assertEquals(PinType.VIRTUAL, deviceTile.dataStream.pinType);
+        for (Tile tile : deviceTiles.tiles) {
+            assertEquals(deviceIdIndex++, tile.deviceId);
+            assertEquals(tileTemplate.id, tile.templateId);
+            assertNotNull(tile.dataStream);
+            assertEquals(2, tile.dataStream.pin);
+            assertEquals(PinType.VIRTUAL, tile.dataStream.pinType);
         }
     }
 
@@ -425,12 +425,12 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         assertEquals(2, deviceTiles.tiles.length);
 
         int deviceIdIndex = 0;
-        for (DeviceTile deviceTile : deviceTiles.tiles) {
-            assertEquals(deviceIdIndex++, deviceTile.deviceId);
-            assertEquals(tileTemplate.id, deviceTile.templateId);
-            assertNotNull(deviceTile.dataStream);
-            assertEquals(5, deviceTile.dataStream.pin);
-            assertEquals(PinType.VIRTUAL, deviceTile.dataStream.pinType);
+        for (Tile tile : deviceTiles.tiles) {
+            assertEquals(deviceIdIndex++, tile.deviceId);
+            assertEquals(tileTemplate.id, tile.templateId);
+            assertNotNull(tile.dataStream);
+            assertEquals(5, tile.dataStream.pin);
+            assertEquals(PinType.VIRTUAL, tile.dataStream.pinType);
         }
 
 
@@ -444,19 +444,19 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(), 0);
         assertNotNull(deviceTiles);
 
-        DeviceTile deviceTile = deviceTiles.tiles[0];
-        assertEquals(0, deviceTile.deviceId);
-        assertNotNull(deviceTile.dataStream);
-        assertEquals(5, deviceTile.dataStream.pin);
-        assertEquals(PinType.VIRTUAL, deviceTile.dataStream.pinType);
-        assertEquals("101", deviceTile.dataStream.value);
+        Tile tile = deviceTiles.tiles[0];
+        assertEquals(0, tile.deviceId);
+        assertNotNull(tile.dataStream);
+        assertEquals(5, tile.dataStream.pin);
+        assertEquals(PinType.VIRTUAL, tile.dataStream.pinType);
+        assertEquals("101", tile.dataStream.value);
 
-        DeviceTile deviceTile2 = deviceTiles.tiles[1];
-        assertEquals(1, deviceTile2.deviceId);
-        assertNotNull(deviceTile2.dataStream);
-        assertEquals(5, deviceTile2.dataStream.pin);
-        assertEquals(PinType.VIRTUAL, deviceTile2.dataStream.pinType);
-        assertNull(deviceTile2.dataStream.value);
+        Tile tile2 = deviceTiles.tiles[1];
+        assertEquals(1, tile2.deviceId);
+        assertNotNull(tile2.dataStream);
+        assertEquals(5, tile2.dataStream.pin);
+        assertEquals(PinType.VIRTUAL, tile2.dataStream.pinType);
+        assertNull(tile2.dataStream.value);
 
         clientPair.appClient.reset();
         clientPair.appClient.sync(1, 0);

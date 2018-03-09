@@ -27,7 +27,7 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
 
     public volatile TileTemplate[] templates = EMPTY_TEMPLATES;
 
-    public volatile DeviceTile[] tiles = EMPTY_DEVICE_TILES;
+    public volatile Tile[] tiles = EMPTY_DEVICE_TILES;
 
     //this field is needed only in the realtime when users selects some template for the device
     //so we know what reading widgets should update their state at that moment
@@ -40,13 +40,13 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
     public SortType sortType;
 
     public void deleteDeviceTilesByTemplateId(long deviceTileId) {
-        ArrayList<DeviceTile> list = new ArrayList<>();
-        for (DeviceTile tile : tiles) {
+        ArrayList<Tile> list = new ArrayList<>();
+        for (Tile tile : tiles) {
             if (tile.templateId != deviceTileId) {
                 list.add(tile);
             }
         }
-        tiles = list.toArray(new DeviceTile[list.size()]);
+        tiles = list.toArray(new Tile[list.size()]);
     }
 
     public TileTemplate findTemplateByDeviceId(int deviceId) {
@@ -67,13 +67,13 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
             return;
         }
 
-        ArrayList<DeviceTile> list = new ArrayList<>();
+        ArrayList<Tile> list = new ArrayList<>();
         for (TileTemplate tileTemplate : this.templates) {
             //creating new device tiles for updated TileTemplate
             if (tileTemplate.id == newTileTemplate.id) {
                 for (int deviceId : newTileTemplate.deviceIds) {
                     list.add(
-                            new DeviceTile(
+                            new Tile(
                                     deviceId,
                                     tileTemplate.id,
                                     newTileTemplate.dataStream == null
@@ -84,14 +84,14 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
                 }
             //leaving untouched device tiles that are not updated
             } else {
-                for (DeviceTile deviceTile : this.tiles) {
-                    if (deviceTile.templateId == tileTemplate.id) {
-                        list.add(deviceTile);
+                for (Tile tile : this.tiles) {
+                    if (tile.templateId == tileTemplate.id) {
+                        list.add(tile);
                     }
                 }
             }
         }
-        this.tiles = list.toArray(new DeviceTile[list.size()]);
+        this.tiles = list.toArray(new Tile[list.size()]);
     }
 
     public TileTemplate getTileTemplateByIdOrThrow(long id) {
@@ -145,8 +145,8 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
 
     @Override
     public boolean updateIfSame(int deviceId, byte pin, PinType pinType, String value) {
-        for (DeviceTile deviceTile : tiles) {
-            if (deviceTile.updateIfSame(deviceId, pin, pinType, value)) {
+        for (Tile tile : tiles) {
+            if (tile.updateIfSame(deviceId, pin, pinType, value)) {
                 return true;
             }
         }
@@ -155,7 +155,7 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
 
     @Override
     public void sendAppSync(Channel appChannel, int dashId, int targetId) {
-        for (DeviceTile tile : tiles) {
+        for (Tile tile : tiles) {
             if (tile.deviceId == targetId && tile.dataStream != null && tile.dataStream.notEmpty()) {
                 String hardBody = tile.dataStream.makeHardwareBody();
                 String body = prependDashIdAndDeviceId(dashId, targetId, hardBody);

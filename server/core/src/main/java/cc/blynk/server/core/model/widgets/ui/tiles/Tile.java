@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by Dmitriy Dumanskiy.
  * Created on 02.10.17.
  */
-public class DeviceTile {
+public class Tile {
 
     public final int deviceId;
 
@@ -20,9 +20,9 @@ public class DeviceTile {
     public final DataStream dataStream;
 
     @JsonCreator
-    public DeviceTile(@JsonProperty("deviceId") int deviceId,
-                      @JsonProperty("templateId") long templateId,
-                      @JsonProperty("pin") DataStream dataStream) {
+    public Tile(@JsonProperty("deviceId") int deviceId,
+                @JsonProperty("templateId") long templateId,
+                @JsonProperty("pin") DataStream dataStream) {
         this.deviceId = deviceId;
         this.templateId = templateId;
         this.dataStream = dataStream;
