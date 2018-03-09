@@ -12,16 +12,15 @@ import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.model.widgets.outputs.TextAlignment;
 import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
 import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
+import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphType;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
-import cc.blynk.server.core.model.widgets.ui.tiles.TileMode;
-import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
+import cc.blynk.server.core.model.widgets.ui.tiles.templates.PageTileTemplate;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
@@ -1712,12 +1711,12 @@ Device device = clientPair.appClient.getDevice();
                 graphDataStream1,
                 graphDataStream2,
         };
-        TileTemplate tileTemplate = new TileTemplate(1,
+        PageTileTemplate tileTemplate = new PageTileTemplate(1,
                 new Widget[] {
                         enhancedHistoryGraph
                 },
-                deviceIds, "123", TileMode.PAGE, "ESP8266", new DataStream((byte) 1, PinType.VIRTUAL),
-                null, null, 0, TextAlignment.LEFT, false, false, null, null);
+                deviceIds, "123", "name", "iconName", "ESP8266", new DataStream((byte) 1, PinType.VIRTUAL),
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
 
         clientPair.appClient.send("createTemplate " + b("1 " + deviceTiles.id + " ")
                 + MAPPER.writeValueAsString(tileTemplate));

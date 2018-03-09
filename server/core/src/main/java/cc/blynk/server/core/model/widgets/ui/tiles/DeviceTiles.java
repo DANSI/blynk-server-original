@@ -5,6 +5,7 @@ import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.AppSyncWidget;
 import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.outputs.TextAlignment;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.Channel;
@@ -38,6 +39,14 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
     public int columns;
 
     public SortType sortType;
+
+    public TextAlignment alignment = TextAlignment.LEFT;
+
+    public int color;
+
+    public boolean isDefaultColor = true;
+
+    public boolean disableWhenOffline;
 
     public void deleteDeviceTilesByTemplateId(long deviceTileId) {
         ArrayList<Tile> list = new ArrayList<>();

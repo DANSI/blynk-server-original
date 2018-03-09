@@ -16,10 +16,10 @@ import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
-import cc.blynk.server.core.model.widgets.outputs.TextAlignment;
+import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
-import cc.blynk.server.core.model.widgets.ui.tiles.TileMode;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
+import cc.blynk.server.core.model.widgets.ui.tiles.templates.PageTileTemplate;
 import cc.blynk.server.db.model.FlashedToken;
 import cc.blynk.server.notifications.mail.QrHolder;
 import cc.blynk.server.servers.BaseServer;
@@ -294,8 +294,9 @@ public class PublishingPreviewFlow extends IntegrationBase {
         clientPair.appClient.createWidget(10, deviceTiles);
         clientPair.appClient.verifyResult(ok(4));
 
-        TileTemplate tileTemplate = new TileTemplate(1, null, null, "123",
-                TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null, null);
+        TileTemplate tileTemplate = new PageTileTemplate(1,
+                null, null, "123", "name", "iconName", "ESP8266", null,
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
 
         clientPair.appClient.send("createTemplate " + b("10 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
@@ -307,8 +308,9 @@ public class PublishingPreviewFlow extends IntegrationBase {
         clientPair.appClient.createWidget(1, deviceTiles);
         clientPair.appClient.verifyResult(ok(7));
 
-        tileTemplate = new TileTemplate(1, null, null, "123",
-                TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null, null);
+        tileTemplate = new PageTileTemplate(1,
+                null, null, "123", "name", "iconName", "ESP8266", null,
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
 
         clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
@@ -347,8 +349,9 @@ public class PublishingPreviewFlow extends IntegrationBase {
         assertEquals(0, deviceTiles.tiles.length);
         assertEquals(1, deviceTiles.templates.length);
 
-        tileTemplate = new TileTemplate(1, null, new int[] {0}, "123",
-                TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null, null);
+        tileTemplate = new PageTileTemplate(1,
+                null, new int[] {0}, "123", "name", "iconName", "ESP8266", null,
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
         appClient2.send("updateTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
         appClient2.verifyResult(ok(4));
@@ -414,8 +417,9 @@ public class PublishingPreviewFlow extends IntegrationBase {
         clientPair.appClient.createWidget(10, deviceTiles);
         clientPair.appClient.verifyResult(ok(5));
 
-        TileTemplate tileTemplate = new TileTemplate(1, null, new int[] {2}, "123",
-                TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null, null);
+        TileTemplate tileTemplate = new PageTileTemplate(1,
+                null, new int[] {2}, "123", "name", "iconName", "ESP8266", null,
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
 
         clientPair.appClient.send("createTemplate " + b("10 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));

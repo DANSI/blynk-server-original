@@ -10,17 +10,18 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Button;
-import cc.blynk.server.core.model.widgets.outputs.TextAlignment;
 import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
 import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
 import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
+import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphType;
 import cc.blynk.server.core.model.widgets.ui.Menu;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.Tile;
-import cc.blynk.server.core.model.widgets.ui.tiles.TileMode;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
+import cc.blynk.server.core.model.widgets.ui.tiles.templates.ButtonTileTemplate;
+import cc.blynk.server.core.model.widgets.ui.tiles.templates.PageTileTemplate;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
@@ -46,6 +47,7 @@ import static junit.framework.TestCase.assertNull;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.never;
@@ -85,7 +87,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
     }
 
     @Test
-    public void createTemplate() throws Exception {
+    public void createPageTemplate() throws Exception {
         long widgetId = 21321;
 
         DeviceTiles deviceTiles = new DeviceTiles();
@@ -98,8 +100,9 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, deviceTiles);
         clientPair.appClient.verifyResult(ok(1));
 
-        TileTemplate tileTemplate = new TileTemplate(1, null, null, "123",
-                TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null, null);
+        PageTileTemplate tileTemplate = new PageTileTemplate(1,
+                null, null, "name", "name", "iconName", "ESP8266", new DataStream((byte) 1, PinType.VIRTUAL),
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
 
         clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
@@ -111,7 +114,69 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         assertEquals(widgetId, deviceTiles.id);
         assertNotNull(deviceTiles.templates);
         assertEquals(1, deviceTiles.templates.length);
-        assertEquals("123", deviceTiles.templates[0].name);
+        assertEquals("name", deviceTiles.templates[0].name);
+        assertEquals(0, deviceTiles.tiles.length);
+    }
+
+    @Test
+    public void createPageTemplateWithOutModeField() throws Exception {
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(1));
+
+        clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
+                + "{\"id\":1,\"templateId\":\"123\",\"name\":\"name\",\"iconName\":\"iconName\",\"boardType\":\"ESP8266\",\"showDeviceName\":false,\"color\":0,\"tileColor\":0,\"fontSize\":\"LARGE\",\"showTileLabel\":false,\"pin\":{\"pin\":1,\"pwmMode\":false,\"rangeMappingOn\":false,\"pinType\":\"VIRTUAL\",\"min\":0.0,\"max\":255.0}}");
+        clientPair.appClient.verifyResult(ok(2));
+
+        clientPair.appClient.send("getWidget 1\0" + widgetId);
+        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(3), 0);
+        assertNotNull(deviceTiles);
+        assertEquals(widgetId, deviceTiles.id);
+        assertNotNull(deviceTiles.templates);
+        assertEquals(1, deviceTiles.templates.length);
+        assertEquals("name", deviceTiles.templates[0].name);
+        assertTrue(deviceTiles.templates[0] instanceof PageTileTemplate);
+        assertEquals(0, deviceTiles.tiles.length);
+    }
+
+    @Test
+    public void createButtonTileTemplate() throws Exception {
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(1));
+
+        ButtonTileTemplate tileTemplate = new ButtonTileTemplate(1,
+                null, null, "name", "name", "iconName", "ESP8266", new DataStream((byte) 1, PinType.VIRTUAL),
+                false, false, false, null, null);
+
+        clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        clientPair.appClient.verifyResult(ok(2));
+
+        clientPair.appClient.send("getWidget 1\0" + widgetId);
+        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(3), 0);
+        assertNotNull(deviceTiles);
+        assertEquals(widgetId, deviceTiles.id);
+        assertNotNull(deviceTiles.templates);
+        assertEquals(1, deviceTiles.templates.length);
+        assertEquals("name", deviceTiles.templates[0].name);
+        assertTrue(deviceTiles.templates[0] instanceof ButtonTileTemplate);
         assertEquals(0, deviceTiles.tiles.length);
     }
 
@@ -129,15 +194,17 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, deviceTiles);
         clientPair.appClient.verifyResult(ok(1));
 
-        TileTemplate tileTemplate = new TileTemplate(1, null, null, "123",
-                TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null, null);
+        PageTileTemplate tileTemplate = new PageTileTemplate(1,
+                null, null, "name", "name", "iconName", "ESP8266", null,
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
 
         clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
         clientPair.appClient.verifyResult(ok(2));
 
-        tileTemplate = new TileTemplate(1, null, new int[] {0}, "123",
-                TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null, null);
+        tileTemplate = new PageTileTemplate(1,
+                null, new int[] {0}, "name", "name", "iconName", "ESP8266", null,
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
 
         clientPair.appClient.send("updateTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
@@ -151,7 +218,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         assertNotNull(deviceTiles.templates);
         assertEquals(1, deviceTiles.templates.length);
         assertArrayEquals(new int[] {0}, deviceTiles.templates[0].deviceIds);
-        assertEquals("123", deviceTiles.templates[0].name);
+        assertEquals("name", deviceTiles.templates[0].name);
         assertEquals(1, deviceTiles.tiles.length);
         assertEquals(0, deviceTiles.tiles[0].deviceId);
         assertEquals(tileTemplate.id, deviceTiles.tiles[0].templateId);
@@ -172,8 +239,9 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, deviceTiles);
         clientPair.appClient.verifyResult(ok(1));
 
-        TileTemplate tileTemplate = new TileTemplate(0, null, null, "123",
-                TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null, null);
+        PageTileTemplate tileTemplate = new PageTileTemplate(0,
+                null, null, "name", "name", "iconName", "ESP8266", null,
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
 
         clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
@@ -217,16 +285,18 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, deviceTiles);
         clientPair.appClient.verifyResult(ok(1));
 
-        TileTemplate tileTemplate = new TileTemplate(1, null, null, "123",
-                TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null, null);
+        PageTileTemplate tileTemplate = new PageTileTemplate(1,
+                null, null, "name", "name", "iconName", "ESP8266", null,
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
 
         clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
         clientPair.appClient.verifyResult(ok(2));
 
         DataStream dataStream = new DataStream((byte) 1, PinType.VIRTUAL);
-        tileTemplate = new TileTemplate(1, null, new int[] {0}, "123",
-                TileMode.PAGE, "ESP8266", dataStream, null, null, 0, TextAlignment.LEFT, false, false, null, null);
+        tileTemplate = new PageTileTemplate(1,
+                null, new int[]{0}, "name", "name", "iconName", "ESP8266", dataStream,
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
 
         clientPair.appClient.send("updateTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
@@ -239,7 +309,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         assertNotNull(deviceTiles.templates);
         assertEquals(1, deviceTiles.templates.length);
         assertArrayEquals(new int[] {0}, deviceTiles.templates[0].deviceIds);
-        assertEquals("123", deviceTiles.templates[0].name);
+        assertEquals("name", deviceTiles.templates[0].name);
         assertEquals(1, deviceTiles.tiles.length);
         assertEquals(0, deviceTiles.tiles[0].deviceId);
         assertEquals(tileTemplate.id, deviceTiles.tiles[0].templateId);
@@ -248,8 +318,9 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         assertEquals(PinType.VIRTUAL, deviceTiles.tiles[0].dataStream.pinType);
 
         dataStream = new DataStream((byte) 2, PinType.VIRTUAL);
-        tileTemplate = new TileTemplate(1, null, new int[] {0}, "123",
-                TileMode.PAGE, "ESP8266", dataStream, null, null, 0, TextAlignment.LEFT, false, false, null, null);
+        tileTemplate = new PageTileTemplate(1,
+                null, new int[]{0}, "name", "name", "iconName", "ESP8266", dataStream,
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
 
         clientPair.appClient.send("updateTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
@@ -262,7 +333,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         assertNotNull(deviceTiles.templates);
         assertEquals(1, deviceTiles.templates.length);
         assertArrayEquals(new int[] {0}, deviceTiles.templates[0].deviceIds);
-        assertEquals("123", deviceTiles.templates[0].name);
+        assertEquals("name", deviceTiles.templates[0].name);
         assertEquals(1, deviceTiles.tiles.length);
         assertEquals(0, deviceTiles.tiles[0].deviceId);
         assertEquals(tileTemplate.id, deviceTiles.tiles[0].templateId);
@@ -296,16 +367,18 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, deviceTiles);
         clientPair.appClient.verifyResult(ok(1));
 
-        TileTemplate tileTemplate = new TileTemplate(1, null, null, "123",
-                TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null, null);
+        TileTemplate tileTemplate = new PageTileTemplate(1,
+                null, null, "name", "name", "iconName", "ESP8266", null,
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
 
         clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
         clientPair.appClient.verifyResult(ok(2));
 
         DataStream dataStream = new DataStream((byte) 1, PinType.VIRTUAL);
-        tileTemplate = new TileTemplate(1, null, new int[] {0, 1}, "123",
-                TileMode.PAGE, "ESP8266", dataStream, null, null, 0, TextAlignment.LEFT, false, false, null, null);
+        tileTemplate = new PageTileTemplate(1,
+                null, new int[]{0, 1}, "name", "name", "iconName", "ESP8266", dataStream,
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
 
         clientPair.appClient.send("updateTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
@@ -318,7 +391,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         assertNotNull(deviceTiles.templates);
         assertEquals(1, deviceTiles.templates.length);
         assertArrayEquals(new int[] {0, 1}, deviceTiles.templates[0].deviceIds);
-        assertEquals("123", deviceTiles.templates[0].name);
+        assertEquals("name", deviceTiles.templates[0].name);
         assertEquals(2, deviceTiles.tiles.length);
 
         int deviceIdIndex = 0;
@@ -331,8 +404,9 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         }
 
         dataStream = new DataStream((byte) 2, PinType.VIRTUAL);
-        tileTemplate = new TileTemplate(1, null, new int[] {0, 1}, "123",
-                TileMode.PAGE, "ESP8266", dataStream, null, null, 0, TextAlignment.LEFT, false, false, null, null);
+        tileTemplate = new PageTileTemplate(1,
+                null, new int[]{0, 1}, "name", "name", "iconName", "ESP8266", dataStream,
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
 
         clientPair.appClient.send("updateTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
@@ -345,7 +419,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         assertNotNull(deviceTiles.templates);
         assertEquals(1, deviceTiles.templates.length);
         assertArrayEquals(new int[] {0, 1}, deviceTiles.templates[0].deviceIds);
-        assertEquals("123", deviceTiles.templates[0].name);
+        assertEquals("name", deviceTiles.templates[0].name);
         assertEquals(2, deviceTiles.tiles.length);
 
         deviceIdIndex = 0;
@@ -383,8 +457,9 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, deviceTiles);
         clientPair.appClient.verifyResult(ok(1));
 
-        TileTemplate tileTemplate = new TileTemplate(1, null, null, "123",
-                TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null, null);
+        TileTemplate tileTemplate = new PageTileTemplate(1,
+                null, null, "name", "name", "iconName", "ESP8266", null,
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
 
         clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
@@ -406,8 +481,9 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         valueDisplay.pinType = PinType.VIRTUAL;
         valueDisplay.deviceId = 0;
 
-        tileTemplate = new TileTemplate(1, new Widget[]{button, valueDisplay}, new int[] {0, 1}, "123",
-                TileMode.PAGE, "ESP8266", dataStream, null, null, 0, TextAlignment.LEFT, false, false, null, null);
+        tileTemplate = new PageTileTemplate(1,
+                new Widget[]{button, valueDisplay}, new int[]{0, 1}, "name", "name", "iconName", "ESP8266", dataStream,
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
 
         clientPair.appClient.send("updateTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
@@ -421,7 +497,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         assertEquals(1, deviceTiles.templates.length);
         assertEquals(2, deviceTiles.templates[0].widgets.length);
         assertArrayEquals(new int[] {0, 1}, deviceTiles.templates[0].deviceIds);
-        assertEquals("123", deviceTiles.templates[0].name);
+        assertEquals("name", deviceTiles.templates[0].name);
         assertEquals(2, deviceTiles.tiles.length);
 
         int deviceIdIndex = 0;
@@ -505,8 +581,9 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, deviceTiles);
         clientPair.appClient.verifyResult(ok(1));
 
-        TileTemplate tileTemplate = new TileTemplate(1, null, null, "123",
-                TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null, null);
+        TileTemplate tileTemplate = new PageTileTemplate(1,
+                null, null, "name", "name", "iconName", "ESP8266", null,
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
 
         clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
@@ -524,8 +601,9 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
 
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.readingWidgetsWorker, 0, 1000, TimeUnit.MILLISECONDS);
 
-        tileTemplate = new TileTemplate(1, new Widget[]{valueDisplay}, new int[] {0}, "123",
-                TileMode.PAGE, "ESP8266", dataStream, null, null, 0, TextAlignment.LEFT, false, false, null, null);
+        tileTemplate = new PageTileTemplate(1,
+                new Widget[]{valueDisplay}, new int[]{0}, "name", "name", "iconName", "ESP8266", dataStream,
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
 
         clientPair.appClient.send("updateTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
@@ -582,8 +660,9 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, deviceTiles);
         clientPair.appClient.verifyResult(ok(1));
 
-        TileTemplate tileTemplate = new TileTemplate(1, null, null, "123",
-                TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null, null);
+        TileTemplate tileTemplate = new PageTileTemplate(1,
+                null, null, "name", "name", "iconName", "ESP8266", null,
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
 
         clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
@@ -601,8 +680,9 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
 
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.readingWidgetsWorker, 0, 1000, TimeUnit.MILLISECONDS);
 
-        tileTemplate = new TileTemplate(1, new Widget[]{valueDisplay}, new int[] {1}, "123",
-                TileMode.PAGE, "ESP8266", dataStream, null, null, 0, TextAlignment.LEFT, false, false, null, null);
+        tileTemplate = new PageTileTemplate(1,
+                new Widget[]{valueDisplay}, new int[]{1}, "name", "name", "iconName", "ESP8266", null,
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
 
         clientPair.appClient.send("updateTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
@@ -635,8 +715,9 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         int[] deviceIds = new int[] {0};
         DataStream dataStream = new DataStream((byte) 1, PinType.VIRTUAL);
 
-        TileTemplate tileTemplate = new TileTemplate(1, null, deviceIds, "123",
-                TileMode.PAGE, "ESP8266", dataStream, null, null, 0, TextAlignment.LEFT, false, false, null, null);
+        TileTemplate tileTemplate = new PageTileTemplate(1,
+                null, deviceIds, "name", "name", "iconName", "ESP8266", dataStream,
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
 
         clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
@@ -649,7 +730,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         assertNotNull(deviceTiles.templates);
         assertArrayEquals(new int[] {0}, deviceTiles.templates[0].deviceIds);
         assertEquals(1, deviceTiles.templates[0].deviceIds.length);
-        assertEquals("123", deviceTiles.templates[0].name);
+        assertEquals("name", deviceTiles.templates[0].name);
         assertEquals(1, deviceTiles.tiles.length);
         assertEquals(0, deviceTiles.tiles[0].deviceId);
         assertEquals(tileTemplate.id, deviceTiles.tiles[0].templateId);
@@ -675,8 +756,9 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         int[] deviceIds = new int[] {0};
         DataStream dataStream = new DataStream((byte) 1, PinType.VIRTUAL);
 
-        TileTemplate tileTemplate = new TileTemplate(1, null, deviceIds, "123",
-                TileMode.PAGE, "ESP8266", dataStream, null, null, 0, TextAlignment.LEFT, false, false, null, null);
+        TileTemplate tileTemplate = new PageTileTemplate(1,
+                null, deviceIds, "name", "name", "iconName", "ESP8266", dataStream,
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
 
         clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
@@ -689,7 +771,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         assertNotNull(deviceTiles.templates);
         assertArrayEquals(new int[] {0}, deviceTiles.templates[0].deviceIds);
         assertEquals(1, deviceTiles.templates[0].deviceIds.length);
-        assertEquals("123", deviceTiles.templates[0].name);
+        assertEquals("name", deviceTiles.templates[0].name);
         assertEquals(1, deviceTiles.tiles.length);
         assertEquals(0, deviceTiles.tiles[0].deviceId);
         assertEquals(tileTemplate.id, deviceTiles.tiles[0].templateId);
@@ -710,7 +792,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         assertNotNull(deviceTiles.templates);
         assertArrayEquals(new int[] {0}, deviceTiles.templates[0].deviceIds);
         assertEquals(1, deviceTiles.templates[0].deviceIds.length);
-        assertEquals("123", deviceTiles.templates[0].name);
+        assertEquals("name", deviceTiles.templates[0].name);
         assertEquals(1, deviceTiles.tiles.length);
         assertEquals(0, deviceTiles.tiles[0].deviceId);
         assertEquals(tileTemplate.id, deviceTiles.tiles[0].templateId);
@@ -748,8 +830,9 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         deviceTiles.width = 50;
         deviceTiles.height = 100;
 
-        TileTemplate tileTemplate = new TileTemplate(1, null, null, "123",
-                TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null, null);
+        TileTemplate tileTemplate = new PageTileTemplate(1,
+                null, null, "name", "name", "iconName", "ESP8266", null,
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
         deviceTiles.templates = new TileTemplate[] {
                 tileTemplate
         };
@@ -763,7 +846,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         assertEquals(widgetId, deviceTiles.id);
         assertNotNull(deviceTiles.templates);
         assertEquals(1, deviceTiles.templates.length);
-        assertEquals("123", deviceTiles.templates[0].name);
+        assertEquals("name", deviceTiles.templates[0].name);
 
 
         clientPair.appClient.send("deleteTemplate " + b("1 " + widgetId + " " + tileTemplate.id));
@@ -788,8 +871,9 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         deviceTiles.width = 50;
         deviceTiles.height = 100;
 
-        TileTemplate tileTemplate = new TileTemplate(1, null, null, "123",
-                TileMode.PAGE, "ESP8266", new DataStream((byte) -1, null), null, null, 0, TextAlignment.LEFT, false, false, null, null);
+        TileTemplate tileTemplate = new PageTileTemplate(1,
+                null, null, "name", "name", "iconName", "ESP8266", new DataStream((byte) -1, null),
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
         deviceTiles.templates = new TileTemplate[] {
                 tileTemplate
         };
@@ -797,8 +881,9 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, deviceTiles);
         clientPair.appClient.verifyResult(ok(1));
 
-        tileTemplate = new TileTemplate(1, null, new int[] {0}, "123",
-                TileMode.PAGE, "ESP8266", new DataStream((byte) 1, PinType.VIRTUAL), null, null, 0, TextAlignment.LEFT, false, false, null, null);
+        tileTemplate = new PageTileTemplate(1,
+                null, new int[] {0}, "name", "name", "iconName", "ESP8266", new DataStream((byte) 1, PinType.VIRTUAL),
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
 
         clientPair.appClient.send("updateTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
@@ -812,7 +897,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         assertNotNull(deviceTiles.templates);
         assertEquals(1, deviceTiles.templates.length);
         assertArrayEquals(new int[] {0}, deviceTiles.templates[0].deviceIds);
-        assertEquals("123", deviceTiles.templates[0].name);
+        assertEquals("name", deviceTiles.templates[0].name);
         assertEquals(1, deviceTiles.tiles.length);
         assertEquals(0, deviceTiles.tiles[0].deviceId);
         assertEquals(tileTemplate.id, deviceTiles.tiles[0].templateId);
@@ -849,11 +934,9 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
                 graphDataStream
         };
 
-        TileTemplate tileTemplate = new TileTemplate(1,
-                new Widget[] {
-                        enhancedHistoryGraph
-                },
-                deviceIds, "123", TileMode.PAGE, "ESP8266", new DataStream((byte) 1, PinType.VIRTUAL), null, null, 0, TextAlignment.LEFT, false, false, null, null);
+        TileTemplate tileTemplate = new PageTileTemplate(1,
+                new Widget[]{enhancedHistoryGraph}, deviceIds, "name", "name", "iconName", "ESP8266", new DataStream((byte)1, PinType.VIRTUAL),
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
 
         clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
@@ -891,11 +974,9 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
                 graphDataStream
         };
 
-        TileTemplate tileTemplate = new TileTemplate(1,
-                new Widget[] {
-                        enhancedHistoryGraph
-                },
-                deviceIds, "123", TileMode.PAGE, "ESP8266", new DataStream((byte) 1, PinType.VIRTUAL), null, null, 0, TextAlignment.LEFT, false, false, null, null);
+        TileTemplate tileTemplate = new PageTileTemplate(1,
+                new Widget[]{enhancedHistoryGraph}, deviceIds, "name", "name", "iconName", "ESP8266", new DataStream((byte)1, PinType.VIRTUAL),
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
 
         clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
@@ -922,8 +1003,9 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.send("getEnergy");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, GET_ENERGY, "2600")));
 
-        TileTemplate tileTemplate = new TileTemplate(1, null, null, "123",
-                TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null, null);
+        TileTemplate tileTemplate = new PageTileTemplate(1,
+                null, null, "name", "name", "iconName", "ESP8266", null,
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
 
         clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
@@ -968,8 +1050,9 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, deviceTiles);
         clientPair.appClient.verifyResult(ok(1));
 
-        TileTemplate tileTemplate = new TileTemplate(1, null, null, "123",
-                TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null, null);
+        TileTemplate tileTemplate = new PageTileTemplate(1,
+                null, null, "name", "name", "iconName", "ESP8266", null,
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
 
         clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
@@ -990,7 +1073,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         assertEquals(widgetId, deviceTiles.id);
         assertNotNull(deviceTiles.templates);
         assertEquals(1, deviceTiles.templates.length);
-        assertEquals("123", deviceTiles.templates[0].name);
+        assertEquals("name", deviceTiles.templates[0].name);
         assertNotNull(deviceTiles.templates[0].widgets[0]);
         assertEquals("Some Text 3", deviceTiles.templates[0].widgets[0].label);
     }
@@ -1009,8 +1092,9 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, deviceTiles);
         clientPair.appClient.verifyResult(ok(1));
 
-        TileTemplate tileTemplate = new TileTemplate(1, null, null, "123",
-                TileMode.PAGE, "ESP8266", null, null, null, 0, TextAlignment.LEFT, false, false, null, null);
+        TileTemplate tileTemplate = new PageTileTemplate(1,
+                null, null, "name", "name", "iconName", "ESP8266", null,
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
 
         clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
@@ -1045,7 +1129,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         assertEquals(widgetId, deviceTiles.id);
         assertNotNull(deviceTiles.templates);
         assertEquals(1, deviceTiles.templates.length);
-        assertEquals("123", deviceTiles.templates[0].name);
+        assertEquals("name", deviceTiles.templates[0].name);
         assertNotNull(deviceTiles.templates[0].widgets[0]);
         assertEquals(500, ((Menu) deviceTiles.templates[0].widgets[0]).labels.length);
     }

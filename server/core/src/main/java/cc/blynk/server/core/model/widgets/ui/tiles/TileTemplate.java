@@ -2,9 +2,11 @@ package cc.blynk.server.core.model.widgets.ui.tiles;
 
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.model.widgets.outputs.TextAlignment;
-import com.fasterxml.jackson.annotation.JsonCreator;
+import cc.blynk.server.core.model.widgets.ui.tiles.templates.ButtonTileTemplate;
+import cc.blynk.server.core.model.widgets.ui.tiles.templates.PageTileTemplate;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_INTS;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_WIDGETS;
@@ -14,7 +16,16 @@ import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_WIDGETS;
  * Created by Dmitriy Dumanskiy.
  * Created on 02.10.17.
  */
-public class TileTemplate {
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "mode",
+        defaultImpl = PageTileTemplate.class)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = PageTileTemplate.class, name = "PAGE"),
+        @JsonSubTypes.Type(value = ButtonTileTemplate.class, name = "BUTTON")
+})
+public abstract class TileTemplate {
 
     public final long id;
 
@@ -22,62 +33,37 @@ public class TileTemplate {
 
     public final int[] deviceIds;
 
+    public final String templateId;
+
     public final String name;
 
-    public final TileMode mode;
+    public final String iconName;
 
     public final String boardType;
 
     @JsonProperty("pin")
     public final DataStream dataStream;
 
-    public final String valueName;
-
-    public final String valueSuffix;
-
-    public final int color;
-
-    public final TextAlignment alignment;
-
-    public final boolean disableWhenOffline;
-
     public final boolean showDeviceName;
 
-    public final String templateId;
-
-    public final String iconName;
-
-    @JsonCreator
-    public TileTemplate(@JsonProperty("id") long id,
-                        @JsonProperty("widgets") Widget[] widgets,
-                        @JsonProperty("deviceIds") int[] deviceIds,
-                        @JsonProperty("name") String name,
-                        @JsonProperty("mode") TileMode mode,
-                        @JsonProperty("boardType") String boardType,
-                        @JsonProperty("pin") DataStream dataStream,
-                        @JsonProperty("valueName") String valueName,
-                        @JsonProperty("valueSuffix") String valueSuffix,
-                        @JsonProperty("color") int color,
-                        @JsonProperty("alignment") TextAlignment alignment,
-                        @JsonProperty("disableWhenOffline") boolean disableWhenOffline,
-                        @JsonProperty("showDeviceName") boolean showDeviceName,
-                        @JsonProperty("templateId") String templateId,
-                        @JsonProperty("iconName") String iconName) {
+    public TileTemplate(long id,
+                        Widget[] widgets,
+                        int[] deviceIds,
+                        String templateId,
+                        String name,
+                        String iconName,
+                        String boardType,
+                        DataStream dataStream,
+                        boolean showDeviceName) {
         this.id = id;
         this.widgets = widgets == null ? EMPTY_WIDGETS : widgets;
         this.deviceIds = deviceIds == null ? EMPTY_INTS : deviceIds;
+        this.templateId = templateId;
         this.name = name;
-        this.mode = mode;
+        this.iconName = iconName;
         this.boardType = boardType;
         this.dataStream = dataStream;
-        this.valueName = valueName;
-        this.valueSuffix = valueSuffix;
-        this.color = color;
-        this.alignment = alignment;
-        this.disableWhenOffline = disableWhenOffline;
         this.showDeviceName = showDeviceName;
-        this.templateId = templateId;
-        this.iconName = iconName;
     }
 
     public int getPrice() {
