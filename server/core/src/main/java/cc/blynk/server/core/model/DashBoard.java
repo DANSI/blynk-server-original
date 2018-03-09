@@ -81,19 +81,23 @@ public class DashBoard {
     @JsonDeserialize(keyUsing = PinStorageKeyDeserializer.class)
     public Map<PinStorageKey, String> pinsStorage = Collections.emptyMap();
 
-    public void update(int deviceId, byte pin, PinType type, String value, long now) {
+    public void update(int deviceId, byte pin, PinType pinType, String value, long now) {
+        if (!updateWidgets(deviceId, pin, pinType, value, now)) {
+            //special case. #237 if no widget - storing without widget.
+            putPinStorageValue(deviceId, pinType, pin, value);
+        }
+
+        this.updatedAt = now;
+    }
+
+    private boolean updateWidgets(int deviceId, byte pin, PinType type, String value, long now) {
         boolean hasWidget = false;
         for (Widget widget : widgets) {
             if (widget.updateIfSame(deviceId, pin, type, value)) {
                 hasWidget = true;
             }
         }
-        //special case. #237 if no widget - storing without widget.
-        if (!hasWidget) {
-            putPinStorageValue(deviceId, type, pin, value);
-        }
-
-        this.updatedAt = now;
+        return hasWidget;
     }
 
     public String getNameOrEmpty() {

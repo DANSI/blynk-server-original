@@ -6,7 +6,7 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
-import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTile;
+import cc.blynk.server.core.model.widgets.ui.tiles.Tile;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 
 /**
@@ -25,7 +25,7 @@ public final class EmptyArraysUtil {
     public static final Device[] EMPTY_DEVICES = {};
     public static final Widget[] EMPTY_WIDGETS = {};
     public static final TileTemplate[] EMPTY_TEMPLATES = {};
-    public static final DeviceTile[] EMPTY_DEVICE_TILES = {};
+    public static final Tile[] EMPTY_DEVICE_TILES = {};
     public static final byte[] EMPTY_BYTES = {};
     public static final App[] EMPTY_APPS = {};
     public static final GraphDataStream[] EMPTY_GRAPH_DATA_STREAMS = {};
