@@ -45,7 +45,7 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
     private final GlobalStats stats;
 
     public AppShareHandler(Holder holder, AppShareStateHolder state) {
-        super(StringMessage.class, holder.limits);
+        super(StringMessage.class);
         this.hardwareApp = new HardwareAppShareLogic(holder, state.userKey.email);
         this.graphData = new GetGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
         this.enhancedGraphDataLogic = new GetEnhancedGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);

@@ -156,7 +156,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final GlobalStats stats;
 
     public AppHandler(Holder holder, AppStateHolder state) {
-        super(StringMessage.class, holder.limits);
+        super(StringMessage.class);
         this.token = new GetTokenLogic(holder);
         this.assignTokenLogic = new AssignTokenLogic(holder);
         this.hardwareApp = new HardwareAppLogic(holder, state.user.email);

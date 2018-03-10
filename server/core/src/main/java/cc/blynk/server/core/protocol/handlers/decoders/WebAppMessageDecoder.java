@@ -1,11 +1,13 @@
 package cc.blynk.server.core.protocol.handlers.decoders;
 
+import cc.blynk.server.Limits;
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.stats.GlobalStats;
+import cc.blynk.server.core.stats.metrics.InstanceLoadMeter;
+import cc.blynk.server.handlers.QuotaLimitChecker;
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
@@ -22,15 +24,16 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * Created by Dmitriy Dumanskiy.
  * Created on 11.01.16.
  */
-@ChannelHandler.Sharable
 public class WebAppMessageDecoder extends ChannelInboundHandlerAdapter {
 
     private static final Logger log = LogManager.getLogger(WebAppMessageDecoder.class);
 
     private final GlobalStats stats;
+    private final QuotaLimitChecker limitChecker;
 
-    public WebAppMessageDecoder(GlobalStats globalStats) {
+    public WebAppMessageDecoder(GlobalStats globalStats, Limits limits) {
         this.stats = globalStats;
+        this.limitChecker = new QuotaLimitChecker(limits.userQuotaLimit);
     }
 
     @Override
@@ -42,6 +45,10 @@ public class WebAppMessageDecoder extends ChannelInboundHandlerAdapter {
 
                 short command = in.readUnsignedByte();
                 int messageId = in.readUnsignedShort();
+
+                if (limitChecker.quotaReached(ctx, messageId)) {
+                    return;
+                }
 
                 MessageBase message;
                 if (command == Command.RESPONSE) {
@@ -67,6 +74,10 @@ public class WebAppMessageDecoder extends ChannelInboundHandlerAdapter {
         if (cause instanceof WebSocketHandshakeException) {
             log.debug("Web Socket Handshake Exception.", cause);
         }
+    }
+
+    public InstanceLoadMeter getQuotaMeter() {
+        return limitChecker.quotaMeter;
     }
 
 }

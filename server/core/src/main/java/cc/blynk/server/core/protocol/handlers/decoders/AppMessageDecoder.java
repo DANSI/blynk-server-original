@@ -1,10 +1,13 @@
 package cc.blynk.server.core.protocol.handlers.decoders;
 
+import cc.blynk.server.Limits;
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.exceptions.UnsupportedCommandException;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.stats.GlobalStats;
+import cc.blynk.server.core.stats.metrics.InstanceLoadMeter;
+import cc.blynk.server.handlers.QuotaLimitChecker;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -32,9 +35,11 @@ public class AppMessageDecoder extends ByteToMessageDecoder {
     public static final int PROTOCOL_APP_HEADER_SIZE = 7;
     private static final DecoderException decoderException =
             new DecoderException(new UnsupportedCommandException("Length field is wrong.", 1));
+    private final QuotaLimitChecker limitChecker;
 
-    public AppMessageDecoder(GlobalStats stats) {
+    public AppMessageDecoder(GlobalStats stats, Limits limits) {
         this.stats = stats;
+        this.limitChecker = new QuotaLimitChecker(limits.userQuotaLimit);
     }
 
     @Override
@@ -50,6 +55,10 @@ public class AppMessageDecoder extends ByteToMessageDecoder {
         //actually here should be long. but we do not expect this number to be large
         //so it should perfectly fit int
         int codeOrLength = (int) in.readUnsignedInt();
+
+        if (limitChecker.quotaReached(ctx, messageId)) {
+            return;
+        }
 
         MessageBase message;
         if (command == Command.RESPONSE) {
@@ -78,4 +87,7 @@ public class AppMessageDecoder extends ByteToMessageDecoder {
         }
     }
 
+    public InstanceLoadMeter getQuotaMeter() {
+        return limitChecker.quotaMeter;
+    }
 }

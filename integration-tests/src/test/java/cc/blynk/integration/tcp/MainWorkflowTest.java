@@ -52,7 +52,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.after;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
@@ -1250,35 +1249,6 @@ public class MainWorkflowTest extends IntegrationBase {
         assertEquals(1, devices[0].id);
         assertEquals("MyDevice", devices[0].name);
         assertNotEquals("aaa", devices[0].token);
-    }
-
-    @Test
-    @Ignore("hard to test this case...")
-    public void testTryReachQuotaLimitAndWarningExceededLimit() throws Exception {
-        String body = "1 ar 100 100";
-
-        //within 1 second sending more messages than default limit 100.
-        for (int i = 0; i < 1000 / 9; i++) {
-            clientPair.appClient.send("hardware " + body, 1);
-            sleep(9);
-        }
-
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, QUOTA_LIMIT)));
-        verify(clientPair.hardwareClient.responseMock, atLeast(100)).channelRead(any(), eq(hardware(1, body)));
-
-        clientPair.appClient.reset();
-        clientPair.hardwareClient.reset();
-
-        //waiting to avoid limit.
-        sleep(1000);
-
-        for (int i = 0; i < 100000 / 9; i++) {
-            clientPair.appClient.send("hardware " + body, 1);
-            sleep(9);
-        }
-
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, QUOTA_LIMIT)));
-        verify(clientPair.hardwareClient.responseMock, atLeast(100)).channelRead(any(), eq(hardware(1, body)));
     }
 
     @Test

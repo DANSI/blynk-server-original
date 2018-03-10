@@ -35,7 +35,7 @@ public class Limits {
     public final String dynamicMailBody;
     public final String staticMailBody;
 
-    Limits(ServerProperties props) {
+    public Limits(ServerProperties props) {
         this.webRequestMaxSize = props.getIntProperty("web.request.max.size", 512 * 1024);
 
         this.deviceLimit = props.getIntProperty("user.devices.limit", 25);

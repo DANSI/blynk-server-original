@@ -1,8 +1,9 @@
 package cc.blynk.server.core.model.auth;
 
+import cc.blynk.server.core.protocol.handlers.decoders.AppMessageDecoder;
+import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
-import cc.blynk.server.core.stats.metrics.InstanceLoadMeter;
 import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.Channel;
@@ -47,11 +48,15 @@ public class Session {
 
     private static int getRequestRate(Set<Channel> channels) {
         double sum = 0;
-        for (Channel c : channels) {
-            BaseSimpleChannelInboundHandler handler = c.pipeline().get(BaseSimpleChannelInboundHandler.class);
-            if (handler != null) {
-                InstanceLoadMeter loadMeter = handler.getQuotaMeter();
-                sum += loadMeter.getOneMinuteRateNoTick();
+        for (Channel ch : channels) {
+            MessageDecoder messageDecoder = ch.pipeline().get(MessageDecoder.class);
+            if (messageDecoder != null) {
+                sum += messageDecoder.getQuotaMeter().getOneMinuteRateNoTick();
+            } else {
+                AppMessageDecoder appMessageDecoder = ch.pipeline().get(AppMessageDecoder.class);
+                if (appMessageDecoder != null) {
+                    sum += appMessageDecoder.getQuotaMeter().getOneMinuteRateNoTick();
+                }
             }
         }
         return (int) sum;

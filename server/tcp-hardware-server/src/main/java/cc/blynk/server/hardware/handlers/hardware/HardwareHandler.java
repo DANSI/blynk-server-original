@@ -52,7 +52,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
     private final BlynkInternalLogic info;
 
     public HardwareHandler(Holder holder, HardwareStateHolder stateHolder) {
-        super(StringMessage.class, holder.limits);
+        super(StringMessage.class);
         this.hardware = new HardwareLogic(holder, stateHolder.user.email);
         this.bridge = new BridgeLogic(holder.sessionDao, holder.tokenManager);
 

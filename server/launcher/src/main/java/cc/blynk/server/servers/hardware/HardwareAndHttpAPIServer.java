@@ -116,7 +116,7 @@ public class HardwareAndHttpAPIServer extends BaseServer {
                         .addLast("WSWebSocketServerProtocolHandler",
                         new WebSocketServerProtocolHandler(websocketPath, true))
                         .addLast("WSWebSocket", new WebSocketHandler(stats))
-                        .addLast("WSMessageDecoder", new MessageDecoder(stats))
+                        .addLast("WSMessageDecoder", new MessageDecoder(stats, holder.limits))
                         .addLast("WSSocketWrapper", new WebSocketWrapperEncoder())
                         .addLast("WSMessageEncoder", new MessageEncoder(stats))
                         .addLast("WSLogin", hardwareLoginHandler)
@@ -150,7 +150,7 @@ public class HardwareAndHttpAPIServer extends BaseServer {
                                         .addFirst("H_IdleStateHandler",
                                                 new IdleStateHandler(hardTimeoutSecs, hardTimeoutSecs, 0))
                                         .addLast("H_ChannelState", hardwareChannelStateHandler)
-                                        .addLast("H_MessageDecoder", new MessageDecoder(holder.stats))
+                                        .addLast("H_MessageDecoder", new MessageDecoder(holder.stats, holder.limits))
                                         .addLast("H_MessageEncoder", new MessageEncoder(holder.stats))
                                         .addLast("H_Login", hardwareLoginHandler)
                                         .addLast("H_AlreadyLogged", alreadyLoggedHandler);

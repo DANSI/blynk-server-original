@@ -39,7 +39,7 @@ public class HardwareSSLServer extends BaseServer {
                     .addLast("HSSL_ReadTimeout", new IdleStateHandler(hardTimeoutSecs, hardTimeoutSecs, 0))
                     .addLast("HSSL", holder.sslContextHolder.sslCtx.newHandler(ch.alloc()))
                     .addLast("HSSLChannelState", hardwareChannelStateHandler)
-                    .addLast("HSSLMessageDecoder", new MessageDecoder(holder.stats))
+                    .addLast("HSSLMessageDecoder", new MessageDecoder(holder.stats, holder.limits))
                     .addLast("HSSLMessageEncoder", new MessageEncoder(holder.stats))
                     .addLast("HSSLLogin", hardwareLoginHandler)
                     .addLast("HSSLAlreadyLogged", alreadyLoggedHandler);

@@ -53,7 +53,7 @@ public class AppServer extends BaseServer {
                         .addLast("AReadTimeout", new IdleStateHandler(readTimeout, 0, 0))
                         .addLast("ASSL", holder.sslContextHolder.sslCtx.newHandler(ch.alloc()))
                         .addLast("AChannelState", appChannelStateHandler)
-                        .addLast("AMessageDecoder", new MessageDecoder(holder.stats))
+                        .addLast("AMessageDecoder", new MessageDecoder(holder.stats, holder.limits))
                         .addLast("AMessageEncoder", new MessageEncoder(holder.stats))
                         .addLast("AGetServer", getServerHandler)
                         .addLast("ARegister", registerHandler)

@@ -99,7 +99,6 @@ public class AppAndHttpsServer extends BaseServer {
         WebSocketHandler webSocketHandler = new WebSocketHandler(stats);
         WebSocketWrapperEncoder webSocketWrapperEncoder = new WebSocketWrapperEncoder();
 
-        WebAppMessageDecoder webAppMessageDecoder = new WebAppMessageDecoder(stats);
         WebAppMessageEncoder webAppMessageEncoder = new WebAppMessageEncoder();
 
         //admin API handlers
@@ -192,7 +191,7 @@ public class AppAndHttpsServer extends BaseServer {
                         .addLast("AChannelState", appChannelStateHandler)
                         .addLast("WSWebSocketServerProtocolHandler",
                         new WebSocketServerProtocolHandler(WEBSOCKET_WEB_PATH))
-                        .addLast("WSMessageDecoder", webAppMessageDecoder)
+                        .addLast("WSMessageDecoder", new WebAppMessageDecoder(stats, holder.limits))
                         .addLast("WSMessageEncoder", webAppMessageEncoder)
                         .addLast("AGetServer", getServerHandler)
                         .addLast("ALogin", appLoginHandler)
@@ -215,7 +214,7 @@ public class AppAndHttpsServer extends BaseServer {
                         .addLast("WSWebSocketServerProtocolHandler",
                         new WebSocketServerProtocolHandler(websocketPath, true))
                         .addLast("WSWebSocket", webSocketHandler)
-                        .addLast("WSMessageDecoder", new MessageDecoder(stats))
+                        .addLast("WSMessageDecoder", new MessageDecoder(stats, holder.limits))
                         .addLast("WSSocketWrapper", webSocketWrapperEncoder)
                         .addLast("WSMessageEncoder", new MessageEncoder(stats))
                         .addLast("WSLogin", hardwareLoginHandler)
@@ -259,7 +258,7 @@ public class AppAndHttpsServer extends BaseServer {
                         return pipeline
                                 .addFirst("AReadTimeout", new IdleStateHandler(600, 0, 0))
                                 .addLast("AChannelState", appChannelStateHandler)
-                                .addLast("AMessageDecoder", new AppMessageDecoder(holder.stats))
+                                .addLast("AMessageDecoder", new AppMessageDecoder(holder.stats, holder.limits))
                                 .addLast("AMessageEncoder", new AppMessageEncoder(holder.stats))
                                 .addLast("AGetServer", getServerHandler)
                                 .addLast("ARegister", registerHandler)
