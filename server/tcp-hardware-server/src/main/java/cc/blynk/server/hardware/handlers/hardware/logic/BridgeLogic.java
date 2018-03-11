@@ -109,14 +109,16 @@ public class BridgeLogic {
             String body = message.body.substring(message.body.indexOf(StringUtils.BODY_SEPARATOR_STRING) + 1);
             StringMessage bridgeMessage = new StringMessage(message.id, BRIDGE, body);
 
-            int deviceId = tokenvalue.device.id;
+            int targetDeviceId = tokenvalue.device.id;
+            int targetDashId = tokenvalue.dash.id;
 
             if (session.hardwareChannels.size() > 1) {
                 boolean messageWasSent = false;
                 for (Channel channel : session.hardwareChannels) {
                     if (channel != ctx.channel() && channel.isWritable()) {
                         HardwareStateHolder hardwareState = getHardState(channel);
-                        if (hardwareState != null && hardwareState.device.id == deviceId) {
+                        if (hardwareState != null
+                                && hardwareState.isSameDashAndDeviceId(targetDashId, targetDeviceId)) {
                             messageWasSent = true;
                             channel.writeAndFlush(bridgeMessage, channel.voidPromise());
                         }

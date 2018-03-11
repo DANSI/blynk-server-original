@@ -428,4 +428,51 @@ public class BridgeWorkflowTest extends IntegrationBase {
         clientPair.appClient.never(hardware(2, "5-0 vw 11 11"));
         clientPair.appClient.never(hardware(2, "1-0 vw 11 11"));
     }
+
+    @Test
+    public void testCorrectWorkflow3HardsOnDifferentProjectsSameId() throws Exception {
+        DashBoard dash = new DashBoard();
+        dash.id = 5;
+        dash.name = "test";
+        dash.activate();
+        clientPair.appClient.createDash(dash);
+        clientPair.appClient.verifyResult(ok(1));
+
+        Device device = new Device(0, "My Device", "ESP8266");
+        clientPair.appClient.createDevice(dash.id, device);
+        device = clientPair.appClient.getDevice(2);
+
+        TestHardClient hardClient1 = new TestHardClient("localhost", tcpHardPort);
+        hardClient1.start();
+        hardClient1.login(device.token);
+        hardClient1.verifyResult(ok(1));
+        hardClient1.reset();
+        clientPair.appClient.verifyResult(hardwareConnected(1, "5-0"));
+        clientPair.appClient.reset();
+
+        dash.id = 6;
+        clientPair.appClient.createDash(dash);
+        clientPair.appClient.verifyResult(ok(1));
+
+        device = new Device(0, "My Device", "ESP8266");
+        clientPair.appClient.createDevice(dash.id, device);
+        device = clientPair.appClient.getDevice(2);
+
+        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
+        hardClient2.start();
+        hardClient2.login(device.token);
+        hardClient2.verifyResult(ok(1));
+        hardClient2.reset();
+        clientPair.appClient.verifyResult(hardwareConnected(1, "6-0"));
+
+        clientPair.hardwareClient.send("bridge 1 i " + device.token);
+        clientPair.hardwareClient.verifyResult(ok(1));
+        clientPair.hardwareClient.send("bridge 1 vw 11 11");
+
+        clientPair.appClient.verifyResult(hardware(2, "6-0 vw 11 11"));
+        hardClient2.verifyResult(bridge(2, "vw 11 11"));
+        hardClient1.never(bridge(2, "vw 11 11"));
+        clientPair.appClient.never(hardware(2, "5-0 vw 11 11"));
+        clientPair.appClient.never(hardware(2, "1-0 vw 11 11"));
+    }
 }
