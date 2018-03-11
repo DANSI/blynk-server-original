@@ -25,15 +25,15 @@ public class TimeInput extends OnePinWidget {
 
     public String format;
 
-    public int[] days;
+    public volatile int[] days;
 
-    public int startAt = -1;
+    public volatile int startAt = -1;
 
-    public int stopAt = -1;
+    public volatile int stopAt = -1;
 
     @JsonSerialize(using = ZoneIdToString.class)
     @JsonDeserialize(using = StringToZoneId.class, as = ZoneId.class)
-    public ZoneId tzName;
+    public volatile ZoneId tzName;
 
     public boolean isStartStopAllowed;
 
