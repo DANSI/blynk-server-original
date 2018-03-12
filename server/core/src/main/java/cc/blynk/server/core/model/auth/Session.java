@@ -8,6 +8,7 @@ import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.EventLoop;
 import io.netty.util.internal.ConcurrentSet;
 import org.apache.logging.log4j.LogManager;
@@ -43,6 +44,14 @@ public class Session {
 
     public Session(EventLoop initialEventLoop) {
         this.initialEventLoop = initialEventLoop;
+    }
+
+    public boolean isSameEventLoop(ChannelHandlerContext ctx) {
+        return isSameEventLoop(ctx.channel());
+    }
+
+    public boolean isSameEventLoop(Channel channel) {
+        return initialEventLoop == channel.eventLoop();
     }
 
     private static int getRequestRate(Set<Channel> channels) {

@@ -42,12 +42,12 @@ public abstract class TokenBaseHttpHandler extends BaseHttpHandler {
         }
 
         Session session = sessionDao.getOrCreateSessionByUser(new UserKey(tokenValue.user), ctx.channel().eventLoop());
-        if (session.initialEventLoop != ctx.channel().eventLoop()) {
+        if (session.isSameEventLoop(ctx)) {
+            completeLogin(ctx.channel(), handler.invoke(params));
+        } else {
             log.debug("Re registering http channel. {}", ctx.channel());
             reRegisterChannel(ctx, session, channelFuture -> completeLogin(
                     channelFuture.channel(), handler.invoke(params)));
-        } else {
-            completeLogin(ctx.channel(), handler.invoke(params));
         }
     }
 

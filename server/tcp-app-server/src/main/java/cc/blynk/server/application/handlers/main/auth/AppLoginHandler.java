@@ -199,12 +199,12 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
         }
 
         Session session = holder.sessionDao.getOrCreateSessionByUser(appStateHolder.userKey, channel.eventLoop());
-        if (session.initialEventLoop != channel.eventLoop()) {
+        if (session.isSameEventLoop(channel)) {
+            completeLogin(channel, session, user, messageId, version);
+        } else {
             log.debug("Re registering app channel. {}", ctx.channel());
             reRegisterChannel(ctx, session, channelFuture ->
                     completeLogin(channelFuture.channel(), session, user, messageId, version));
-        } else {
-            completeLogin(channel, session, user, messageId, version);
         }
     }
 

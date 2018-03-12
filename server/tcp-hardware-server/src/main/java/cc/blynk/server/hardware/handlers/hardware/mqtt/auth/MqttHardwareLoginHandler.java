@@ -97,12 +97,12 @@ public class MqttHardwareLoginHandler extends SimpleChannelInboundHandler<MqttCo
         Session session = holder.sessionDao.getOrCreateSessionByUser(
                 hardwareStateHolder.userKey, ctx.channel().eventLoop());
 
-        if (session.initialEventLoop != ctx.channel().eventLoop()) {
+        if (session.isSameEventLoop(ctx)) {
+            completeLogin(ctx.channel(), session, user, dash, device, -1);
+        } else {
             log.debug("Re registering hard channel. {}", ctx.channel());
             reRegisterChannel(ctx, session, channelFuture ->
                     completeLogin(channelFuture.channel(), session, user, dash, device, -1));
-        } else {
-            completeLogin(ctx.channel(), session, user, dash, device, -1);
         }
     }
 

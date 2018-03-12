@@ -96,12 +96,12 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
         Session session = holder.sessionDao.getOrCreateSessionByUser(
                 appShareStateHolder.userKey, ctx.channel().eventLoop());
 
-        if (session.initialEventLoop != ctx.channel().eventLoop()) {
+        if (session.isSameEventLoop(ctx)) {
+            completeLogin(ctx.channel(), session, user.email, messageId);
+        } else {
             log.debug("Re registering app channel. {}", ctx.channel());
             reRegisterChannel(ctx, session, channelFuture ->
                     completeLogin(channelFuture.channel(), session, user.email, messageId));
-        } else {
-            completeLogin(ctx.channel(), session, user.email, messageId);
         }
     }
 
