@@ -110,6 +110,7 @@ public final class Command {
     public static final short GET_WIDGET = 70;
     public static final short DEVICE_OFFLINE = 71;
     public static final short OUTDATED_APP_NOTIFICATION = 72;
+    public static final short TRACK_DEVICE = 73;
 
     //http codes. Used only for stats
     public static final short HTTP_IS_HARDWARE_CONNECTED = 82;
@@ -207,6 +208,7 @@ public final class Command {
 
                 put(DEVICE_OFFLINE, "deviceOffline");
                 put(OUTDATED_APP_NOTIFICATION, "outdatedAppNotification");
+                put(TRACK_DEVICE, "trackDevice");
 
                 put(HTTP_IS_HARDWARE_CONNECTED, "HttpIsHardwareConnected");
                 put(HTTP_IS_APP_CONNECTED, "HttpIsAppConnected");
