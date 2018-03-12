@@ -21,7 +21,6 @@ import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.StateHolderUtil.getHardState;
 import static cc.blynk.server.internal.StateHolderUtil.isSameDash;
 import static cc.blynk.server.internal.StateHolderUtil.isSameDashAndDeviceId;
-import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
 import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
 
 /**
@@ -168,13 +167,6 @@ public class Session {
         }
     }
 
-    public void sendToApps(short cmd, int msgId, int dashId, int deviceId) {
-        if (isAppConnected()) {
-            String finalBody = "" + dashId + DEVICE_SEPARATOR + deviceId;
-            sendToApps(cmd, msgId, dashId, finalBody);
-        }
-    }
-
     public void sendToApps(short cmd, int msgId, int dashId, int deviceId, String body) {
         if (isAppConnected()) {
             String finalBody = prependDashIdAndDeviceId(dashId, deviceId, body);
@@ -182,7 +174,7 @@ public class Session {
         }
     }
 
-    private void sendToApps(short cmd, int msgId, int dashId, String finalBody) {
+    public void sendToApps(short cmd, int msgId, int dashId, String finalBody) {
         Set<Channel> targetChannels = filterByDash(dashId);
 
         int targetsNum = targetChannels.size();

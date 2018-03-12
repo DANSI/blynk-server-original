@@ -27,6 +27,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_CONNECTED;
+import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
 import static io.netty.handler.codec.mqtt.MqttConnectReturnCode.CONNECTION_REFUSED_BAD_USER_NAME_OR_PASSWORD;
 
 /**
@@ -59,7 +60,8 @@ public class MqttHardwareLoginHandler extends SimpleChannelInboundHandler<MqttCo
         session.addHardChannel(channel);
         channel.writeAndFlush(ACCEPTED);
 
-        session.sendToApps(HARDWARE_CONNECTED, msgId, dash.id, device.id);
+        String responseBody = String.valueOf(dash.id) + DEVICE_SEPARATOR + device.id;
+        session.sendToApps(HARDWARE_CONNECTED, msgId, dash.id, responseBody);
 
         log.info("{} mqtt hardware joined.", user.email);
     }
