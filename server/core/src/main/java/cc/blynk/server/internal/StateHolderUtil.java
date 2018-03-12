@@ -33,7 +33,7 @@ public final class StateHolderUtil {
             return false;
         }
         HardwareStateHolder hardwareStateHolder = (HardwareStateHolder) handler.getState();
-        return hardwareStateHolder.dash.id == dashId && hardwareStateHolder.device.id == deviceId;
+        return hardwareStateHolder.isSameDashAndDeviceId(dashId, deviceId);
     }
 
 }

@@ -26,4 +26,6 @@ public abstract class StateHolderBase {
 
     public abstract boolean isSameDash(int inDashId);
 
+    public abstract boolean isSameDashAndDeviceId(int inDashId, int deviceId);
+
 }

@@ -31,4 +31,9 @@ public final class AppShareStateHolder extends AppStateHolder {
         return this.dashId == inDashId;
     }
 
+    @Override
+    public boolean isSameDashAndDeviceId(int inDashId, int deviceId) {
+        return isSameDash(inDashId);
+    }
+
 }
