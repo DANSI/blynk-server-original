@@ -85,6 +85,7 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
                             new Tile(
                                     deviceId,
                                     tileTemplate.id,
+                                    null,
                                     newTileTemplate.dataStream == null
                                             ? null
                                             : new DataStream(newTileTemplate.dataStream)
