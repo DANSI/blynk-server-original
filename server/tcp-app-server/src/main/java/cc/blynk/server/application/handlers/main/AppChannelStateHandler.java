@@ -38,7 +38,6 @@ public class AppChannelStateHandler extends ChannelInboundHandlerAdapter {
         if (state != null) {
             Session session = sessionDao.userSession.get(state.userKey);
             if (session != null) {
-                session.removeAppChannel(ctx.channel());
                 log.trace("Application channel disconnect. {}", ctx.channel());
 
                 for (DashBoard dashBoard : state.user.profile.dashBoards) {

@@ -38,8 +38,8 @@ public class Session {
     public final Set<Channel> appChannels = new ConcurrentSet<>();
     public final Set<Channel> hardwareChannels = new ConcurrentSet<>();
 
-    private final ChannelFutureListener appRemover = future -> removeAppChannel(future.channel());
-    private final ChannelFutureListener hardRemover = future -> removeHardChannel(future.channel());
+    private final ChannelFutureListener appRemover = future -> appChannels.remove(future.channel());
+    private final ChannelFutureListener hardRemover = future -> hardwareChannels.remove(future.channel());
 
     public Session(EventLoop initialEventLoop) {
         this.initialEventLoop = initialEventLoop;
@@ -72,21 +72,9 @@ public class Session {
         }
     }
 
-    public void removeAppChannel(Channel appChannel) {
-        if (appChannels.remove(appChannel)) {
-            appChannel.closeFuture().removeListener(appRemover);
-        }
-    }
-
     public void addHardChannel(Channel hardChannel) {
         if (hardwareChannels.add(hardChannel)) {
             hardChannel.closeFuture().addListener(hardRemover);
-        }
-    }
-
-    public void removeHardChannel(Channel hardChannel) {
-        if (hardwareChannels.remove(hardChannel)) {
-            hardChannel.closeFuture().removeListener(hardRemover);
         }
     }
 
