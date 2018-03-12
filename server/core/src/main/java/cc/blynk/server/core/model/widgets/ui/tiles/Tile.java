@@ -16,15 +16,19 @@ public class Tile {
 
     public final long templateId;
 
+    public final String iconName;
+
     @JsonProperty("pin")
     public final DataStream dataStream;
 
     @JsonCreator
     public Tile(@JsonProperty("deviceId") int deviceId,
                 @JsonProperty("templateId") long templateId,
+                @JsonProperty("iconName") String iconName,
                 @JsonProperty("pin") DataStream dataStream) {
         this.deviceId = deviceId;
         this.templateId = templateId;
+        this.iconName = iconName;
         this.dataStream = dataStream;
     }
 
