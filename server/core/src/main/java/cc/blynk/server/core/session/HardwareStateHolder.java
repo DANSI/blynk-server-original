@@ -31,7 +31,12 @@ public final class HardwareStateHolder extends StateHolderBase {
     }
 
     @Override
+    public boolean isSameDevice(int deviceId) {
+        return device.id == deviceId;
+    }
+
+    @Override
     public boolean isSameDashAndDeviceId(int inDashId, int deviceId) {
-        return isSameDash(inDashId) && device.id == deviceId;
+        return isSameDash(inDashId) && isSameDevice(deviceId);
     }
 }
