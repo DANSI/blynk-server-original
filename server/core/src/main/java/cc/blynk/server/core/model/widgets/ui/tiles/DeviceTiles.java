@@ -42,8 +42,6 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
 
     public TextAlignment alignment = TextAlignment.LEFT;
 
-    public boolean isDefaultColor = true;
-
     public boolean disableWhenOffline;
 
     public void deleteDeviceTilesByTemplateId(long deviceTileId) {
