@@ -211,13 +211,13 @@ Please **do not** revert your server to lower versions. You may loose all of you
     to
     
     ```
-    Blynk.begin(auth, "your_host");
+    Blynk.begin(auth, "your_host", 8080);
     ```
     
     or to
     
     ```
-    Blynk.begin(auth, IPAddress(xxx,xxx,xxx,xxx));
+    Blynk.begin(auth, IPAddress(xxx,xxx,xxx,xxx), 8080);
     ```
         
 + Change your WIFI sketch from
@@ -229,13 +229,13 @@ Please **do not** revert your server to lower versions. You may loose all of you
     to
     
     ```
-    Blynk.begin(auth, SSID, pass, "your_host");
+    Blynk.begin(auth, SSID, pass, "your_host", 8080);
     ```
     
     or to
     
     ```
-    Blynk.begin(auth, SSID, pass, IPAddress(XXX,XXX,XXX,XXX));
+    Blynk.begin(auth, SSID, pass, IPAddress(XXX,XXX,XXX,XXX), 8080);
     ```
         
 + Change your rasp PI javascript from
@@ -247,7 +247,7 @@ Please **do not** revert your server to lower versions. You may loose all of you
     to
     
     ```
-    var blynk = new Blynk.Blynk(AUTH, options= {addr:"xxx.xxx.xxx.xxx"});
+    var blynk = new Blynk.Blynk(AUTH, options= {addr:"xxx.xxx.xxx.xxx", port:8080});
     ```
         
 + or in case of USB when running blynk-ser.sh provide '-s' option with address of your local server
