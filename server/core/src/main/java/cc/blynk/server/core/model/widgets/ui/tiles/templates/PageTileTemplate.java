@@ -20,9 +20,9 @@ public class PageTileTemplate extends TileTemplate {
 
     private final String valueSuffix;
 
-    private final int color;
+    public final int color;
 
-    private final int tileColor;
+    public final int tileColor;
 
     private final FontSize fontSize;
 

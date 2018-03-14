@@ -96,6 +96,45 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         deviceTiles.y = 8;
         deviceTiles.width = 50;
         deviceTiles.height = 100;
+        deviceTiles.color = -231;
+
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(1));
+
+        PageTileTemplate tileTemplate = new PageTileTemplate(1,
+                null, null, "name", "name", "iconName", "ESP8266", new DataStream((byte) 1, PinType.VIRTUAL),
+                false, null, null, null, -75056000, -231, FontSize.LARGE, false);
+
+        clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        clientPair.appClient.verifyResult(ok(2));
+
+        clientPair.appClient.send("getWidget 1\0" + widgetId);
+        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(3), 0);
+        assertNotNull(deviceTiles);
+        assertEquals(widgetId, deviceTiles.id);
+        assertEquals(-231, deviceTiles.color);
+        assertNotNull(deviceTiles.templates);
+        assertEquals(1, deviceTiles.templates.length);
+        assertEquals("name", deviceTiles.templates[0].name);
+        assertTrue(deviceTiles.templates[0] instanceof PageTileTemplate);
+        PageTileTemplate pageTileTemplate = (PageTileTemplate) deviceTiles.templates[0];
+        assertEquals(0, deviceTiles.tiles.length);
+        assertEquals(-75056000, pageTileTemplate.color);
+        assertEquals(-231, pageTileTemplate.tileColor);
+    }
+
+    @Test
+    public void createDeviceTilesAndEditColors() throws Exception {
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+        deviceTiles.color = 0;
 
         clientPair.appClient.createWidget(1, deviceTiles);
         clientPair.appClient.verifyResult(ok(1));
@@ -108,14 +147,32 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
                 + MAPPER.writeValueAsString(tileTemplate));
         clientPair.appClient.verifyResult(ok(2));
 
+        deviceTiles.color = -231;
+
+        clientPair.appClient.updateWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(3));
+
+        tileTemplate = new PageTileTemplate(1,
+                null, null, "name", "name", "iconName", "ESP8266", new DataStream((byte) 1, PinType.VIRTUAL),
+                false, null, null, null, -1, -231, FontSize.LARGE, false);
+
+        clientPair.appClient.send("updateTemplate " + b("1 " + widgetId + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        clientPair.appClient.verifyResult(ok(4));
+
         clientPair.appClient.send("getWidget 1\0" + widgetId);
-        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(3), 0);
+        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(5), 0);
         assertNotNull(deviceTiles);
         assertEquals(widgetId, deviceTiles.id);
+        assertEquals(-231, deviceTiles.color);
         assertNotNull(deviceTiles.templates);
         assertEquals(1, deviceTiles.templates.length);
         assertEquals("name", deviceTiles.templates[0].name);
+        assertTrue(deviceTiles.templates[0] instanceof PageTileTemplate);
+        PageTileTemplate pageTileTemplate = (PageTileTemplate) deviceTiles.templates[0];
         assertEquals(0, deviceTiles.tiles.length);
+        assertEquals(-1, pageTileTemplate.color);
+        assertEquals(-231, pageTileTemplate.tileColor);
     }
 
     @Test
