@@ -3,6 +3,7 @@ package cc.blynk.server.core.model.widgets.ui;
 import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
+import cc.blynk.server.core.model.widgets.outputs.TextAlignment;
 import cc.blynk.utils.StringUtils;
 
 /**
@@ -15,6 +16,8 @@ public class Menu extends OnePinWidget {
     public volatile String[] labels;
 
     public String hint;
+
+    public TextAlignment alignment;
 
     @Override
     public PinMode getModeType() {
