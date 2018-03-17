@@ -189,8 +189,8 @@ public class AppAndHttpsServer extends BaseServer {
                 ChannelPipeline pipeline = ctx.pipeline();
 
                 //websockets specific handlers
-                pipeline.addFirst("AReadTimeout", new IdleStateHandler(appIdleTimeout, 0, 0))
-                        .addLast("AChannelState", appChannelStateHandler)
+                pipeline.addFirst("AChannelState", appChannelStateHandler)
+                        .addFirst("AReadTimeout", new IdleStateHandler(appIdleTimeout, 0, 0))
                         .addLast("WSWebSocketServerProtocolHandler",
                         new WebSocketServerProtocolHandler(WEBSOCKET_WEB_PATH))
                         .addLast("WSMessageDecoder", new WebAppMessageDecoder(stats, holder.limits))
@@ -258,8 +258,8 @@ public class AppAndHttpsServer extends BaseServer {
                     public ChannelPipeline buildBlynkPipeline(ChannelPipeline pipeline) {
                         log.trace("Blynk protocol connection detected.", pipeline.channel());
                         return pipeline
+                                .addFirst("AChannelState", appChannelStateHandler)
                                 .addFirst("AReadTimeout", new IdleStateHandler(appIdleTimeout, 0, 0))
-                                .addLast("AChannelState", appChannelStateHandler)
                                 .addLast("AMessageDecoder", new AppMessageDecoder(holder.stats, holder.limits))
                                 .addLast("AMessageEncoder", new AppMessageEncoder(holder.stats))
                                 .addLast("AGetServer", getServerHandler)

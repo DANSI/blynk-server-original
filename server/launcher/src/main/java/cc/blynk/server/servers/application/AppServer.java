@@ -51,8 +51,8 @@ public class AppServer extends BaseServer {
                 //socket will be closed due to non activity. In seconds.
                 ch.pipeline()
                         .addLast("AReadTimeout", new IdleStateHandler(readTimeout, 0, 0))
-                        .addLast("ASSL", holder.sslContextHolder.sslCtx.newHandler(ch.alloc()))
                         .addLast("AChannelState", appChannelStateHandler)
+                        .addLast("ASSL", holder.sslContextHolder.sslCtx.newHandler(ch.alloc()))
                         .addLast("AMessageDecoder", new MessageDecoder(holder.stats, holder.limits))
                         .addLast("AMessageEncoder", new MessageEncoder(holder.stats))
                         .addLast("AGetServer", getServerHandler)
