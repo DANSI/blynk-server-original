@@ -317,6 +317,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
     var config = nga.entity('config').identifier(nga.field('name'));
     config.listView()
         .title('Configurations')
+        .sortField('name')
         .batchActions([])
         .fields([
             nga.field('name').isDetailLink(true)
