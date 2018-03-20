@@ -35,6 +35,7 @@ public class Limits {
     public volatile String tokenBody;
     public final String dynamicMailBody;
     public final String staticMailBody;
+    public final String templateIdMailBody;
 
     public Limits(ServerProperties props) {
         this.webRequestMaxSize = props.getIntProperty("web.request.max.size", 512 * 1024);
@@ -59,6 +60,7 @@ public class Limits {
         this.tokenBody = FileLoaderUtil.readTokenMailBody();
         this.dynamicMailBody = FileLoaderUtil.readDynamicMailBody();
         this.staticMailBody = FileLoaderUtil.readStaticMailBody();
+        this.templateIdMailBody = FileLoaderUtil.readTemplateIdMailBody();
     }
 
     private static int isUnlimited(int val, int max) {

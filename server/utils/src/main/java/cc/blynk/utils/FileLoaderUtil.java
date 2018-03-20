@@ -41,6 +41,10 @@ public final class FileLoaderUtil {
         return readFileAsString("static_provisioning_mail.html");
     }
 
+    public static String readTemplateIdMailBody() {
+        return readFileAsString("template_id_mail.html");
+    }
+
     /**
      * First loads file from class path after that from current folder.
      * So file in current folder is always overrides properties in classpath.

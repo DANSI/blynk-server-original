@@ -1191,4 +1191,54 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         assertEquals(500, ((Menu) deviceTiles.templates[0].widgets[0]).labels.length);
     }
 
+    @Test
+    public void createpageTempalteWithIdAndSendEmail() throws Exception {
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(1));
+
+        long templateId = 1;
+        clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
+                + "{\"id\":" + templateId + ",\"templateId\":\"TMPL123\",\"name\":\"My New Template\",\"iconName\":\"iconName\",\"boardType\":\"ESP8266\",\"showDeviceName\":false,\"color\":0,\"tileColor\":0,\"fontSize\":\"LARGE\",\"showTileLabel\":false,\"pin\":{\"pin\":1,\"pwmMode\":false,\"rangeMappingOn\":false,\"pinType\":\"VIRTUAL\",\"min\":0.0,\"max\":255.0}}");
+        clientPair.appClient.verifyResult(ok(2));
+
+
+        clientPair.appClient.send("email template 1 " + widgetId + " " + templateId);
+
+        String expectedBody = "Template ID for {template_name} is: {template_id}.<br>\n" +
+                "<br>\n" +
+                "This ID should be added in <a href=\"https://github.com/blynkkk/blynk-library/blob/master/examples/Export_Demo/Template_ESP32/Settings.h\">Settings.h</a>. Simply change this line\n" +
+                "<br>\n" +
+                "<p>\n" +
+                "    <i>\n" +
+                "#define BOARD_TEMPLATE_ID             \"{template_id}\" // ID of the Tile Template. Can be found in Tile Template Settings\n" +
+                "    </i>\n" +
+                "</p>\n" +
+                "Template ID is used during device provisioning process and defines which template will be assigned to the device of this particular type.\n" +
+                "<br>\n" +
+                "<br>\n" +
+                "--<br>\n" +
+                "<br>\n" +
+                "Blynk Team<br>\n" +
+                "<br>\n" +
+                "<a href=\"https://www.blynk.io\">blynk.io</a>\n" +
+                "<br>\n" +
+                "<a href=\"https://www.blynk.cc\">blynk.cc</a>\n";
+
+        expectedBody = expectedBody
+                        .replace("{template_name}", "My New Template")
+                        .replace("{template_id}", "TMPL123");
+
+        verify(mailWrapper, timeout(1000)).sendHtml(eq(DEFAULT_TEST_USER), eq("Template ID for My New Template"), eq(expectedBody));
+
+    }
+
 }
