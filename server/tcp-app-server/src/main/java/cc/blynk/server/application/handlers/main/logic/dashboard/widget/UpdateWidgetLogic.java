@@ -10,6 +10,7 @@ import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.ui.Tabs;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
+import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -92,12 +93,6 @@ public class UpdateWidgetLogic {
             throw new IllegalCommandException("Widget with passed id not found.");
         }
 
-        if (newWidget instanceof Tabs) {
-            Tabs newTabs = (Tabs) newWidget;
-            dash.widgets = DeleteWidgetLogic.deleteTabsFromDash(timerWorker,
-                    user, state.userKey, dash.id, dash.widgets, newTabs.tabs.length - 1);
-        }
-
         if (prevWidget instanceof Notification && newWidget instanceof Notification) {
             Notification prevNotif = (Notification) prevWidget;
             Notification newNotif = (Notification) newWidget;
@@ -114,8 +109,20 @@ public class UpdateWidgetLogic {
         }
 
         if (inDeviceTiles) {
-            deviceTiles.updateWidget(newWidget);
+            TileTemplate tileTemplate = deviceTiles.getTileTemplateByWidgetIdOrThrow(newWidget.id);
+            if (newWidget instanceof Tabs) {
+                Tabs newTabs = (Tabs) newWidget;
+                tileTemplate.widgets = DeleteWidgetLogic.deleteTabs(timerWorker,
+                        user, state.userKey, dash.id, tileTemplate.widgets, newTabs.tabs.length - 1);
+            }
+            tileTemplate.widgets = ArrayUtil.copyAndReplace(
+                    tileTemplate.widgets, newWidget, tileTemplate.getWidgetIndexByIdOrThrow(newWidget.id));
         } else {
+            if (newWidget instanceof Tabs) {
+                Tabs newTabs = (Tabs) newWidget;
+                dash.widgets = DeleteWidgetLogic.deleteTabs(timerWorker,
+                        user, state.userKey, dash.id, dash.widgets, newTabs.tabs.length - 1);
+            }
             dash.widgets = ArrayUtil.copyAndReplace(
                     dash.widgets, newWidget, dash.getWidgetIndexByIdOrThrow(newWidget.id));
         }

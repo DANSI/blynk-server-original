@@ -3,6 +3,7 @@ package cc.blynk.integration.tcp;
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestHardClient;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
@@ -17,6 +18,8 @@ import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphType;
 import cc.blynk.server.core.model.widgets.ui.Menu;
+import cc.blynk.server.core.model.widgets.ui.Tab;
+import cc.blynk.server.core.model.widgets.ui.Tabs;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.Tile;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
@@ -1241,4 +1244,242 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
 
     }
 
+    @Test
+    public void testAddAndRemoveTabs() throws Exception {
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(1));
+
+        TileTemplate tileTemplate = new PageTileTemplate(1,
+                null, null, "name", "name", "iconName", "ESP8266", null,
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
+
+        clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        clientPair.appClient.verifyResult(ok(2));
+
+        Tabs tabs = new Tabs();
+        tabs.id = 172649;
+        tabs.width = 10;
+        tabs.height = 1;
+        tabs.tabs = new Tab[] {
+                new Tab(0, "0"),
+                new Tab(1, "1")
+        };
+
+        clientPair.appClient.createWidget(1, b("21321 1 ") + JsonParser.MAPPER.writeValueAsString(tabs));
+        clientPair.appClient.verifyResult(ok(3));
+
+        Menu menu = new Menu();
+        menu.id = 172650;
+        menu.x = 2;
+        menu.y = 34;
+        menu.width = 6;
+        menu.height = 1;
+        menu.label = "Set Volume";
+        menu.deviceId = 252521;
+        menu.tabId = 0;
+
+        clientPair.appClient.createWidget(1, b("21321 1 ") + JsonParser.MAPPER.writeValueAsString(menu));
+        clientPair.appClient.verifyResult(ok(4));
+
+        menu = new Menu();
+        menu.id = 172651;
+        menu.x = 2;
+        menu.y = 34;
+        menu.width = 6;
+        menu.height = 1;
+        menu.label = "Set Volume";
+        menu.deviceId = 252521;
+        menu.tabId = 1;
+
+        clientPair.appClient.createWidget(1, b("21321 1 ") + JsonParser.MAPPER.writeValueAsString(menu));
+        clientPair.appClient.verifyResult(ok(5));
+
+        Tabs tabs2 = new Tabs();
+        tabs2.id = 172648;
+        tabs2.width = 10;
+        tabs2.height = 1;
+        tabs2.tabs = new Tab[] {
+                new Tab(0, "0"),
+                new Tab(1, "1")
+        };
+
+        clientPair.appClient.createWidget(1, tabs2);
+        clientPair.appClient.verifyResult(ok(6));
+
+        menu = new Menu();
+        menu.id = 172652;
+        menu.x = 2;
+        menu.y = 34;
+        menu.width = 6;
+        menu.height = 1;
+        menu.label = "Set Volume";
+        menu.deviceId = 252521;
+        menu.tabId = 0;
+
+        clientPair.appClient.createWidget(1, menu);
+        clientPair.appClient.verifyResult(ok(7));
+
+        Menu menu2 = new Menu();
+        menu2.id = 172653;
+        menu2.x = 2;
+        menu2.y = 34;
+        menu2.width = 6;
+        menu2.height = 1;
+        menu2.label = "Set Volume";
+        menu2.deviceId = 252521;
+        menu2.tabId = 1;
+
+        clientPair.appClient.createWidget(1, menu2);
+        clientPair.appClient.verifyResult(ok(8));
+
+        clientPair.appClient.deleteWidget(1, tabs.id);
+        clientPair.appClient.verifyResult(ok(9));
+
+        clientPair.appClient.send("loadProfileGzipped 1");
+        DashBoard dashBoard = clientPair.appClient.getDash(10);
+        assertNotNull(dashBoard);
+        Tabs dashTabs = dashBoard.getWidgetByType(Tabs.class);
+        assertNotNull(dashTabs);
+        assertEquals(2, dashTabs.tabs.length);
+        assertNotNull(dashBoard.getWidgetById(menu.id));
+        assertNotNull(dashBoard.getWidgetById(menu2.id));
+        DeviceTiles deviceTiles1 = dashBoard.getWidgetByType(DeviceTiles.class);
+        assertNotNull(deviceTiles1);
+        assertNull(deviceTiles1.getWidgetById(tabs.id));
+        assertEquals(1, deviceTiles1.templates[0].widgets.length);
+        assertEquals(0, deviceTiles1.templates[0].getWidgetIndexByIdOrThrow(172650));
+        assertTrue(deviceTiles1.templates[0].widgets[0] instanceof Menu);
+    }
+
+    @Test
+    public void testAddAndUpdateTabs() throws Exception {
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(1));
+
+        TileTemplate tileTemplate = new PageTileTemplate(1,
+                null, null, "name", "name", "iconName", "ESP8266", null,
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
+
+        clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        clientPair.appClient.verifyResult(ok(2));
+
+        Tabs tabs = new Tabs();
+        tabs.id = 172649;
+        tabs.width = 10;
+        tabs.height = 1;
+        tabs.tabs = new Tab[] {
+                new Tab(0, "0"),
+                new Tab(1, "1")
+        };
+
+        clientPair.appClient.createWidget(1, b("21321 1 ") + JsonParser.MAPPER.writeValueAsString(tabs));
+        clientPair.appClient.verifyResult(ok(3));
+
+        Menu menu = new Menu();
+        menu.id = 172650;
+        menu.x = 2;
+        menu.y = 34;
+        menu.width = 6;
+        menu.height = 1;
+        menu.label = "Set Volume";
+        menu.deviceId = 252521;
+        menu.tabId = 0;
+
+        clientPair.appClient.createWidget(1, b("21321 1 ") + JsonParser.MAPPER.writeValueAsString(menu));
+        clientPair.appClient.verifyResult(ok(4));
+
+        menu = new Menu();
+        menu.id = 172651;
+        menu.x = 2;
+        menu.y = 34;
+        menu.width = 6;
+        menu.height = 1;
+        menu.label = "Set Volume";
+        menu.deviceId = 252521;
+        menu.tabId = 1;
+
+        clientPair.appClient.createWidget(1, b("21321 1 ") + JsonParser.MAPPER.writeValueAsString(menu));
+        clientPair.appClient.verifyResult(ok(5));
+
+        Tabs tabs2 = new Tabs();
+        tabs2.id = 172648;
+        tabs2.width = 10;
+        tabs2.height = 1;
+        tabs2.tabs = new Tab[] {
+                new Tab(0, "0"),
+                new Tab(1, "1")
+        };
+
+        clientPair.appClient.createWidget(1, tabs2);
+        clientPair.appClient.verifyResult(ok(6));
+
+        menu = new Menu();
+        menu.id = 172652;
+        menu.x = 2;
+        menu.y = 34;
+        menu.width = 6;
+        menu.height = 1;
+        menu.label = "Set Volume";
+        menu.deviceId = 252521;
+        menu.tabId = 0;
+
+        clientPair.appClient.createWidget(1, menu);
+        clientPair.appClient.verifyResult(ok(7));
+
+        Menu menu2 = new Menu();
+        menu2.id = 172653;
+        menu2.x = 2;
+        menu2.y = 34;
+        menu2.width = 6;
+        menu2.height = 1;
+        menu2.label = "Set Volume";
+        menu2.deviceId = 252521;
+        menu2.tabId = 1;
+
+        clientPair.appClient.createWidget(1, menu2);
+        clientPair.appClient.verifyResult(ok(8));
+
+        tabs.tabs = new Tab[] {
+                new Tab(0, "0")
+        };
+
+        clientPair.appClient.updateWidget(1, tabs);
+        clientPair.appClient.verifyResult(ok(9));
+
+        clientPair.appClient.send("loadProfileGzipped 1");
+        DashBoard dashBoard = clientPair.appClient.getDash(10);
+        assertNotNull(dashBoard);
+        Tabs dashTabs = dashBoard.getWidgetByType(Tabs.class);
+        assertNotNull(dashTabs);
+        assertEquals(2, dashTabs.tabs.length);
+        assertNotNull(dashBoard.getWidgetById(menu.id));
+        assertNotNull(dashBoard.getWidgetById(menu2.id));
+        DeviceTiles deviceTiles1 = dashBoard.getWidgetByType(DeviceTiles.class);
+        assertNotNull(deviceTiles1.getWidgetById(tabs.id));
+        assertTrue(deviceTiles1.getWidgetById(tabs.id) instanceof Tabs);
+        assertEquals(2, deviceTiles1.templates[0].widgets.length);
+        int menuWidgetIndex = deviceTiles1.templates[0].getWidgetIndexByIdOrThrow(172650);
+        assertEquals(1, menuWidgetIndex);
+        assertTrue(deviceTiles1.templates[0].widgets[menuWidgetIndex] instanceof Menu);
+    }
 }

@@ -124,29 +124,15 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
         return null;
     }
 
-    public boolean deleteWidget(long removeWidgetId) {
+    public TileTemplate getTileTemplateByWidgetIdOrThrow(long widgetId) {
         for (TileTemplate tileTemplate : templates) {
-            for (int i = 0; i < tileTemplate.widgets.length; i++) {
-                if (tileTemplate.widgets[i].id == removeWidgetId) {
-                    tileTemplate.widgets = ArrayUtil.remove(tileTemplate.widgets, i, Widget.class);
-                    return true;
+            for (Widget tileTemplateWidget : tileTemplate.widgets) {
+                if (tileTemplateWidget.id == widgetId) {
+                    return tileTemplate;
                 }
             }
         }
-        return false;
-    }
-
-    public boolean updateWidget(Widget newWidget) {
-        for (TileTemplate tileTemplate : templates) {
-            for (int i = 0; i < tileTemplate.widgets.length; i++) {
-                if (tileTemplate.widgets[i].id == newWidget.id) {
-                    tileTemplate.widgets = ArrayUtil.copyAndReplace(
-                            tileTemplate.widgets, newWidget, i);
-                    return true;
-                }
-            }
-        }
-        return false;
+        throw new IllegalCommandException("Widget template not found for passed widget id.");
     }
 
     @Override

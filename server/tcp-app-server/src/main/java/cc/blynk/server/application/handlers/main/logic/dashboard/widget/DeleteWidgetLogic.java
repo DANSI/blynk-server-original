@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.ui.Tabs;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
+import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.workers.timer.TimerWorker;
@@ -77,10 +78,16 @@ public class DeleteWidgetLogic {
 
         user.addEnergy(widgetToDelete.getPrice());
         if (inDeviceTiles) {
-            deviceTiles.deleteWidget(widgetId);
+            TileTemplate tileTemplate = deviceTiles.getTileTemplateByWidgetIdOrThrow(widgetId);
+            if (widgetToDelete instanceof Tabs) {
+                tileTemplate.widgets = deleteTabs(timerWorker,
+                        user, state.userKey, dash.id, tileTemplate.widgets, 0);
+            }
+            int index = tileTemplate.getWidgetIndexByIdOrThrow(widgetId);
+            tileTemplate.widgets = ArrayUtil.remove(tileTemplate.widgets, index, Widget.class);
         } else {
             if (widgetToDelete instanceof Tabs) {
-                dash.widgets = deleteTabsFromDash(timerWorker, user, state.userKey, dash.id, dash.widgets, 0);
+                dash.widgets = deleteTabs(timerWorker, user, state.userKey, dash.id, dash.widgets, 0);
             }
             int index = dash.getWidgetIndexByIdOrThrow(widgetId);
             dash.widgets = ArrayUtil.remove(dash.widgets, index, Widget.class);
@@ -100,8 +107,8 @@ public class DeleteWidgetLogic {
     /**
      * Removes all widgets with tabId greater than lastTabIndex
      */
-    static Widget[] deleteTabsFromDash(TimerWorker timerWorker, User user, UserKey userKey,
-                                       int dashId, Widget[] widgets, int lastTabIndex) {
+    static Widget[] deleteTabs(TimerWorker timerWorker, User user, UserKey userKey,
+                               int dashId, Widget[] widgets, int lastTabIndex) {
         ArrayList<Widget> zeroTabWidgets = new ArrayList<>();
         int removedWidgetPrice = 0;
         for (Widget widgetToDelete : widgets) {

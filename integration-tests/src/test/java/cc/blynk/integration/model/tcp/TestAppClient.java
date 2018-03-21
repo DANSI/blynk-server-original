@@ -171,7 +171,7 @@ public class TestAppClient extends BaseTestAppClient {
         send("updateWidget " + dashId + BODY_SEPARATOR + widgetJson);
     }
 
-    public void deleteWidget(int dashId, int widgetId) {
+    public void deleteWidget(int dashId, long widgetId) {
         send("deleteWidget " + dashId + " " + widgetId);
     }
 
