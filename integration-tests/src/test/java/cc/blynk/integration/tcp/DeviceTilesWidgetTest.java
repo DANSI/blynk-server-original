@@ -1426,6 +1426,124 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
     }
 
     @Test
+    public void testAddAndRemoveTabs2() throws Exception {
+        Tabs tabs = new Tabs();
+        tabs.id = 172648;
+        tabs.width = 10;
+        tabs.height = 1;
+        tabs.tabs = new Tab[] {
+                new Tab(0, "0"),
+                new Tab(1, "1")
+        };
+
+        clientPair.appClient.createWidget(1, tabs);
+        clientPair.appClient.verifyResult(ok(1));
+
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(2));
+
+        Button button = new Button();
+        button.id = 172649;
+        button.x = 2;
+        button.y = 34;
+        button.width = 6;
+        button.height = 1;
+        button.label = "Set Volume";
+        button.deviceId = 0;
+        button.tabId = 0;
+
+        clientPair.appClient.createWidget(1, button);
+        clientPair.appClient.verifyResult(ok(3));
+
+        Button button2 = new Button();
+        button2.id = 172650;
+        button2.x = 2;
+        button2.y = 34;
+        button2.width = 6;
+        button2.height = 1;
+        button2.label = "Set Volume";
+        button2.deviceId = 0;
+        button2.tabId = 1;
+
+        clientPair.appClient.createWidget(1, button2);
+        clientPair.appClient.verifyResult(ok(4));
+
+        ButtonTileTemplate tileTemplate = new ButtonTileTemplate(1,
+                null, null, "name", "name", "iconName", "ESP8266", new DataStream((byte) 1, PinType.VIRTUAL),
+                false, false, false, null, null);
+
+        clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        clientPair.appClient.verifyResult(ok(5));
+
+        tileTemplate = new ButtonTileTemplate(1,
+                null, new int[] {0}, "name", "name", "iconName", "ESP8266", new DataStream((byte) 1, PinType.VIRTUAL),
+                false, false, false, null, null);
+
+        clientPair.appClient.send("updateTemplate " + b("1 " + widgetId + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        clientPair.appClient.verifyResult(ok(6));
+
+        Tabs tabs2 = new Tabs();
+        tabs2.id = 172651;
+        tabs2.width = 10;
+        tabs2.height = 1;
+        tabs2.tabs = new Tab[] {
+                new Tab(0, "0"),
+                new Tab(1, "1")
+        };
+
+        clientPair.appClient.createWidget(1, b("21321 1 ") + JsonParser.MAPPER.writeValueAsString(tabs2));
+        clientPair.appClient.verifyResult(ok(7));
+
+        Button button3 = new Button();
+        button3.id = 172652;
+        button3.x = 2;
+        button3.y = 34;
+        button3.width = 6;
+        button3.height = 1;
+        button3.label = "Set Volume";
+        button3.deviceId = 0;
+        button3.tabId = 0;
+
+        clientPair.appClient.createWidget(1, b("21321 1 ") + JsonParser.MAPPER.writeValueAsString(button3));
+        clientPair.appClient.verifyResult(ok(8));
+
+        Button button4 = new Button();
+        button4.id = 172653;
+        button4.x = 2;
+        button4.y = 34;
+        button4.width = 6;
+        button4.height = 1;
+        button4.label = "Set Volume";
+        button4.deviceId = 0;
+        button4.tabId = 1;
+
+        clientPair.appClient.createWidget(1, b("21321 1 ") + JsonParser.MAPPER.writeValueAsString(button4));
+        clientPair.appClient.verifyResult(ok(9));
+
+        clientPair.appClient.deleteWidget(1, tabs2.id);
+        clientPair.appClient.verifyResult(ok(10));
+
+        clientPair.appClient.send("loadProfileGzipped 1");
+        DashBoard dashBoard = clientPair.appClient.getDash(11);
+        assertNotNull(dashBoard);
+        Tabs searchTabs = (Tabs) dashBoard.getWidgetById(tabs.id);
+        assertNotNull(searchTabs);
+        assertNotNull(dashBoard.getWidgetById(button.id));
+        assertNotNull(dashBoard.getWidgetById(button2.id));
+    }
+
+    @Test
     public void testAddAndUpdateTabs() throws Exception {
         long widgetId = 21321;
 
