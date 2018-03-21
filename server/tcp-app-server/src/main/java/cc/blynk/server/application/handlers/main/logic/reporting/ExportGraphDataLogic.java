@@ -67,22 +67,26 @@ public class ExportGraphDataLogic {
             targetId = Integer.parseInt(dashIdAndDeviceId[1]);
         }
 
-        DashBoard dashBoard = user.profile.getDashByIdOrThrow(dashId);
+        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
         long widgetId = Long.parseLong(messageParts[1]);
-        Widget widget = dashBoard.getWidgetByIdOrThrow(widgetId);
+
+        Widget widget = dash.getWidgetById(widgetId);
+        if (widget == null) {
+            widget = dash.getWidgetByIdInDeviceTilesOrThrow(widgetId);
+        }
 
         if (widget instanceof HistoryGraph) {
             HistoryGraph historyGraph = (HistoryGraph) widget;
 
             blockingIOProcessor.executeHistory(
-                    new ExportHistoryGraphJob(ctx, dashBoard, historyGraph, message.id, user)
+                    new ExportHistoryGraphJob(ctx, dash, historyGraph, message.id, user)
             );
         } else if (widget instanceof EnhancedHistoryGraph) {
             EnhancedHistoryGraph enhancedHistoryGraph = (EnhancedHistoryGraph) widget;
 
             blockingIOProcessor.executeHistory(
-                    new ExportEnhancedHistoryGraphJob(ctx, dashBoard, targetId, enhancedHistoryGraph, message.id, user)
+                    new ExportEnhancedHistoryGraphJob(ctx, dash, targetId, enhancedHistoryGraph, message.id, user)
             );
         } else {
             throw new IllegalCommandException("Passed wrong widget id.");
@@ -182,8 +186,13 @@ public class ExportGraphDataLogic {
                         try {
                             int[] deviceIds = new int[] {deviceId};
                             //special case, this is not actually a deviceId but device selector widget id
+                            //todo refactor/simplify/test
                             if (deviceId >= DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-                                Widget deviceSelector = dash.getWidgetById(deviceId);
+                                long targetId = deviceId;
+                                Widget deviceSelector = dash.getWidgetById(targetId);
+                                if (deviceSelector == null) {
+                                    deviceSelector = dash.getWidgetByIdInDeviceTilesOrThrow(targetId);
+                                }
                                 if (deviceSelector != null && deviceSelector instanceof DeviceSelector) {
                                     deviceIds = ((DeviceSelector) deviceSelector).deviceIds;
                                 }

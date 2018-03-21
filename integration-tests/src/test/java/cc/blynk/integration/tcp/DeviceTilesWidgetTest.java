@@ -3,6 +3,7 @@ package cc.blynk.integration.tcp;
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestHardClient;
+import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.Device;
@@ -16,6 +17,7 @@ import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
 import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
 import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphType;
 import cc.blynk.server.core.model.widgets.ui.Menu;
 import cc.blynk.server.core.model.widgets.ui.Tab;
@@ -29,12 +31,16 @@ import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
+import cc.blynk.utils.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -51,6 +57,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.never;
@@ -1044,6 +1051,63 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
 
         clientPair.appClient.send("getenhanceddata 1-0" + b(" 432 DAY"));
         clientPair.appClient.verifyResult(new ResponseMessage(3, NO_DATA));
+    }
+
+    @Test
+    public void exportEnhancedHistoryGraphWorksForTiles() throws Exception {
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(1));
+
+        int[] deviceIds = new int[] {0};
+
+        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        GraphDataStream graphDataStream = new GraphDataStream(
+                null, GraphType.LINE, 0, 0,
+                new DataStream((byte) 88, PinType.VIRTUAL),
+                AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream
+        };
+
+        TileTemplate tileTemplate = new PageTileTemplate(1,
+                new Widget[]{enhancedHistoryGraph}, deviceIds, "name", "name", "iconName", "ESP8266", new DataStream((byte)1, PinType.VIRTUAL),
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
+
+        clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        clientPair.appClient.verifyResult(ok(2));
+
+        clientPair.appClient.send("export 1 432");
+        clientPair.appClient.verifyResult(new ResponseMessage(3, NO_DATA));
+
+        Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", DEFAULT_TEST_USER);
+        Files.createDirectories(userReportDirectory);
+        Path userReportFile = Paths.get(userReportDirectory.toString(),
+                ReportingDao.generateFilename(1, 0, PinType.VIRTUAL.pintTypeChar, (byte) 88, GraphGranularityType.MINUTE.label));
+        FileUtils.write(userReportFile, 1.1, 1L);
+        FileUtils.write(userReportFile, 2.2, 2L);
+
+        clientPair.appClient.send("export 1 432");
+        clientPair.appClient.verifyResult(ok(4));
+        verify(mailWrapper, timeout(1000)).sendHtml(eq(DEFAULT_TEST_USER), eq("History graph data for project My Dashboard"), contains("/dima@mail.ua_1_0_v88_"));
+
+        clientPair.appClient.send("deleteEnhancedData 1\0" + "432");
+        clientPair.appClient.verifyResult(ok(5));
+
+        clientPair.appClient.send("export 1 432");
+        clientPair.appClient.verifyResult(new ResponseMessage(6, NO_DATA));
     }
 
     @Test

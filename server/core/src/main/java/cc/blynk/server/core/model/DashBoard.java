@@ -18,6 +18,7 @@ import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
+import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.workers.timer.TimerWorker;
@@ -267,6 +268,19 @@ public class DashBoard {
 
     public Widget getWidgetById(long id) {
         return getWidgetById(widgets, id);
+    }
+
+    public Widget getWidgetByIdInDeviceTilesOrThrow(long id) {
+        for (Widget widget : widgets) {
+            if (widget instanceof DeviceTiles) {
+                DeviceTiles deviceTiles = (DeviceTiles) widget;
+                Widget widgetInDeviceTiles = deviceTiles.getWidgetById(id);
+                if (widgetInDeviceTiles != null) {
+                    return widgetInDeviceTiles;
+                }
+            }
+        }
+        throw new IllegalCommandException("Widget with passed id not found.");
     }
 
     private static Widget getWidgetById(Widget[] widgets, long id) {

@@ -6,6 +6,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Target;
+import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
@@ -58,7 +59,12 @@ public class DeleteEnhancedGraphDataLogic {
         }
 
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
-        EnhancedHistoryGraph enhancedHistoryGraph = (EnhancedHistoryGraph) dash.getWidgetById(widgetId);
+
+        Widget widget = dash.getWidgetById(widgetId);
+        if (widget == null) {
+            widget = dash.getWidgetByIdInDeviceTilesOrThrow(widgetId);
+        }
+        EnhancedHistoryGraph enhancedHistoryGraph = (EnhancedHistoryGraph) widget;
 
         if (streamIndex == -1 || streamIndex > enhancedHistoryGraph.dataStreams.length - 1) {
             delete(ctx.channel(), message.id, user, dash, targetId, enhancedHistoryGraph.dataStreams);
