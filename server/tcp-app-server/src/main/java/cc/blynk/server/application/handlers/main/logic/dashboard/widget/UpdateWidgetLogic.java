@@ -80,7 +80,7 @@ public class UpdateWidgetLogic {
                 break;
             }
             if (widget instanceof DeviceTiles) {
-                deviceTiles = ((DeviceTiles) widget);
+                deviceTiles = (DeviceTiles) widget;
                 prevWidget = deviceTiles.getWidgetById(widgetId);
                 if (prevWidget != null) {
                     inDeviceTiles = true;

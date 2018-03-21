@@ -63,7 +63,7 @@ public class DeleteWidgetLogic {
                 break;
             }
             if (widget instanceof DeviceTiles) {
-                deviceTiles = ((DeviceTiles) widget);
+                deviceTiles = (DeviceTiles) widget;
                 widgetToDelete = deviceTiles.getWidgetById(widgetId);
                 if (widgetToDelete != null) {
                     inDeviceTiles = true;
