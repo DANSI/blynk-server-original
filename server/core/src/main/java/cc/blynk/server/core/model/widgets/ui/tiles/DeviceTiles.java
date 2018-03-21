@@ -136,6 +136,16 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
     }
 
     @Override
+    public boolean isSame(int deviceId, byte pin, PinType pinType) {
+        for (Tile tile : tiles) {
+            if (tile.isSame(deviceId, pin, pinType)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public boolean updateIfSame(int deviceId, byte pin, PinType pinType, String value) {
         for (Tile tile : tiles) {
             if (tile.updateIfSame(deviceId, pin, pinType, value)) {
@@ -187,5 +197,14 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
                 tileTemplate.erase();
             }
         }
+    }
+
+    public String getValue(int deviceId, byte pin, PinType pinType) {
+        for (Tile tile : tiles) {
+            if (tile.isSame(deviceId, pin, pinType)) {
+                return tile.dataStream.value;
+            }
+        }
+        return null;
     }
 }

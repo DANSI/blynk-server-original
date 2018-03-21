@@ -32,6 +32,10 @@ import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.FileUtils;
+import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.DefaultAsyncHttpClient;
+import org.asynchttpclient.DefaultAsyncHttpClientConfig;
+import org.asynchttpclient.Response;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,6 +48,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import static cc.blynk.server.core.model.serialization.JsonParser.MAPPER;
@@ -1663,5 +1668,48 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         int menuWidgetIndex = deviceTiles1.templates[0].getWidgetIndexByIdOrThrow(172650);
         assertEquals(1, menuWidgetIndex);
         assertTrue(deviceTiles1.templates[0].widgets[menuWidgetIndex] instanceof Menu);
+    }
+
+    @Test
+    public void testGetPinViaHttpApiWorksForDeviceTiles() throws Exception {
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(1));
+
+        TileTemplate tileTemplate = new ButtonTileTemplate(1,
+                null, new int[] {0}, "name", "name", "iconName", "ESP8266", new DataStream((byte) 111, PinType.VIRTUAL),
+                false, false, false, null, null);
+
+        clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        clientPair.appClient.verifyResult(ok(2));
+
+        clientPair.appClient.send("getDevices 1");
+        Device[] devices = clientPair.appClient.getDevices(3);
+        Device device = devices[0];
+        assertEquals(0, device.id);
+
+        clientPair.appClient.send("hardware 1-0 vw 111 1");
+
+        AsyncHttpClient httpclient = new DefaultAsyncHttpClient(
+                new DefaultAsyncHttpClientConfig.Builder()
+                        .setUserAgent(null)
+                        .setKeepAlive(true)
+                        .build()
+        );
+
+        String httpsServerUrl = String.format("http://localhost:%s/", httpPort);
+        Future<Response> f = httpclient.prepareGet(httpsServerUrl + device.token + "/get/v111").execute();
+        Response response = f.get();
+        assertEquals(200, response.getStatusCode());
+        assertEquals("1", response.getResponseBody());
     }
 }

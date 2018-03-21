@@ -34,6 +34,7 @@ import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Mail;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
+import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.processors.EventorProcessor;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
@@ -210,6 +211,15 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
                 return badRequest("Requested pin doesn't exist in the app.");
             }
             return ok(JsonParser.valueToJsonAsString(value.split(StringUtils.BODY_SEPARATOR_STRING)));
+        }
+
+        if (widget instanceof DeviceTiles) {
+            String value = ((DeviceTiles) widget).getValue(deviceId, pin, pinType);
+            if (value == null) {
+                log.debug("Requested pin {} not found. User {}", pinString, user.email);
+                return badRequest("Requested pin doesn't exist in the app.");
+            }
+            return ok(value);
         }
 
         return ok(widget.getJsonValue());
