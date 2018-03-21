@@ -76,7 +76,7 @@ public class DeleteWidgetLogic {
         }
 
         if (widgetToDelete instanceof Tabs) {
-            deleteTabs(timerWorker, user, state.userKey, dash, 0);
+            deleteTabsFromDash(timerWorker, user, state.userKey, dash, 0);
         }
 
         user.addEnergy(widgetToDelete.getPrice());
@@ -101,8 +101,8 @@ public class DeleteWidgetLogic {
     /**
      * Removes all widgets with tabId greater than lastTabIndex
      */
-    static void deleteTabs(TimerWorker timerWorker, User user, UserKey userKey,
-                                  DashBoard dash, int lastTabIndex) {
+    static void deleteTabsFromDash(TimerWorker timerWorker, User user, UserKey userKey,
+                                   DashBoard dash, int lastTabIndex) {
         ArrayList<Widget> zeroTabWidgets = new ArrayList<>();
         int removedWidgetPrice = 0;
         for (Widget widgetToDelete : dash.widgets) {
@@ -120,7 +120,6 @@ public class DeleteWidgetLogic {
 
         user.addEnergy(removedWidgetPrice);
         dash.widgets = zeroTabWidgets.toArray(new Widget[zeroTabWidgets.size()]);
-        dash.updatedAt = System.currentTimeMillis();
     }
 
 }

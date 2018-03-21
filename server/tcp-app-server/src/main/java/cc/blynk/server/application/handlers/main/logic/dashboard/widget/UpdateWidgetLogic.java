@@ -94,7 +94,7 @@ public class UpdateWidgetLogic {
 
         if (newWidget instanceof Tabs) {
             Tabs newTabs = (Tabs) newWidget;
-            DeleteWidgetLogic.deleteTabs(timerWorker, user, state.userKey, dash, newTabs.tabs.length - 1);
+            DeleteWidgetLogic.deleteTabsFromDash(timerWorker, user, state.userKey, dash, newTabs.tabs.length - 1);
         }
 
         if (prevWidget instanceof Notification && newWidget instanceof Notification) {
