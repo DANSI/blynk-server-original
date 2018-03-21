@@ -22,6 +22,7 @@ import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.workers.timer.TimerWorker;
+import cc.blynk.utils.ArrayUtil;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.netty.channel.Channel;
 
@@ -220,6 +221,12 @@ public class DashBoard {
             if (widget instanceof MultiPinWidget) {
                 MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
                 if (multiPinWidget.deviceId == deviceId) {
+                    return true;
+                }
+            }
+            if (widget instanceof DeviceSelector) {
+                DeviceSelector deviceSelector = (DeviceSelector) widget;
+                if (ArrayUtil.contains(deviceSelector.deviceIds, deviceId)) {
                     return true;
                 }
             }
