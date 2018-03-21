@@ -75,14 +75,13 @@ public class DeleteWidgetLogic {
             throw new IllegalCommandException("Widget with passed id not found.");
         }
 
-        if (widgetToDelete instanceof Tabs) {
-            deleteTabsFromDash(timerWorker, user, state.userKey, dash, 0);
-        }
-
         user.addEnergy(widgetToDelete.getPrice());
         if (inDeviceTiles) {
             deviceTiles.deleteWidget(widgetId);
         } else {
+            if (widgetToDelete instanceof Tabs) {
+                dash.widgets = deleteTabsFromDash(timerWorker, user, state.userKey, dash.id, dash.widgets, 0);
+            }
             int index = dash.getWidgetIndexByIdOrThrow(widgetId);
             dash.widgets = ArrayUtil.remove(dash.widgets, index, Widget.class);
         }
@@ -101,17 +100,17 @@ public class DeleteWidgetLogic {
     /**
      * Removes all widgets with tabId greater than lastTabIndex
      */
-    static void deleteTabsFromDash(TimerWorker timerWorker, User user, UserKey userKey,
-                                   DashBoard dash, int lastTabIndex) {
+    static Widget[] deleteTabsFromDash(TimerWorker timerWorker, User user, UserKey userKey,
+                                       int dashId, Widget[] widgets, int lastTabIndex) {
         ArrayList<Widget> zeroTabWidgets = new ArrayList<>();
         int removedWidgetPrice = 0;
-        for (Widget widgetToDelete : dash.widgets) {
+        for (Widget widgetToDelete : widgets) {
             if (widgetToDelete.tabId > lastTabIndex) {
                 removedWidgetPrice += widgetToDelete.getPrice();
                 if (widgetToDelete instanceof Timer) {
-                    timerWorker.delete(userKey, (Timer) widgetToDelete, dash.id);
+                    timerWorker.delete(userKey, (Timer) widgetToDelete, dashId);
                 } else if (widgetToDelete instanceof Eventor) {
-                    timerWorker.delete(userKey, (Eventor) widgetToDelete, dash.id);
+                    timerWorker.delete(userKey, (Eventor) widgetToDelete, dashId);
                 }
             } else {
                 zeroTabWidgets.add(widgetToDelete);
@@ -119,7 +118,7 @@ public class DeleteWidgetLogic {
         }
 
         user.addEnergy(removedWidgetPrice);
-        dash.widgets = zeroTabWidgets.toArray(new Widget[zeroTabWidgets.size()]);
+        return zeroTabWidgets.toArray(new Widget[zeroTabWidgets.size()]);
     }
 
 }
