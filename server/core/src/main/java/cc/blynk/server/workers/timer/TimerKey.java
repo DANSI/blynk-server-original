@@ -20,15 +20,26 @@ public class TimerKey {
 
     public final int additionalId;
 
+    public final long deviceTilesId;
+
+    public final long templateId;
+
     public final TimerTime time;
 
-    public TimerKey(UserKey userKey, int dashId, int deviceId, long widgetId, int additionalId, TimerTime time) {
+    public TimerKey(UserKey userKey, int dashId, int deviceId, long widgetId,
+                    int additionalId, long deviceTilesId, long templateId, TimerTime time) {
         this.userKey = userKey;
         this.dashId = dashId;
         this.deviceId = deviceId;
         this.widgetId = widgetId;
         this.additionalId = additionalId;
+        this.deviceTilesId = deviceTilesId;
+        this.templateId = templateId;
         this.time = time;
+    }
+
+    public boolean isTilesTimer() {
+        return deviceTilesId != -1 && templateId != -1;
     }
 
     @Override
@@ -54,10 +65,16 @@ public class TimerKey {
         if (additionalId != timerKey.additionalId) {
             return false;
         }
+        if (deviceTilesId != timerKey.deviceTilesId) {
+            return false;
+        }
+        if (templateId != timerKey.templateId) {
+            return false;
+        }
         if (userKey != null ? !userKey.equals(timerKey.userKey) : timerKey.userKey != null) {
             return false;
         }
-        return !(time != null ? !time.equals(timerKey.time) : timerKey.time != null);
+        return time != null ? time.equals(timerKey.time) : timerKey.time == null;
     }
 
     @Override
@@ -67,6 +84,8 @@ public class TimerKey {
         result = 31 * result + deviceId;
         result = 31 * result + (int) (widgetId ^ (widgetId >>> 32));
         result = 31 * result + additionalId;
+        result = 31 * result + (int) (deviceTilesId ^ (deviceTilesId >>> 32));
+        result = 31 * result + (int) (templateId ^ (templateId >>> 32));
         result = 31 * result + (time != null ? time.hashCode() : 0);
         return result;
     }

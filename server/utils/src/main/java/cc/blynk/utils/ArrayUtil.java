@@ -2,6 +2,7 @@ package cc.blynk.utils;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * The Blynk Project.
@@ -50,6 +51,14 @@ public final class ArrayUtil {
             }
         }
         return false;
+    }
+
+    public static int[] convertIntegersToInt(List<Integer> integers) {
+        int[] result = new int[integers.size()];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = integers.get(i);
+        }
+        return result;
     }
 
 }

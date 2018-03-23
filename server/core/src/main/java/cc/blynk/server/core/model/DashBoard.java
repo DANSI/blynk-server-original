@@ -339,8 +339,11 @@ public class DashBoard {
 
     public void deleteTimers(TimerWorker timerWorker, UserKey userKey) {
         for (Widget widget : widgets) {
-            if (widget instanceof Timer) {
-                timerWorker.delete(userKey, (Timer) widget, id);
+            if (widget instanceof DeviceTiles) {
+                DeviceTiles deviceTiles = (DeviceTiles) widget;
+                deviceTiles.deleteTimers(timerWorker, userKey, id);
+            } else if (widget instanceof Timer) {
+                timerWorker.delete(userKey, (Timer) widget, id, -1L, -1L);
             } else if (widget instanceof Eventor) {
                 timerWorker.delete(userKey, (Eventor) widget, id);
             }
@@ -349,10 +352,12 @@ public class DashBoard {
 
     public void addTimers(TimerWorker timerWorker, UserKey userKey) {
         for (Widget widget : widgets) {
-            if (widget instanceof Timer) {
-                timerWorker.add(userKey, (Timer) widget, id);
-            }
-            if (widget instanceof Eventor) {
+            if (widget instanceof DeviceTiles) {
+                DeviceTiles deviceTiles = (DeviceTiles) widget;
+                deviceTiles.addTimers(timerWorker, userKey, id);
+            } else if (widget instanceof Timer) {
+                timerWorker.add(userKey, (Timer) widget, id, -1L, -1L);
+            } else if (widget instanceof Eventor) {
                 timerWorker.add(userKey, (Eventor) widget, id);
             }
         }

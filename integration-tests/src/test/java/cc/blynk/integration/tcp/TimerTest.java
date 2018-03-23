@@ -699,6 +699,7 @@ Device device = clientPair.appClient.getDevice();
         timer.pinType = PinType.DIGITAL;
         timer.pin = 5;
         timer.startValue = "1";
+        timer.deviceId = -1;
         LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
         int curTime = localDateTime.toSecondOfDay();
         timer.startTime = curTime + 1;

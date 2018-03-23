@@ -70,8 +70,10 @@ public class UpdateWidgetLogic {
         log.debug("Updating widget {}.", widgetString);
 
         Widget prevWidget = null;
-        boolean inDeviceTiles = false;
         DeviceTiles deviceTiles = null;
+
+        long deviceTilesId = -1;
+        long deviceTilesTemplateId = -1;
 
         long widgetId = newWidget.id;
         for (Widget widget : dash.widgets) {
@@ -81,10 +83,14 @@ public class UpdateWidgetLogic {
             }
             if (widget instanceof DeviceTiles) {
                 deviceTiles = (DeviceTiles) widget;
-                prevWidget = deviceTiles.getWidgetById(widgetId);
-                if (prevWidget != null) {
-                    inDeviceTiles = true;
-                    break;
+                for (TileTemplate tileTemplate : deviceTiles.templates) {
+                    for (Widget tileTemplateWidget : tileTemplate.widgets) {
+                        if (tileTemplateWidget.id == widgetId) {
+                            deviceTilesId = deviceTiles.id;
+                            deviceTilesTemplateId = tileTemplate.id;
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -93,7 +99,11 @@ public class UpdateWidgetLogic {
             throw new IllegalCommandException("Widget with passed id not found.");
         }
 
-        if (prevWidget instanceof Notification && newWidget instanceof Notification) {
+        if (!prevWidget.getClass().equals(newWidget.getClass())) {
+            throw new IllegalCommandException("Widget class was changed.");
+        }
+
+        if (prevWidget instanceof Notification) {
             Notification prevNotif = (Notification) prevWidget;
             Notification newNotif = (Notification) newWidget;
             newNotif.iOSTokens.putAll(prevNotif.iOSTokens);
@@ -101,19 +111,20 @@ public class UpdateWidgetLogic {
         }
 
         //do not update template, tile fields for DeviceTiles.
-        if (newWidget instanceof DeviceTiles && prevWidget instanceof DeviceTiles) {
+        if (newWidget instanceof DeviceTiles) {
             DeviceTiles prevDeviceTiles = (DeviceTiles) prevWidget;
             DeviceTiles newDeviceTiles = (DeviceTiles) newWidget;
             newDeviceTiles.tiles = prevDeviceTiles.tiles;
             newDeviceTiles.templates = prevDeviceTiles.templates;
         }
 
-        if (inDeviceTiles) {
+        if (deviceTilesId != -1) {
             TileTemplate tileTemplate = deviceTiles.getTileTemplateByWidgetIdOrThrow(newWidget.id);
             if (newWidget instanceof Tabs) {
                 Tabs newTabs = (Tabs) newWidget;
                 tileTemplate.widgets = DeleteWidgetLogic.deleteTabs(timerWorker,
-                        user, state.userKey, dash.id, tileTemplate.widgets, newTabs.tabs.length - 1);
+                        user, state.userKey, dash.id, deviceTilesId, deviceTilesTemplateId,
+                        tileTemplate.widgets, newTabs.tabs.length - 1);
             }
             tileTemplate.widgets = ArrayUtil.copyAndReplace(
                     tileTemplate.widgets, newWidget, tileTemplate.getWidgetIndexByIdOrThrow(newWidget.id));
@@ -121,7 +132,8 @@ public class UpdateWidgetLogic {
             if (newWidget instanceof Tabs) {
                 Tabs newTabs = (Tabs) newWidget;
                 dash.widgets = DeleteWidgetLogic.deleteTabs(timerWorker,
-                        user, state.userKey, dash.id, dash.widgets, newTabs.tabs.length - 1);
+                        user, state.userKey, dash.id, deviceTilesId, deviceTilesTemplateId,
+                        dash.widgets, newTabs.tabs.length - 1);
             }
             dash.widgets = ArrayUtil.copyAndReplace(
                     dash.widgets, newWidget, dash.getWidgetIndexByIdOrThrow(newWidget.id));
@@ -132,13 +144,13 @@ public class UpdateWidgetLogic {
         user.lastModifiedTs = dash.updatedAt;
 
         if (prevWidget instanceof Timer) {
-            timerWorker.delete(state.userKey, (Timer) prevWidget, dashId);
+            timerWorker.delete(state.userKey, (Timer) prevWidget, dashId, deviceTilesId, deviceTilesTemplateId);
         } else if (prevWidget instanceof Eventor) {
             timerWorker.delete(state.userKey, (Eventor) prevWidget, dashId);
         }
 
         if (newWidget instanceof Timer) {
-            timerWorker.add(state.userKey, (Timer) newWidget, dashId);
+            timerWorker.add(state.userKey, (Timer) newWidget, dashId, deviceTilesId, deviceTilesTemplateId);
         } else if (newWidget instanceof Eventor) {
             timerWorker.add(state.userKey, (Eventor) newWidget, dashId);
         }

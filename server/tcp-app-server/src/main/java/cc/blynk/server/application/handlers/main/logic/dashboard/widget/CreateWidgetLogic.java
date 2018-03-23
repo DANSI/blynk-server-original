@@ -117,7 +117,7 @@ public class CreateWidgetLogic {
         dash.updatedAt = now;
 
         if (newWidget instanceof Timer) {
-            timerWorker.add(state.userKey, (Timer) newWidget, dashId);
+            timerWorker.add(state.userKey, (Timer) newWidget, dashId, widgetAddToId, templateIdAddToId);
         } else if (newWidget instanceof Eventor) {
             timerWorker.add(state.userKey, (Eventor) newWidget, dashId);
         }
