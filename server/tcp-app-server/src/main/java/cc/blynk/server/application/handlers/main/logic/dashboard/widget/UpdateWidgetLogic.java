@@ -86,6 +86,7 @@ public class UpdateWidgetLogic {
                 for (TileTemplate tileTemplate : deviceTiles.templates) {
                     for (Widget tileTemplateWidget : tileTemplate.widgets) {
                         if (tileTemplateWidget.id == widgetId) {
+                            prevWidget = tileTemplateWidget;
                             deviceTilesId = deviceTiles.id;
                             deviceTilesTemplateId = tileTemplate.id;
                             break;
