@@ -28,6 +28,7 @@ import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.model.widgets.ui.tiles.templates.ButtonTileTemplate;
 import cc.blynk.server.core.model.widgets.ui.tiles.templates.PageTileTemplate;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
+import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
@@ -1711,5 +1712,39 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         Response response = f.get();
         assertEquals(200, response.getStatusCode());
         assertEquals("1", response.getResponseBody());
+    }
+
+    @Test
+    public void testDeviceTileIsUpdatedFromHardware() throws Exception {
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(1));
+
+        TileTemplate tileTemplate = new ButtonTileTemplate(1,
+                null, new int[] {0}, "name", "name", "iconName", "ESP8266", new DataStream((byte) 111, PinType.VIRTUAL),
+                false, false, false, null, null);
+
+        clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        clientPair.appClient.verifyResult(ok(2));
+
+        clientPair.hardwareClient.send("hardware vw 111 1");
+        clientPair.appClient.verifyResult(new HardwareMessage(1, b("1-0 vw 111 1")));
+
+        clientPair.appClient.send("loadProfileGzipped 1");
+        DashBoard dashBoard = clientPair.appClient.getDash(4);
+        assertNotNull(dashBoard);
+        deviceTiles = dashBoard.getWidgetByType(DeviceTiles.class);
+        assertNotNull(deviceTiles);
+        assertEquals(1, deviceTiles.tiles.length);
+        assertEquals("1", deviceTiles.tiles[0].dataStream.value);
     }
 }
