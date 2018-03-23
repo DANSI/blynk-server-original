@@ -107,22 +107,28 @@ public class TimerWorker implements Runnable {
             for (Rule rule : eventor.rules) {
                 if (rule.isValidTimerRule()) {
                     add(userKey, dashId, eventor.deviceId, eventor.id,
-                            rule.triggerTime.id, 0L, 0L, rule.triggerTime, rule.actions);
+                            rule.triggerTime.id, -1L, -1L, rule.triggerTime, rule.actions);
                 }
             }
         }
     }
 
     public void add(UserKey userKey, Timer timer, int dashId, long deviceTilesId, long templateId) {
-        if (timer.isValidStart()) {
-            add(userKey, dashId, timer.deviceId, timer.id, 0, deviceTilesId, templateId,
-                    new TimerTime(timer.startTime),
-                    new SetPinAction(timer.pin, timer.pinType, timer.startValue));
-        }
-        if (timer.isValidStop()) {
-            add(userKey, dashId, timer.deviceId, timer.id, 1, deviceTilesId, templateId,
-                    new TimerTime(timer.stopTime),
-                    new SetPinAction(timer.pin, timer.pinType, timer.stopValue));
+        if (timer.isValid()) {
+            if (timer.isValidStart()) {
+                TimerTime timerTime = new TimerTime(timer.startTime);
+                SetPinAction action = new SetPinAction(timer.pin, timer.pinType, timer.startValue);
+                TimerKey timerKey = new TimerKey(userKey, dashId, timer.deviceId, timer.id, 0,
+                        deviceTilesId, templateId, timerTime);
+                timerExecutors[hash(timerTime.time)].put(timerKey, new BaseAction[]{action});
+            }
+            if (timer.isValidStop()) {
+                TimerTime timerTime = new TimerTime(timer.stopTime);
+                SetPinAction action = new SetPinAction(timer.pin, timer.pinType, timer.stopValue);
+                TimerKey timerKey = new TimerKey(userKey, dashId, timer.deviceId, timer.id, 1,
+                        deviceTilesId, templateId, timerTime);
+                timerExecutors[hash(timerTime.time)].put(timerKey, new BaseAction[]{action});
+            }
         }
     }
 
@@ -140,16 +146,6 @@ public class TimerWorker implements Runnable {
                     new TimerKey(userKey, dashId, deviceId, widgetId, additionalId,
                             deviceTilesId, templateId, time),
                     validActions.toArray(new BaseAction[validActions.size()]));
-        }
-    }
-
-    private void add(UserKey userKey, int dashId, int deviceId, long widgetId,
-                     int additionalId, long deviceTilesId, long templateId, TimerTime time, BaseAction action) {
-        if (action.isValid()) {
-            timerExecutors[hash(time.time)].put(
-                    new TimerKey(userKey, dashId, deviceId, widgetId, additionalId,
-                            deviceTilesId, templateId, time),
-                    new BaseAction[]{action});
         }
     }
 
@@ -216,7 +212,7 @@ public class TimerWorker implements Runnable {
     }
 
     private void send(ConcurrentMap<TimerKey, BaseAction[]> tickedExecutors,
-                     ZonedDateTime currentDateTime, int curSeconds, long now) {
+                      ZonedDateTime currentDateTime, int curSeconds, long now) {
         for (Map.Entry<TimerKey, BaseAction[]> entry : tickedExecutors.entrySet()) {
             TimerKey key = entry.getKey();
             BaseAction[] actions = entry.getValue();
