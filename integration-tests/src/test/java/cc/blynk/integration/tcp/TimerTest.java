@@ -18,6 +18,9 @@ import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinActionType;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.NotifyAction;
+import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
+import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
+import cc.blynk.server.core.model.widgets.ui.tiles.templates.ButtonTileTemplate;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.enums.Priority;
 import cc.blynk.server.servers.BaseServer;
@@ -38,6 +41,7 @@ import java.time.ZonedDateTime;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import static cc.blynk.server.core.model.serialization.JsonParser.MAPPER;
 import static cc.blynk.server.workers.timer.TimerWorker.TIMER_MSG_ID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -663,6 +667,47 @@ Device device = clientPair.appClient.getDevice();
 
         clientPair.hardwareClient.sync(PinType.VIRTUAL, 5);
         verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(2, "vw 5 0")));
+    }
 
+    @Test
+    public void testAddTimerWidgetToDeviceTilesWithStartTimeTriggered() throws Exception {
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = 21321;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(1));
+
+        TileTemplate tileTemplate = new ButtonTileTemplate(1,
+                null, new int[] {0}, "name", "name", "iconName", "ESP8266", new DataStream((byte) 111, PinType.VIRTUAL),
+                false, false, false, null, null);
+
+        clientPair.appClient.send("createTemplate " + b("1 " + deviceTiles.id + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        clientPair.appClient.verifyResult(ok(2));
+
+        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        Timer timer = new Timer();
+        timer.id = 112;
+        timer.x = 1;
+        timer.y = 1;
+        timer.width = 2;
+        timer.height = 1;
+        timer.pinType = PinType.DIGITAL;
+        timer.pin = 5;
+        timer.startValue = "1";
+        LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
+        int curTime = localDateTime.toSecondOfDay();
+        timer.startTime = curTime + 1;
+
+        clientPair.appClient.createWidget(1, b("21321 1 ") + JsonParser.MAPPER.writeValueAsString(timer));
+        clientPair.appClient.verifyResult(ok(3));
+
+        verify(clientPair.hardwareClient.responseMock, timeout(1500).times(1)).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "dw 5 1")));
+        verify(clientPair.appClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "1-0 dw 5 1")));
     }
 }
