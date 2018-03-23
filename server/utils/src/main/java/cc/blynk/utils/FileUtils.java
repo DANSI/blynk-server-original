@@ -134,7 +134,10 @@ public final class FileUtils {
         return email + "_" + appName;
     }
 
-    public static String csvDownloadUrl(String host, String httpPort) {
+    public static String csvDownloadUrl(String host, String httpPort, boolean forcePort80) {
+        if (forcePort80) {
+            return "http://" + host + "/";
+        }
         return "http://" + host + ":" + httpPort + "/";
     }
 

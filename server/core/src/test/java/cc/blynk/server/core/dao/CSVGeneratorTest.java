@@ -2,11 +2,14 @@ package cc.blynk.server.core.dao;
 
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.utils.AppNameUtil;
+import cc.blynk.utils.FileUtils;
 import org.junit.Test;
 
 import java.nio.ByteBuffer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * The Blynk Project.
@@ -31,6 +34,12 @@ public class CSVGeneratorTest {
         buf.flip();
 
         //CSVGenerator.makeGzippedCSVFile(buf, path);
+    }
+
+    @Test
+    public void testForcePort80Property() {
+        assertEquals("http://myhost/", FileUtils.csvDownloadUrl("myhost", "8080", true));
+        assertEquals("http://myhost:8080/", FileUtils.csvDownloadUrl("myhost", "8080", false));
     }
 
 }

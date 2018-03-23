@@ -137,7 +137,10 @@ public class Holder {
         this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao, props.getAllowWithoutActiveApp());
         this.limits = new Limits(props);
 
-        this.csvDownloadUrl = FileUtils.csvDownloadUrl(host, props.getProperty("http.port"));
+        this.csvDownloadUrl = FileUtils.csvDownloadUrl(host,
+                props.getProperty("http.port"),
+                props.getBoolProperty("force.port.80.for.csv")
+        );
 
         String contactEmail = serverProperties.getProperty("contact.email", mailProperties.getSMTPUsername());
         this.sslContextHolder = new SslContextHolder(props, contactEmail);
@@ -193,7 +196,10 @@ public class Holder {
         this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao, props.getAllowWithoutActiveApp());
         this.limits = new Limits(props);
 
-        this.csvDownloadUrl = FileUtils.csvDownloadUrl(host, props.getProperty("http.port"));
+        this.csvDownloadUrl = FileUtils.csvDownloadUrl(host,
+                props.getProperty("http.port"),
+                props.getBoolProperty("force.port.80.for.csv")
+        );
 
         this.sslContextHolder = new SslContextHolder(props, "test@blynk.cc");
     }

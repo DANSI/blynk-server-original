@@ -15,6 +15,7 @@ data.folder=./data
 logs.folder=./logs
 log.level=info
 enable.db=true
+force.port.80.for.csv=true
 admin.rootPath=/admin
 allowed.administrator.ips=
 server.host=xxx.blynk.cc

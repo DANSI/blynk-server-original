@@ -1401,7 +1401,7 @@ Device device = clientPair.appClient.getDevice();
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -1478,7 +1478,7 @@ Device device = clientPair.appClient.getDevice();
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -1563,7 +1563,7 @@ Device device = clientPair.appClient.getDevice();
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
