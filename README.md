@@ -85,7 +85,7 @@ That's it!
         All server output is stored in current folder in 'logs/blynk.log' file.
         
 ### Enabling mail on Local server
-To enable mail notifications on Local server you need to provide your own mail credentials. Create file ```mail.properties``` within same folder where ```server.jar``` is.
+To enable mail notifications on Local server you need to provide your own mail credentials. Create file `mail.properties` within same folder where `server.jar` is.
 Mail properties:
 
         mail.smtp.auth=true
@@ -128,7 +128,16 @@ That's it!
 
         Blynk Server successfully started.
         All server output is stored in current folder in 'logs/blynk.log' file.
-       
+
+## Quick Docker container setup
+
++ Install [Docker](https://docs.docker.com/install/)
++ Run Docker container
+
+        docker run -p 8080:8080 -p 8441:8441 -p 9443:9443 mpherg/blynk-server
+
+That's it!
+
 ## Enabling server auto restart on unix-like systems
         
 + To enable server auto restart find /etc/rc.local file and add:
