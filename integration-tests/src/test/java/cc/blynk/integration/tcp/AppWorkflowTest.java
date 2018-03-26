@@ -152,5 +152,6 @@ public class AppWorkflowTest extends IntegrationBase {
 
         assertNotNull(profile.apps);
         assertEquals(0, profile.apps.length);
+        assertEquals(0, profile.dashBoards.length);
     }
 }

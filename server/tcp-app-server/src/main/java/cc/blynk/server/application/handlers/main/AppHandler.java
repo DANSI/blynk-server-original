@@ -147,6 +147,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final LoadProfileGzippedLogic loadProfileGzippedLogic;
     private final CreateAppLogic createAppLogic;
     private final UpdateAppLogic updateAppLogic;
+    private final DeleteAppLogic deleteAppLogic;
     private final GetProjectByTokenLogic getProjectByTokenLogic;
     private final MailQRsLogic mailQRsLogic;
     private final UpdateFaceLogic updateFaceLogic;
@@ -193,6 +194,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
 
         this.createAppLogic = new CreateAppLogic(holder.limits.widgetSizeLimitBytes);
         this.updateAppLogic = new UpdateAppLogic(holder.limits.widgetSizeLimitBytes);
+        this.deleteAppLogic = new DeleteAppLogic(holder);
 
         this.loadProfileGzippedLogic = new LoadProfileGzippedLogic(holder);
         this.getProjectByTokenLogic = new GetProjectByTokenLogic(holder);
@@ -354,7 +356,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 updateAppLogic.messageReceived(ctx, state, msg);
                 break;
             case DELETE_APP :
-                DeleteAppLogic.messageReceived(ctx, state, msg);
+                deleteAppLogic.messageReceived(ctx, state, msg);
                 break;
 
             case GET_PROJECT_BY_TOKEN :
