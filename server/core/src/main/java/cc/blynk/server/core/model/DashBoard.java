@@ -337,19 +337,6 @@ public class DashBoard {
         }
     }
 
-    public void deleteTimers(TimerWorker timerWorker, UserKey userKey) {
-        for (Widget widget : widgets) {
-            if (widget instanceof DeviceTiles) {
-                DeviceTiles deviceTiles = (DeviceTiles) widget;
-                deviceTiles.deleteTimers(timerWorker, userKey, id);
-            } else if (widget instanceof Timer) {
-                timerWorker.delete(userKey, (Timer) widget, id, -1L, -1L);
-            } else if (widget instanceof Eventor) {
-                timerWorker.delete(userKey, (Eventor) widget, id);
-            }
-        }
-    }
-
     public void addTimers(TimerWorker timerWorker, UserKey userKey) {
         for (Widget widget : widgets) {
             if (widget instanceof DeviceTiles) {

@@ -215,16 +215,6 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
         return counter;
     }
 
-    public void deleteTimers(TimerWorker timerWorker, UserKey userKey, int dashId) {
-        for (TileTemplate template : templates) {
-            for (Widget widgetInTemplate : template.widgets) {
-                if (widgetInTemplate instanceof Timer) {
-                    timerWorker.delete(userKey, (Timer) widgetInTemplate, dashId, this.id, template.id);
-                }
-            }
-        }
-    }
-
     public String getValue(int deviceId, byte pin, PinType pinType) {
         for (Tile tile : tiles) {
             if (tile.isSame(deviceId, pin, pinType)) {

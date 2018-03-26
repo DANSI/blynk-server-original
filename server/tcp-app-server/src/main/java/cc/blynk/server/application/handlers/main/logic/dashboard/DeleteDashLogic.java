@@ -55,7 +55,7 @@ public class DeleteDashLogic {
 
         user.addEnergy(dash.energySum());
 
-        dash.deleteTimers(timerWorker, state.userKey);
+        timerWorker.deleteTimers(state.userKey, dash);
 
         user.profile.dashBoards = ArrayUtil.remove(user.profile.dashBoards, index, DashBoard.class);
         tokenManager.deleteDash(dash);

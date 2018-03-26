@@ -17,6 +17,7 @@ import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinActi
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.NotifyAction;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.Tile;
+import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.processors.EventorProcessor;
 import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.utils.ArrayUtil;
@@ -287,4 +288,26 @@ public class TimerWorker implements Runnable {
         }
     }
 
+    public void deleteTimers(UserKey userKey, DashBoard dash) {
+        for (Widget widget : dash.widgets) {
+            if (widget instanceof DeviceTiles) {
+                DeviceTiles deviceTiles = (DeviceTiles) widget;
+                deleteTimers(userKey, dash.id, deviceTiles);
+            } else if (widget instanceof Timer) {
+                delete(userKey, (Timer) widget, dash.id, -1L, -1L);
+            } else if (widget instanceof Eventor) {
+                delete(userKey, (Eventor) widget, dash.id);
+            }
+        }
+    }
+
+    private void deleteTimers(UserKey userKey, int dashId, DeviceTiles deviceTiles) {
+        for (TileTemplate template : deviceTiles.templates) {
+            for (Widget widgetInTemplate : template.widgets) {
+                if (widgetInTemplate instanceof Timer) {
+                    delete(userKey, (Timer) widgetInTemplate, dashId, deviceTiles.id, template.id);
+                }
+            }
+        }
+    }
 }

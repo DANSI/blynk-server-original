@@ -57,7 +57,7 @@ public class UpdateDashLogic {
 
         DashBoard existingDash = user.profile.getDashByIdOrThrow(updatedDash.id);
 
-        existingDash.deleteTimers(timerWorker, state.userKey);
+        timerWorker.deleteTimers(state.userKey, existingDash);
         updatedDash.addTimers(timerWorker, state.userKey);
 
         existingDash.updateFields(updatedDash);

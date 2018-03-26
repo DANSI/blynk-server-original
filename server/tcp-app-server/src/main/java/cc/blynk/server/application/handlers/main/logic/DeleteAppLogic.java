@@ -52,7 +52,7 @@ public final class DeleteAppLogic {
         List<DashBoard> result = new ArrayList<>();
         for (DashBoard dash : user.profile.dashBoards) {
             if (ArrayUtil.contains(projectIds, dash.id)) {
-                dash.deleteTimers(timerWorker, state.userKey);
+                timerWorker.deleteTimers(state.userKey, dash);
                 tokenManager.deleteDash(dash);
                 Session session = sessionDao.userSession.get(state.userKey);
                 session.closeHardwareChannelByDashId(dash.id);
