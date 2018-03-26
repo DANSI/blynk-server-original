@@ -328,6 +328,8 @@ public class SyncWorkflowTest extends IntegrationBase {
 
         clientPair.hardwareClient.send("internal rtc");
 
+        int offset = LocalDateTime.now().atZone(zoneId).getOffset().getTotalSeconds();
+
         long expectedTS = System.currentTimeMillis() / 1000 + LocalDateTime.now().atZone(zoneId).getOffset().getTotalSeconds();
 
         ArgumentCaptor<StringMessage> objectArgumentCaptor = ArgumentCaptor.forClass(StringMessage.class);
@@ -341,7 +343,7 @@ public class SyncWorkflowTest extends IntegrationBase {
         String tsString = hardMessage.body.split("\0")[1];
         long ts = Long.valueOf(tsString);
 
-        assertEquals(expectedTS, ts, 7200 + 100);
+        assertEquals(expectedTS, ts, offset + 100);
     }
 
     @Test
