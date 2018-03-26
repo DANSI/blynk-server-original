@@ -5,7 +5,6 @@ import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.workers.timer.TimerWorker;
@@ -56,11 +55,10 @@ public class DeleteDashLogic {
         user.addEnergy(dash.energySum());
 
         timerWorker.deleteTimers(state.userKey, dash);
+        tokenManager.deleteDash(dash);
+        sessionDao.closeHardwareChannelByDashId(state.userKey, dashId);
 
         user.profile.dashBoards = ArrayUtil.remove(user.profile.dashBoards, index, DashBoard.class);
-        tokenManager.deleteDash(dash);
-        Session session = sessionDao.userSession.get(state.userKey);
-        session.closeHardwareChannelByDashId(dashId);
     }
 
 }
