@@ -1,6 +1,7 @@
 package cc.blynk.server;
 
 import cc.blynk.utils.FileLoaderUtil;
+import cc.blynk.utils.properties.GCMProperties;
 import cc.blynk.utils.properties.ServerProperties;
 
 /**
@@ -36,8 +37,9 @@ public class Limits {
     public final String dynamicMailBody;
     public final String staticMailBody;
     public final String templateIdMailBody;
+    public final String pushNotificationBody;
 
-    public Limits(ServerProperties props) {
+    public Limits(ServerProperties props, GCMProperties gcmProperties) {
         this.webRequestMaxSize = props.getIntProperty("web.request.max.size", 512 * 1024);
 
         this.deviceLimit = props.getIntProperty("user.devices.limit", 25);
@@ -61,6 +63,7 @@ public class Limits {
         this.dynamicMailBody = FileLoaderUtil.readDynamicMailBody();
         this.staticMailBody = FileLoaderUtil.readStaticMailBody();
         this.templateIdMailBody = FileLoaderUtil.readTemplateIdMailBody();
+        this.pushNotificationBody = gcmProperties.getNotificationBody();
     }
 
     private static int isUnlimited(int val, int max) {

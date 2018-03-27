@@ -19,6 +19,10 @@ public class GCMProperties extends BaseProperties {
         return getProperty("notification.title", "Blynk Notification");
     }
 
+    public String getNotificationBody() {
+        return getProperty("notification.body", "Your {DEVICE_NAME} went offline.");
+    }
+
     public String getGCMApiKey() {
         return getProperty("gcm.api.key");
     }

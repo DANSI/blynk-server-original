@@ -28,6 +28,8 @@ import io.netty.util.internal.SystemPropertyUtil;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 
+import java.util.Collections;
+
 import static cc.blynk.server.internal.ReportingUtil.getReportingFolder;
 
 /**
@@ -135,7 +137,7 @@ public class Holder {
                 gcmWrapper, mailWrapper, twitterWrapper, blockingIOProcessor, stats);
         this.timerWorker = new TimerWorker(userDao, sessionDao, gcmWrapper);
         this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao, props.getAllowWithoutActiveApp());
-        this.limits = new Limits(props);
+        this.limits = new Limits(props, gcmProperties);
 
         this.csvDownloadUrl = FileUtils.csvDownloadUrl(host,
                 props.getProperty("http.port"),
@@ -194,7 +196,7 @@ public class Holder {
 
         this.timerWorker = new TimerWorker(userDao, sessionDao, gcmWrapper);
         this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao, props.getAllowWithoutActiveApp());
-        this.limits = new Limits(props);
+        this.limits = new Limits(props, new GCMProperties(Collections.emptyMap()));
 
         this.csvDownloadUrl = FileUtils.csvDownloadUrl(host,
                 props.getProperty("http.port"),

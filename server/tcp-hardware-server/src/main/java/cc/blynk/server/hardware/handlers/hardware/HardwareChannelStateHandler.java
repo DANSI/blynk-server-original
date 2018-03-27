@@ -35,10 +35,12 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
 
     private final SessionDao sessionDao;
     private final GCMWrapper gcmWrapper;
+    private final String pushNotificationBody;
 
     public HardwareChannelStateHandler(Holder holder) {
         this.sessionDao = holder.sessionDao;
         this.gcmWrapper = holder.gcmWrapper;
+        this.pushNotificationBody = holder.limits.pushNotificationBody;
     }
 
     @Override
@@ -94,7 +96,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
     private void sendPushNotification(ChannelHandlerContext ctx,
                                       Notification notification, int dashId, Device device) {
         String deviceName = ((device == null || device.name == null) ? "device" : device.name);
-        String message = "Your " + deviceName + " went offline.";
+        String message = pushNotificationBody.replace("{DEVICE_NAME}", deviceName);
         if (notification.notifyWhenOfflineIgnorePeriod == 0 || device == null) {
             notification.push(gcmWrapper,
                     message,
