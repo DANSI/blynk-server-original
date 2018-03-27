@@ -101,7 +101,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         QrHolder[] qrHolders = makeQRs(devices, 1, false);
         StringBuilder sb = new StringBuilder();
         qrHolders[0].attach(sb);
-        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.staticMailBody.replace("{project_name}", "My Dashboard").replace("{device_section}", sb.toString())), eq(qrHolders));
+        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.textHolder.staticMailBody.replace("{project_name}", "My Dashboard").replace("{device_section}", sb.toString())), eq(qrHolders));
 
         clientPair.appClient.send("getProjectByToken " + qrHolders[0].token);
         DashBoard dashBoard = clientPair.appClient.getDash(3);
@@ -127,7 +127,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         QrHolder[] qrHolders = makeQRs(devices, 1, false);
         StringBuilder sb = new StringBuilder();
         qrHolders[0].attach(sb);
-        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.staticMailBody.replace("{project_name}", "My Dashboard").replace("{device_section}", sb.toString())), eq(qrHolders));
+        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.textHolder.staticMailBody.replace("{project_name}", "My Dashboard").replace("{device_section}", sb.toString())), eq(qrHolders));
 
         FlashedToken flashedToken = holder.dbManager.selectFlashedToken(qrHolders[0].token);
         assertNotNull(flashedToken);
@@ -155,7 +155,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
 
         QrHolder[] qrHolders = makeQRs(devices, 1, false);
 
-        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.dynamicMailBody.replace("{project_name}", "My Dashboard")), eq(qrHolders));
+        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.textHolder.dynamicMailBody.replace("{project_name}", "My Dashboard")), eq(qrHolders));
     }
 
     @Test
@@ -183,7 +183,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
 
         QrHolder[] qrHolders = makeQRs(devices, 1, true);
 
-        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.dynamicMailBody.replace("{project_name}", "My Dashboard")), eq(qrHolders));
+        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.textHolder.dynamicMailBody.replace("{project_name}", "My Dashboard")), eq(qrHolders));
     }
 
     @Test
@@ -223,7 +223,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         QrHolder[] qrHolders = makeQRs(new Device[] {device}, 10, false);
         StringBuilder sb = new StringBuilder();
         qrHolders[0].attach(sb);
-        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.staticMailBody.replace("{project_name}", "Face Edit Test").replace("{device_section}", sb.toString())), eq(qrHolders));
+        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.textHolder.staticMailBody.replace("{project_name}", "Face Edit Test").replace("{device_section}", sb.toString())), eq(qrHolders));
 
         TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
         appClient2.start();
@@ -323,7 +323,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         QrHolder[] qrHolders = makeQRs(new Device[] {device}, 10, false);
         StringBuilder sb = new StringBuilder();
         qrHolders[0].attach(sb);
-        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.staticMailBody.replace("{project_name}", "Face Edit Test").replace("{device_section}", sb.toString())), eq(qrHolders));
+        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.textHolder.staticMailBody.replace("{project_name}", "Face Edit Test").replace("{device_section}", sb.toString())), eq(qrHolders));
 
         TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
         appClient2.start();
@@ -490,7 +490,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
         QrHolder[] qrHolders = makeQRs(new Device[] {device}, 10, false);
         StringBuilder sb = new StringBuilder();
         qrHolders[0].attach(sb);
-        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.staticMailBody.replace("{project_name}", "Face Edit Test").replace("{device_section}", sb.toString())), eq(qrHolders));
+        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.textHolder.staticMailBody.replace("{project_name}", "Face Edit Test").replace("{device_section}", sb.toString())), eq(qrHolders));
 
         TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
         appClient2.start();
@@ -557,7 +557,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
 
         StringBuilder sb = new StringBuilder();
         qrHolders[0].attach(sb);
-        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.staticMailBody.replace("{project_name}", "My Dashboard").replace("{device_section}", sb.toString())), eq(qrHolders));
+        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.textHolder.staticMailBody.replace("{project_name}", "My Dashboard").replace("{device_section}", sb.toString())), eq(qrHolders));
 
         clientPair.appClient.send("loadProfileGzipped " + qrHolders[0].token + " " + qrHolders[0].dashId + " " + DEFAULT_TEST_USER);
 
@@ -607,7 +607,7 @@ public class PublishingPreviewFlow extends IntegrationBase {
 
         StringBuilder sb = new StringBuilder();
         qrHolders[0].attach(sb);
-        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.limits.staticMailBody.replace("{project_name}", "My Dashboard").replace("{device_section}", sb.toString())), eq(qrHolders));
+        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.textHolder.staticMailBody.replace("{project_name}", "My Dashboard").replace("{device_section}", sb.toString())), eq(qrHolders));
 
         clientPair.appClient.send("loadProfileGzipped " + qrHolders[0].token + " " + qrHolders[0].dashId + " " + DEFAULT_TEST_USER);
 

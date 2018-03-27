@@ -40,7 +40,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
     public HardwareChannelStateHandler(Holder holder) {
         this.sessionDao = holder.sessionDao;
         this.gcmWrapper = holder.gcmWrapper;
-        this.pushNotificationBody = holder.limits.pushNotificationBody;
+        this.pushNotificationBody = holder.textHolder.pushNotificationBody;
     }
 
     @Override

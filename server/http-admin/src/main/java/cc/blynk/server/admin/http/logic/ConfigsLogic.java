@@ -9,7 +9,7 @@ import cc.blynk.core.http.annotation.Path;
 import cc.blynk.core.http.annotation.PathParam;
 import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.server.Holder;
-import cc.blynk.server.Limits;
+import cc.blynk.server.TextHolder;
 import cc.blynk.utils.http.MediaType;
 import cc.blynk.utils.properties.GCMProperties;
 import cc.blynk.utils.properties.MailProperties;
@@ -44,12 +44,12 @@ import static cc.blynk.utils.properties.TwitterProperties.TWITTER_PROPERTIES_FIL
 @ChannelHandler.Sharable
 public class ConfigsLogic extends CookiesBaseHttpHandler {
 
-    private final Limits limits;
+    private final TextHolder textHolder;
     private final ServerProperties serverProperties;
 
     public ConfigsLogic(Holder holder, String rootPath) {
         super(holder, rootPath);
-        this.limits = holder.limits;
+        this.textHolder = holder.textHolder;
         this.serverProperties = holder.props;
     }
 
@@ -79,7 +79,7 @@ public class ConfigsLogic extends CookiesBaseHttpHandler {
     public Response getConfigByName(@PathParam("name") String name) {
         switch (name) {
             case TOKEN_MAIL_BODY :
-                return ok(new Config(name, limits.tokenBody).toString());
+                return ok(new Config(name, textHolder.tokenBody).toString());
             case SERVER_PROPERTIES_FILENAME :
                 return ok(new Config(name, serverProperties).toString());
             case MAIL_PROPERTIES_FILENAME :
@@ -105,7 +105,7 @@ public class ConfigsLogic extends CookiesBaseHttpHandler {
 
         switch (name) {
             case TOKEN_MAIL_BODY:
-                limits.tokenBody = updatedConfig.body;
+                textHolder.tokenBody = updatedConfig.body;
                 break;
             case SERVER_PROPERTIES_FILENAME :
                 Properties properties = readPropertiesFromString(updatedConfig.body);

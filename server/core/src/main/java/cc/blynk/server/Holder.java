@@ -73,6 +73,7 @@ public class Holder {
     public final OTAManager otaManager;
 
     public final Limits limits;
+    public final TextHolder textHolder;
 
     public final String csvDownloadUrl;
 
@@ -137,7 +138,8 @@ public class Holder {
                 gcmWrapper, mailWrapper, twitterWrapper, blockingIOProcessor, stats);
         this.timerWorker = new TimerWorker(userDao, sessionDao, gcmWrapper);
         this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao, props.getAllowWithoutActiveApp());
-        this.limits = new Limits(props, gcmProperties);
+        this.limits = new Limits(props);
+        this.textHolder = new TextHolder(gcmProperties);
 
         this.csvDownloadUrl = FileUtils.csvDownloadUrl(host,
                 props.getProperty("http.port"),
@@ -196,7 +198,8 @@ public class Holder {
 
         this.timerWorker = new TimerWorker(userDao, sessionDao, gcmWrapper);
         this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao, props.getAllowWithoutActiveApp());
-        this.limits = new Limits(props, new GCMProperties(Collections.emptyMap()));
+        this.limits = new Limits(props);
+        this.textHolder = new TextHolder(new GCMProperties(Collections.emptyMap()));
 
         this.csvDownloadUrl = FileUtils.csvDownloadUrl(host,
                 props.getProperty("http.port"),

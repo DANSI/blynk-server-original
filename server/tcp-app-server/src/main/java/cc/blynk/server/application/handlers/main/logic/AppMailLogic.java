@@ -38,9 +38,9 @@ public class AppMailLogic {
 
     public AppMailLogic(Holder holder) {
         this.blockingIOProcessor = holder.blockingIOProcessor;
-        this.tokenMailBody = holder.limits.tokenBody;
+        this.tokenMailBody = holder.textHolder.tokenBody;
         this.mailWrapper = holder.mailWrapper;
-        this.templateIdMailBody = holder.limits.templateIdMailBody;
+        this.templateIdMailBody = holder.textHolder.templateIdMailBody;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {

@@ -1,7 +1,7 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.Limits;
+import cc.blynk.server.TextHolder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.App;
@@ -37,7 +37,7 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 public class MailQRsLogic {
 
     private static final Logger log = LogManager.getLogger(MailQRsLogic.class);
-    private final Limits limits;
+    private final TextHolder textHolder;
 
     private final BlockingIOProcessor blockingIOProcessor;
     private final MailWrapper mailWrapper;
@@ -47,7 +47,7 @@ public class MailQRsLogic {
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.mailWrapper =  holder.mailWrapper;
         this.dbManager = holder.dbManager;
-        this.limits = holder.limits;
+        this.textHolder = holder.textHolder;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
@@ -80,9 +80,9 @@ public class MailQRsLogic {
                                          String publishAppName, String publishAppId, int msgId) {
         String subj = publishAppName + " - App details";
         if (provisionType == ProvisionType.DYNAMIC) {
-            mailDynamic(ctx.channel(), to, subj, limits.dynamicMailBody, publishAppId, dash, msgId);
+            mailDynamic(ctx.channel(), to, subj, textHolder.dynamicMailBody, publishAppId, dash, msgId);
         } else {
-            mailStatic(ctx.channel(), to, subj, limits.staticMailBody, publishAppId, dash, msgId);
+            mailStatic(ctx.channel(), to, subj, textHolder.staticMailBody, publishAppId, dash, msgId);
         }
     }
 

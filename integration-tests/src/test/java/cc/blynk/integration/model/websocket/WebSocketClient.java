@@ -21,7 +21,6 @@ import cc.blynk.server.Limits;
 import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.stats.GlobalStats;
-import cc.blynk.utils.properties.GCMProperties;
 import cc.blynk.utils.properties.ServerProperties;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
@@ -93,8 +92,7 @@ public final class WebSocketClient extends BaseClient {
                         new HttpObjectAggregator(8192),
                         handler,
                         new MessageDecoder(new GlobalStats(),
-                                new Limits(new ServerProperties(Collections.emptyMap()),
-                                new GCMProperties(Collections.emptyMap())))
+                                new Limits(new ServerProperties(Collections.emptyMap())))
                 );
             }
         };

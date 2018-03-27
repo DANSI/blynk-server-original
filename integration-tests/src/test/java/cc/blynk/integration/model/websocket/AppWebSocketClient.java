@@ -22,7 +22,6 @@ import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.utils.SHA256Util;
 import cc.blynk.utils.StringUtils;
-import cc.blynk.utils.properties.GCMProperties;
 import cc.blynk.utils.properties.ServerProperties;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
@@ -85,8 +84,7 @@ public final class AppWebSocketClient extends BaseTestAppClient {
                         new HttpObjectAggregator(8192),
                         appHandler,
                         new WebAppMessageDecoder(new GlobalStats(),
-                                new Limits(new ServerProperties(Collections.emptyMap()),
-                                           new GCMProperties(Collections.emptyMap()))
+                                new Limits(new ServerProperties(Collections.emptyMap()))
                         )
                 );
             }
