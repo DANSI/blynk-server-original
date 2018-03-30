@@ -1697,7 +1697,7 @@ Device device = clientPair.appClient.getDevice();
         clientPair.appClient.createWidget(1, deviceTiles);
         clientPair.appClient.verifyResult(ok(1));
 
-        int[] deviceIds = new int[] {0};
+        int[] deviceIds = new int[] {1};
 
         EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
         enhancedHistoryGraph.id = 432;
@@ -1705,8 +1705,8 @@ Device device = clientPair.appClient.getDevice();
         enhancedHistoryGraph.height = 4;
         DataStream dataStream1 = new DataStream((byte) 8, PinType.DIGITAL);
         DataStream dataStream2 = new DataStream((byte) 9, PinType.DIGITAL);
-        GraphDataStream graphDataStream1 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream1, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
-        GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream2, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
+        GraphDataStream graphDataStream1 = new GraphDataStream(null, GraphType.LINE, 0, -1, dataStream1, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
+        GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, -1, dataStream2, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream1,
                 graphDataStream2,
@@ -1731,20 +1731,20 @@ Device device = clientPair.appClient.getDevice();
 
         //this file has corresponding history graph
         Path pinReportingDataPath1 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 8, GraphGranularityType.HOURLY.label));
+                ReportingDao.generateFilename(1, 1, PinType.DIGITAL.pintTypeChar, (byte) 8, GraphGranularityType.HOURLY.label));
         FileUtils.write(pinReportingDataPath1, 1.11D, 1111111);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 9, GraphGranularityType.HOURLY.label));
+                ReportingDao.generateFilename(1, 1, PinType.DIGITAL.pintTypeChar, (byte) 9, GraphGranularityType.HOURLY.label));
         FileUtils.write(pinReportingDataPath2, 1.11D, 1111111);
 
         //those are not
         Path pinReportingDataPath3 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 10, GraphGranularityType.HOURLY.label));
+                ReportingDao.generateFilename(1, 1, PinType.DIGITAL.pintTypeChar, (byte) 10, GraphGranularityType.HOURLY.label));
         FileUtils.write(pinReportingDataPath3, 1.11D, 1111111);
 
         Path pinReportingDataPath4 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 11, GraphGranularityType.HOURLY.label));
+                ReportingDao.generateFilename(1, 1, PinType.DIGITAL.pintTypeChar, (byte) 11, GraphGranularityType.HOURLY.label));
         FileUtils.write(pinReportingDataPath4, 1.11D, 1111111);
 
         assertTrue(Files.exists(pinReportingDataPath1));
@@ -1766,7 +1766,7 @@ Device device = clientPair.appClient.getDevice();
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));

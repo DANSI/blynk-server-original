@@ -13,6 +13,7 @@ import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
+import cc.blynk.server.internal.EmptyArraysUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -78,11 +79,11 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
                                 DeviceTiles deviceTiles = (DeviceTiles) widget;
                                 for (TileTemplate tileTemplate : deviceTiles.templates) {
                                     for (Widget tilesWidget : tileTemplate.widgets) {
-                                        add(doNotRemovePaths, dashBoard, tilesWidget);
+                                        add(doNotRemovePaths, dashBoard, tilesWidget, tileTemplate.deviceIds);
                                     }
                                 }
                             } else {
-                                add(doNotRemovePaths, dashBoard, widget);
+                                add(doNotRemovePaths, dashBoard, widget, null);
                             }
                         }
                     }
@@ -97,29 +98,39 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
         return removedFilesCounter;
     }
 
-    private static void add(Set<String> doNotRemovePaths, DashBoard dash, Widget widget) {
+    private static void add(Set<String> doNotRemovePaths, DashBoard dash, Widget widget, int[] deviceIds) {
         if (widget instanceof HistoryGraph) {
             HistoryGraph historyGraph = (HistoryGraph) widget;
             add(doNotRemovePaths, dash.id, historyGraph);
         } else if (widget instanceof EnhancedHistoryGraph) {
             EnhancedHistoryGraph enhancedHistoryGraph = (EnhancedHistoryGraph) widget;
-            add(doNotRemovePaths, dash, enhancedHistoryGraph);
+            add(doNotRemovePaths, dash, enhancedHistoryGraph, deviceIds);
         }
     }
 
-    private static void add(Set<String> doNotRemovePaths, DashBoard dash, EnhancedHistoryGraph graph) {
+    private static void add(Set<String> doNotRemovePaths, DashBoard dash, EnhancedHistoryGraph graph, int[] deviceIds) {
         for (GraphDataStream graphDataStream : graph.dataStreams) {
             if (graphDataStream != null && graphDataStream.dataStream != null && graphDataStream.dataStream.isValid()) {
                 DataStream dataStream = graphDataStream.dataStream;
-                Target target = dash.getTarget(graphDataStream.targetId);
-                if (target != null) {
-                    for (int deviceId : target.getAssignedDeviceIds()) {
-                        for (GraphGranularityType type : GraphGranularityType.values()) {
-                            String filename = ReportingDao.generateFilename(dash.id,
-                                    deviceId,
-                                    dataStream.pinType.pintTypeChar, dataStream.pin, type.label);
-                            doNotRemovePaths.add(filename);
-                        }
+
+                int[] resultIds;
+                if (deviceIds == null) {
+                    Target target = dash.getTarget(graphDataStream.targetId);
+                    if (target != null) {
+                        resultIds = target.getAssignedDeviceIds();
+                    } else {
+                        resultIds = EmptyArraysUtil.EMPTY_INTS;
+                    }
+                } else {
+                    resultIds = deviceIds;
+                }
+
+                for (int deviceId : resultIds) {
+                    for (GraphGranularityType type : GraphGranularityType.values()) {
+                        String filename = ReportingDao.generateFilename(dash.id,
+                                deviceId,
+                                dataStream.pinType.pintTypeChar, dataStream.pin, type.label);
+                        doNotRemovePaths.add(filename);
                     }
                 }
             }
