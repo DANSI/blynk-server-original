@@ -314,6 +314,9 @@ public class DashBoard {
         for (Widget widget : widgets) {
             widget.append(sb, deviceId);
         }
+        if (sb.length() == 2) {
+            return null;
+        }
         return sb.toString();
     }
 

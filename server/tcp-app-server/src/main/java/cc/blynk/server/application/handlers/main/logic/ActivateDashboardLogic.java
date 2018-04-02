@@ -52,8 +52,9 @@ public class ActivateDashboardLogic {
 
         if (session.isHardwareConnected(dashId)) {
             for (Device device : dash.devices) {
-                if (session.sendMessageToHardware(dashId, HARDWARE, PIN_MODE_MSG_ID,
-                        dash.buildPMMessage(device.id), device.id)) {
+                String pmBody = dash.buildPMMessage(device.id);
+                if (pmBody != null
+                        && session.sendMessageToHardware(dashId, HARDWARE, PIN_MODE_MSG_ID, pmBody, device.id)) {
                     log.debug("No device in session.");
                     if (ctx.channel().isWritable() && !dash.isNotificationsOff) {
                         ctx.write(deviceNotInNetwork(PIN_MODE_MSG_ID), ctx.voidPromise());

@@ -18,6 +18,7 @@ import cc.blynk.server.core.model.widgets.controls.Step;
 import cc.blynk.server.core.model.widgets.others.Player;
 import cc.blynk.server.core.model.widgets.ui.TimeInput;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
@@ -35,6 +36,7 @@ import java.time.ZoneId;
 import java.util.List;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_CONNECTED;
 import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK;
 import static cc.blynk.server.core.protocol.enums.Response.INVALID_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_INVALID_BODY;
@@ -148,6 +150,51 @@ public class MainWorkflowTest extends IntegrationBase {
         profile = appClient.getProfile();
         profile.dashBoards[0].updatedAt = 0;
         assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board\",\"createdAt\":1,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false}]}", profile.toString());
+    }
+
+    @Test
+    public void testNoEmptyPMCommands() throws Exception {
+        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+
+        appClient.start();
+
+        appClient.register("test@test.com", "1");
+        appClient.verifyResult(ok(1));
+
+        appClient.login("test@test.com", "1", "Android", "RC13");
+        appClient.verifyResult(ok(2));
+
+        appClient.createDash("{\"id\":1, \"createdAt\":1, \"name\":\"test board\"}");
+        appClient.verifyResult(ok(3));
+
+        appClient.createWidget(1, "{\"id\":1, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"VIRTUAL\", \"pin\":1}");
+        appClient.verifyResult(ok(4));
+
+        Device device = new Device();
+        device.id = 1;
+        device.name = "123";
+        device.boardType = "ESP32";
+        appClient.createDevice(1, device);
+        device = appClient.getDevice(5);
+
+        assertNotNull(device);
+        assertNotNull(device.token);
+        appClient.verifyResult(createDevice(5, device));
+
+        appClient.activate(1);
+        appClient.verifyResult(new ResponseMessage(6, DEVICE_NOT_IN_NETWORK));
+
+        TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
+        hardClient.start();
+
+        hardClient.login(device.token);
+        hardClient.verifyResult(ok(1));
+        hardClient.never(hardware(1, "pm"));
+        appClient.verifyResult(new StringMessage(1, HARDWARE_CONNECTED, "1-1"));
+
+        appClient.activate(1);
+        appClient.verifyResult(ok(7));
+        hardClient.never(hardware(1, "pm"));
     }
 
     @Test

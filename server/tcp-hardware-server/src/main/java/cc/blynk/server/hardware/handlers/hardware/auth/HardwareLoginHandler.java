@@ -73,7 +73,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         channel.write(ok(msgId));
 
         String body = dash.buildPMMessage(device.id);
-        if (dash.isActive && body.length() > 2) {
+        if (dash.isActive && body != null) {
             channel.write(makeASCIIStringMessage(HARDWARE, HARDWARE_PIN_MODE_MSG_ID, body));
         }
 
