@@ -253,7 +253,6 @@ public class SetPropertyTest extends IntegrationBase {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = clientPair.appClient.getProfile();
-        profile.dashBoards[0].updatedAt = 0;
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
         assertEquals(600084223, widget.color);
@@ -409,6 +408,18 @@ public class SetPropertyTest extends IntegrationBase {
         Step stepWidget = (Step) widget;
 
         assertEquals(1.1, stepWidget.step, 0.00001);
+    }
+
+    @Test
+    public void testSetColorForWidgetFromApp() throws Exception {
+        clientPair.appClient.send("setProperty 1 4 color #23C48E");
+        clientPair.appClient.verifyResult(ok(1));
+
+        clientPair.appClient.send("loadProfileGzipped");
+        Profile profile = clientPair.appClient.getProfile(2);
+
+        Widget widget = profile.dashBoards[0].getWidgetById(4);
+        assertEquals(600084223, widget.color);
     }
 
 }

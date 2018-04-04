@@ -6,6 +6,7 @@ import cc.blynk.server.application.handlers.main.logic.ActivateDashboardLogic;
 import cc.blynk.server.application.handlers.main.logic.AddEnergyLogic;
 import cc.blynk.server.application.handlers.main.logic.AddPushLogic;
 import cc.blynk.server.application.handlers.main.logic.AppMailLogic;
+import cc.blynk.server.application.handlers.main.logic.AppSetWidgetPropertyLogic;
 import cc.blynk.server.application.handlers.main.logic.AppSyncLogic;
 import cc.blynk.server.application.handlers.main.logic.AssignTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.CreateAppLogic;
@@ -99,6 +100,7 @@ import static cc.blynk.server.core.protocol.enums.Command.PING;
 import static cc.blynk.server.core.protocol.enums.Command.REDEEM;
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_SHARE_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
 import static cc.blynk.server.core.protocol.enums.Command.SHARING;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_APP;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_DASH;
@@ -376,6 +378,9 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 break;
             case LOGOUT :
                 LogoutLogic.messageReceived(ctx, state.user, msg);
+                break;
+            case SET_WIDGET_PROPERTY :
+                AppSetWidgetPropertyLogic.messageReceived(ctx, state.user, msg);
                 break;
         }
     }
