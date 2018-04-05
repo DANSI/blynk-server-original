@@ -257,6 +257,20 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
     }
 
     @Test
+    public void redirectForHardwareWorksWithForce80Port() throws Exception {
+        String token = "12345678901234567890123456789013";
+
+        assertTrue(holder.dbManager.forwardingTokenDBDao.insertTokenHost(
+                token, "test_host", DEFAULT_TEST_USER, 0, 0));
+
+        TestHardClient hardClient = new TestHardClient("localhost", plainHardPort2);
+        hardClient.start();
+
+        hardClient.login(token);
+        hardClient.verifyResult(connectRedirect(1, "test_host " + 80));
+    }
+
+    @Test
     public void invalidToken() throws Exception {
         String token = "1234567890123456789012345678901";
 

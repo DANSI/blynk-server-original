@@ -62,7 +62,8 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         this.holder = holder;
         this.dbManager = holder.dbManager;
         this.blockingIOProcessor = holder.blockingIOProcessor;
-        this.listenPort = String.valueOf(listenPort);
+        boolean isForce80ForRedirect = holder.props.getBoolProperty("force.port.80.for.redirect");
+        this.listenPort = isForce80ForRedirect ? "80" : String.valueOf(listenPort);
     }
 
     private static void completeLogin(Channel channel, Session session, User user,
