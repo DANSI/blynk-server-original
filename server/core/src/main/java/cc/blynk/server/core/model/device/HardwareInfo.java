@@ -10,17 +10,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class HardwareInfo {
 
-    public String version;
+    public final String version;
 
-    public String boardType;
+    public final String boardType;
 
-    public String cpuType;
+    public final String cpuType;
 
-    public String connectionType;
+    public final String connectionType;
 
-    public String build;
+    public final String build;
 
-    public int heartbeatInterval;
+    public final int heartbeatInterval;
 
     @JsonCreator
     public HardwareInfo(@JsonProperty("version") String version,
@@ -38,37 +38,57 @@ public class HardwareInfo {
     }
 
     public HardwareInfo(String[] info) {
-        for (int i = 0; i < info.length; i++) {
-            if (i < info.length - 1) {
-                intiField(info[i], info[++i]);
-            }
-        }
+        HardwareInfoPrivate hardwareInfoPrivate = new HardwareInfoPrivate(info);
+        this.version = hardwareInfoPrivate.version;
+        this.boardType = hardwareInfoPrivate.boardType;
+        this.cpuType = hardwareInfoPrivate.cpuType;
+        this.connectionType = hardwareInfoPrivate.connectionType;
+        this.build = hardwareInfoPrivate.build;
+        this.heartbeatInterval = hardwareInfoPrivate.heartbeatInterval;
     }
 
-    private void intiField(final String key, final String value) {
-        switch (key) {
-            case "h-beat" :
-                try {
-                    this.heartbeatInterval = Integer.parseInt(value);
-                } catch (NumberFormatException nfe) {
-                    this.heartbeatInterval = -1;
+    //utility class to make fields of HardwareInfo final, used instead of hashmap
+    private final class HardwareInfoPrivate {
+        private String version;
+        private String boardType;
+        private String cpuType;
+        private String connectionType;
+        private String build;
+        private int heartbeatInterval;
+
+        private HardwareInfoPrivate(String[] info) {
+            for (int i = 0; i < info.length; i++) {
+                if (i < info.length - 1) {
+                    intiField(info[i], info[++i]);
                 }
-                break;
-            case "ver" :
-                this.version = value;
-                break;
-            case "dev" :
-                this.boardType = value;
-                break;
-            case "cpu" :
-                this.cpuType = value;
-                break;
-            case "con" :
-                this.connectionType = value;
-                break;
-            case "build" :
-                this.build = value;
-                break;
+            }
+        }
+
+        private void intiField(final String key, final String value) {
+            switch (key) {
+                case "h-beat" :
+                    try {
+                        this.heartbeatInterval = Integer.parseInt(value);
+                    } catch (NumberFormatException nfe) {
+                        this.heartbeatInterval = -1;
+                    }
+                    break;
+                case "ver" :
+                    this.version = value;
+                    break;
+                case "dev" :
+                    this.boardType = value;
+                    break;
+                case "cpu" :
+                    this.cpuType = value;
+                    break;
+                case "con" :
+                    this.connectionType = value;
+                    break;
+                case "build" :
+                    this.build = value;
+                    break;
+            }
         }
     }
 
