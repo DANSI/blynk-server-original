@@ -20,8 +20,8 @@ import java.io.InputStreamReader;
 public final class ClientLauncher {
 
     static final String DEFAULT_HOST = "localhost";
-    static final int DEFAULT_HARDWARE_PORT = 8442;
-    static final int DEFAULT_APPLICATION_PORT = 8443;
+    static final int DEFAULT_HARDWARE_PORT = 8080;
+    static final int DEFAULT_APPLICATION_PORT = 9443;
 
     private static final Options options = new Options();
 
