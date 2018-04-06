@@ -376,6 +376,8 @@ public class PublishingPreviewFlow extends IntegrationBase {
         assertEquals(0, deviceTiles.tiles[0].deviceId);
         assertEquals(1, deviceTiles.tiles[0].templateId);
         assertEquals(1, deviceTiles.templates.length);
+        assertNotNull(deviceTiles.templates[0].deviceIds);
+        assertEquals(1, deviceTiles.templates[0].deviceIds.length);
     }
 
     @Test

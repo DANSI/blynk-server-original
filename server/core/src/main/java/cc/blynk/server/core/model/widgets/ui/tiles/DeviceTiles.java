@@ -107,6 +107,15 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
         return templates[getTileTemplateIndexByIdOrThrow(id)];
     }
 
+    public TileTemplate getTileTemplateById(long id) {
+        for (TileTemplate tileTemplate : templates) {
+            if (tileTemplate.id == id) {
+                return tileTemplate;
+            }
+        }
+        return null;
+    }
+
     public int getTileTemplateIndexByIdOrThrow(long id) {
         for (int i = 0; i < templates.length; i++) {
             if (templates[i].id == id) {
@@ -185,8 +194,15 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
 
     @Override
     public void updateValue(Widget oldWidget) {
-        if (oldWidget instanceof  DeviceTiles) {
-            this.tiles = ((DeviceTiles) oldWidget).tiles;
+        if (oldWidget instanceof DeviceTiles) {
+            DeviceTiles oldDeviceTiles = (DeviceTiles) oldWidget;
+            this.tiles = oldDeviceTiles.tiles;
+            for (TileTemplate tileTemplate : templates) {
+                TileTemplate oldTileTemplate = oldDeviceTiles.getTileTemplateById(tileTemplate.id);
+                if (oldTileTemplate != null) {
+                    tileTemplate.deviceIds = oldTileTemplate.deviceIds;
+                }
+            }
         }
     }
 
