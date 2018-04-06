@@ -31,6 +31,7 @@ import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DAT
 import static cc.blynk.server.core.protocol.enums.Command.GET_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_CLONE_CODE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.GET_PROVISION_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.GET_SERVER;
 import static cc.blynk.server.core.protocol.enums.Command.GET_SHARE_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.GET_TAGS;
@@ -208,6 +209,8 @@ public final class CommandParserUtil {
                 return GET_CLONE_CODE;
             case "getprojectbyclonecode" :
                 return GET_PROJECT_BY_CLONE_CODE;
+            case "getprovisiontoken" :
+                return GET_PROVISION_TOKEN;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");

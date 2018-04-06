@@ -17,9 +17,19 @@ public final class TokenValue {
 
     public final Device device;
 
+    public final boolean isTemporary;
+
     public TokenValue(User user, DashBoard dash, Device device) {
         this.user = user;
         this.dash = dash;
         this.device = device;
+        this.isTemporary = false;
+    }
+
+    public TokenValue(User user, DashBoard dash, Device device, boolean isTemporary) {
+        this.user = user;
+        this.dash = dash;
+        this.device = device;
+        this.isTemporary = isTemporary;
     }
 }

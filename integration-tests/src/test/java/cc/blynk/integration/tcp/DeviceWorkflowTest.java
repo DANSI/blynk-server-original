@@ -3,6 +3,7 @@ package cc.blynk.integration.tcp;
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestHardClient;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.device.Tag;
@@ -334,7 +335,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -474,7 +475,7 @@ Device device = clientPair.appClient.getDevice();
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(createDevice(1, device)));
@@ -491,6 +492,46 @@ Device device = clientPair.appClient.getDevice();
 
         assertFalse(clientPair.hardwareClient.isClosed());
         assertTrue(hardClient2.isClosed());
+    }
+
+    @Test
+    public void testTemporaryTokenWorksAsExpected() throws Exception {
+        Device device1 = new Device(1, "My Device", "ESP8266");
+
+        clientPair.appClient.send("getProvisionToken 1\0" + device1.toString());
+        String tempToken = clientPair.appClient.getBody(1);
+        assertNotNull(tempToken);
+
+        clientPair.appClient.send("loadProfileGzipped 1");
+        DashBoard dash = clientPair.appClient.getDash(2);
+        assertNotNull(dash);
+        assertEquals(1, dash.devices.length);
+
+        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
+        hardClient2.start();
+
+        hardClient2.login(tempToken);
+        hardClient2.verifyResult(ok(1));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(hardwareConnected(1, "1-1")));
+
+        clientPair.appClient.send("loadProfileGzipped 1");
+        dash = clientPair.appClient.getDash(4);
+        assertNotNull(dash);
+        assertEquals(2, dash.devices.length);
+
+        clientPair.appClient.reset();
+
+        hardClient2 = new TestHardClient("localhost", tcpHardPort);
+        hardClient2.start();
+
+        hardClient2.login(tempToken);
+        hardClient2.verifyResult(ok(1));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(hardwareConnected(1, "1-1")));
+
+        clientPair.appClient.send("loadProfileGzipped 1");
+        dash = clientPair.appClient.getDash(2);
+        assertNotNull(dash);
+        assertEquals(2, dash.devices.length);
     }
 
 

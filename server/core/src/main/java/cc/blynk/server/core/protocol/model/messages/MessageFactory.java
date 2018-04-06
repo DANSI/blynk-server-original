@@ -41,6 +41,7 @@ import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DAT
 import static cc.blynk.server.core.protocol.enums.Command.GET_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_CLONE_CODE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.GET_PROVISION_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.GET_SERVER;
 import static cc.blynk.server.core.protocol.enums.Command.GET_SHARE_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.GET_TAGS;
@@ -157,6 +158,7 @@ public final class MessageFactory {
             case GET_PROJECT_BY_CLONE_CODE :
             case DEVICE_OFFLINE :
             case OUTDATED_APP_NOTIFICATION :
+            case GET_PROVISION_TOKEN :
                 return new StringMessage(messageId, command, body);
 
             default: throw new UnsupportedCommandException("Command not supported. Code : " + command, messageId);

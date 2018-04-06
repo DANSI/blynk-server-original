@@ -29,6 +29,7 @@ import java.util.Random;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_CLONE_CODE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.GET_PROVISION_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
@@ -117,6 +118,7 @@ public class TestAppClient extends BaseTestAppClient {
             return ((StringMessage) messageBase).body;
         } else if (messageBase.command == LOAD_PROFILE_GZIPPED
                 || messageBase.command == GET_PROJECT_BY_TOKEN
+                || messageBase.command == GET_PROVISION_TOKEN
                 || messageBase.command == GET_PROJECT_BY_CLONE_CODE) {
             return new String(BaseTest.decompress(messageBase.getBytes()));
         }
