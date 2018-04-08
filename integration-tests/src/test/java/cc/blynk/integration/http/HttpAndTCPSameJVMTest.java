@@ -236,8 +236,8 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, eventor);
         clientPair.appClient.verifyResult(ok(1));
 
-        verify(clientPair.appClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1-0 vw 4 1"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("vw 4 1"))));
+        verify(clientPair.appClient.responseMock, timeout(3000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1-0 vw 4 1"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(3000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("vw 4 1"))));
 
 
 
