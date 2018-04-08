@@ -16,16 +16,13 @@ import cc.blynk.utils.IPUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelPipeline;
+import io.netty.channel.DefaultChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.asynchttpclient.AsyncCompletionHandler;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.Response;
-
-import java.util.NoSuchElementException;
 
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
 import static cc.blynk.server.core.protocol.enums.Command.OUTDATED_APP_NOTIFICATION;
@@ -64,23 +61,12 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
         this.asyncHttpClient = holder.asyncHttpClient;
     }
 
-    private static void cleanPipeline(ChannelPipeline pipeline) {
-        try {
-            //common handlers for websockets and app pipeline
-            pipeline.remove(AppLoginHandler.class);
-            pipeline.remove(UserNotLoggedHandler.class);
-            pipeline.remove(GetServerHandler.class);
-
-            //app pipeline sepcific handlers
-            if (pipeline.get(WebSocketServerProtocolHandler.class) == null) {
-                pipeline.remove(RegisterHandler.class);
-                pipeline.remove(AppShareLoginHandler.class);
-            }
-        } catch (NoSuchElementException e) {
-            //this case possible when few login commands come at same time to different threads
-            //just do nothing and ignore.
-            //https://github.com/blynkkk/blynk-server/issues/224
-        }
+    private static void cleanPipeline(DefaultChannelPipeline pipeline) {
+        pipeline.removeIfExists(AppLoginHandler.class);
+        pipeline.removeIfExists(UserNotLoggedHandler.class);
+        pipeline.removeIfExists(GetServerHandler.class);
+        pipeline.removeIfExists(RegisterHandler.class);
+        pipeline.removeIfExists(AppShareLoginHandler.class);
     }
 
     @Override
@@ -185,7 +171,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
     }
 
     private void login(ChannelHandlerContext ctx, int messageId, User user, Version version) {
-        ChannelPipeline pipeline = ctx.pipeline();
+        DefaultChannelPipeline pipeline = (DefaultChannelPipeline) ctx.pipeline();
         cleanPipeline(pipeline);
 
         AppStateHolder appStateHolder = new AppStateHolder(user, version);
