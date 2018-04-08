@@ -151,7 +151,7 @@ public class WebhookTest extends IntegrationBase {
     @Test
     public void testWebhookWorksWithBlynkHttpApiNoPlaceHolder() throws Exception {
         WebHook webHook = new WebHook();
-        webHook.url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124";
+        webHook.url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/V124";
         webHook.method = PUT;
         webHook.headers = new Header[] {new Header("Content-Type", "application/json")};
         webHook.body = "[\"124\"]";
@@ -178,7 +178,7 @@ public class WebhookTest extends IntegrationBase {
     @Test
     public void testWebhookWorksWithBlynkHttpApiPlaceHolderAndTextPlain() throws Exception {
         WebHook webHook = new WebHook();
-        webHook.url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124";
+        webHook.url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/V124";
         webHook.method = PUT;
         webHook.headers = new Header[] {new Header("Content-Type", "text/plain")};
         webHook.body = "[\"/pin/\"]";
@@ -216,7 +216,7 @@ public class WebhookTest extends IntegrationBase {
         clientPair.hardwareClient.send("hardware vw 123 " + b("10 11 12"));
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
 
-        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124").execute();
+        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124").execute();
         Response response = f.get();
 
         assertEquals(200, response.getStatusCode());
@@ -255,7 +255,7 @@ public class WebhookTest extends IntegrationBase {
         clientPair.hardwareClient.send("hardware vw 123 " + b("0 1 2 3 4 5 6 7 8 9"));
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
 
-        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124").execute();
+        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124").execute();
         Response response = f.get();
 
         assertEquals(200, response.getStatusCode());
@@ -269,7 +269,7 @@ public class WebhookTest extends IntegrationBase {
     @Test
     public void testWebhookWorksWithBlynkHttpApiWithDateTimePlaceholder() throws Exception {
         WebHook webHook = new WebHook();
-        webHook.url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124";
+        webHook.url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/V124";
         webHook.method = PUT;
         webHook.headers = new Header[] {new Header("Content-Type", "application/json")};
         webHook.body = "[\"/datetime_iso/\"]";
@@ -284,7 +284,7 @@ public class WebhookTest extends IntegrationBase {
         clientPair.hardwareClient.send("hardware vw 123 10");
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
 
-        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124").execute();
+        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124").execute();
         Response response = f.get();
 
         assertEquals(200, response.getStatusCode());
@@ -297,7 +297,7 @@ public class WebhookTest extends IntegrationBase {
     @Test
     public void testWebhookWorksWithBlynkHttpApiWithDateTimePlaceholderAndPins() throws Exception {
         WebHook webHook = new WebHook();
-        webHook.url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124";
+        webHook.url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/V124";
         webHook.method = PUT;
         webHook.headers = new Header[] {new Header("Content-Type", "application/json")};
         webHook.body = "[\"/datetime_iso/,/pin[0]/,/pin[1]/\"]";
@@ -312,7 +312,7 @@ public class WebhookTest extends IntegrationBase {
         clientPair.hardwareClient.send("hardware vw 123 10 11");
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
 
-        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124").execute();
+        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124").execute();
         Response response = f.get();
 
         assertEquals(200, response.getStatusCode());
@@ -331,7 +331,7 @@ public class WebhookTest extends IntegrationBase {
     @Test
     public void testWebhookWorksWithBlynkHttpApiWithPlaceholder() throws Exception {
         WebHook webHook = new WebHook();
-        webHook.url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124";
+        webHook.url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/V124";
         webHook.method = PUT;
         webHook.headers = new Header[] {new Header("Content-Type", "application/json")};
         webHook.body = "[%s]";
@@ -346,7 +346,7 @@ public class WebhookTest extends IntegrationBase {
         clientPair.hardwareClient.send("hardware vw 123 10");
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
 
-        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124").execute();
+        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124").execute();
         Response response = f.get();
 
         assertEquals(200, response.getStatusCode());
@@ -358,7 +358,7 @@ public class WebhookTest extends IntegrationBase {
     @Test
     public void testWebhookWorksWithBlynkHttpApiWithArrayPlaceholder() throws Exception {
         WebHook webHook = new WebHook();
-        webHook.url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124";
+        webHook.url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/V124";
         webHook.method = PUT;
         webHook.headers = new Header[] {new Header("Content-Type", "application/json")};
         webHook.body = "[/pin[0]/,/pin[1]/,/pin[2]/]";
@@ -373,7 +373,7 @@ public class WebhookTest extends IntegrationBase {
         clientPair.hardwareClient.send("hardware vw 123 " + b("10 11 12"));
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
 
-        Future<Response> f = httpclient.prepareGet(webHook.url).execute();
+        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124").execute();
         Response response = f.get();
 
         assertEquals(200, response.getStatusCode());
@@ -387,7 +387,7 @@ public class WebhookTest extends IntegrationBase {
     @Test
     public void testWebhookWorksWithBlynkHttpApiWithArrayPlaceholder2() throws Exception {
         WebHook webHook = new WebHook();
-        webHook.url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124";
+        webHook.url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/V124";
         webHook.method = PUT;
         webHook.headers = new Header[] {new Header("Content-Type", "application/json")};
         webHook.body = "[/pin[0]/]";
@@ -402,7 +402,7 @@ public class WebhookTest extends IntegrationBase {
         clientPair.hardwareClient.send("hardware vw 123 10");
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
 
-        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124").execute();
+        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124").execute();
         Response response = f.get();
 
         assertEquals(200, response.getStatusCode());
@@ -414,7 +414,7 @@ public class WebhookTest extends IntegrationBase {
     @Test
     public void testWebhookWorksWithBlynkHttpApiWithPlaceholderQuotaLimit() throws Exception {
         WebHook webHook = new WebHook();
-        webHook.url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124";
+        webHook.url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/V124";
         webHook.method = PUT;
         webHook.headers = new Header[] {new Header("Content-Type", "application/json")};
         webHook.body = "[%s]";
@@ -429,7 +429,7 @@ public class WebhookTest extends IntegrationBase {
         clientPair.hardwareClient.send("hardware vw 123 10");
         verify(clientPair.hardwareClient.responseMock, after(500).times(0)).channelRead(any(), any());
 
-        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124").execute();
+        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124").execute();
         Response response = f.get();
 
         assertEquals(200, response.getStatusCode());
@@ -440,7 +440,7 @@ public class WebhookTest extends IntegrationBase {
         clientPair.hardwareClient.send("hardware vw 123 11");
         verify(clientPair.hardwareClient.responseMock, after(600).times(0)).channelRead(any(), any());
 
-        f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124").execute();
+        f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124").execute();
         response = f.get();
 
         assertEquals(200, response.getStatusCode());
@@ -452,7 +452,7 @@ public class WebhookTest extends IntegrationBase {
         clientPair.hardwareClient.send("hardware vw 123 12");
         verify(clientPair.hardwareClient.responseMock, after(500).times(0)).channelRead(any(), any());
 
-        f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124").execute();
+        f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124").execute();
         response = f.get();
 
         assertEquals(200, response.getStatusCode());
@@ -464,7 +464,7 @@ public class WebhookTest extends IntegrationBase {
     @Test
     public void testWebhookWorksWithBlynkHttpApiNoPlaceHolderAppSideTrigger() throws Exception {
         WebHook webHook = new WebHook();
-        webHook.url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124";
+        webHook.url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/V124";
         webHook.method = PUT;
         webHook.headers = new Header[] {new Header("Content-Type", "application/json")};
         webHook.body = "[\"124\"]";
@@ -480,7 +480,7 @@ public class WebhookTest extends IntegrationBase {
         clientPair.appClient.send("hardware 1 vw 123 10");
         verify(clientPair.hardwareClient.responseMock, after(500).times(1)).channelRead(any(), eq(hardware(2, "vw 123 10")));
 
-        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124").execute();
+        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124").execute();
         Response response = f.get();
 
         assertEquals(200, response.getStatusCode());
@@ -614,7 +614,7 @@ public class WebhookTest extends IntegrationBase {
         verify(clientPair.hardwareClient.responseMock, after(500).times(1)).channelRead(any(), eq(
                 new HardwareMessage(2, b("vw 123 1"))));
 
-        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124").execute();
+        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124").execute();
         Response response = f.get();
 
         assertEquals(400, response.getStatusCode());
