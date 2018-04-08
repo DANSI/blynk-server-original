@@ -349,9 +349,8 @@ public class DeviceWorkflowTest extends IntegrationBase {
         device0.status = Status.ONLINE;
         device1.status = Status.ONLINE;
 
-        clientPair.appClient.reset();
         clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.getDevices();
+        Device[] devices = clientPair.appClient.getDevices(3);
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
