@@ -131,6 +131,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
 
         createProjectForExportedApp(newUser, appName, message.id);
 
+        ctx.pipeline().remove(this);
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }
 
