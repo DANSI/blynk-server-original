@@ -83,7 +83,7 @@ public class WebhookProcessor extends NotificationBase {
     }
 
     private void process(Session session, int dashId, int deviceId,  WebHook webHook, String triggerValue) {
-        String newUrl = format(webHook.url, triggerValue, false);
+        String newUrl = format(webHook.url, triggerValue);
 
         if (!WebHook.isValidUrl(newUrl)) {
             return;
@@ -96,7 +96,7 @@ public class WebhookProcessor extends NotificationBase {
                     builder.setHeader(header.name, header.value);
                     if (webHook.body != null && !webHook.body.isEmpty()) {
                         if (CONTENT_TYPE.equals(header.name)) {
-                            String newBody = format(webHook.body, triggerValue, true);
+                            String newBody = format(webHook.body, triggerValue);
                             log.trace("Webhook formatted body : {}", newBody);
                             builder.setBody(newBody);
                         }
@@ -166,14 +166,12 @@ public class WebhookProcessor extends NotificationBase {
         }
     }
 
-    private static String format(String data, String triggerValue, boolean doBlynkCheck) {
+    private static String format(String data, String triggerValue) {
         //this is an ugly hack to make it work with Blynk HTTP API.
-        triggerValue = Matcher.quoteReplacement(triggerValue);
-        if (doBlynkCheck || !data.toLowerCase().contains("/pin/v")) {
-            data = PIN_PATTERN.matcher(data).replaceFirst(triggerValue);
-        }
+        String quotedValue = Matcher.quoteReplacement(triggerValue);
+        data = PIN_PATTERN.matcher(data).replaceFirst(quotedValue);
 
-        String[] splitted = triggerValue.split(StringUtils.BODY_SEPARATOR_STRING);
+        String[] splitted = quotedValue.split(StringUtils.BODY_SEPARATOR_STRING);
         switch (splitted.length) {
             case 10 :
                 data = PIN_PATTERN_9.matcher(data).replaceFirst(splitted[9]);
@@ -196,7 +194,7 @@ public class WebhookProcessor extends NotificationBase {
             case 1 :
                 data = PIN_PATTERN_0.matcher(data).replaceFirst(splitted[0]);
             default :
-                data = GENERIC_PLACEHOLDER.matcher(data).replaceFirst(triggerValue);
+                data = GENERIC_PLACEHOLDER.matcher(data).replaceFirst(quotedValue);
                 data = DATETIME_PATTERN.matcher(data).replaceFirst(Instant.now().toString());
         }
         return data;

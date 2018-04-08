@@ -151,7 +151,7 @@ public class WebhookTest extends IntegrationBase {
     @Test
     public void testReservedREgexCharForReplaceArgumentsInWebhook() throws Exception {
         WebHook webHook = new WebHook();
-        webHook.url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124";
+        webHook.url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/V124";
         webHook.method = PUT;
         webHook.headers = new Header[] {new Header("Content-Type", "application/json")};
         webHook.body = "[\"/pin/\"]";
@@ -166,7 +166,7 @@ public class WebhookTest extends IntegrationBase {
         clientPair.hardwareClient.send("hardware vw 123 $$");
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
 
-        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124").execute();
+        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124").execute();
         Response response = f.get();
 
         assertEquals(200, response.getStatusCode());
