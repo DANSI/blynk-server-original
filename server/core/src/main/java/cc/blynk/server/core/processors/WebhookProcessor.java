@@ -20,6 +20,7 @@ import org.asynchttpclient.HttpResponseBodyPart;
 import org.asynchttpclient.Response;
 
 import java.time.Instant;
+import java.util.regex.Matcher;
 
 import static cc.blynk.server.core.protocol.enums.Command.WEB_HOOKS;
 import static cc.blynk.utils.StringUtils.DATETIME_PATTERN;
@@ -167,6 +168,7 @@ public class WebhookProcessor extends NotificationBase {
 
     private static String format(String data, String triggerValue, boolean doBlynkCheck) {
         //this is an ugly hack to make it work with Blynk HTTP API.
+        triggerValue = Matcher.quoteReplacement(triggerValue);
         if (doBlynkCheck || !data.toLowerCase().contains("/pin/v")) {
             data = PIN_PATTERN.matcher(data).replaceFirst(triggerValue);
         }
