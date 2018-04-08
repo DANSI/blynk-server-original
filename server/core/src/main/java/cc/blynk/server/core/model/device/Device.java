@@ -18,6 +18,8 @@ public class Device implements Target {
 
     public volatile String token;
 
+    public volatile String vendor;
+
     public volatile ConnectionType connectionType;
 
     public volatile Status status = Status.OFFLINE;
@@ -70,6 +72,7 @@ public class Device implements Target {
 
     public void update(Device newDevice) {
         this.name = newDevice.name;
+        this.vendor = newDevice.vendor;
         this.boardType = newDevice.boardType;
         this.connectionType = newDevice.connectionType;
         this.iconName = newDevice.iconName;
