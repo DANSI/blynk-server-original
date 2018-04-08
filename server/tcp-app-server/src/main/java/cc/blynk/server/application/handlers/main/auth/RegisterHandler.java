@@ -55,22 +55,18 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
     private final TimerWorker timerWorker;
     private final MailWrapper mailWrapper;
     private final BlockingIOProcessor blockingIOProcessor;
+    private final LimitChecker registrationLimitChecker;
     private final Set<String> allowedUsers;
 
     public RegisterHandler(Holder holder) {
-        this(holder.userDao, holder.tokenManager, holder.timerWorker,
-                holder.mailWrapper, holder.blockingIOProcessor,
-                holder.props.getCommaSeparatedValueAsArray("allowed.users.list"));
-    }
+        this.userDao = holder.userDao;
+        this.tokenManager = holder.tokenManager;
+        this.timerWorker = holder.timerWorker;
+        this.mailWrapper = holder.mailWrapper;
+        this.blockingIOProcessor = holder.blockingIOProcessor;
+        this.registrationLimitChecker = new LimitChecker(holder.limits.hourlyRegistrationsLimit, 3_600_000L);
 
-    //for tests only
-    RegisterHandler(UserDao userDao, TokenManager tokenManager, TimerWorker timerWorker,
-                    MailWrapper mailWrapper, BlockingIOProcessor blockingIOProcessor, String[] allowedUsersArray) {
-        this.userDao = userDao;
-        this.tokenManager = tokenManager;
-        this.timerWorker = timerWorker;
-        this.mailWrapper = mailWrapper;
-        this.blockingIOProcessor = blockingIOProcessor;
+        String[] allowedUsersArray = holder.props.getCommaSeparatedValueAsArray("allowed.users.list");
         if (allowedUsersArray != null && allowedUsersArray.length > 0
                 && allowedUsersArray[0] != null && !allowedUsersArray[0].isEmpty()) {
             allowedUsers = new HashSet<>(Arrays.asList(allowedUsersArray));
@@ -82,6 +78,12 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RegisterMessage message) throws Exception {
+        if (registrationLimitChecker.isLimitReached()) {
+            log.error("Register Handler. Registration limit reached. {}", message);
+            ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
+            return;
+        }
+
         String[] messageParts = StringUtils.split3(message.body);
 
         //expecting message with 2 parts at least.

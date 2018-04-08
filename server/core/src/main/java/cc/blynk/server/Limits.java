@@ -20,6 +20,7 @@ public class Limits {
     public final int dashboardsLimit;
     public final int widgetSizeLimitBytes;
     public final int profileSizeLimitBytes;
+    public final int hourlyRegistrationsLimit;
 
     //hardware side limits
     public final long notificationPeriodLimitSec;
@@ -49,6 +50,8 @@ public class Limits {
                 isUnlimited(props.getIntProperty("webhooks.failure.count.limit", 10), Integer.MAX_VALUE);
         this.hardwareIdleTimeout = props.getIntProperty("hard.socket.idle.timeout", 0);
         this.appIdleTimeout = props.getIntProperty("app.socket.idle.timeout", 300);
+
+        this.hourlyRegistrationsLimit = props.getIntProperty("hourly.registrations.limit", 1000);
     }
 
     private static int isUnlimited(int val, int max) {
