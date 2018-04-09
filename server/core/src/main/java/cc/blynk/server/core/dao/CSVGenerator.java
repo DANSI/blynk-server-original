@@ -45,6 +45,7 @@ public class CSVGenerator {
     }
 
     private final ReportingDao reportingDao;
+    //43200 == 30 * 24 * 60 is minutes points for 1 month
     private final static int FETCH_COUNT = Integer.parseInt(System.getProperty("csv.export.data.points.max", "43200"));
 
     CSVGenerator(ReportingDao reportingDao) {

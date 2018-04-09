@@ -2,6 +2,7 @@ package cc.blynk.server.db.dao;
 
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
@@ -311,9 +312,12 @@ public class ReportingDBDao {
              PreparedStatement psMinute = connection.prepareStatement(deleteMinute);
              PreparedStatement psHour = connection.prepareStatement(deleteHour)) {
 
-            psMinute.setTimestamp(1, new Timestamp(now.minus(360 + 1,
+            //for minute table we store only data for last 24 hours
+            psMinute.setTimestamp(1, new Timestamp(now.minus(GraphPeriod.DAY.numberOfPoints + 1,
                     ChronoUnit.MINUTES).toEpochMilli()), DateTimeUtils.UTC_CALENDAR);
-            psHour.setTimestamp(1, new Timestamp(now.minus(168 + 1,
+
+            //for hour table we store only data for last 3 months
+            psHour.setTimestamp(1, new Timestamp(now.minus(GraphPeriod.THREE_MONTHS.numberOfPoints + 1,
                     ChronoUnit.HOURS).toEpochMilli()), DateTimeUtils.UTC_CALENDAR);
 
             minuteRecordsRemoved = psMinute.executeUpdate();
