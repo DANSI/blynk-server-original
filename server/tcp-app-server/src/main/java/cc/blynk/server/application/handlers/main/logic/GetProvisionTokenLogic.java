@@ -56,7 +56,8 @@ public class GetProvisionTokenLogic {
         tokenManager.assignToken(user, dash, temporaryDevice, tempToken, true);
 
         if (ctx.channel().isWritable()) {
-            ctx.writeAndFlush(makeASCIIStringMessage(GET_PROVISION_TOKEN, message.id, tempToken), ctx.voidPromise());
+            ctx.writeAndFlush(makeASCIIStringMessage(GET_PROVISION_TOKEN,
+                    message.id, temporaryDevice.toString()), ctx.voidPromise());
         }
 
     }

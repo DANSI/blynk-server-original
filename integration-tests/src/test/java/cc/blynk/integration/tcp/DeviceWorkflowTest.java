@@ -498,8 +498,10 @@ public class DeviceWorkflowTest extends IntegrationBase {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.send("getProvisionToken 1\0" + device1.toString());
-        String tempToken = clientPair.appClient.getBody(1);
-        assertNotNull(tempToken);
+        device1 = clientPair.appClient.getDevice(1);
+        assertNotNull(device1);
+        assertEquals(1, device1.id);
+        assertEquals(32, device1.token.length());
 
         clientPair.appClient.send("loadProfileGzipped 1");
         DashBoard dash = clientPair.appClient.getDash(2);
@@ -509,7 +511,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
-        hardClient2.login(tempToken);
+        hardClient2.login(device1.token);
         hardClient2.verifyResult(ok(1));
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(hardwareConnected(1, "1-1")));
 
@@ -523,7 +525,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
-        hardClient2.login(tempToken);
+        hardClient2.login(device1.token);
         hardClient2.verifyResult(ok(1));
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(hardwareConnected(1, "1-1")));
 
