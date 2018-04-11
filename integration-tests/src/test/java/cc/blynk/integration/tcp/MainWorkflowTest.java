@@ -22,7 +22,6 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
-import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelFuture;
 import org.junit.After;
 import org.junit.Before;
@@ -715,16 +714,6 @@ public class MainWorkflowTest extends IntegrationBase {
         assertEquals(settings.isShared, dashBoard.isShared);
         assertEquals(settings.keepScreenOn, dashBoard.keepScreenOn);
         assertEquals(settings.theme, dashBoard.theme);
-    }
-
-    @Test
-    public void testLargeMessageIsNotAccepted() throws Exception {
-        for (int i = 0; i < 127 ; i++) {
-            clientPair.hardwareClient.send("hardware vw " + i + " " + StringUtils.randomString(1000));
-        }
-
-        clientPair.appClient.send("loadProfileGzipped");
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(serverError(1)));
     }
 
     @Test

@@ -123,59 +123,6 @@ public class HistoryGraphTest extends IntegrationBase {
     }
 
     @Test
-    public void testTooManyDataForGraph() throws Exception {
-        String tempDir = holder.props.getProperty("data.folder");
-
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
-        enhancedHistoryGraph.id = 432;
-        enhancedHistoryGraph.width = 8;
-        enhancedHistoryGraph.height = 4;
-        DataStream dataStream1 = new DataStream((byte) 8, PinType.DIGITAL);
-        DataStream dataStream2 = new DataStream((byte) 9, PinType.DIGITAL);
-        DataStream dataStream3 = new DataStream((byte) 10, PinType.DIGITAL);
-        DataStream dataStream4 = new DataStream((byte) 11, PinType.DIGITAL);
-        GraphDataStream graphDataStream1 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream1, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
-        GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream2, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
-        GraphDataStream graphDataStream3 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream3, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
-        GraphDataStream graphDataStream4 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream4, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
-        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
-                graphDataStream1,
-                graphDataStream2,
-                graphDataStream3,
-                graphDataStream4
-        };
-
-        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
-        clientPair.appClient.verifyResult(ok(1));
-        clientPair.appClient.reset();
-
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
-        if (Files.notExists(userReportFolder)) {
-            Files.createDirectories(userReportFolder);
-        }
-
-        Path pinReportingDataPath1 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 8, GraphGranularityType.HOURLY.label));
-        Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 9, GraphGranularityType.HOURLY.label));
-        Path pinReportingDataPath3 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 10, GraphGranularityType.HOURLY.label));
-        Path pinReportingDataPath4 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 11, GraphGranularityType.HOURLY.label));
-
-        for (int i = 0; i < GraphPeriod.THREE_MONTHS.numberOfPoints; i++) {
-            long now = System.currentTimeMillis();
-            FileUtils.write(pinReportingDataPath1, ThreadLocalRandom.current().nextDouble(), now);
-            FileUtils.write(pinReportingDataPath2, ThreadLocalRandom.current().nextDouble(), now);
-            FileUtils.write(pinReportingDataPath3, ThreadLocalRandom.current().nextDouble(), now);
-            FileUtils.write(pinReportingDataPath4, ThreadLocalRandom.current().nextDouble(), now);
-        }
-
-        clientPair.appClient.send("getenhanceddata 1" + b(" 432 THREE_MONTHS"));
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(serverError(1)));
-    }
-
-    @Test
     public void testTooManyDataForGraphWorkWithNewProtocol() throws Exception {
         TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
         appClient.start();

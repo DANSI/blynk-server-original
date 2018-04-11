@@ -6,8 +6,6 @@ import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import io.netty.channel.ChannelHandlerContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.model.serialization.JsonParser.gzipDashRestrictive;
 import static cc.blynk.server.core.model.serialization.JsonParser.gzipProfileRestrictive;
@@ -19,8 +17,6 @@ import static cc.blynk.server.core.model.serialization.JsonParser.gzipProfileRes
  *
  */
 public final class LoadSharedProfileGzippedLogic {
-
-    private static final Logger log = LogManager.getLogger(LoadSharedProfileGzippedLogic.class);
 
     private LoadSharedProfileGzippedLogic() {
     }
@@ -39,7 +35,7 @@ public final class LoadSharedProfileGzippedLogic {
             DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
             data = gzipDashRestrictive(dash);
         }
-        LoadProfileGzippedLogic.write(ctx, data, message.id, user.email, state.isNewProtocol());
+        LoadProfileGzippedLogic.write(ctx, data, message.id);
     }
 
 }

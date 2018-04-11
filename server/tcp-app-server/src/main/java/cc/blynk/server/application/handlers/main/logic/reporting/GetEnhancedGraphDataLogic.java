@@ -22,7 +22,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
-import static cc.blynk.server.core.protocol.enums.Command.PROTOCOL_MAX_LENGTH;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeBinaryMessage;
 import static cc.blynk.server.internal.CommonByteBufUtil.noData;
 import static cc.blynk.server.internal.CommonByteBufUtil.serverError;
@@ -114,26 +113,21 @@ public class GetEnhancedGraphDataLogic {
             i++;
         }
 
-        readGraphData(ctx.channel(), state.user, state.isNewProtocol(), requestedPins, message.id);
+        readGraphData(ctx.channel(), state.user, requestedPins, message.id);
     }
 
-    private void readGraphData(Channel channel, User user, boolean isNewProtocol,
+    private void readGraphData(Channel channel, User user,
                                GraphPinRequest[] requestedPins, int msgId) {
         blockingIOProcessor.executeHistory(() -> {
             try {
                 byte[][] data = reportingDao.getReportingData(user, requestedPins);
                 byte[] compressed = compress(requestedPins[0].dashId, data);
 
-                if (!isNewProtocol && compressed.length > PROTOCOL_MAX_LENGTH) {
-                    log.error("Data set for history graph is too large {}, for {}.", compressed.length, user.email);
-                    channel.writeAndFlush(serverError(msgId), channel.voidPromise());
-                } else {
-                    if (channel.isWritable()) {
-                        channel.writeAndFlush(
-                                makeBinaryMessage(GET_ENHANCED_GRAPH_DATA, msgId, compressed),
-                                channel.voidPromise()
-                        );
-                    }
+                if (channel.isWritable()) {
+                    channel.writeAndFlush(
+                            makeBinaryMessage(GET_ENHANCED_GRAPH_DATA, msgId, compressed),
+                            channel.voidPromise()
+                    );
                 }
             } catch (NoDataException noDataException) {
                 channel.writeAndFlush(noData(msgId), channel.voidPromise());

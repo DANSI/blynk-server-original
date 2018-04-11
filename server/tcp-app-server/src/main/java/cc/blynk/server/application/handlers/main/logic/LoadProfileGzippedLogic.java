@@ -21,11 +21,9 @@ import static cc.blynk.server.core.model.serialization.JsonParser.gzipDash;
 import static cc.blynk.server.core.model.serialization.JsonParser.gzipDashRestrictive;
 import static cc.blynk.server.core.model.serialization.JsonParser.gzipProfile;
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
-import static cc.blynk.server.core.protocol.enums.Command.PROTOCOL_MAX_LENGTH;
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeBinaryMessage;
 import static cc.blynk.server.internal.CommonByteBufUtil.noData;
-import static cc.blynk.server.internal.CommonByteBufUtil.serverError;
 
 /**
  * The Blynk Project.
@@ -50,12 +48,11 @@ public class LoadProfileGzippedLogic {
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
         //load all
         String email = state.user.email;
-        boolean isNewProtocol = state.isNewProtocol();
         int msgId = message.id;
 
         if (message.body.length() == 0) {
             Profile profile = state.user.profile;
-            write(ctx, gzipProfile(profile), msgId, email, isNewProtocol);
+            write(ctx, gzipProfile(profile), msgId);
             return;
         }
 
@@ -64,7 +61,7 @@ public class LoadProfileGzippedLogic {
             //load specific by id
             int dashId = Integer.parseInt(message.body);
             DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
-            write(ctx, gzipDash(dash), msgId, email, isNewProtocol);
+            write(ctx, gzipDash(dash), msgId);
         } else {
             String token = parts[0];
             int dashId = Integer.parseInt(parts[1]);
@@ -82,7 +79,7 @@ public class LoadProfileGzippedLogic {
                         String copyString = JsonParser.toJsonRestrictiveDashboard(dash);
                         DashBoard copyDash = JsonParser.parseDashboard(copyString, msgId);
                         copyDash.eraseValues();
-                        write(ctx, gzipDashRestrictive(copyDash), msgId, email, isNewProtocol);
+                        write(ctx, gzipDashRestrictive(copyDash), msgId);
                     }
                 } catch (Exception e) {
                     ctx.writeAndFlush(illegalCommand(msgId), ctx.voidPromise());
@@ -92,20 +89,16 @@ public class LoadProfileGzippedLogic {
         }
     }
 
-    public static void write(ChannelHandlerContext ctx, byte[] data, int msgId, String email, boolean isNewProtocol) {
+    public static void write(ChannelHandlerContext ctx, byte[] data, int msgId) {
         if (ctx.channel().isWritable()) {
-            MessageBase outputMsg = makeResponse(data, msgId, email, isNewProtocol);
+            MessageBase outputMsg = makeResponse(data, msgId);
             ctx.writeAndFlush(outputMsg, ctx.voidPromise());
         }
     }
 
-    private static MessageBase makeResponse(byte[] data, int msgId, String email, boolean isNewProtocol) {
+    private static MessageBase makeResponse(byte[] data, int msgId) {
         if (data == null) {
             return noData(msgId);
-        }
-        if (!isNewProtocol && data.length > PROTOCOL_MAX_LENGTH) {
-            log.error("Profile for user {} is too big. Size : {}", email, data.length);
-            return serverError(msgId);
         }
         return makeBinaryMessage(LOAD_PROFILE_GZIPPED, msgId, data);
     }
