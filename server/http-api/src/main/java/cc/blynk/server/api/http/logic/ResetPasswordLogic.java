@@ -36,6 +36,7 @@ import static cc.blynk.core.http.Response.notFound;
 import static cc.blynk.core.http.Response.ok;
 import static cc.blynk.core.http.Response.serverError;
 import static cc.blynk.server.core.protocol.enums.Command.HTTP_CLONE;
+import static cc.blynk.utils.http.MediaType.TEXT_PLAIN;
 
 /**
  * The Blynk project
@@ -169,7 +170,7 @@ public class ResetPasswordLogic extends BaseHttpHandler {
 
         log.info("{} password was reset.", user.email);
         tokensPool.removeToken(token);
-        return ok("Password was successfully reset.");
+        return ok("Password was successfully reset.", TEXT_PLAIN);
     }
 
     @GET
