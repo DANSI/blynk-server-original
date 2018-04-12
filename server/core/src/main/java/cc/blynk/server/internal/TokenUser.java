@@ -1,11 +1,11 @@
-package cc.blynk.server.api.http.pojo;
+package cc.blynk.server.internal;
 
 /**
  * The Blynk project
  * Created by Andrew Zakordonets
  * Date : 12/05/2015.
  */
-public class TokenUser {
+public final class TokenUser {
 
     public final String email;
     public final String appName;

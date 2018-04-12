@@ -1,10 +1,8 @@
-package cc.blynk.server.api.http.pojo;
+package cc.blynk.server.internal;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Iterator;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -45,13 +43,8 @@ public final class TokensPool {
     }
 
     private void cleanupOldTokens() {
-        final long now = System.currentTimeMillis();
-        for (Iterator<Map.Entry<String, TokenUser>> iterator = holder.entrySet().iterator(); iterator.hasNext();) {
-            Map.Entry<String, TokenUser> entry = iterator.next();
-            if (entry.getValue().createdAt + tokenExpirationPeriodMillis < now) {
-                iterator.remove();
-            }
-        }
+        long now = System.currentTimeMillis();
+        holder.entrySet().removeIf(entry -> entry.getValue().createdAt + tokenExpirationPeriodMillis < now);
     }
 
 }

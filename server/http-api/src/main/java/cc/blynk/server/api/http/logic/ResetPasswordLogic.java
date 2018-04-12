@@ -12,13 +12,13 @@ import cc.blynk.core.http.annotation.Path;
 import cc.blynk.core.http.annotation.PathParam;
 import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.server.Holder;
-import cc.blynk.server.api.http.pojo.TokenUser;
-import cc.blynk.server.api.http.pojo.TokensPool;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.db.DBManager;
+import cc.blynk.server.internal.TokenUser;
+import cc.blynk.server.internal.TokensPool;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.FileLoaderUtil;
@@ -64,7 +64,7 @@ public class ResetPasswordLogic extends BaseHttpHandler {
     public ResetPasswordLogic(Holder holder) {
         super(holder, "");
         this.userDao = holder.userDao;
-        this.tokensPool = new TokensPool(60 * 60 * 1000);
+        this.tokensPool = holder.tokensPool;
         String productName = holder.props.getProductName();
         this.emailSubj = "Password reset request for the " + productName + " app.";
         this.emailBody = FileLoaderUtil
@@ -73,7 +73,10 @@ public class ResetPasswordLogic extends BaseHttpHandler {
         this.mailWrapper = holder.mailWrapper;
 
         String host = holder.props.getServerHost();
-        this.resetPassUrl = "http://" + host + "/landing?token=";
+
+        //using https for private servers as they have valid certificates.
+        String protocol = host.endsWith(".blynk.cc") ? "https://" : "http://";
+        this.resetPassUrl = protocol + host + "/landing?token=";
         this.pageContent = FileLoaderUtil.readFileAsString(RESET_PASS_STATIC_PATH + "enterNewPassword.html");
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.dbManager = holder.dbManager;
