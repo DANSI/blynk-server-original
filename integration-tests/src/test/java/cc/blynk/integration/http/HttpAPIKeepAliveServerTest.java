@@ -57,12 +57,10 @@ public class HttpAPIKeepAliveServerTest extends BaseTest {
 
     @Test
     public void testKeepAlive() throws Exception {
-        String url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/a14";
-
-        HttpPut request = new HttpPut(url);
+        HttpPut request = new HttpPut(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/a14");
         request.setHeader("Connection", "keep-alive");
 
-        HttpGet getRequest = new HttpGet(url);
+        HttpGet getRequest = new HttpGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/a14");
         getRequest.setHeader("Connection", "keep-alive");
 
         for (int i = 0; i < 100; i++) {
@@ -86,7 +84,7 @@ public class HttpAPIKeepAliveServerTest extends BaseTest {
 
     @Test(expected = Exception.class)
     public void keepAliveIsSupported()  throws Exception{
-        String url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/a14";
+        String url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/a14";
 
         HttpPut request = new HttpPut(url);
         request.setHeader("Connection", "close");

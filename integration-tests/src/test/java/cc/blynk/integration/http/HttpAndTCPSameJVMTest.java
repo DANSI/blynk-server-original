@@ -113,7 +113,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
-        HttpGet request = new HttpGet(httpServerUrl + token + "/pin/v10");
+        HttpGet request = new HttpGet(httpServerUrl + token + "/get/v10");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -143,7 +143,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
-        HttpGet request = new HttpGet(httpServerUrl + token + "/pin/v4");
+        HttpGet request = new HttpGet(httpServerUrl + token + "/get/v4");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -201,7 +201,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
-        HttpPut request = new HttpPut(httpServerUrl + token + "/pin/v100");
+        HttpPut request = new HttpPut(httpServerUrl + token + "/update/v100");
         request.setEntity(new StringEntity("[\"37\"]", ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -245,7 +245,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
-        HttpGet requestGET = new HttpGet(httpServerUrl + token + "/pin/v4");
+        HttpGet requestGET = new HttpGet(httpServerUrl + token + "/get/v4");
 
         try (CloseableHttpResponse response = httpclient.execute(requestGET)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -288,7 +288,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
-        HttpGet requestGET = new HttpGet(httpServerUrl + token + "/pin/v4");
+        HttpGet requestGET = new HttpGet(httpServerUrl + token + "/get/v4");
 
         try (CloseableHttpResponse response = httpclient.execute(requestGET)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -309,7 +309,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
-        HttpGet requestGET = new HttpGet(httpServerUrl + token + "/pin/d18");
+        HttpGet requestGET = new HttpGet(httpServerUrl + token + "/get/d18");
 
         try (CloseableHttpResponse response = httpclient.execute(requestGET)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -318,7 +318,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
             assertEquals("1", values.get(0));
         }
 
-        HttpPut requestPUT = new HttpPut(httpServerUrl + token + "/pin/d18");
+        HttpPut requestPUT = new HttpPut(httpServerUrl + token + "/update/d18");
         requestPUT.setEntity(new StringEntity("[\"0\"]", ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(requestPUT)) {
@@ -334,8 +334,8 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
-        HttpPut request = new HttpPut(httpServerUrl + token + "/pin/v4");
-        HttpGet getRequest = new HttpGet(httpServerUrl + token + "/pin/v4");
+        HttpPut request = new HttpPut(httpServerUrl + token + "/update/v4");
+        HttpGet getRequest = new HttpGet(httpServerUrl + token + "/get/v4");
 
         for (int i = 0; i < 50; i++) {
             request.setEntity(new StringEntity("[\"" + i + "\"]", ContentType.APPLICATION_JSON));
@@ -491,7 +491,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         clientPair.appClient.deactivate(1);
         clientPair.appClient.verifyResult(ok(1));
 
-        HttpPut request = new HttpPut(httpServerUrl + token + "/pin/v31");
+        HttpPut request = new HttpPut(httpServerUrl + token + "/update/v31");
 
         request.setEntity(new StringEntity("[\"100\"]", ContentType.APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -510,7 +510,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
-        HttpPut request = new HttpPut(httpServerUrl + token + "/pin/v0");
+        HttpPut request = new HttpPut(httpServerUrl + token + "/update/v0");
 
         request.setEntity(new StringEntity("[\"100\"]", ContentType.APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -520,7 +520,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("vw 0 100"))));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("1-0 vw 0 100"))));
 
-        request = new HttpPut(httpServerUrl + token + "/pin/v1");
+        request = new HttpPut(httpServerUrl + token + "/update/v1");
 
         request.setEntity(new StringEntity("[\"101\"]", ContentType.APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -536,7 +536,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
-        HttpPut request = new HttpPut(httpServerUrl + token + "/pin/v31");
+        HttpPut request = new HttpPut(httpServerUrl + token + "/update/v31");
 
         request.setEntity(new StringEntity("[\"100\"]", ContentType.APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -555,7 +555,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, "{\"id\":222, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"TERMINAL\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
-        HttpPut request = new HttpPut(httpServerUrl + token + "/pin/V100");
+        HttpPut request = new HttpPut(httpServerUrl + token + "/update/V100");
 
         request.setEntity(new StringEntity("[\"100\"]", ContentType.APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -571,7 +571,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
 
-        HttpPut request = new HttpPut(httpServerUrl + token + "/pin/v31");
+        HttpPut request = new HttpPut(httpServerUrl + token + "/update/v31");
 
         request.setEntity(new StringEntity("[\"100\",\"101\",\"102\"]", ContentType.APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(request)) {

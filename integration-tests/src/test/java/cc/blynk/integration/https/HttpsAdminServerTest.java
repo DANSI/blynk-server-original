@@ -403,14 +403,14 @@ public class HttpsAdminServerTest extends BaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        HttpPut put = new HttpPut(httpServerUrl + "123/pin/v10");
+        HttpPut put = new HttpPut(httpServerUrl + "123/update/v10");
         put.setEntity(new StringEntity("[\"100\"]", ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(put)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        HttpGet get = new HttpGet(httpServerUrl + "123/pin/v10");
+        HttpGet get = new HttpGet(httpServerUrl + "123/get/v10");
 
         try (CloseableHttpResponse response = httpclient.execute(get)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -435,14 +435,14 @@ public class HttpsAdminServerTest extends BaseTest {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        HttpPut put = new HttpPut(httpServerUrl + "123/pin/v10");
+        HttpPut put = new HttpPut(httpServerUrl + "123/update/v10");
         put.setEntity(new StringEntity("[\"100\"]", ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(put)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        HttpGet get = new HttpGet(httpServerUrl + "123/pin/v10");
+        HttpGet get = new HttpGet(httpServerUrl + "123/get/v10");
 
         try (CloseableHttpResponse response = httpclient.execute(get)) {
             assertEquals(200, response.getStatusLine().getStatusCode());

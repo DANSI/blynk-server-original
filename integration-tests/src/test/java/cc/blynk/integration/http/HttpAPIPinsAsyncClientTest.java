@@ -187,7 +187,7 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
 
     @Test
     public void testPutGetNonExistingPin() throws Exception {
-        Future<Response> f = httpclient.preparePut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/v10")
+        Future<Response> f = httpclient.preparePut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/v10")
                 .setHeader("Content-Type", "application/json")
                 .setBody("[\"100\"]")
                 .execute();
@@ -208,7 +208,7 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
 
     @Test
     public void testMultiPutGetNonExistingPin() throws Exception {
-        Future<Response> f = httpclient.preparePut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/v10")
+        Future<Response> f = httpclient.preparePut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/v10")
                 .setHeader("Content-Type", "application/json")
                 .setBody("[\"100\", \"101\", \"102\"]")
                 .execute();

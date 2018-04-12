@@ -193,7 +193,7 @@ public class WebhookTest extends IntegrationBase {
         clientPair.hardwareClient.send("hardware vw 123 10");
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
 
-        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124").execute();
+        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124").execute();
         Response response = f.get();
 
         assertEquals(200, response.getStatusCode());
@@ -220,7 +220,7 @@ public class WebhookTest extends IntegrationBase {
         clientPair.hardwareClient.send("hardware vw 123 10");
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
 
-        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124").execute();
+        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124").execute();
         Response response = f.get();
 
         assertEquals(400, response.getStatusCode());
@@ -610,11 +610,11 @@ public class WebhookTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, webHook);
         clientPair.appClient.verifyResult(ok(1));
 
-        clientPair.appClient.send("hardware 1 vw 123 " + httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124");
+        clientPair.appClient.send("hardware 1 vw 123 " + httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/V124");
         verify(clientPair.hardwareClient.responseMock, after(500).times(1)).channelRead(any(), eq(
-                new HardwareMessage(2, b("vw 123 " + httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124"))));
+                new HardwareMessage(2, b("vw 123 " + httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/V124"))));
 
-        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/V124").execute();
+        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124").execute();
         Response response = f.get();
 
         assertEquals(200, response.getStatusCode());

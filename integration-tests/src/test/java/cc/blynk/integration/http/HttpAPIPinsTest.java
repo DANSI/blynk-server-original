@@ -70,7 +70,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
     @Test
     public void testGetWithFakeToken() throws Exception {
-        HttpGet request = new HttpGet(httpsServerUrl + "dsadasddasdasdasdasdasdas/pin/d8");
+        HttpGet request = new HttpGet(httpsServerUrl + "dsadasddasdasdasdasdasdas/get/d8");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
@@ -89,7 +89,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
     @Test
     public void testGetWithWrongPin() throws Exception {
-        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/x8");
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/x8");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
@@ -99,7 +99,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
     @Test
     public void testGetWithNonExistingPin() throws Exception {
-        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/v11");
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/v11");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(400, response.getStatusLine().getStatusCode());
@@ -109,14 +109,14 @@ public class HttpAPIPinsTest extends BaseTest {
 
     @Test
     public void testPutGetNonExistingPin() throws Exception {
-        HttpPut put = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/v10");
+        HttpPut put = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/v10");
         put.setEntity(new StringEntity("[\"100\"]", ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(put)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        HttpGet get = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/v10");
+        HttpGet get = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/v10");
 
         try (CloseableHttpResponse response = httpclient.execute(get)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -128,14 +128,14 @@ public class HttpAPIPinsTest extends BaseTest {
 
     @Test
     public void testMultiPutGetNonExistingPin() throws Exception {
-        HttpPut put = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/v10");
+        HttpPut put = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/v10");
         put.setEntity(new StringEntity("[\"100\", \"101\", \"102\"]", ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(put)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        HttpGet get = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/v10");
+        HttpGet get = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/v10");
 
         try (CloseableHttpResponse response = httpclient.execute(get)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -170,7 +170,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
     @Test
     public void testGetTimerExistingPin() throws Exception {
-        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/D0");
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/D0");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -182,7 +182,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
     @Test
     public void testGetWithExistingPin() throws Exception {
-        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/D8");
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/D8");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -191,7 +191,7 @@ public class HttpAPIPinsTest extends BaseTest {
             assertEquals("0", values.get(0));
         }
 
-        request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/d1");
+        request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/d1");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -200,7 +200,7 @@ public class HttpAPIPinsTest extends BaseTest {
             assertEquals("1", values.get(0));
         }
 
-        request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/d3");
+        request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/d3");
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             List<String> values = consumeJsonPinValues(response);
@@ -211,7 +211,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
     @Test
     public void testGetWithExistingEmptyPin() throws Exception {
-        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/a14");
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/a14");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -222,7 +222,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
     @Test
     public void testGetWithExistingMultiPin() throws Exception {
-        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/a15");
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/a15");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -235,7 +235,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
     @Test
     public void testGetForRGBMerge() throws Exception {
-        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/v13");
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/v13");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -249,7 +249,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
     @Test
     public void testGetForJoystickMerge() throws Exception {
-        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/v14");
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/v14");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -264,7 +264,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
     @Test
     public void testPutNoContentType() throws Exception {
-        HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/d8");
+        HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/d8");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(500, response.getStatusLine().getStatusCode());
@@ -274,7 +274,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
     @Test
     public void testPutFakeToken() throws Exception {
-        HttpPut request = new HttpPut(httpsServerUrl + "dsadasddasdasdasdasdasdas/pin/d8");
+        HttpPut request = new HttpPut(httpsServerUrl + "dsadasddasdasdasdasdasdas/update/d8");
         request.setHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
         request.setEntity(new StringEntity("[\"100\"]", ContentType.APPLICATION_JSON));
 
@@ -286,7 +286,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
     @Test
     public void testPutWithWrongPin() throws Exception {
-        HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/x8");
+        HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/x8");
         request.setHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
         request.setEntity(new StringEntity("[\"100\"]", ContentType.APPLICATION_JSON));
 
@@ -298,7 +298,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
     @Test
     public void testPutWithNoWidget() throws Exception {
-        HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/v10");
+        HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/v10");
         request.setHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
         request.setEntity(new StringEntity("[\"100\"]", ContentType.APPLICATION_JSON));
 
@@ -309,7 +309,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
     @Test
     public void testPutWithNoWidgetNoPinData() throws Exception {
-        HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/v10");
+        HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/v10");
         request.setHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
         request.setEntity(new StringEntity("[]", ContentType.APPLICATION_JSON));
 
@@ -321,7 +321,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
     @Test
     public void testPutWithNoWidgetMultivalue() throws Exception {
-        HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/v10");
+        HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/v10");
         request.setHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
         request.setEntity(new StringEntity("[\"100\", \"101\", \"102\"]", ContentType.APPLICATION_JSON));
 
@@ -361,14 +361,14 @@ public class HttpAPIPinsTest extends BaseTest {
 
     @Test
     public void testPutWithExistingPin() throws Exception {
-        HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/a14");
+        HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/a14");
         request.setEntity(new StringEntity("[\"100\"]", ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        HttpGet getRequest = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/a14");
+        HttpGet getRequest = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/a14");
 
         try (CloseableHttpResponse response = httpclient.execute(getRequest)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -380,7 +380,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
     @Test
     public void testPutWithExistingPinWrongBody() throws Exception {
-        HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/a14");
+        HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/a14");
         request.setEntity(new StringEntity("\"100\"", ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -391,7 +391,7 @@ public class HttpAPIPinsTest extends BaseTest {
 
     @Test
     public void testPutWithExistingPinWrongBody2() throws Exception {
-        HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/a14");
+        HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/a14");
         request.setEntity(new StringEntity("", ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -487,10 +487,8 @@ public class HttpAPIPinsTest extends BaseTest {
     //------------------------------ SYNC TEST
     @Test
     public void testSync() throws Exception {
-        String url = httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/pin/a14";
-
-        HttpPut request = new HttpPut(url);
-        HttpGet getRequest = new HttpGet(url);
+        HttpPut request = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/a14");
+        HttpGet getRequest = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/a14");
 
         for (int i = 0; i < 100; i++) {
             request.setEntity(new StringEntity("[\""+ i + "\"]", ContentType.APPLICATION_JSON));
