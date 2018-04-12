@@ -21,10 +21,14 @@ public class StringToZoneId extends JsonDeserializer<ZoneId> {
         try {
             return ZoneId.of(zoneString);
         } catch (ZoneRulesException e) {
-            if (zoneString.equals("Canada/East-Saskatchewan")) {
-                return ZoneId.of("America/Regina");
+            switch (zoneString) {
+                case "Canada/East-Saskatchewan" :
+                    return ZoneId.of("America/Regina");
+                case "Asia/Hanoi" :
+                    return ZoneId.of("Asia/Ho_Chi_Minh");
+                default :
+                    throw e;
             }
-            throw e;
         }
     }
 

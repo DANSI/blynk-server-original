@@ -33,7 +33,7 @@ public class RTCSerializationTest {
     }
 
     @Test
-    public void unsupportedTimeZoneForKnownLocationTest() {
+    public void unsupportedTimeZoneForKnownLocationCanadaTest() {
         String widgetString = "{\"id\":1, \"x\":1, \"y\":1, \"type\":\"RTC\", \"tzName\":\"Canada/East-Saskatchewan\"}";
         Widget widget = JsonParser.parseWidget(widgetString, 0);
 
@@ -42,6 +42,18 @@ public class RTCSerializationTest {
         RTC rtc = (RTC) widget;
         assertNotNull(rtc.tzName);
         assertEquals(ZoneId.of("America/Regina"), rtc.tzName);
+    }
+
+    @Test
+    public void unsupportedTimeZoneForKnownLocationHanoiTest() {
+        String widgetString = "{\"id\":1, \"x\":1, \"y\":1, \"type\":\"RTC\", \"tzName\":\"Asia/Hanoi\"}";
+        Widget widget = JsonParser.parseWidget(widgetString, 0);
+
+        assertNotNull(widget);
+
+        RTC rtc = (RTC) widget;
+        assertNotNull(rtc.tzName);
+        assertEquals(ZoneId.of("Asia/Ho_Chi_Minh"), rtc.tzName);
     }
 
     @Test(expected = IllegalCommandBodyException.class)
