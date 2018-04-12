@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 
 import java.io.IOException;
 import java.time.ZoneId;
+import java.time.zone.ZoneRulesException;
 
 /**
  * The Blynk Project.
@@ -16,7 +17,15 @@ public class StringToZoneId extends JsonDeserializer<ZoneId> {
 
     @Override
     public ZoneId deserialize(JsonParser p, DeserializationContext ctx) throws IOException {
-        return ZoneId.of(p.readValueAs(String.class));
+        String zoneString = p.readValueAs(String.class);
+        try {
+            return ZoneId.of(zoneString);
+        } catch (ZoneRulesException e) {
+            if (zoneString.equals("Canada/East-Saskatchewan")) {
+                return ZoneId.of("America/Regina");
+            }
+            throw e;
+        }
     }
 
 }

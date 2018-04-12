@@ -3,6 +3,7 @@ package cc.blynk.server.core.model.widgets.others;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.utils.DateTimeUtils;
 import org.junit.Test;
 
@@ -29,6 +30,24 @@ public class RTCSerializationTest {
         RTC rtc = (RTC) widget;
         assertNotNull(rtc.tzName);
         assertEquals(ZoneId.of("Australia/Sydney"), rtc.tzName);
+    }
+
+    @Test
+    public void unsupportedTimeZoneForKnownLocationTest() {
+        String widgetString = "{\"id\":1, \"x\":1, \"y\":1, \"type\":\"RTC\", \"tzName\":\"Canada/East-Saskatchewan\"}";
+        Widget widget = JsonParser.parseWidget(widgetString, 0);
+
+        assertNotNull(widget);
+
+        RTC rtc = (RTC) widget;
+        assertNotNull(rtc.tzName);
+        assertEquals(ZoneId.of("America/Regina"), rtc.tzName);
+    }
+
+    @Test(expected = IllegalCommandBodyException.class)
+    public void unsupportedTimeZoneTest() {
+        String widgetString = "{\"id\":1, \"x\":1, \"y\":1, \"type\":\"RTC\", \"tzName\":\"Canada/East-xxx\"}";
+        JsonParser.parseWidget(widgetString, 0);
     }
 
     @Test
