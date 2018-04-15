@@ -56,17 +56,17 @@ public class MailQRsLogic {
         int dashId = Integer.parseInt(split[0]);
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
-        if (dash.devices.length == 0) {
-            log.debug("No devices in project.");
-            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
-            return;
-        }
-
         String appId = split[1];
         App app = user.profile.getAppById(appId);
 
         if (app == null) {
             log.debug("App with passed id not found.");
+            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+            return;
+        }
+
+        if (app.provisionType == ProvisionType.STATIC && dash.devices.length == 0) {
+            log.debug("No devices in project.");
             ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
             return;
         }
@@ -79,57 +79,55 @@ public class MailQRsLogic {
                                          ProvisionType provisionType, String to,
                                          String publishAppName, String publishAppId, int msgId) {
         String subj = publishAppName + " - App details";
+        Channel channel = ctx.channel();
         if (provisionType == ProvisionType.DYNAMIC) {
-            mailDynamic(ctx.channel(), to, subj, textHolder.dynamicMailBody, publishAppId, dash, msgId);
+            blockingIOProcessor.execute(() -> {
+                try {
+                    String newToken = TokenGeneratorUtil.generateNewToken();
+                    QrHolder qrHolder = new QrHolder(dash.id, -1, null, newToken,
+                                QRCode.from(newToken).to(ImageType.JPG).stream().toByteArray());
+                    FlashedToken flashedToken = new FlashedToken(to, newToken, publishAppId, dash.id, -1);
+
+                    if (!dbManager.insertFlashedTokens(flashedToken)) {
+                        throw new Exception("App Publishing Preview requires enabled DB.");
+                    }
+
+                    String finalBody = textHolder.dynamicMailBody
+                            .replace("{project_name}", dash.name);
+
+                    mailWrapper.sendWithAttachment(to, subj, finalBody, qrHolder);
+                    channel.writeAndFlush(ok(msgId), channel.voidPromise());
+                } catch (Exception e) {
+                    log.error("Error sending dynamic email from application. For user {}. Error: ", to, e);
+                    channel.writeAndFlush(notificationError(msgId), channel.voidPromise());
+                }
+            });
         } else {
-            mailStatic(ctx.channel(), to, subj, textHolder.staticMailBody, publishAppId, dash, msgId);
+            blockingIOProcessor.execute(() -> {
+                try {
+                    QrHolder[] qrHolders = makeQRs(to, publishAppId, dash);
+                    StringBuilder sb = new StringBuilder();
+                    for (QrHolder qrHolder : qrHolders) {
+                        qrHolder.attach(sb);
+                    }
+
+                    String finalBody = textHolder.staticMailBody
+                            .replace("{project_name}", dash.name)
+                            .replace("{device_section}", sb.toString());
+
+                    mailWrapper.sendWithAttachment(to, subj, finalBody, qrHolders);
+                    channel.writeAndFlush(ok(msgId), channel.voidPromise());
+                } catch (Exception e) {
+                    log.error("Error sending static email from application. For user {}. Reason: {}", to, e);
+                    channel.writeAndFlush(notificationError(msgId), channel.voidPromise());
+                }
+            });
         }
     }
 
-    private void mailDynamic(Channel channel, String to, String subj, String body,
-                             String publishAppId, DashBoard dash, int msgId) {
-        blockingIOProcessor.execute(() -> {
-            try {
-                QrHolder[] qrHolders = makeQRs(to, publishAppId, dash, true);
 
-                String finalBody = body.replace("{project_name}", dash.name);
-
-                mailWrapper.sendWithAttachment(to, subj, finalBody, qrHolders);
-                channel.writeAndFlush(ok(msgId), channel.voidPromise());
-            } catch (Exception e) {
-                log.error("Error sending dynamic email from application. For user {}. Error: ", to, e);
-                if (channel.isActive() && channel.isWritable()) {
-                    channel.writeAndFlush(notificationError(msgId), channel.voidPromise());
-                }
-            }
-        });
-    }
-
-    private void mailStatic(Channel channel, String to, String subj, String body,
-                            String publishAppId, DashBoard dash, int msgId) {
-        blockingIOProcessor.execute(() -> {
-            try {
-                QrHolder[] qrHolders = makeQRs(to, publishAppId, dash, false);
-                StringBuilder sb = new StringBuilder();
-                for (QrHolder qrHolder : qrHolders) {
-                    qrHolder.attach(sb);
-                }
-
-                String finalBody = body.replace("{project_name}", dash.name)
-                                       .replace("{device_section}", sb.toString());
-
-                mailWrapper.sendWithAttachment(to, subj, finalBody, qrHolders);
-                channel.writeAndFlush(ok(msgId), channel.voidPromise());
-            } catch (Exception e) {
-                log.error("Error sending static email from application. For user {}. Reason: {}", to, e);
-                log.error(e);
-                channel.writeAndFlush(notificationError(msgId), channel.voidPromise());
-            }
-        });
-    }
-
-    private QrHolder[] makeQRs(String username, String appId, DashBoard dash, boolean onlyFirst) throws Exception {
-        int tokensCount = onlyFirst ? 1 : dash.devices.length;
+    private QrHolder[] makeQRs(String username, String appId, DashBoard dash) throws Exception {
+        int tokensCount = dash.devices.length;
         QrHolder[] qrHolders = new QrHolder[tokensCount];
         FlashedToken[] flashedTokens = new FlashedToken[tokensCount];
 
@@ -138,11 +136,7 @@ public class MailQRsLogic {
             String newToken = TokenGeneratorUtil.generateNewToken();
             qrHolders[i] = new QrHolder(dash.id, device.id, device.name, newToken,
                     QRCode.from(newToken).to(ImageType.JPG).stream().toByteArray());
-            flashedTokens[i] = new FlashedToken(username, newToken, appId, dash.id, device.id);
-            if (onlyFirst) {
-                break;
-            }
-            i++;
+            flashedTokens[i++] = new FlashedToken(username, newToken, appId, dash.id, device.id);
         }
 
         if (!dbManager.insertFlashedTokens(flashedTokens)) {

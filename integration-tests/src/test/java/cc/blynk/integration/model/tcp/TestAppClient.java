@@ -157,6 +157,10 @@ public class TestAppClient extends BaseTestAppClient {
         send("updateDevice " + dashId + BODY_SEPARATOR + device.toString());
     }
 
+    public void deleteDevice(int dashId, int deviceId) {
+        send("deleteDevice " + dashId + BODY_SEPARATOR + deviceId);
+    }
+
     public void createWidget(int dashId, Widget widget) throws Exception {
         createWidget(dashId, JsonParser.MAPPER.writeValueAsString(widget));
     }

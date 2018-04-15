@@ -153,9 +153,36 @@ public class PublishingPreviewFlow extends IntegrationBase {
         clientPair.appClient.send("emailQr 1\0" + app.id);
         clientPair.appClient.verifyResult(ok(2));
 
-        QrHolder[] qrHolders = makeQRs(devices, 1, false);
+        FlashedToken flashedToken = getFlashedTokenByDevice(-1);
+        assertNotNull(flashedToken);
+        QrHolder qrHolder = new QrHolder(1, -1, null, flashedToken.token, QRCode.from(flashedToken.token).to(ImageType.JPG).stream().toByteArray());
 
-        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.textHolder.dynamicMailBody.replace("{project_name}", "My Dashboard")), eq(qrHolders));
+        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.textHolder.dynamicMailBody.replace("{project_name}", "My Dashboard")), eq(qrHolder));
+    }
+
+    @Test
+    public void testSendDynamicEmailForAppPublishAndNoDevices() throws Exception {
+        clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"DYNAMIC\",\"color\":0,\"name\":\"AppPreview\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
+        App app = clientPair.appClient.getApp();
+        assertNotNull(app);
+        assertNotNull(app.id);
+        clientPair.appClient.reset();
+
+        clientPair.appClient.deleteDevice(1, 0);
+        clientPair.appClient.verifyResult(ok(1));
+
+        clientPair.appClient.send("getDevices 1");
+        Device[] devices = clientPair.appClient.getDevices(2);
+        assertEquals(0, devices.length);
+
+        clientPair.appClient.send("emailQr 1\0" + app.id);
+        clientPair.appClient.verifyResult(ok(3));
+
+        FlashedToken flashedToken = getFlashedTokenByDevice(-1);
+        assertNotNull(flashedToken);
+        QrHolder qrHolder = new QrHolder(1, -1, null, flashedToken.token, QRCode.from(flashedToken.token).to(ImageType.JPG).stream().toByteArray());
+
+        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.textHolder.dynamicMailBody.replace("{project_name}", "My Dashboard")), eq(qrHolder));
     }
 
     @Test
@@ -181,9 +208,11 @@ public class PublishingPreviewFlow extends IntegrationBase {
         clientPair.appClient.send("emailQr 1\0" + app.id);
         clientPair.appClient.verifyResult(ok(2));
 
-        QrHolder[] qrHolders = makeQRs(devices, 1, true);
+        FlashedToken flashedToken = getFlashedTokenByDevice(-1);
+        assertNotNull(flashedToken);
+        QrHolder qrHolder = new QrHolder(1, -1, null, flashedToken.token, QRCode.from(flashedToken.token).to(ImageType.JPG).stream().toByteArray());
 
-        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.textHolder.dynamicMailBody.replace("{project_name}", "My Dashboard")), eq(qrHolders));
+        verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.textHolder.dynamicMailBody.replace("{project_name}", "My Dashboard")), eq(qrHolder));
     }
 
     @Test
@@ -768,6 +797,19 @@ public class PublishingPreviewFlow extends IntegrationBase {
         }
 
         return qrHolders;
+    }
+
+    private FlashedToken getFlashedTokenByDevice(int deviceId) throws Exception {
+        List<FlashedToken> flashedTokens = getAllTokens();
+
+        int i = 0;
+        for (FlashedToken flashedToken : flashedTokens) {
+            if (deviceId == flashedToken.deviceId) {
+                return flashedTokens.get(i);
+            }
+
+        }
+        return null;
     }
 
     private List<FlashedToken> getAllTokens() throws Exception {
