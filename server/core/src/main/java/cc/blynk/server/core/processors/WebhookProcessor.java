@@ -89,7 +89,16 @@ public class WebhookProcessor extends NotificationBase {
             return;
         }
 
-        BoundRequestBuilder builder = httpclient.prepare(webHook.method.name(), newUrl);
+        BoundRequestBuilder builder;
+        try {
+            builder = httpclient.prepare(webHook.method.name(), newUrl);
+        } catch (NumberFormatException nfe) {
+            //this is known possible error due to malformed input
+            //https://github.com/blynkkk/blynk-server/issues/1001
+            log.debug("Error during webhook initialization.", nfe);
+            return;
+        }
+
         if (webHook.headers != null) {
             for (Header header : webHook.headers) {
                 if (header.isValid()) {
