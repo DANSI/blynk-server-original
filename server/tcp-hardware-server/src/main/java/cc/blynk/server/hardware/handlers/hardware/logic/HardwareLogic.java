@@ -37,7 +37,7 @@ public class HardwareLogic extends BaseProcessorHandler {
     public HardwareLogic(Holder holder, String email) {
         super(holder.eventorProcessor, new WebhookProcessor(holder.asyncHttpClient,
                 holder.limits.webhookPeriodLimitation,
-                holder.limits.webhookResponseSuzeLimitBytes,
+                holder.limits.webhookResponseSizeLimitBytes,
                 holder.limits.webhookFailureLimit,
                 holder.stats,
                 email));

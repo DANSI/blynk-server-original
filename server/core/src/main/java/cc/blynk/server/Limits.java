@@ -26,7 +26,7 @@ public class Limits {
     public final long notificationPeriodLimitSec;
     public final int userQuotaLimit;
     public final long webhookPeriodLimitation;
-    public final int webhookResponseSuzeLimitBytes;
+    public final int webhookResponseSizeLimitBytes;
     public final int webhookFailureLimit;
     public final int hardwareIdleTimeout;
     public final int appIdleTimeout;
@@ -45,7 +45,7 @@ public class Limits {
         this.userQuotaLimit = props.getIntProperty("user.message.quota.limit", 100);
         this.webhookPeriodLimitation =
                 isUnlimited(props.getLongProperty("webhooks.frequency.user.quota.limit", 1000), -1L);
-        this.webhookResponseSuzeLimitBytes = props.getIntProperty("webhooks.response.size.limit", 64) * 1024;
+        this.webhookResponseSizeLimitBytes = props.getIntProperty("webhooks.response.size.limit", 64) * 1024;
         this.webhookFailureLimit =
                 isUnlimited(props.getIntProperty("webhooks.failure.count.limit", 10), Integer.MAX_VALUE);
         this.hardwareIdleTimeout = props.getIntProperty("hard.socket.idle.timeout", 0);
