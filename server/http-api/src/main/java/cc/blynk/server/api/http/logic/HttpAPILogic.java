@@ -15,9 +15,8 @@ import cc.blynk.server.api.http.pojo.EmailPojo;
 import cc.blynk.server.api.http.pojo.PinData;
 import cc.blynk.server.api.http.pojo.PushMessagePojo;
 import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.ReportingDao;
-import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
@@ -38,18 +37,17 @@ import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.processors.EventorProcessor;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
-import cc.blynk.server.core.stats.GlobalStats;
+import cc.blynk.server.db.DBManager;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.utils.StringUtils;
+import cc.blynk.utils.TokenGeneratorUtil;
 import cc.blynk.utils.http.MediaType;
 import io.netty.channel.ChannelHandler;
 import net.glxn.qrgen.core.image.ImageType;
 import net.glxn.qrgen.javase.QRCode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.Base64;
 
 import static cc.blynk.core.http.Response.badRequest;
 import static cc.blynk.core.http.Response.ok;
@@ -82,23 +80,22 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
     private final GCMWrapper gcmWrapper;
     private final ReportingDao reportingDao;
     private final EventorProcessor eventorProcessor;
-
+    private final DBManager dbManager;
+    private final FileManager fileManager;
+    private final String host;
+    private final String httpsPort;
 
     public HttpAPILogic(Holder holder) {
-        this(holder.tokenManager, holder.sessionDao, holder.blockingIOProcessor,
-                holder.mailWrapper, holder.gcmWrapper, holder.reportingDao,
-                holder.stats, holder.eventorProcessor);
-    }
-
-    private HttpAPILogic(TokenManager tokenManager, SessionDao sessionDao, BlockingIOProcessor blockingIOProcessor,
-                         MailWrapper mailWrapper, GCMWrapper gcmWrapper, ReportingDao reportingDao,
-                         GlobalStats globalStats, EventorProcessor eventorProcessor) {
-        super(tokenManager, sessionDao, globalStats, "");
-        this.blockingIOProcessor = blockingIOProcessor;
-        this.mailWrapper = mailWrapper;
-        this.gcmWrapper = gcmWrapper;
-        this.reportingDao = reportingDao;
-        this.eventorProcessor = eventorProcessor;
+        super(holder.tokenManager, holder.sessionDao, holder.stats, "");
+        this.blockingIOProcessor = holder.blockingIOProcessor;
+        this.mailWrapper = holder.mailWrapper;
+        this.gcmWrapper = holder.gcmWrapper;
+        this.reportingDao = holder.reportingDao;
+        this.eventorProcessor = holder.eventorProcessor;
+        this.dbManager = holder.dbManager;
+        this.fileManager = holder.fileManager;
+        this.host = holder.props.getServerHost();
+        this.httpsPort = holder.props.getHttpsPortAsString();
     }
 
     private static String makeBody(DashBoard dash, int deviceId, byte pin, PinType pinType, String pinValue) {
@@ -259,17 +256,26 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             return badRequest("Invalid token.");
         }
 
-        DashBoard dashBoard = tokenValue.dash;
+        DashBoard dash = tokenValue.dash;
 
-        try {
-            byte[] compressed = JsonParser.gzipDashRestrictive(dashBoard);
-            String qrData = "bp1" + Base64.getEncoder().encodeToString(compressed);
-            byte[] qrDataBinary = QRCode.from(qrData).to(ImageType.PNG).withSize(500, 500).stream().toByteArray();
-            return ok(qrDataBinary, "image/png");
-        } catch (Throwable e) {
-            log.error("Error generating QR. Reason : {}", e.getMessage());
-            return badRequest("Error generating QR.");
-        }
+        String qrToken = TokenGeneratorUtil.generateNewToken();
+        String json = JsonParser.toJsonRestrictiveDashboard(dash);
+
+        blockingIOProcessor.executeDB(() -> {
+            try {
+                boolean insertStatus = dbManager.insertClonedProject(qrToken, json);
+                if (!insertStatus && !fileManager.writeCloneProjectToDisk(qrToken, json)) {
+                    log.error("Creating clone project failed for {}", tokenValue.user.email);
+                }
+            } catch (Exception e) {
+                log.error("Error cloning project for {}.", tokenValue.user.email, e);
+            }
+        });
+
+        //todo generate QR on client side.
+        String cloneQrString = "blynk://token/clone/" + qrToken + "?server=" + host + "&port=" + httpsPort;
+        byte[] qrDataBinary = QRCode.from(cloneQrString).to(ImageType.PNG).stream().toByteArray();
+        return ok(qrDataBinary, "image/png");
     }
 
     @GET

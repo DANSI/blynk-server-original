@@ -43,15 +43,15 @@ public class GetCloneCodeLogic {
 
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
-        String token = TokenGeneratorUtil.generateNewToken();
+        String qrToken = TokenGeneratorUtil.generateNewToken();
         String json = JsonParser.toJsonRestrictiveDashboard(dash);
 
         blockingIOProcessor.executeDB(() -> {
             MessageBase result;
             try {
-                boolean insertStatus = dbManager.insertClonedProject(token, json);
-                if (insertStatus || fileManager.writeCloneProjectToDisk(token, json)) {
-                    result = makeASCIIStringMessage(GET_CLONE_CODE, message.id, token);
+                boolean insertStatus = dbManager.insertClonedProject(qrToken, json);
+                if (insertStatus || fileManager.writeCloneProjectToDisk(qrToken, json)) {
+                    result = makeASCIIStringMessage(GET_CLONE_CODE, message.id, qrToken);
                 } else {
                     log.error("Creating clone project failed for {}", user.email);
                     result = serverError(message.id);

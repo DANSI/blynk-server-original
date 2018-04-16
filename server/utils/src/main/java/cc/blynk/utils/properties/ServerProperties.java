@@ -30,4 +30,11 @@ public class ServerProperties extends BaseProperties {
         this.isUnpacked = JarUtil.unpackStaticFiles(jarPath, STATIC_FILES_FOLDER);
     }
 
+    public String getHttpsPortAsString() {
+        return force80Port() ? "443" : getProperty("https.port");
+    }
+
+    public boolean force80Port() {
+        return getBoolProperty("force.port.80.for.csv");
+    }
 }

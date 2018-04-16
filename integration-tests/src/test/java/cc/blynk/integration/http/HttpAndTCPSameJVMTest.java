@@ -4,6 +4,7 @@ import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.integration.tcp.EventorTest;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.widgets.controls.RGB;
@@ -23,6 +24,12 @@ import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.DateTimeUtils;
+import com.google.zxing.BinaryBitmap;
+import com.google.zxing.LuminanceSource;
+import com.google.zxing.Result;
+import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
+import com.google.zxing.common.HybridBinarizer;
+import com.google.zxing.qrcode.QRCodeReader;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
@@ -30,6 +37,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -37,6 +45,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.List;
@@ -353,6 +364,41 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
                 assertEquals(i, Integer.valueOf(values.get(0)).intValue());
             }
         }
+    }
+
+    @Test
+    public void testQRWorks() throws Exception {
+        clientPair.appClient.getToken(1);
+        String token = clientPair.appClient.getBody();
+
+        HttpGet getRequest = new HttpGet(httpServerUrl + token + "/qr");
+        String cloneToken;
+        try (CloseableHttpResponse response = httpclient.execute(getRequest)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            assertEquals("image/png", response.getFirstHeader("Content-Type").getValue());
+            byte[] data = EntityUtils.toByteArray(response.getEntity());
+            assertNotNull(data);
+
+            //get the data from the input stream
+            BufferedImage image = ImageIO.read(new ByteArrayInputStream(data));
+
+            //convert the image to a binary bitmap source
+            LuminanceSource source = new BufferedImageLuminanceSource(image);
+            BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
+            QRCodeReader reader = new QRCodeReader();
+            Result result = reader.decode(bitmap);
+            String resultString = result.getText();
+            assertTrue(resultString.startsWith("blynk://token/clone/"));
+            assertTrue(resultString.endsWith("?server=127.0.0.1&port=10443"));
+            cloneToken = resultString.substring(
+                    resultString.indexOf("blynk://token/clone/") + "blynk://token/clone/".length(),
+                    resultString.indexOf("?server=127.0.0.1&port=10443"));
+            assertEquals(32, cloneToken.length());
+        }
+
+        clientPair.appClient.send("getProjectByCloneCode " + cloneToken);
+        DashBoard dashBoard = clientPair.appClient.getDash(2);
+        assertEquals("My Dashboard", dashBoard.name);
     }
 
     @Test
