@@ -24,6 +24,7 @@ import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.TokenGeneratorUtil;
 import cc.blynk.utils.http.MediaType;
+import cc.blynk.utils.properties.ServerProperties;
 import cc.blynk.utils.validators.BlynkEmailValidator;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -70,7 +71,7 @@ public class ResetPasswordLogic extends BaseHttpHandler {
         this.emailSubj = "Password reset request for the " + productName + " app.";
         this.emailBody = FileLoaderUtil
                 .readFileAsString(RESET_PASS_STATIC_PATH + "reset-email.html")
-                .replace(AppNameUtil.PRODUCT_NAME, productName);
+                .replace(ServerProperties.PRODUCT_NAME, productName);
         this.mailWrapper = holder.mailWrapper;
 
         String host = holder.props.getServerHost();

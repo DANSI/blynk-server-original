@@ -21,6 +21,7 @@ allowed.administrator.ips=
 server.host=xxx.blynk.cc
 contact.email=xxx@blynk.cc
 region=xxx
+product.name=xxx
         
 db.properties
 

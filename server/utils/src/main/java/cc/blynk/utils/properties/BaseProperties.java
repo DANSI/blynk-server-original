@@ -1,6 +1,5 @@
 package cc.blynk.utils.properties;
 
-import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.IPUtils;
 
 import java.io.File;
@@ -161,7 +160,4 @@ public abstract class BaseProperties extends Properties {
         return getBoolProperty("allow.reading.widget.without.active.app");
     }
 
-    public String getProductName() {
-        return getProperty("product.name", AppNameUtil.BLYNK);
-    }
 }

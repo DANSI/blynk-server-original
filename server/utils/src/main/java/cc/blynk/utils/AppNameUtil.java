@@ -12,6 +12,5 @@ public final class AppNameUtil {
 
     public static final String BLYNK = "Blynk";
     public static final String FACEBOOK = "facebook";
-    public static final String PRODUCT_NAME = "{PRODUCT_NAME}";
 
 }

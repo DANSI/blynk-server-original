@@ -3,6 +3,7 @@ package cc.blynk.server.notifications.push;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.enums.Priority;
 import cc.blynk.server.notifications.push.ios.IOSGCMMessage;
+import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.properties.GCMProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.netty.channel.epoll.Epoll;
@@ -39,7 +40,7 @@ public class GCMWrapperTest {
     @Test
     @Ignore
     public void testIOS() throws Exception {
-        GCMWrapper gcmWrapper = new GCMWrapper(props, client);
+        GCMWrapper gcmWrapper = new GCMWrapper(props, client, AppNameUtil.BLYNK);
         gcmWrapper.send(new IOSGCMMessage("to", Priority.normal, "yo!!!", 1), null, null);
     }
 
@@ -48,7 +49,7 @@ public class GCMWrapperTest {
     public void testAndroid() throws Exception {
         when(props.getProperty("gcm.api.key")).thenReturn("");
         when(props.getProperty("gcm.server")).thenReturn("");
-        GCMWrapper gcmWrapper = new GCMWrapper(props, client);
+        GCMWrapper gcmWrapper = new GCMWrapper(props, client, AppNameUtil.BLYNK);
         gcmWrapper.send(new AndroidGCMMessage("", Priority.normal, "yo!!!", 1), null, null);
         Thread.sleep(5000);
     }

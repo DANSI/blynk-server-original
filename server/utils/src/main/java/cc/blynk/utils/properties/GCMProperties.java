@@ -16,7 +16,7 @@ public class GCMProperties extends BaseProperties {
     }
 
     public String getNotificationTitle() {
-        return getProperty("notification.title", "Blynk Notification");
+        return getProperty("notification.title", "{PRODUCT_NAME} Notification");
     }
 
     public String getNotificationBody() {

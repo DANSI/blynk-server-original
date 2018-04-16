@@ -130,9 +130,10 @@ public class Holder {
                 .build()
         );
 
+        String productName = serverProperties.getProductName();
         this.twitterWrapper = new TwitterWrapper(twitterProperties, asyncHttpClient);
-        this.mailWrapper = new MailWrapper(mailProperties);
-        this.gcmWrapper = new GCMWrapper(gcmProperties, asyncHttpClient);
+        this.mailWrapper = new MailWrapper(mailProperties, productName);
+        this.gcmWrapper = new GCMWrapper(gcmProperties, asyncHttpClient, productName);
         this.smsWrapper = new SMSWrapper(smsProperties, asyncHttpClient);
 
         this.otaManager = new OTAManager(props);

@@ -1,6 +1,7 @@
 package cc.blynk.server.notifications.mail;
 
 import cc.blynk.utils.properties.MailProperties;
+import cc.blynk.utils.properties.ServerProperties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -31,7 +32,7 @@ public class SparkPostMailClient implements MailClient {
     private final String username;
     private final String password;
 
-    SparkPostMailClient(MailProperties mailProperties) {
+    SparkPostMailClient(MailProperties mailProperties, String productName) {
         this.username = mailProperties.getSMTPUsername();
         this.password = mailProperties.getSMTPPassword();
         this.host = mailProperties.getSMTPHost();
@@ -41,7 +42,11 @@ public class SparkPostMailClient implements MailClient {
 
         this.session = Session.getInstance(mailProperties);
         try {
-            this.from = new InternetAddress(mailProperties.getProperty("mail.from"));
+            String mailFrom = mailProperties.getProperty("mail.from");
+            if (mailFrom != null) {
+                mailFrom = mailFrom.replace(ServerProperties.PRODUCT_NAME, productName);
+            }
+            this.from = new InternetAddress(mailFrom);
         } catch (AddressException e) {
             throw new RuntimeException("Error initializing MailWrapper.");
         }

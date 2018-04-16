@@ -1,7 +1,7 @@
 package cc.blynk.server.notifications.push;
 
-import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.properties.GCMProperties;
+import cc.blynk.utils.properties.ServerProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,14 +33,13 @@ public class GCMWrapper {
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .readerFor(GCMResponseMessage.class);
 
-    public GCMWrapper(GCMProperties props, AsyncHttpClient httpclient) {
+    public GCMWrapper(GCMProperties props, AsyncHttpClient httpclient, String productName) {
         this.apiKey = "key=" + props.getGCMApiKey();
         this.httpclient = httpclient;
         this.gcmURI = props.getGCMServer();
 
-        String productName = props.getProductName();
         String title = props.getNotificationTitle();
-        this.title = title.replace(AppNameUtil.PRODUCT_NAME, productName);
+        this.title = title.replace(ServerProperties.PRODUCT_NAME, productName);
     }
 
     private static void processError(String errorMessage, Map<String, String> tokens, String uid) {

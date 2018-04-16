@@ -13,10 +13,10 @@ public class MailWrapper {
     private final MailClient client;
     private final String emailBody;
 
-    public MailWrapper(MailProperties mailProperties) {
+    public MailWrapper(MailProperties mailProperties, String productName) {
         String host = mailProperties.getProperty("mail.smtp.host");
         if (host != null && host.contains("sparkpostmail")) {
-            client = new SparkPostMailClient(mailProperties);
+            client = new SparkPostMailClient(mailProperties, productName);
         } else {
             client = new GMailClient(mailProperties);
         }
