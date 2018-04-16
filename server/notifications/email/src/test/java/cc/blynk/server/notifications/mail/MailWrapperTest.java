@@ -1,5 +1,6 @@
 package cc.blynk.server.notifications.mail;
 
+import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.properties.MailProperties;
 import net.glxn.qrgen.core.image.ImageType;
 import net.glxn.qrgen.javase.QRCode;
@@ -64,7 +65,7 @@ public class MailWrapperTest {
             }
         }
 
-        MailWrapper mailWrapper = new MailWrapper(properties);
+        MailWrapper mailWrapper = new MailWrapper(properties, AppNameUtil.BLYNK);
         mailWrapper.sendWithAttachment("dmitriy@blynk.cc", "yo", body, qrHolders);
     }
 
@@ -82,7 +83,7 @@ public class MailWrapperTest {
         QrHolder qrHolder2 = new QrHolder(1, 1, "device name", "123",  QRCode.from("124").to(ImageType.JPG).stream().toByteArray());
 
         String to = "doom369@gmail.com";
-        MailWrapper mailWrapper = new MailWrapper(properties);
+        MailWrapper mailWrapper = new MailWrapper(properties, AppNameUtil.BLYNK);
         mailWrapper.sendWithAttachment(to, "Hello", "Body!", new QrHolder[]{qrHolder, qrHolder2});
     }
 
@@ -97,7 +98,7 @@ public class MailWrapperTest {
         }
 
         String to = "";
-        MailWrapper mailWrapper = new MailWrapper(properties);
+        MailWrapper mailWrapper = new MailWrapper(properties, AppNameUtil.BLYNK);
         mailWrapper.sendText(to, "Hello", "Body!");
     }
 
@@ -112,7 +113,7 @@ public class MailWrapperTest {
         }
 
         String to = "doom369@gmail.com";
-        MailWrapper mailWrapper = new MailWrapper(properties);
+        MailWrapper mailWrapper = new MailWrapper(properties, AppNameUtil.BLYNK);
 
         mailWrapper.sendText(to, "Hello", "Body!");
     }
@@ -129,7 +130,7 @@ public class MailWrapperTest {
 
         String to = "";
 
-        MailWrapper mailWrapper = new MailWrapper(properties);
+        MailWrapper mailWrapper = new MailWrapper(properties, AppNameUtil.BLYNK);
 
         mailWrapper.sendText(to, "Hello", "Happy Blynking!\n" +
                 "-\n" +
