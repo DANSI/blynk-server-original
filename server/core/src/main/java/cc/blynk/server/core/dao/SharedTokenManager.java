@@ -5,8 +5,8 @@ import cc.blynk.server.core.model.auth.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * The Blynk Project.
@@ -19,20 +19,17 @@ public class SharedTokenManager {
 
     public static final String ALL = "*";
 
-    protected final ConcurrentMap<String, SharedTokenValue> cache;
+    final ConcurrentHashMap<String, SharedTokenValue> cache;
 
-    SharedTokenManager(Iterable<User> users) {
-        this.cache = new ConcurrentHashMap<String, SharedTokenValue>() {
-            {
-                for (User user : users) {
-                    for (DashBoard dashBoard : user.profile.dashBoards) {
-                        if (dashBoard.sharedToken != null) {
-                            put(dashBoard.sharedToken, new SharedTokenValue(user, dashBoard.id));
-                        }
-                    }
+    SharedTokenManager(Collection<User> users) {
+        this.cache = new ConcurrentHashMap<>();
+        for (User user : users) {
+            for (DashBoard dashBoard : user.profile.dashBoards) {
+                if (dashBoard.sharedToken != null) {
+                    cache.put(dashBoard.sharedToken, new SharedTokenValue(user, dashBoard.id));
                 }
             }
-        };
+        }
     }
 
     public void assignToken(User user, DashBoard dash, String newToken) {
