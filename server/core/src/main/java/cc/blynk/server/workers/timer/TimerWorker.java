@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicReferenceArray;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_INTS;
@@ -59,8 +60,8 @@ public class TimerWorker implements Runnable {
     private final UserDao userDao;
     private final SessionDao sessionDao;
     private final GCMWrapper gcmWrapper;
-    private final ConcurrentHashMap<TimerKey, BaseAction[]>[] timerExecutors;
-    private final static int size = 8640;
+    private final AtomicReferenceArray<ConcurrentHashMap<TimerKey, BaseAction[]>> timerExecutors;
+    private final static int size = 86400;
 
     @SuppressWarnings("unchecked")
     public TimerWorker(UserDao userDao, SessionDao sessionDao, GCMWrapper gcmWrapper) {
@@ -69,15 +70,8 @@ public class TimerWorker implements Runnable {
         this.gcmWrapper = gcmWrapper;
         //array cell for every second in a day,
         //yes, it costs a bit of memory, but still cheap :)
-        this.timerExecutors = new ConcurrentHashMap[size];
-        for (int i = 0; i < size; i++) {
-            timerExecutors[i] = new ConcurrentHashMap<>();
-        }
+        this.timerExecutors = new AtomicReferenceArray<>(size);
         init(userDao.users);
-    }
-
-    private static int hash(int time) {
-        return time / 10;
     }
 
     private void init(ConcurrentMap<UserKey, User> users) {
@@ -121,14 +115,14 @@ public class TimerWorker implements Runnable {
                 SetPinAction action = new SetPinAction(timer.pin, timer.pinType, timer.startValue);
                 TimerKey timerKey = new TimerKey(userKey, dashId, timer.deviceId, timer.id, 0,
                         deviceTilesId, templateId, timerTime);
-                timerExecutors[hash(timerTime.time)].put(timerKey, new BaseAction[]{action});
+                getExecutorOrCreate(timerTime.time).put(timerKey, new BaseAction[]{action});
             }
             if (timer.isValidStop()) {
                 TimerTime timerTime = new TimerTime(timer.stopTime);
                 SetPinAction action = new SetPinAction(timer.pin, timer.pinType, timer.stopValue);
                 TimerKey timerKey = new TimerKey(userKey, dashId, timer.deviceId, timer.id, 1,
                         deviceTilesId, templateId, timerTime);
-                timerExecutors[hash(timerTime.time)].put(timerKey, new BaseAction[]{action});
+                getExecutorOrCreate(timerTime.time).put(timerKey, new BaseAction[]{action});
             }
         }
     }
@@ -143,7 +137,7 @@ public class TimerWorker implements Runnable {
             }
         }
         if (!validActions.isEmpty()) {
-            timerExecutors[hash(time.time)].put(
+            getExecutorOrCreate(time.time).put(
                     new TimerKey(userKey, dashId, deviceId, widgetId, additionalId,
                             deviceTilesId, templateId, time),
                     validActions.toArray(new BaseAction[validActions.size()]));
@@ -174,9 +168,25 @@ public class TimerWorker implements Runnable {
 
     private void delete(UserKey userKey, int dashId, int deviceId, long widgetId, int additionalId,
                         long deviceTilesId, long templateId, TimerTime time) {
-        timerExecutors[hash(time.time)].remove(new TimerKey(userKey, dashId, deviceId,
-                widgetId, additionalId,
-                deviceTilesId, templateId, time));
+        ConcurrentHashMap<TimerKey, BaseAction[]> secondExecutor = timerExecutors.get(time.time);
+        if (secondExecutor != null) {
+            secondExecutor.remove(new TimerKey(userKey, dashId, deviceId,
+                    widgetId, additionalId,
+                    deviceTilesId, templateId, time));
+        }
+    }
+
+    //may be improved in Java9 with compareAndExchange
+    private ConcurrentHashMap<TimerKey, BaseAction[]> getExecutorOrCreate(int seconds) {
+        ConcurrentHashMap<TimerKey, BaseAction[]> secondExecutor = timerExecutors.get(seconds);
+        if (secondExecutor != null) {
+            return secondExecutor;
+        }
+        ConcurrentHashMap<TimerKey, BaseAction[]> newSecondExecutorMap = new ConcurrentHashMap<>();
+        if (timerExecutors.compareAndSet(seconds, null, newSecondExecutorMap)) {
+            return newSecondExecutorMap;
+        }
+        return timerExecutors.get(seconds);
     }
 
     private int actuallySendTimers;
@@ -189,10 +199,9 @@ public class TimerWorker implements Runnable {
         ZonedDateTime currentDateTime = ZonedDateTime.now(DateTimeUtils.UTC);
         int curSeconds = currentDateTime.toLocalTime().toSecondOfDay();
 
-        ConcurrentMap<TimerKey, BaseAction[]> tickedExecutors = timerExecutors[hash(curSeconds)];
+        ConcurrentMap<TimerKey, BaseAction[]> tickedExecutors = timerExecutors.get(curSeconds);
 
-        int readyForTickTimers = tickedExecutors.size();
-        if (readyForTickTimers == 0) {
+        if (tickedExecutors == null) {
             return;
         }
 
@@ -208,7 +217,7 @@ public class TimerWorker implements Runnable {
 
         if (activeTimers > 0) {
             log.info("Timer finished. Ready {}, Active {}, Actual {}. Processing time : {} ms",
-                    readyForTickTimers, activeTimers, actuallySendTimers, System.currentTimeMillis() - now);
+                    tickedExecutors.size(), activeTimers, actuallySendTimers, System.currentTimeMillis() - now);
         }
     }
 
