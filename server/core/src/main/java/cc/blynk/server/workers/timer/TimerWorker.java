@@ -59,7 +59,7 @@ public class TimerWorker implements Runnable {
     private final UserDao userDao;
     private final SessionDao sessionDao;
     private final GCMWrapper gcmWrapper;
-    private final ConcurrentMap<TimerKey, BaseAction[]>[] timerExecutors;
+    private final ConcurrentHashMap<TimerKey, BaseAction[]>[] timerExecutors;
     private final static int size = 8640;
 
     @SuppressWarnings("unchecked")
@@ -69,7 +69,7 @@ public class TimerWorker implements Runnable {
         this.gcmWrapper = gcmWrapper;
         //array cell for every second in a day,
         //yes, it costs a bit of memory, but still cheap :)
-        this.timerExecutors = new ConcurrentMap[size];
+        this.timerExecutors = new ConcurrentHashMap[size];
         for (int i = 0; i < size; i++) {
             timerExecutors[i] = new ConcurrentHashMap<>();
         }
