@@ -8,7 +8,6 @@ import cc.blynk.server.notifications.push.ios.IOSGCMMessage;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * The Blynk Project.
@@ -19,9 +18,9 @@ public class Notification extends NoPinWidget {
 
     private static final int MAX_PUSH_BODY_SIZE = 255;
 
-    public volatile ConcurrentMap<String, String> androidTokens = new ConcurrentHashMap<>();
+    public volatile ConcurrentHashMap<String, String> androidTokens = new ConcurrentHashMap<>();
 
-    public volatile ConcurrentMap<String, String> iOSTokens = new ConcurrentHashMap<>();
+    public volatile ConcurrentHashMap<String, String> iOSTokens = new ConcurrentHashMap<>();
 
     public boolean notifyWhenOffline;
 

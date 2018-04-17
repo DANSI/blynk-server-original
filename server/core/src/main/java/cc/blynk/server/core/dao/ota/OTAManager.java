@@ -34,13 +34,14 @@ public class OTAManager {
 
     public final String serverHostUrl;
     private volatile OTAInfo allInfo;
-    private final ConcurrentHashMap<UserKey, OTAInfo> otaInfos = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<UserKey, OTAInfo> otaInfos;
     private final String staticFilesFolder;
 
     public OTAManager(ServerProperties props) {
         String port = props.getProperty("http.port", "8080");
         this.serverHostUrl = "http://" + props.getServerHost() + (port.equals("80") ? "" : (":" + port));
         this.staticFilesFolder = props.jarPath;
+        this.otaInfos = new ConcurrentHashMap<>();
     }
 
     public void initiateHardwareUpdate(ChannelHandlerContext ctx, UserKey userKey,
