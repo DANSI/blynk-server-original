@@ -148,7 +148,7 @@ public class AcmeClient {
      * This is a simple way of finding your {@link Registration}. A better way is to get
      * the URI of your new registration with {@link Registration#getLocation()} and store
      * it somewhere. If you need to get access to your account later, reconnect to it via
-     * {@link Registration#bind(Session, URI)} by using the stored location.
+     * by using the stored location.
      *
      * @param session
      *            {@link Session} to bind with
