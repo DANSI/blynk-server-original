@@ -107,7 +107,7 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
         return templates[getTileTemplateIndexByIdOrThrow(id)];
     }
 
-    public TileTemplate getTileTemplateById(long id) {
+    private TileTemplate getTileTemplateById(long id) {
         for (TileTemplate tileTemplate : templates) {
             if (tileTemplate.id == id) {
                 return tileTemplate;

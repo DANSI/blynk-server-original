@@ -78,7 +78,7 @@ public class ReadingWidgetsWorker implements Runnable {
                                     int deviceId = stateHolder.device.id;
                                     for (Widget widget : dashBoard.widgets) {
                                         if (widget instanceof FrequencyWidget) {
-                                            process(channel, widget, dashBoard, deviceId, now);
+                                            process(channel, widget, dashBoard, deviceId, now, false);
                                         } else if (widget instanceof DeviceTiles) {
                                             DeviceTiles deviceTiles = (DeviceTiles) widget;
                                             if (deviceId == deviceTiles.selectedDeviceId) {
@@ -87,7 +87,8 @@ public class ReadingWidgetsWorker implements Runnable {
                                                 if (tileTemplate != null) {
                                                     for (Widget tileWidget : tileTemplate.widgets) {
                                                         if (tileWidget instanceof FrequencyWidget) {
-                                                            process(channel, tileWidget, dashBoard, deviceId, now);
+                                                            process(channel, tileWidget, dashBoard,
+                                                                    deviceId, now, true);
                                                         }
                                                     }
                                                 }
@@ -104,10 +105,10 @@ public class ReadingWidgetsWorker implements Runnable {
         }
     }
 
-    private void process(Channel channel, Widget widget, DashBoard dashBoard, int deviceId, long now) {
+    private void process(Channel channel, Widget widget, DashBoard dashBoard, int deviceId, long now, boolean isTiles) {
         FrequencyWidget frequencyWidget = (FrequencyWidget) widget;
         if (channel.isWritable()
-                && sameDeviceId(dashBoard, frequencyWidget.getDeviceId(), deviceId)
+                && sameDeviceId(dashBoard, isTiles ? deviceId : frequencyWidget.getDeviceId(), deviceId)
                 && frequencyWidget.isTicked(now)) {
             frequencyWidget.writeReadingCommand(channel);
             tickedWidgets++;

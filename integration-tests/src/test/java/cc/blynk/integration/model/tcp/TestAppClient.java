@@ -165,6 +165,16 @@ public class TestAppClient extends BaseTestAppClient {
         createWidget(dashId, JsonParser.MAPPER.writeValueAsString(widget));
     }
 
+    public void createWidget(int dashId, long widgetId, long templateId, String widgetJson) {
+        send("createWidget " + dashId + BODY_SEPARATOR + widgetId
+                + BODY_SEPARATOR + templateId + BODY_SEPARATOR + widgetJson);
+    }
+
+    public void createWidget(int dashId, long widgetId, long templateId, Widget widget) throws Exception {
+        send("createWidget " + dashId + BODY_SEPARATOR + widgetId
+                + BODY_SEPARATOR + templateId + BODY_SEPARATOR + JsonParser.MAPPER.writeValueAsString(widget));
+    }
+
     public void createWidget(int dashId, String widgetJson) {
         send("createWidget " + dashId + BODY_SEPARATOR + widgetJson);
     }

@@ -541,29 +541,35 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         DataStream dataStream = new DataStream((byte) 5, PinType.VIRTUAL);
 
         Button button = new Button();
+        button.id = 2321;
         button.width = 2;
         button.height = 2;
         button.pin = 2;
         button.pinType = PinType.VIRTUAL;
-        button.deviceId = 0;
 
         ValueDisplay valueDisplay = new ValueDisplay();
+        valueDisplay.id = 2322;
         valueDisplay.width = 2;
         valueDisplay.height = 2;
         valueDisplay.pin = 77;
         valueDisplay.pinType = PinType.VIRTUAL;
-        valueDisplay.deviceId = 0;
+
+        clientPair.appClient.createWidget(1, widgetId, tileTemplate.id, button);
+        clientPair.appClient.verifyResult(ok(3));
+
+        clientPair.appClient.createWidget(1, widgetId, tileTemplate.id, valueDisplay);
+        clientPair.appClient.verifyResult(ok(4));
 
         tileTemplate = new PageTileTemplate(1,
-                new Widget[]{button, valueDisplay}, new int[]{0, 1}, "name", "name", "iconName", "ESP8266", dataStream,
+                null, new int[]{0, 1}, "name", "name", "iconName", "ESP8266", dataStream,
                 false, null, null, null, 0, 0, FontSize.LARGE, false);
 
         clientPair.appClient.send("updateTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
-        clientPair.appClient.verifyResult(ok(3));
+        clientPair.appClient.verifyResult(ok(5));
 
         clientPair.appClient.send("getWidget 1\0" + widgetId);
-        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(4), 0);
+        deviceTiles = (DeviceTiles) JsonParser.parseWidget(clientPair.appClient.getBody(6), 0);
         assertNotNull(deviceTiles);
         assertEquals(widgetId, deviceTiles.id);
         assertNotNull(deviceTiles.templates);
@@ -665,22 +671,26 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         DataStream dataStream = new DataStream((byte) 5, PinType.VIRTUAL);
 
         ValueDisplay valueDisplay = new ValueDisplay();
+        valueDisplay.id = 1234;
         valueDisplay.width = 2;
         valueDisplay.height = 2;
         valueDisplay.pin = 77;
         valueDisplay.pinType = PinType.VIRTUAL;
         valueDisplay.frequency = 1000;
-        valueDisplay.deviceId = 0;
+        valueDisplay.deviceId = -1;
 
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.readingWidgetsWorker, 0, 1000, TimeUnit.MILLISECONDS);
 
         tileTemplate = new PageTileTemplate(1,
-                new Widget[]{valueDisplay}, new int[]{0}, "name", "name", "iconName", "ESP8266", dataStream,
+                null, new int[]{0}, "name", "name", "iconName", "ESP8266", dataStream,
                 false, null, null, null, 0, 0, FontSize.LARGE, false);
 
-        clientPair.appClient.send("updateTemplate " + b("1 " + widgetId + " ")
-                + MAPPER.writeValueAsString(tileTemplate));
+        clientPair.appClient.createWidget(1, deviceTiles.id, tileTemplate.id, valueDisplay);
         clientPair.appClient.verifyResult(ok(3));
+
+        clientPair.appClient.send("updateTemplate " + b("1 " + deviceTiles.id + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        clientPair.appClient.verifyResult(ok(4));
 
         clientPair.appClient.reset();
         clientPair.appClient.sync(1, 0);
@@ -721,10 +731,8 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
 
         clientPair.appClient.reset();
 
-        long widgetId = 21321;
-
         DeviceTiles deviceTiles = new DeviceTiles();
-        deviceTiles.id = widgetId;
+        deviceTiles.id = 21321;
         deviceTiles.x = 8;
         deviceTiles.y = 8;
         deviceTiles.width = 50;
@@ -737,32 +745,34 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
                 null, null, "name", "name", "iconName", "ESP8266", null,
                 false, null, null, null, 0, 0, FontSize.LARGE, false);
 
-        clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
+        clientPair.appClient.send("createTemplate " + b("1 " + deviceTiles.id + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
         clientPair.appClient.verifyResult(ok(2));
 
-        DataStream dataStream = new DataStream((byte) 5, PinType.VIRTUAL);
-
         ValueDisplay valueDisplay = new ValueDisplay();
+        valueDisplay.id = 1234;
         valueDisplay.width = 2;
         valueDisplay.height = 2;
         valueDisplay.pin = 77;
         valueDisplay.pinType = PinType.VIRTUAL;
         valueDisplay.frequency = 1000;
-        valueDisplay.deviceId = 1;
-
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.readingWidgetsWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        valueDisplay.deviceId = -1;
 
         tileTemplate = new PageTileTemplate(1,
-                new Widget[]{valueDisplay}, new int[]{1}, "name", "name", "iconName", "ESP8266", null,
+                null, new int[]{1}, "name", "name", "iconName", "ESP8266", null,
                 false, null, null, null, 0, 0, FontSize.LARGE, false);
 
-        clientPair.appClient.send("updateTemplate " + b("1 " + widgetId + " ")
-                + MAPPER.writeValueAsString(tileTemplate));
+        clientPair.appClient.createWidget(1, deviceTiles.id, tileTemplate.id, valueDisplay);
         clientPair.appClient.verifyResult(ok(3));
 
+        clientPair.appClient.send("updateTemplate " + b("1 " + deviceTiles.id + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        clientPair.appClient.verifyResult(ok(4));
+
         clientPair.appClient.reset();
-        clientPair.appClient.sync(1, 1);
+        clientPair.appClient.sync(1, device1.id);
+
+        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.readingWidgetsWorker, 0, 1000, TimeUnit.MILLISECONDS);
 
         clientPair.appClient.verifyAny();
         clientPair.appClient.verifyResult(ok(1));
@@ -1141,13 +1151,13 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
                 + MAPPER.writeValueAsString(tileTemplate));
         clientPair.appClient.verifyResult(ok(3));
 
-        clientPair.appClient.createWidget(1, b("21321 1 ") + "{\"id\":100, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":2}");
+        clientPair.appClient.createWidget(1, 21321, 1, "{\"id\":100, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":2}");
         clientPair.appClient.verifyResult(ok(4));
 
         clientPair.appClient.send("getEnergy");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(5, GET_ENERGY, "4400")));
 
-        clientPair.appClient.createWidget(1, b("21321 1 ") + "{\"id\":101, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":3}");
+        clientPair.appClient.createWidget(1, 21321, 1, "{\"id\":101, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":3}");
         clientPair.appClient.verifyResult(ok(6));
 
         clientPair.appClient.send("getEnergy");
@@ -1188,10 +1198,10 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
                 + MAPPER.writeValueAsString(tileTemplate));
         clientPair.appClient.verifyResult(ok(2));
 
-        clientPair.appClient.createWidget(1, b("21321 1 ") + "{\"id\":100, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":2}");
+        clientPair.appClient.createWidget(1, 21321, 1, "{\"id\":100, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":2}");
         clientPair.appClient.verifyResult(ok(3));
 
-        clientPair.appClient.createWidget(1, b("21321 1 ") + "{\"id\":100, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":2}");
+        clientPair.appClient.createWidget(1, 21321, 1, "{\"id\":100, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":2}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(notAllowed(4)));
 
         clientPair.appClient.updateWidget(1, "{\"id\":100, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 3\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":3}");
@@ -1241,7 +1251,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         menu.deviceId = 252521;
         menu.labels = new String[] {"Item1", "Item2"};
 
-        clientPair.appClient.createWidget(1, b("21321 1 ") + JsonParser.MAPPER.writeValueAsString(menu));
+        clientPair.appClient.createWidget(1, 21321, 1, menu);
         clientPair.appClient.verifyResult(ok(3));
 
         List<String> list = new ArrayList<>();
@@ -1345,7 +1355,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
                 new Tab(1, "1")
         };
 
-        clientPair.appClient.createWidget(1, b("21321 1 ") + JsonParser.MAPPER.writeValueAsString(tabs));
+        clientPair.appClient.createWidget(1, 21321, 1, tabs);
         clientPair.appClient.verifyResult(ok(3));
 
         Menu menu = new Menu();
@@ -1358,7 +1368,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         menu.deviceId = 252521;
         menu.tabId = 0;
 
-        clientPair.appClient.createWidget(1, b("21321 1 ") + JsonParser.MAPPER.writeValueAsString(menu));
+        clientPair.appClient.createWidget(1, 21321, 1, menu);
         clientPair.appClient.verifyResult(ok(4));
 
         menu = new Menu();
@@ -1371,7 +1381,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         menu.deviceId = 252521;
         menu.tabId = 1;
 
-        clientPair.appClient.createWidget(1, b("21321 1 ") + JsonParser.MAPPER.writeValueAsString(menu));
+        clientPair.appClient.createWidget(1, 21321, 1, menu);
         clientPair.appClient.verifyResult(ok(5));
 
         Tabs tabs2 = new Tabs();
@@ -1508,7 +1518,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
                 new Tab(1, "1")
         };
 
-        clientPair.appClient.createWidget(1, b("21321 1 ") + JsonParser.MAPPER.writeValueAsString(tabs2));
+        clientPair.appClient.createWidget(1, 21321, 1, tabs2);
         clientPair.appClient.verifyResult(ok(7));
 
         Button button3 = new Button();
@@ -1521,7 +1531,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         button3.deviceId = 0;
         button3.tabId = 0;
 
-        clientPair.appClient.createWidget(1, b("21321 1 ") + JsonParser.MAPPER.writeValueAsString(button3));
+        clientPair.appClient.createWidget(1, 21321, 1, button3);
         clientPair.appClient.verifyResult(ok(8));
 
         Button button4 = new Button();
@@ -1534,7 +1544,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         button4.deviceId = 0;
         button4.tabId = 1;
 
-        clientPair.appClient.createWidget(1, b("21321 1 ") + JsonParser.MAPPER.writeValueAsString(button4));
+        clientPair.appClient.createWidget(1, 21321, 1, button4);
         clientPair.appClient.verifyResult(ok(9));
 
         clientPair.appClient.deleteWidget(1, tabs2.id);
@@ -1580,7 +1590,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
                 new Tab(1, "1")
         };
 
-        clientPair.appClient.createWidget(1, b("21321 1 ") + JsonParser.MAPPER.writeValueAsString(tabs));
+        clientPair.appClient.createWidget(1, 21321, 1, tabs);
         clientPair.appClient.verifyResult(ok(3));
 
         Menu menu = new Menu();
@@ -1593,7 +1603,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         menu.deviceId = 252521;
         menu.tabId = 0;
 
-        clientPair.appClient.createWidget(1, b("21321 1 ") + JsonParser.MAPPER.writeValueAsString(menu));
+        clientPair.appClient.createWidget(1, 21321, 1, menu);
         clientPair.appClient.verifyResult(ok(4));
 
         menu = new Menu();
@@ -1606,7 +1616,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         menu.deviceId = 252521;
         menu.tabId = 1;
 
-        clientPair.appClient.createWidget(1, b("21321 1 ") + JsonParser.MAPPER.writeValueAsString(menu));
+        clientPair.appClient.createWidget(1, 21321, 1, menu);
         clientPair.appClient.verifyResult(ok(5));
 
         Tabs tabs2 = new Tabs();

@@ -63,6 +63,8 @@ public final class UpdateTileTemplateLogic {
 
         TileTemplate[] updatedTemplates = Arrays.copyOf(deviceTiles.templates, deviceTiles.templates.length);
         updatedTemplates[existingTileTemplateIndex] = newTileTemplate;
+        //do not override widgets field, as we have separate commands for it.
+        newTileTemplate.widgets = existingTileTemplate.widgets;
 
         log.debug("Updating tile template {}.", tileTemplateString);
         deviceTiles.templates = updatedTemplates;
