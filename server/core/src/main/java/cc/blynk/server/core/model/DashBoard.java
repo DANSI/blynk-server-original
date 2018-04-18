@@ -355,18 +355,18 @@ public class DashBoard {
     }
 
     public void cleanPinStorage(Widget widget, boolean removePropertiesToo) {
-        cleanPinStorageInternal(widget, removePropertiesToo);
+        cleanPinStorageInternalWihtoutUpdatedAt(widget, removePropertiesToo);
         this.updatedAt = System.currentTimeMillis();
     }
 
     private void cleanPinStorage(Widget[] widgets) {
         for (Widget widget : widgets) {
-            cleanPinStorageInternal(widget, false);
+            cleanPinStorageInternalWihtoutUpdatedAt(widget, false);
         }
         this.updatedAt = System.currentTimeMillis();
     }
 
-    private void cleanPinStorageInternal(Widget widget, boolean removePropertiesToo) {
+    public void cleanPinStorageInternalWihtoutUpdatedAt(Widget widget, boolean removePropertiesToo) {
         if (widget instanceof OnePinWidget) {
             OnePinWidget onePinWidget = (OnePinWidget) widget;
             if (onePinWidget.pinType != null) {

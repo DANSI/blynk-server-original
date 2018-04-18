@@ -217,7 +217,7 @@ public class FileManager {
             }
 
             for (Widget widget : dashBoard.widgets) {
-                dashBoard.cleanPinStorage(widget, false);
+                dashBoard.cleanPinStorageInternalWihtoutUpdatedAt(widget, false);
             }
         }
     }
