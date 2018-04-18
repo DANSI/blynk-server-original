@@ -392,7 +392,7 @@ public class DashBoard {
             DeviceTiles deviceTiles = (DeviceTiles) widget;
             for (Tile tile : deviceTiles.tiles) {
                 DataStream dataStream = tile.dataStream;
-                if (dataStream != null) {
+                if (dataStream != null && dataStream.isValid()) {
                     pinsStorage.remove(new PinStorageKey(tile.deviceId, dataStream.pinType, dataStream.pin));
                     if (removePropertiesToo) {
                         cleanPropertyStorageForTarget(tile.deviceId, dataStream.pinType, dataStream.pin);
