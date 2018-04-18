@@ -109,14 +109,14 @@ public class ReportingDBDao {
                                                  int dashId,
                                                  int deviceId,
                                                  byte pin,
-                                                 char pinType,
+                                                 PinType pinType,
                                                  long ts,
                                                  double value) throws SQLException {
         ps.setString(1, email);
         ps.setInt(2, dashId);
         ps.setInt(3, deviceId);
         ps.setByte(4, pin);
-        ps.setString(5, PinType.getPinTypeString(pinType));
+        ps.setString(5, pinType.pinTypeString);
         ps.setTimestamp(6, new Timestamp(ts), DateTimeUtils.UTC_CALENDAR);
         ps.setDouble(7, value);
     }
@@ -151,7 +151,7 @@ public class ReportingDBDao {
                 ps.setInt(2, key.getDashId());
                 ps.setInt(3, key.getDeviceId());
                 ps.setByte(4, key.getPin());
-                ps.setString(5, PinType.getPinTypeString(key.getPinType()));
+                ps.setString(5, key.getPinType().pinTypeString);
                 ps.setTimestamp(6, new Timestamp(key.ts), DateTimeUtils.UTC_CALENDAR);
 
                 if (value instanceof String) {

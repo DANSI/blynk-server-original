@@ -101,7 +101,7 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 8, GraphGranularityType.HOURLY.label));
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
 
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
@@ -160,13 +160,13 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath1 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 8, GraphGranularityType.HOURLY.label));
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphPeriod.THREE_MONTHS.granularityType));
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 9, GraphGranularityType.HOURLY.label));
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 9, GraphPeriod.THREE_MONTHS.granularityType));
         Path pinReportingDataPath3 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 10, GraphGranularityType.HOURLY.label));
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 10, GraphPeriod.THREE_MONTHS.granularityType));
         Path pinReportingDataPath4 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 11, GraphGranularityType.HOURLY.label));
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 11, GraphPeriod.THREE_MONTHS.granularityType));
 
         for (int i = 0; i < GraphPeriod.THREE_MONTHS.numberOfPoints; i++) {
             long now = System.currentTimeMillis();
@@ -177,7 +177,7 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         appClient.reset();
-        appClient.send("getenhanceddata 1" + b(" 432 THREE_MONTHS"));
+        appClient.getEnhancedGraphData(1, 432, GraphPeriod.THREE_MONTHS);
         BinaryMessage graphDataResponse = appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -197,7 +197,7 @@ public class HistoryGraphTest extends IntegrationBase {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -220,7 +220,7 @@ Device device = clientPair.appClient.getDevice();
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.VIRTUAL.pintTypeChar, (byte) 88, GraphGranularityType.MINUTE.label));
+                ReportingDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
@@ -241,7 +241,7 @@ Device device = clientPair.appClient.getDevice();
         clientPair.appClient.verifyResult(ok(3));
         clientPair.appClient.reset();
 
-        clientPair.appClient.send("getenhanceddata 1" + b(" 432 DAY"));
+        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.DAY);
         BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -284,12 +284,12 @@ Device device = clientPair.appClient.getDevice();
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.VIRTUAL.pintTypeChar, (byte) 88, GraphGranularityType.MINUTE.label));
+                ReportingDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.VIRTUAL.pintTypeChar, (byte) 88, GraphGranularityType.MINUTE.label));
+                ReportingDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
@@ -307,7 +307,7 @@ Device device = clientPair.appClient.getDevice();
         clientPair.appClient.verifyResult(ok(3));
         clientPair.appClient.reset();
 
-        clientPair.appClient.send("getenhanceddata 1" + b(" 432 DAY"));
+        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.DAY);
         BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -350,12 +350,12 @@ Device device = clientPair.appClient.getDevice();
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.VIRTUAL.pintTypeChar, (byte) 88, GraphGranularityType.MINUTE.label));
+                ReportingDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.VIRTUAL.pintTypeChar, (byte) 88, GraphGranularityType.MINUTE.label));
+                ReportingDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
@@ -373,7 +373,7 @@ Device device = clientPair.appClient.getDevice();
         clientPair.appClient.verifyResult(ok(3));
         clientPair.appClient.reset();
 
-        clientPair.appClient.send("getenhanceddata 1" + b(" 432 DAY"));
+        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.DAY);
         BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -416,12 +416,12 @@ Device device = clientPair.appClient.getDevice();
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.VIRTUAL.pintTypeChar, (byte) 88, GraphGranularityType.MINUTE.label));
+                ReportingDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.VIRTUAL.pintTypeChar, (byte) 88, GraphGranularityType.MINUTE.label));
+                ReportingDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
@@ -439,7 +439,7 @@ Device device = clientPair.appClient.getDevice();
         clientPair.appClient.verifyResult(ok(3));
         clientPair.appClient.reset();
 
-        clientPair.appClient.send("getenhanceddata 1" + b(" 432 DAY"));
+        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.DAY);
         BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -482,12 +482,12 @@ Device device = clientPair.appClient.getDevice();
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.VIRTUAL.pintTypeChar, (byte) 88, GraphGranularityType.MINUTE.label));
+                ReportingDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.VIRTUAL.pintTypeChar, (byte) 88, GraphGranularityType.MINUTE.label));
+                ReportingDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
@@ -505,7 +505,7 @@ Device device = clientPair.appClient.getDevice();
         clientPair.appClient.verifyResult(ok(3));
         clientPair.appClient.reset();
 
-        clientPair.appClient.send("getenhanceddata 1" + b(" 432 DAY"));
+        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.DAY);
         BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -548,12 +548,12 @@ Device device = clientPair.appClient.getDevice();
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.VIRTUAL.pintTypeChar, (byte) 88, GraphGranularityType.MINUTE.label));
+                ReportingDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.VIRTUAL.pintTypeChar, (byte) 88, GraphGranularityType.MINUTE.label));
+                ReportingDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
@@ -571,7 +571,7 @@ Device device = clientPair.appClient.getDevice();
         clientPair.appClient.verifyResult(ok(3));
         clientPair.appClient.reset();
 
-        clientPair.appClient.send("getenhanceddata 1" + b(" 432 DAY"));
+        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.DAY);
         BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -621,17 +621,17 @@ Device device = clientPair.appClient.getDevice();
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.VIRTUAL.pintTypeChar, (byte) 88, GraphGranularityType.MINUTE.label));
+                ReportingDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.VIRTUAL.pintTypeChar, (byte) 88, GraphGranularityType.MINUTE.label));
+                ReportingDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
         Path pinReportingDataPath3 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 2, PinType.VIRTUAL.pintTypeChar, (byte) 88, GraphGranularityType.MINUTE.label));
+                ReportingDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath3, 1.113D, 1111111);
         FileUtils.write(pinReportingDataPath3, 1.223D, 2222222);
 
@@ -649,7 +649,7 @@ Device device = clientPair.appClient.getDevice();
         clientPair.appClient.verifyResult(ok(4));
         clientPair.appClient.reset();
 
-        clientPair.appClient.send("getenhanceddata 1" + b(" 432 DAY"));
+        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.DAY);
         BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -674,7 +674,7 @@ Device device = clientPair.appClient.getDevice();
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 8, GraphGranularityType.HOURLY.label));
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
 
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
@@ -691,7 +691,7 @@ Device device = clientPair.appClient.getDevice();
         clientPair.appClient.createWidget(1, enhancedHistoryGraph);
         clientPair.appClient.verifyResult(ok(1));
 
-        clientPair.appClient.send("getenhanceddata 1" + b(" 432 DAY"));
+        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.DAY);
 
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, NO_DATA)));
     }
@@ -706,7 +706,7 @@ Device device = clientPair.appClient.getDevice();
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 8, GraphGranularityType.MINUTE.label));
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphPeriod.DAY.granularityType));
 
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
@@ -725,7 +725,7 @@ Device device = clientPair.appClient.getDevice();
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
-        clientPair.appClient.send("getenhanceddata 1" + b(" 432 DAY"));
+        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.DAY);
 
         BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
@@ -751,7 +751,7 @@ Device device = clientPair.appClient.getDevice();
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 8, GraphGranularityType.MINUTE.label));
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphPeriod.DAY.granularityType));
 
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
@@ -773,7 +773,7 @@ Device device = clientPair.appClient.getDevice();
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
-        clientPair.appClient.send("getenhanceddata 1" + b(" 432 DAY"));
+        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.DAY);
         BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -799,7 +799,7 @@ Device device = clientPair.appClient.getDevice();
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 8, GraphGranularityType.HOURLY.label));
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
 
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
@@ -818,7 +818,7 @@ Device device = clientPair.appClient.getDevice();
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
-        clientPair.appClient.send("getenhanceddata 1" + b(" 432 DAY"));
+        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.DAY);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
     }
 
@@ -846,14 +846,14 @@ Device device = clientPair.appClient.getDevice();
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
-        clientPair.appClient.send("getenhanceddata 1" + b(" 432 LIVE"));
+        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.LIVE);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
 
         clientPair.hardwareClient.send("hardware vw 88 111");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
         clientPair.appClient.reset();
 
-        clientPair.appClient.send("getenhanceddata 1" + b(" 432 LIVE"));
+        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.LIVE);
         BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -872,7 +872,7 @@ Device device = clientPair.appClient.getDevice();
         verify(clientPair.appClient.responseMock, timeout(10000)).channelRead(any(), eq(new HardwareMessage(61, b("1-0 vw 88 60"))));
         clientPair.appClient.reset();
 
-        clientPair.appClient.send("getenhanceddata 1" + b(" 432 LIVE"));
+        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.LIVE);
         graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -912,7 +912,7 @@ Device device = clientPair.appClient.getDevice();
         clientPair.appClient.createWidget(1, enhancedHistoryGraph);
         clientPair.appClient.verifyResult(ok(1));
 
-        clientPair.appClient.send("getenhanceddata 1" + b(" 432 LIVE"));
+        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.LIVE);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, NO_DATA)));
     }
 
@@ -941,14 +941,14 @@ Device device = clientPair.appClient.getDevice();
         clientPair.appClient.createWidget(1, enhancedHistoryGraph);
         clientPair.appClient.verifyResult(ok(1));
 
-        clientPair.appClient.send("getenhanceddata 1" + b(" 432 LIVE"));
+        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.LIVE);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, NO_DATA)));
 
         clientPair.hardwareClient.send("hardware vw 88 111");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(2, b("1-0 vw 88 111"))));
         clientPair.appClient.reset();
 
-        clientPair.appClient.send("getenhanceddata 1" + b(" 432 LIVE"));
+        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.LIVE);
         BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -1008,14 +1008,14 @@ Device device = clientPair.appClient.getDevice();
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
-        clientPair.appClient.send("getenhanceddata 1" + b(" 432 LIVE"));
+        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.LIVE);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
 
         clientPair.hardwareClient.send("hardware vw 88 111");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1 vw 88 111"))));
         clientPair.appClient.reset();
 
-        clientPair.appClient.send("getenhanceddata 1" + b(" 432 LIVE"));
+        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.LIVE);
         BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -1034,7 +1034,7 @@ Device device = clientPair.appClient.getDevice();
         verify(clientPair.appClient.responseMock, timeout(10000)).channelRead(any(), eq(new HardwareMessage(61, b("1 vw 88 60"))));
         clientPair.appClient.reset();
 
-        clientPair.appClient.send("getenhanceddata 1" + b(" 432 LIVE"));
+        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.LIVE);
         graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -1049,7 +1049,7 @@ Device device = clientPair.appClient.getDevice();
         }
 
         clientPair.appClient.reset();
-        clientPair.appClient.send("getenhanceddata 1" + b(" 432 LIVE 1"));
+        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.LIVE, 1);
         graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -1067,7 +1067,7 @@ Device device = clientPair.appClient.getDevice();
 
         verify(clientPair.appClient.responseMock, timeout(5000)).channelRead(any(), eq(new HardwareMessage(181, b("1 vw 88 419"))));
         clientPair.appClient.reset();
-        clientPair.appClient.send("getenhanceddata 1" + b(" 432 LIVE 1"));
+        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.LIVE, 1);
         graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -1093,7 +1093,7 @@ Device device = clientPair.appClient.getDevice();
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 8, GraphGranularityType.MINUTE.label));
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
 
         try (DataOutputStream dos = new DataOutputStream(
                     Files.newOutputStream(pinReportingDataPath, CREATE, APPEND))) {
@@ -1118,7 +1118,7 @@ Device device = clientPair.appClient.getDevice();
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
-        clientPair.appClient.send("getenhanceddata 1" + b(" 432 ONE_HOUR 1"));
+        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.ONE_HOUR, 1);
         BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -1142,7 +1142,7 @@ Device device = clientPair.appClient.getDevice();
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 8, GraphGranularityType.MINUTE.label));
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
 
         try (DataOutputStream dos = new DataOutputStream(
                 Files.newOutputStream(pinReportingDataPath, CREATE, APPEND))) {
@@ -1167,7 +1167,7 @@ Device device = clientPair.appClient.getDevice();
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
-        clientPair.appClient.send("getenhanceddata 1" + b(" 432 ONE_HOUR 1"));
+        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.ONE_HOUR, 1);
         BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
         assertNotNull(graphDataResponse);
@@ -1193,7 +1193,7 @@ Device device = clientPair.appClient.getDevice();
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 8, GraphGranularityType.MINUTE.label));
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
 
         try (DataOutputStream dos = new DataOutputStream(
                 Files.newOutputStream(pinReportingDataPath, CREATE, APPEND))) {
@@ -1218,7 +1218,7 @@ Device device = clientPair.appClient.getDevice();
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
-        clientPair.appClient.send("getenhanceddata 1" + b(" 432 ONE_HOUR 5"));
+        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.ONE_HOUR, 5);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
     }
 
@@ -1232,7 +1232,7 @@ Device device = clientPair.appClient.getDevice();
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 8, GraphGranularityType.MINUTE.label));
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
 
         try (DataOutputStream dos = new DataOutputStream(
                 Files.newOutputStream(pinReportingDataPath, CREATE, APPEND))) {
@@ -1257,7 +1257,7 @@ Device device = clientPair.appClient.getDevice();
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
-        clientPair.appClient.send("getenhanceddata 1" + b(" 432 ONE_HOUR 1"));
+        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.ONE_HOUR, 1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
     }
 
@@ -1280,7 +1280,7 @@ Device device = clientPair.appClient.getDevice();
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
         clientPair.appClient.reset();
 
-        clientPair.appClient.send("getenhanceddata 1" + b(" 432 DAY"));
+        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.DAY);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
     }
 
@@ -1302,7 +1302,7 @@ Device device = clientPair.appClient.getDevice();
         Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", DEFAULT_TEST_USER);
         Files.createDirectories(userReportDirectory);
         Path userReportFile = Paths.get(userReportDirectory.toString(),
-                ReportingDao.generateFilename(1, 0, PinType.ANALOG.pintTypeChar, (byte) 7, GraphGranularityType.MINUTE.label));
+                ReportingDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE));
         FileUtils.write(userReportFile, 1.1, 1L);
         FileUtils.write(userReportFile, 2.2, 2L);
 
@@ -1315,7 +1315,7 @@ Device device = clientPair.appClient.getDevice();
         //generate fake reporting data
         Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", DEFAULT_TEST_USER);
         Files.createDirectories(userReportDirectory);
-        String filename = ReportingDao.generateFilename(1, 0, PinType.ANALOG.pintTypeChar, (byte) 7, GraphGranularityType.MINUTE.label);
+        String filename = ReportingDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE);
         Path userReportFile = Paths.get(userReportDirectory.toString(), filename);
         FileUtils.write(userReportFile, 1.1, 1L);
         FileUtils.write(userReportFile, 2.2, 2L);
@@ -1375,12 +1375,12 @@ Device device = clientPair.appClient.getDevice();
         Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", DEFAULT_TEST_USER);
         Files.createDirectories(userReportDirectory);
 
-        String filename = ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 8, GraphGranularityType.MINUTE.label);
+        String filename = ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE);
         Path userReportFile = Paths.get(userReportDirectory.toString(), filename);
         FileUtils.write(userReportFile, 1.1, 1L);
         FileUtils.write(userReportFile, 2.2, 2L);
 
-        filename = ReportingDao.generateFilename(1, 1, PinType.DIGITAL.pintTypeChar, (byte) 8, GraphGranularityType.MINUTE.label);
+        filename = ReportingDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE);
         userReportFile = Paths.get(userReportDirectory.toString(), filename);
         FileUtils.write(userReportFile, 11.1, 11L);
         FileUtils.write(userReportFile, 12.2, 12L);
@@ -1460,12 +1460,12 @@ Device device = clientPair.appClient.getDevice();
         Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", DEFAULT_TEST_USER);
         Files.createDirectories(userReportDirectory);
 
-        String filename = ReportingDao.generateFilename(1, 0, PinType.ANALOG.pintTypeChar, (byte) 7, GraphGranularityType.MINUTE.label);
+        String filename = ReportingDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE);
         Path userReportFile = Paths.get(userReportDirectory.toString(), filename);
         FileUtils.write(userReportFile, 1.1, 1L);
         FileUtils.write(userReportFile, 2.2, 2L);
 
-        filename = ReportingDao.generateFilename(1, 1, PinType.ANALOG.pintTypeChar, (byte) 7, GraphGranularityType.MINUTE.label);
+        filename = ReportingDao.generateFilename(1, 1, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE);
         userReportFile = Paths.get(userReportDirectory.toString(), filename);
         FileUtils.write(userReportFile, 11.1, 11L);
         FileUtils.write(userReportFile, 12.2, 12L);
@@ -1536,20 +1536,20 @@ Device device = clientPair.appClient.getDevice();
 
         //this file has corresponding history graph
         Path pinReportingDataPath1 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.ANALOG.pintTypeChar, (byte) 7, GraphGranularityType.HOURLY.label));
+                ReportingDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath1, 1.11D, 1111111);
 
         //those are not
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 100, GraphGranularityType.HOURLY.label));
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 100, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath2, 1.11D, 1111111);
 
         Path pinReportingDataPath3 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 101, GraphGranularityType.HOURLY.label));
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 101, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath3, 1.11D, 1111111);
 
         Path pinReportingDataPath4 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 102, GraphGranularityType.HOURLY.label));
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 102, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath4, 1.11D, 1111111);
 
         assertTrue(Files.exists(pinReportingDataPath1));
@@ -1601,20 +1601,20 @@ Device device = clientPair.appClient.getDevice();
 
         //this file has corresponding history graph
         Path pinReportingDataPath1 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 8, GraphGranularityType.HOURLY.label));
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath1, 1.11D, 1111111);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 9, GraphGranularityType.HOURLY.label));
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 9, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath2, 1.11D, 1111111);
 
         Path pinReportingDataPath3 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 10, GraphGranularityType.HOURLY.label));
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 10, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath3, 1.11D, 1111111);
 
         //those are not
         Path pinReportingDataPath4 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 11, GraphGranularityType.HOURLY.label));
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 11, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath4, 1.11D, 1111111);
 
         assertTrue(Files.exists(pinReportingDataPath1));
@@ -1678,20 +1678,20 @@ Device device = clientPair.appClient.getDevice();
 
         //this file has corresponding history graph
         Path pinReportingDataPath1 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.DIGITAL.pintTypeChar, (byte) 8, GraphGranularityType.HOURLY.label));
+                ReportingDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath1, 1.11D, 1111111);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.DIGITAL.pintTypeChar, (byte) 9, GraphGranularityType.HOURLY.label));
+                ReportingDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 9, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath2, 1.11D, 1111111);
 
         //those are not
         Path pinReportingDataPath3 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.DIGITAL.pintTypeChar, (byte) 10, GraphGranularityType.HOURLY.label));
+                ReportingDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 10, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath3, 1.11D, 1111111);
 
         Path pinReportingDataPath4 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.DIGITAL.pintTypeChar, (byte) 11, GraphGranularityType.HOURLY.label));
+                ReportingDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 11, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath4, 1.11D, 1111111);
 
         assertTrue(Files.exists(pinReportingDataPath1));
@@ -1751,36 +1751,36 @@ Device device = clientPair.appClient.getDevice();
 
         //this file has corresponding history graph
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 8, GraphGranularityType.HOURLY.label));
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
 
         Path pinReportingDataPath20 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 9, GraphGranularityType.HOURLY.label));
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 9, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath20, 1.11D, 1111111);
 
         Path pinReportingDataPath30 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 10, GraphGranularityType.HOURLY.label));
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 10, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath30, 1.11D, 1111111);
 
         Path pinReportingDataPath11 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.DIGITAL.pintTypeChar, (byte) 8, GraphGranularityType.HOURLY.label));
+                ReportingDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath11, 1.11D, 1111111);
 
         Path pinReportingDataPath21 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.DIGITAL.pintTypeChar, (byte) 9, GraphGranularityType.HOURLY.label));
+                ReportingDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 9, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath21, 1.11D, 1111111);
 
         Path pinReportingDataPath31 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.DIGITAL.pintTypeChar, (byte) 10, GraphGranularityType.HOURLY.label));
+                ReportingDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 10, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath31, 1.11D, 1111111);
 
         //those are not
         Path pinReportingDataPath40 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 11, GraphGranularityType.HOURLY.label));
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 11, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath40, 1.11D, 1111111);
 
         Path pinReportingDataPath41 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.DIGITAL.pintTypeChar, (byte) 11, GraphGranularityType.HOURLY.label));
+                ReportingDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 11, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath41, 1.11D, 1111111);
 
         //3 files for device 0
@@ -1824,14 +1824,14 @@ Device device = clientPair.appClient.getDevice();
 
         //this file has corresponding history graph
         Path pinReportingDataPath1 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.ANALOG.pintTypeChar, (byte) 7, GraphGranularityType.MINUTE.label));
+                ReportingDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE));
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.VIRTUAL.pintTypeChar, (byte) 7, GraphGranularityType.MINUTE.label));
+                ReportingDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 7, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath2, 1.11D, 1);
 
         Path pinReportingDataPath3 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.VIRTUAL.pintTypeChar, (byte) 7, GraphGranularityType.HOURLY.label));
+                ReportingDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 7, GraphGranularityType.HOURLY));
 
         //write max amount of data for 1 week + 1 point
         for (int i = 0; i < 30 * 24 * 60 + 1; i++) {
@@ -1878,7 +1878,7 @@ Device device = clientPair.appClient.getDevice();
 
         //this file has corresponding history graph
         Path pinReportingDataPath1 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.ANALOG.pintTypeChar, (byte) 7, GraphGranularityType.MINUTE.label));
+                ReportingDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE));
 
         //write max amount of data for 1 week + 1 point
         for (int i = 0; i < 7 * 24 * 60; i++) {

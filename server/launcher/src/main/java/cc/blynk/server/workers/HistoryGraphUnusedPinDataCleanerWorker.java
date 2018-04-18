@@ -129,7 +129,7 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
                     for (GraphGranularityType type : GraphGranularityType.values()) {
                         String filename = ReportingDao.generateFilename(dash.id,
                                 deviceId,
-                                dataStream.pinType.pintTypeChar, dataStream.pin, type.label);
+                                dataStream.pinType, dataStream.pin, type);
                         doNotRemovePaths.add(filename);
                     }
                 }
@@ -143,7 +143,7 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
             if (dataStream.isValid()) {
                 for (GraphGranularityType type : GraphGranularityType.values()) {
                     String filename = ReportingDao.generateFilename(dashId, graph.deviceId,
-                            dataStream.pinType.pintTypeChar, dataStream.pin, type.label);
+                            dataStream.pinType, dataStream.pin, type);
                     doNotRemovePaths.add(filename);
                 }
             }

@@ -35,8 +35,4 @@ public enum PinType {
                 throw new NumberFormatException("Invalid pin type.");
         }
     }
-
-    public static String getPinTypeString(char pinTypeChar) {
-        return getPinType(pinTypeChar).pinTypeString;
-    }
 }

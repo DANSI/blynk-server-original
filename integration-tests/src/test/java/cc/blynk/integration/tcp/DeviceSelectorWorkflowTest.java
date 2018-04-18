@@ -259,9 +259,9 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL.pintTypeChar, (byte) 8, GraphGranularityType.HOURLY.label));
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.DIGITAL.pintTypeChar, (byte) 8, GraphGranularityType.HOURLY.label));
+                ReportingDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
 
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);

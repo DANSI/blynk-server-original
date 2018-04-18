@@ -79,7 +79,7 @@ public class ReportingDao implements Closeable {
         Path userDataFile = Paths.get(
                 dataFolder,
                 FileUtils.getUserReportingDir(user.email, user.appName),
-                generateFilename(dashId, deviceId, pinType.pintTypeChar, pin, type.label)
+                generateFilename(dashId, deviceId, pinType, pin, type)
         );
         if (Files.exists(userDataFile)) {
             try {
@@ -204,11 +204,16 @@ public class ReportingDao implements Closeable {
     private static void delete(String userReportingDir, int dashId, int deviceId, PinType pinType, byte pin,
                                GraphGranularityType reportGranularity) {
         Path userDataFile = Paths.get(userReportingDir,
-                generateFilename(dashId, deviceId, pinType.pintTypeChar, pin, reportGranularity.label));
+                generateFilename(dashId, deviceId, pinType, pin, reportGranularity));
         FileUtils.deleteQuietly(userDataFile);
     }
 
-    public static String generateFilename(int dashId, int deviceId, char pinType, byte pin, String type) {
+    public static String generateFilename(int dashId, int deviceId,
+                                          PinType pinType, byte pin, GraphGranularityType type) {
+        return generateFilename(dashId, deviceId, pinType.pintTypeChar, pin, type.label);
+    }
+
+    private static String generateFilename(int dashId, int deviceId, char pinType, byte pin, String type) {
         //todo this is back compatibility code. should be removed in future versions.
         if (deviceId == 0) {
             return "history_" + dashId + "_" + pinType + pin + "_" + type + ".bin";

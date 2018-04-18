@@ -20,17 +20,17 @@ public class ReportingDaoTest {
     @Test
     public void testFileName() {
         int dashId = 1;
-        char pinType = PinType.VIRTUAL.pintTypeChar;
+        PinType pinType = PinType.VIRTUAL;
         byte pin = 2;
 
-        assertEquals(String.format(REPORTING_MINUTE_FILE_NAME, dashId, pinType, pin),
-                ReportingDao.generateFilename(dashId, 0, pinType, pin, GraphGranularityType.MINUTE.label));
+        assertEquals(String.format(REPORTING_MINUTE_FILE_NAME, dashId, pinType.pintTypeChar, pin),
+                ReportingDao.generateFilename(dashId, 0, pinType, pin, GraphGranularityType.MINUTE));
 
-        assertEquals(String.format(REPORTING_HOURLY_FILE_NAME, dashId, pinType, pin),
-                ReportingDao.generateFilename(dashId, 0, pinType, pin, GraphGranularityType.HOURLY.label));
+        assertEquals(String.format(REPORTING_HOURLY_FILE_NAME, dashId, pinType.pintTypeChar, pin),
+                ReportingDao.generateFilename(dashId, 0, pinType, pin, GraphGranularityType.HOURLY));
 
-        assertEquals(String.format(REPORTING_DAILY_FILE_NAME, dashId, pinType, pin),
-                ReportingDao.generateFilename(dashId, 0, pinType, pin, GraphGranularityType.DAILY.label));
+        assertEquals(String.format(REPORTING_DAILY_FILE_NAME, dashId, pinType.pintTypeChar, pin),
+                ReportingDao.generateFilename(dashId, 0, pinType, pin, GraphGranularityType.DAILY));
 
     }
 

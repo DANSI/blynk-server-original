@@ -140,9 +140,9 @@ public class ReportingWorkerTest {
         reportingWorker.run();
 
         assertTrue(Files.exists(Paths.get(reportingFolder, "test",
-                generateFilename(1, 0, PinType.ANALOG.pintTypeChar, (byte) 1, GraphGranularityType.HOURLY.label))));
+                generateFilename(1, 0, PinType.ANALOG, (byte) 1, GraphGranularityType.HOURLY))));
         assertTrue(Files.exists(Paths.get(reportingFolder, "test2",
-                generateFilename(2, 0, PinType.ANALOG.pintTypeChar, (byte) 2, GraphGranularityType.HOURLY.label))));
+                generateFilename(2, 0, PinType.ANALOG, (byte) 2, GraphGranularityType.HOURLY))));
 
         assertTrue(map.isEmpty());
 
@@ -197,7 +197,7 @@ public class ReportingWorkerTest {
         reportingWorker.run();
 
         assertTrue(Files.exists(Paths.get(reportingFolder, "test",
-                generateFilename(1, 0, PinType.ANALOG.pintTypeChar, (byte) 1, GraphGranularityType.HOURLY.label))));
+                generateFilename(1, 0, PinType.ANALOG, (byte) 1, GraphGranularityType.HOURLY))));
 
         assertTrue(map.isEmpty());
 
@@ -261,15 +261,15 @@ public class ReportingWorkerTest {
 
         reportingWorker.run();
 
-        assertTrue(Files.exists(Paths.get(reportingFolder, "test", generateFilename(1, 0, PinType.ANALOG.pintTypeChar, (byte) 1, GraphGranularityType.HOURLY.label))));
-        assertTrue(Files.exists(Paths.get(reportingFolder, "test2", generateFilename(2, 0, PinType.ANALOG.pintTypeChar, (byte) 2, GraphGranularityType.HOURLY.label))));
+        assertTrue(Files.exists(Paths.get(reportingFolder, "test", generateFilename(1, 0, PinType.ANALOG, (byte) 1, GraphGranularityType.HOURLY))));
+        assertTrue(Files.exists(Paths.get(reportingFolder, "test2", generateFilename(2, 0, PinType.ANALOG, (byte) 2, GraphGranularityType.HOURLY))));
 
         User user = new User();
         user.email = "test";
         user.appName = AppNameUtil.BLYNK;
 
         new ReportingDao(reportingFolder, true).delete(user, 1, 0, PinType.ANALOG, (byte) 1);
-        assertFalse(Files.exists(Paths.get(reportingFolder, "test", generateFilename(1, 0, PinType.ANALOG.pintTypeChar, (byte) 1, GraphGranularityType.HOURLY.label))));
+        assertFalse(Files.exists(Paths.get(reportingFolder, "test", generateFilename(1, 0, PinType.ANALOG, (byte) 1, GraphGranularityType.HOURLY))));
     }
 
     private long getTS() {

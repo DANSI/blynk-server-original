@@ -1111,7 +1111,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", DEFAULT_TEST_USER);
         Files.createDirectories(userReportDirectory);
         Path userReportFile = Paths.get(userReportDirectory.toString(),
-                ReportingDao.generateFilename(1, 0, PinType.VIRTUAL.pintTypeChar, (byte) 88, GraphGranularityType.MINUTE.label));
+                ReportingDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphGranularityType.MINUTE));
         FileUtils.write(userReportFile, 1.1, 1L);
         FileUtils.write(userReportFile, 2.2, 2L);
 
