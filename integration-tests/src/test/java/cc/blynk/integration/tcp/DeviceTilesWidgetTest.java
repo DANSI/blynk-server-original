@@ -1747,4 +1747,173 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         assertEquals(1, deviceTiles.tiles.length);
         assertEquals("1", deviceTiles.tiles[0].dataStream.value);
     }
+
+    @Test
+    public void testDeviceTileAndWidgetWithinTemplateHasSamePin() throws Exception {
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(1));
+
+        TileTemplate tileTemplate = new PageTileTemplate(1,
+                null, null, "name", "name", "iconName", "ESP8266", null,
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
+
+        clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        clientPair.appClient.verifyResult(ok(2));
+
+        //send value before we have tile for that pin
+        clientPair.hardwareClient.send("hardware vw 5 111");
+        clientPair.appClient.verifyResult(new HardwareMessage(1, b("1-0 vw 5 111")));
+
+        DataStream dataStream = new DataStream((byte) 5, PinType.VIRTUAL);
+
+        ValueDisplay valueDisplay = new ValueDisplay();
+        valueDisplay.width = 2;
+        valueDisplay.height = 2;
+        valueDisplay.pin = dataStream.pin;
+        valueDisplay.pinType = dataStream.pinType;
+
+        tileTemplate = new PageTileTemplate(1,
+                new Widget[]{valueDisplay}, new int[]{0}, "name", "name", "iconName", "ESP8266", dataStream,
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
+
+        clientPair.appClient.send("updateTemplate " + b("1 " + widgetId + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        clientPair.appClient.verifyResult(ok(3));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.sync(1, 0);
+
+        verify(clientPair.appClient.responseMock, timeout(500).times(11)).channelRead(any(), any());
+
+        clientPair.appClient.verifyResult(ok(1));
+
+        clientPair.appClient.verifyResult(appSync(b("1-0 dw 1 1")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 dw 2 1")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 aw 3 0")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 dw 5 1")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 4 244")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 aw 7 3")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 aw 30 3")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 0 89.888037459418")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 1 -58.74774244674501")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 13 60 143 158")));
+
+        clientPair.hardwareClient.send("hardware vw 5 112");
+        clientPair.appClient.verifyResult(new HardwareMessage(2, b("1-0 vw 5 112")));
+
+
+        clientPair.appClient.reset();
+        clientPair.appClient.sync(1, 0);
+
+        verify(clientPair.appClient.responseMock, timeout(500).times(12)).channelRead(any(), any());
+
+        clientPair.appClient.verifyResult(ok(1));
+
+        clientPair.appClient.verifyResult(appSync(b("1-0 dw 1 1")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 dw 2 1")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 aw 3 0")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 dw 5 1")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 4 244")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 aw 7 3")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 aw 30 3")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 0 89.888037459418")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 1 -58.74774244674501")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 13 60 143 158")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 5 112")));
+    }
+
+    @Test
+    public void testDeviceTileAndWidgetWithinTemplateHasSamePin2() throws Exception {
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(1));
+
+        TileTemplate tileTemplate = new PageTileTemplate(1,
+                null, null, "name", "name", "iconName", "ESP8266", null,
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
+
+        clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        clientPair.appClient.verifyResult(ok(2));
+
+        DataStream dataStream = new DataStream((byte) 5, PinType.VIRTUAL);
+
+        ValueDisplay valueDisplay = new ValueDisplay();
+        valueDisplay.width = 2;
+        valueDisplay.height = 2;
+        valueDisplay.pin = dataStream.pin;
+        valueDisplay.pinType = dataStream.pinType;
+
+        tileTemplate = new PageTileTemplate(1,
+                new Widget[]{valueDisplay}, new int[]{0}, "name", "name", "iconName", "ESP8266", dataStream,
+                false, null, null, null, 0, 0, FontSize.LARGE, false);
+
+        clientPair.appClient.send("updateTemplate " + b("1 " + widgetId + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        clientPair.appClient.verifyResult(ok(3));
+
+        //send value after we have tile for that pin
+        clientPair.hardwareClient.send("hardware vw 5 111");
+        clientPair.appClient.verifyResult(new HardwareMessage(1, b("1-0 vw 5 111")));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.sync(1, 0);
+
+        verify(clientPair.appClient.responseMock, timeout(500).times(12)).channelRead(any(), any());
+
+        clientPair.appClient.verifyResult(ok(1));
+
+        clientPair.appClient.verifyResult(appSync(b("1-0 dw 1 1")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 dw 2 1")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 aw 3 0")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 dw 5 1")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 4 244")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 aw 7 3")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 aw 30 3")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 0 89.888037459418")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 1 -58.74774244674501")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 13 60 143 158")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 5 111")));
+
+        clientPair.hardwareClient.send("hardware vw 5 112");
+        clientPair.appClient.verifyResult(new HardwareMessage(2, b("1-0 vw 5 112")));
+
+
+        clientPair.appClient.reset();
+        clientPair.appClient.sync(1, 0);
+
+        verify(clientPair.appClient.responseMock, timeout(500).times(12)).channelRead(any(), any());
+
+        clientPair.appClient.verifyResult(ok(1));
+
+        clientPair.appClient.verifyResult(appSync(b("1-0 dw 1 1")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 dw 2 1")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 aw 3 0")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 dw 5 1")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 4 244")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 aw 7 3")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 aw 30 3")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 0 89.888037459418")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 1 -58.74774244674501")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 13 60 143 158")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 5 112")));
+    }
 }

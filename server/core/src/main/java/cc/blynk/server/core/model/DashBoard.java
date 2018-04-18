@@ -19,6 +19,7 @@ import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
+import cc.blynk.server.core.model.widgets.ui.tiles.Tile;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.workers.timer.TimerWorker;
@@ -354,6 +355,18 @@ public class DashBoard {
     }
 
     public void cleanPinStorage(Widget widget, boolean removePropertiesToo) {
+        cleanPinStorageInternal(widget, removePropertiesToo);
+        this.updatedAt = System.currentTimeMillis();
+    }
+
+    private void cleanPinStorage(Widget[] widgets) {
+        for (Widget widget : widgets) {
+            cleanPinStorageInternal(widget, false);
+        }
+        this.updatedAt = System.currentTimeMillis();
+    }
+
+    private void cleanPinStorageInternal(Widget widget, boolean removePropertiesToo) {
         if (widget instanceof OnePinWidget) {
             OnePinWidget onePinWidget = (OnePinWidget) widget;
             if (onePinWidget.pinType != null) {
@@ -372,6 +385,17 @@ public class DashBoard {
                         if (removePropertiesToo) {
                             cleanPropertyStorageForTarget(multiPinWidget.deviceId, dataStream.pinType, dataStream.pin);
                         }
+                    }
+                }
+            }
+        } else if (widget instanceof DeviceTiles) {
+            DeviceTiles deviceTiles = (DeviceTiles) widget;
+            for (Tile tile : deviceTiles.tiles) {
+                DataStream dataStream = tile.dataStream;
+                if (dataStream != null) {
+                    pinsStorage.remove(new PinStorageKey(tile.deviceId, dataStream.pinType, dataStream.pin));
+                    if (removePropertiesToo) {
+                        cleanPropertyStorageForTarget(tile.deviceId, dataStream.pinType, dataStream.pin);
                     }
                 }
             }
@@ -439,12 +463,7 @@ public class DashBoard {
         }
 
         this.widgets = updatedDashboard.widgets;
-
-        for (Widget widget : widgets) {
-            cleanPinStorage(widget, false);
-        }
-
-        this.updatedAt = System.currentTimeMillis();
+        cleanPinStorage(widgets);
     }
 
     public void updateFaceFields(DashBoard parent) {

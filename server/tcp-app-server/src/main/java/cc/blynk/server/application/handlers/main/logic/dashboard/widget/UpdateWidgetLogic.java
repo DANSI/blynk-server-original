@@ -141,7 +141,6 @@ public class UpdateWidgetLogic {
         }
 
         dash.cleanPinStorage(newWidget, true);
-        dash.updatedAt = System.currentTimeMillis();
         user.lastModifiedTs = dash.updatedAt;
 
         if (prevWidget instanceof Timer) {

@@ -67,7 +67,7 @@ public final class CreateTileTemplateLogic {
         deviceTiles.templates = ArrayUtil.add(deviceTiles.templates, newTileTemplate, TileTemplate.class);
         deviceTiles.recreateTilesIfNecessary(newTileTemplate, null);
 
-        dash.updatedAt = System.currentTimeMillis();
+        dash.cleanPinStorage(deviceTiles, true);
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

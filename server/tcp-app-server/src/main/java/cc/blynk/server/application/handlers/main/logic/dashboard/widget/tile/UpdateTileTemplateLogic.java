@@ -66,7 +66,8 @@ public final class UpdateTileTemplateLogic {
 
         log.debug("Updating tile template {}.", tileTemplateString);
         deviceTiles.templates = updatedTemplates;
-        dash.updatedAt = System.currentTimeMillis();
+
+        dash.cleanPinStorage(deviceTiles, true);
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

@@ -112,9 +112,7 @@ public class CreateWidgetLogic {
         }
 
         dash.cleanPinStorage(newWidget, true);
-        long now = System.currentTimeMillis();
-        user.lastModifiedTs = now;
-        dash.updatedAt = now;
+        user.lastModifiedTs = dash.updatedAt;
 
         if (newWidget instanceof Timer) {
             timerWorker.add(state.userKey, (Timer) newWidget, dashId, widgetAddToId, templateIdAddToId);
