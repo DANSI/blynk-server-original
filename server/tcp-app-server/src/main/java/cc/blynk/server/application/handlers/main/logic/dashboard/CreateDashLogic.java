@@ -65,8 +65,6 @@ public class CreateDashLogic {
         log.debug("Trying to parse user newDash : {}", dashString);
         DashBoard newDash = JsonParser.parseDashboard(dashString, message.id);
 
-        log.info("Creating new dashboard.");
-
         User user = state.user;
         if (user.profile.dashBoards.length >= dashMaxLimit) {
             throw new QuotaLimitException("Dashboards limit reached.", message.id);
@@ -77,6 +75,8 @@ public class CreateDashLogic {
                 throw new NotAllowedException("Dashboard already exists.", message.id);
             }
         }
+
+        log.info("Creating new dashboard.");
 
         if (newDash.createdAt == 0) {
             newDash.createdAt = System.currentTimeMillis();
