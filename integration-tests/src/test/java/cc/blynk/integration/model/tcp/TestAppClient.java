@@ -272,7 +272,15 @@ public class TestAppClient extends BaseTestAppClient {
     }
 
     public void createTemplate(int dashId, long widgetId, TileTemplate tileTemplate) throws Exception {
-        send("createTemplate " + dashId + BODY_SEPARATOR + widgetId + BODY_SEPARATOR
+        createTemplate(dashId, widgetId, JsonParser.MAPPER.writeValueAsString(tileTemplate));
+    }
+
+    public void createTemplate(int dashId, long widgetId, String tileTemplate) throws Exception {
+        send("createTemplate " + dashId + BODY_SEPARATOR + widgetId + BODY_SEPARATOR + tileTemplate);
+    }
+
+    public void updateTemplate(int dashId, long widgetId, TileTemplate tileTemplate) throws Exception {
+        send("updateTemplate " + dashId + BODY_SEPARATOR + widgetId + BODY_SEPARATOR
                 + JsonParser.MAPPER.writeValueAsString(tileTemplate));
     }
 
