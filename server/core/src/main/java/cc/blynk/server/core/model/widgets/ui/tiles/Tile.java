@@ -21,6 +21,8 @@ public class Tile {
     @JsonProperty("pin")
     public final DataStream dataStream;
 
+    private transient long lastRequestTS;
+
     @JsonCreator
     public Tile(@JsonProperty("deviceId") int deviceId,
                 @JsonProperty("templateId") long templateId,
@@ -48,5 +50,14 @@ public class Tile {
         if (dataStream != null) {
             dataStream.value = null;
         }
+    }
+
+    public boolean isTicked(long now) {
+        //todo 1000 is hardcoded for now
+        if (now >= lastRequestTS + 1000) {
+            this.lastRequestTS = now;
+            return true;
+        }
+        return false;
     }
 }

@@ -65,7 +65,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 
@@ -631,10 +630,8 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
 
         clientPair.appClient.reset();
 
-        long widgetId = 21321;
-
         DeviceTiles deviceTiles = new DeviceTiles();
-        deviceTiles.id = widgetId;
+        deviceTiles.id = 21321;
         deviceTiles.x = 8;
         deviceTiles.y = 8;
         deviceTiles.width = 50;
@@ -647,7 +644,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
                 null, null, "name", "name", "iconName", "ESP8266", null,
                 false, null, null, null, 0, 0, FontSize.LARGE, false);
 
-        clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
+        clientPair.appClient.createTemplate(1, deviceTiles.id, tileTemplate);
         clientPair.appClient.verifyResult(ok(2));
 
         DataStream dataStream = new DataStream((byte) 5, PinType.VIRTUAL);
@@ -695,7 +692,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
     }
 
     @Test
-    public void readingWidgetWorksForDeviceTiles2() throws Exception {
+    public void readingWidgetWorksForAllTilesWithinDeviceTiles() throws Exception {
         Device device1 = new Device(1, "My Device", "ESP8266");
         device1.status = Status.OFFLINE;
 
@@ -739,7 +736,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         valueDisplay.deviceId = -1;
 
         tileTemplate = new PageTileTemplate(1,
-                null, new int[]{1}, "name", "name", "iconName", "ESP8266", null,
+                null, new int[]{0, 1}, "name", "name", "iconName", "ESP8266", null,
                 false, null, null, null, 0, 0, FontSize.LARGE, false);
 
         clientPair.appClient.createWidget(1, deviceTiles.id, tileTemplate.id, valueDisplay);
@@ -750,14 +747,12 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.sync(1, device1.id);
+        clientPair.appClient.verifyResult(ok(1));
 
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.readingWidgetsWorker, 0, 1000, TimeUnit.MILLISECONDS);
 
-        clientPair.appClient.verifyAny();
-        clientPair.appClient.verifyResult(ok(1));
-
-        verify(hardClient2.responseMock, timeout(2000)).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 77"))));
-        verify(clientPair.hardwareClient.responseMock, never()).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 77"))));
+        hardClient2.verifyResult(produce(READING_MSG_ID, HARDWARE, b("vr 77")));
+        clientPair.hardwareClient.verifyResult(produce(READING_MSG_ID, HARDWARE, b("vr 77")));
     }
 
     @Test

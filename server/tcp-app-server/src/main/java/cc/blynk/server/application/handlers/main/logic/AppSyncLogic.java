@@ -3,8 +3,6 @@ package cc.blynk.server.application.handlers.main.logic;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.widgets.AppSyncWidget;
-import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -34,15 +32,6 @@ public final class AppSyncLogic {
 
         if (dashIdAndTargetIdString.length == 2) {
             targetId = Integer.parseInt(dashIdAndTargetIdString[1]);
-
-            //special case. app sync with targetId most probably comes from DeviceTiles widget
-            //so we do update for it.
-            //we actually don't care what DeviceTiles is opened on UI, just update all
-            for (Widget widget : dash.widgets) {
-                if (widget instanceof DeviceTiles) {
-                    ((DeviceTiles) widget).selectedDeviceId = targetId;
-                }
-            }
         }
 
         ctx.write(ok(message.id), ctx.voidPromise());

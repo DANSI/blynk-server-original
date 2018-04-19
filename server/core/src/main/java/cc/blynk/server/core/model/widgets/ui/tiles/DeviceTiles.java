@@ -33,10 +33,6 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
 
     public volatile Tile[] tiles = EMPTY_DEVICE_TILES;
 
-    //this field is needed only in the realtime when users selects some template for the device
-    //so we know what reading widgets should update their state at that moment
-    public transient int selectedDeviceId;
-
     public int rows;
 
     public int columns;
@@ -107,7 +103,7 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
         return templates[getTileTemplateIndexByIdOrThrow(id)];
     }
 
-    private TileTemplate getTileTemplateById(long id) {
+    public TileTemplate getTileTemplateById(long id) {
         for (TileTemplate tileTemplate : templates) {
             if (tileTemplate.id == id) {
                 return tileTemplate;

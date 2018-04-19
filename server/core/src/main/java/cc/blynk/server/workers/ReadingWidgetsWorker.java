@@ -10,6 +10,7 @@ import cc.blynk.server.core.model.widgets.FrequencyWidget;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
+import cc.blynk.server.core.model.widgets.ui.tiles.Tile;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.internal.StateHolderUtil;
@@ -78,21 +79,9 @@ public class ReadingWidgetsWorker implements Runnable {
                                     int deviceId = stateHolder.device.id;
                                     for (Widget widget : dashBoard.widgets) {
                                         if (widget instanceof FrequencyWidget) {
-                                            process(channel, widget, dashBoard, deviceId, now, false);
+                                            process(channel, (FrequencyWidget) widget, dashBoard, deviceId, now);
                                         } else if (widget instanceof DeviceTiles) {
-                                            DeviceTiles deviceTiles = (DeviceTiles) widget;
-                                            if (deviceId == deviceTiles.selectedDeviceId) {
-                                                TileTemplate tileTemplate =
-                                                        deviceTiles.findTemplateByDeviceId(deviceId);
-                                                if (tileTemplate != null) {
-                                                    for (Widget tileWidget : tileTemplate.widgets) {
-                                                        if (tileWidget instanceof FrequencyWidget) {
-                                                            process(channel, tileWidget, dashBoard,
-                                                                    deviceId, now, true);
-                                                        }
-                                                    }
-                                                }
-                                            }
+                                            processDeviceTile(channel, (DeviceTiles) widget, deviceId, now);
                                         }
                                     }
                                     channel.flush();
@@ -105,10 +94,29 @@ public class ReadingWidgetsWorker implements Runnable {
         }
     }
 
-    private void process(Channel channel, Widget widget, DashBoard dashBoard, int deviceId, long now, boolean isTiles) {
-        FrequencyWidget frequencyWidget = (FrequencyWidget) widget;
+    private void processDeviceTile(Channel channel,  DeviceTiles deviceTiles, int deviceId, long now) {
+        for (Tile tile : deviceTiles.tiles) {
+            if (tile.deviceId == deviceId && tile.isTicked(now)) {
+                TileTemplate tileTemplate = deviceTiles.getTileTemplateById(tile.templateId);
+                if (tileTemplate != null) {
+                    for (Widget tileWidget : tileTemplate.widgets) {
+                        if (tileWidget instanceof FrequencyWidget) {
+                            FrequencyWidget frequencyWidget = (FrequencyWidget) tileWidget;
+                            if (channel.isWritable()) {
+                                frequencyWidget.writeReadingCommand(channel);
+                                tickedWidgets++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void process(Channel channel, FrequencyWidget frequencyWidget,
+                         DashBoard dashBoard, int deviceId, long now) {
         if (channel.isWritable()
-                && sameDeviceId(dashBoard, isTiles ? deviceId : frequencyWidget.getDeviceId(), deviceId)
+                && sameDeviceId(dashBoard, frequencyWidget.getDeviceId(), deviceId)
                 && frequencyWidget.isTicked(now)) {
             frequencyWidget.writeReadingCommand(channel);
             tickedWidgets++;
