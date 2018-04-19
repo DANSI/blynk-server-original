@@ -11,6 +11,7 @@ import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
+import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.handlers.encoders.AppMessageEncoder;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
@@ -268,6 +269,11 @@ public class TestAppClient extends BaseTestAppClient {
 
     public void getEnhancedGraphData(int dashId, long widgetId, GraphPeriod period, int page) {
         send("getenhanceddata " + dashId + BODY_SEPARATOR + widgetId + BODY_SEPARATOR + period.name() + BODY_SEPARATOR + page);
+    }
+
+    public void createTemplate(int dashId, long widgetId, TileTemplate tileTemplate) throws Exception {
+        send("createTemplate " + dashId + BODY_SEPARATOR + widgetId + BODY_SEPARATOR
+                + JsonParser.MAPPER.writeValueAsString(tileTemplate));
     }
 
     public void send(String line) {
