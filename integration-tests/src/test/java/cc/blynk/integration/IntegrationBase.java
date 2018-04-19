@@ -216,12 +216,12 @@ public abstract class IntegrationBase extends BaseTest {
                 if (multiPinWidget.dataStreams != null) {
                     if (multiPinWidget.isSplitMode()) {
                         for (DataStream dataStream : multiPinWidget.dataStreams) {
-                            if (dataStream.notEmpty()) {
+                            if (dataStream.notEmptyAndIsValid()) {
                                 expectedSyncCommandsCount++;
                             }
                         }
                     } else {
-                        if (multiPinWidget.dataStreams[0].notEmpty()) {
+                        if (multiPinWidget.dataStreams[0].notEmptyAndIsValid()) {
                             expectedSyncCommandsCount++;
                         }
                     }

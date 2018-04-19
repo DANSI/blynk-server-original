@@ -102,7 +102,7 @@ public class FacebookLoginTest extends IntegrationBase {
                 MultiPinWidget multiPinWidget = ((MultiPinWidget) widget);
                 if (multiPinWidget.dataStreams != null) {
                     for (DataStream dataStream : multiPinWidget.dataStreams) {
-                        if (dataStream.notEmpty()) {
+                        if (dataStream.notEmptyAndIsValid()) {
                             expectedSyncCommandsCount++;
                         }
                     }

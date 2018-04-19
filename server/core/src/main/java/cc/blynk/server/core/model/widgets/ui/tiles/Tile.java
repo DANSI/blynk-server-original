@@ -46,6 +46,10 @@ public class Tile {
         return false;
     }
 
+    public boolean isValidDataStream() {
+        return dataStream != null && dataStream.isValid();
+    }
+
     public void erase() {
         if (dataStream != null) {
             dataStream.value = null;

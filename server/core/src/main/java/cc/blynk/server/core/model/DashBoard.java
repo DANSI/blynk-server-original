@@ -391,8 +391,8 @@ public class DashBoard {
         } else if (widget instanceof DeviceTiles) {
             DeviceTiles deviceTiles = (DeviceTiles) widget;
             for (Tile tile : deviceTiles.tiles) {
-                DataStream dataStream = tile.dataStream;
-                if (dataStream != null && dataStream.isValid()) {
+                if (tile.isValidDataStream()) {
+                    DataStream dataStream = tile.dataStream;
                     pinsStorage.remove(new PinStorageKey(tile.deviceId, dataStream.pinType, dataStream.pin));
                     if (removePropertiesToo) {
                         cleanPropertyStorageForTarget(tile.deviceId, dataStream.pinType, dataStream.pin);

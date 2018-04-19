@@ -37,7 +37,7 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
     private transient final LimitedArrayDeque<String> lastCommands = new LimitedArrayDeque<>(POOL_SIZE);
 
     private static void sendSyncOnActivate(DataStream dataStream, int dashId, int deviceId, Channel appChannel) {
-        if (dataStream.notEmpty()) {
+        if (dataStream.notEmptyAndIsValid()) {
             String body = prependDashIdAndDeviceId(dashId, deviceId, dataStream.makeHardwareBody());
             appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body),
                     appChannel.voidPromise());

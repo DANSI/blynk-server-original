@@ -60,10 +60,10 @@ public abstract class MultiPinWidget extends Widget implements AppSyncWidget {
                 }
             }
         } else {
-            if (dataStreams[0].notEmpty()) {
+            if (dataStreams[0].notEmptyAndIsValid()) {
                 StringBuilder sb = new StringBuilder(dataStreams[0].makeHardwareBody());
                 for (int i = 1; i < dataStreams.length; i++) {
-                    if (dataStreams[i].notEmpty()) {
+                    if (dataStreams[i].notEmptyAndIsValid()) {
                         sb.append(BODY_SEPARATOR).append(dataStreams[i].value);
                     }
                 }
@@ -98,7 +98,7 @@ public abstract class MultiPinWidget extends Widget implements AppSyncWidget {
                 }
             }
         } else {
-            if (dataStreams[0].notEmpty()) {
+            if (dataStreams[0].notEmptyAndIsValid()) {
                 for (String pinValue : dataStreams[0].value.split(BODY_SEPARATOR_STRING)) {
                     sj.add("\"" + pinValue + "\"");
                 }
