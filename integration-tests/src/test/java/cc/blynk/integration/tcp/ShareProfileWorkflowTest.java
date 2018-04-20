@@ -316,21 +316,20 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
         appClient2.start();
         appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
-
-        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        appClient2.verifyResult(ok(1));
 
         clientPair.appClient.send("hardware 1 vw 1 1");
-        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, APP_SYNC, b("1 vw 1 1"))));
+        appClient2.verifyResult(produce(2, APP_SYNC, b("1 vw 1 1")));
 
         appClient2.send("hardware 1 vw 2 2");
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(2, APP_SYNC, b("1 vw 2 2"))));
+        clientPair.appClient.verifyResult(produce(2, APP_SYNC, b("1 vw 2 2")));
 
         clientPair.appClient.reset();
         appClient2.reset();
 
         //check from master side
         clientPair.appClient.send("hardware 1 aw 3 1");
-        verify(clientPair.hardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, HARDWARE, b("aw 3 1"))));
+        clientPair.hardwareClient.verifyResult(produce(1, HARDWARE, b("aw 3 1")));
 
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = clientPair.appClient.getProfile();
@@ -343,7 +342,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
 
         //check from slave side
         appClient2.send("hardware 1 aw 3 150");
-        verify(clientPair.hardwareClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, HARDWARE, b("aw 3 150"))));
+        clientPair.hardwareClient.verifyResult(produce(1, HARDWARE, b("aw 3 150")));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
@@ -356,7 +355,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
 
         //check from hard side
         clientPair.hardwareClient.send("hardware aw 3 151");
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, HARDWARE, b("1-0 aw 3 151"))));
+        clientPair.appClient.verifyResult(produce(1, HARDWARE, b("1-0 aw 3 151")));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
@@ -366,6 +365,24 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
 
         assertNotNull(tmp);
         assertEquals("151", tmp.value);
+    }
+
+    @Test
+    public void checkSetPropertyWasChanged() throws Exception {
+        clientPair.appClient.send("getShareToken 1");
+
+        String token = clientPair.appClient.getBody();
+        assertNotNull(token);
+        assertEquals(32, token.length());
+
+        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient2.start();
+        appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
+        appClient2.verifyResult(ok(1));
+
+        clientPair.hardwareClient.send("setProperty 1 color 123");
+        clientPair.appClient.verifyResult(setProperty(1, "1-0 1 color 123"));
+        appClient2.verifyResult(setProperty(1, "1-0 1 color 123"));
     }
 
     @Test
