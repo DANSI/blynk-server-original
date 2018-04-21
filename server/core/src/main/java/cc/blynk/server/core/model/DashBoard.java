@@ -85,7 +85,7 @@ public class DashBoard {
     public Map<PinStorageKey, String> pinsStorage = Collections.emptyMap();
 
     public void update(int deviceId, byte pin, PinType pinType, String value, long now) {
-        if (!updateWidgets(deviceId, pin, pinType, value, now)) {
+        if (!updateWidgets(deviceId, pin, pinType, value)) {
             //special case. #237 if no widget - storing without widget.
             putPinStorageValue(deviceId, pinType, pin, value);
         }
@@ -93,7 +93,7 @@ public class DashBoard {
         this.updatedAt = now;
     }
 
-    private boolean updateWidgets(int deviceId, byte pin, PinType type, String value, long now) {
+    private boolean updateWidgets(int deviceId, byte pin, PinType type, String value) {
         boolean hasWidget = false;
         for (Widget widget : widgets) {
             if (widget.updateIfSame(deviceId, pin, type, value)) {

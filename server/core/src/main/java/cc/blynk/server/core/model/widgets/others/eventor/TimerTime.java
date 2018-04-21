@@ -44,11 +44,7 @@ public class TimerTime {
         this.tzName = tzName;
     }
 
-    public boolean isTickTime(int curSeconds, ZonedDateTime currentDateTime) {
-        return time == curSeconds && isTickTime(currentDateTime);
-    }
-
-    private boolean isTickTime(ZonedDateTime currentDateTime) {
+    public boolean isTickTime(ZonedDateTime currentDateTime) {
         LocalDate userDate = currentDateTime.withZoneSameInstant(tzName).toLocalDate();
         int dayOfWeek = userDate.getDayOfWeek().getValue();
         return ArrayUtil.contains(days, dayOfWeek);

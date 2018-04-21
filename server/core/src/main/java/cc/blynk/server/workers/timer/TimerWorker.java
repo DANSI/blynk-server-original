@@ -196,21 +196,17 @@ public class TimerWorker implements Runnable {
     public void run() {
         log.trace("Starting timer...");
 
-        ZonedDateTime currentDateTime = ZonedDateTime.now(DateTimeUtils.UTC);
-        int curSeconds = currentDateTime.toLocalTime().toSecondOfDay();
-
-        ConcurrentMap<TimerKey, BaseAction[]> tickedExecutors = timerExecutors.get(curSeconds);
+        long now = System.currentTimeMillis();
+        ConcurrentMap<TimerKey, BaseAction[]> tickedExecutors = timerExecutors.get((int) ((now / 1000) % 86400));
 
         if (tickedExecutors == null) {
             return;
         }
 
-        long now = System.currentTimeMillis();
-
         try {
             this.activeTimers = 0;
             this.actuallySendTimers = 0;
-            send(tickedExecutors, currentDateTime, curSeconds, now);
+            send(tickedExecutors, now);
         } catch (Exception e) {
             log.error("Error running timers. ", e);
         }
@@ -221,12 +217,13 @@ public class TimerWorker implements Runnable {
         }
     }
 
-    private void send(ConcurrentMap<TimerKey, BaseAction[]> tickedExecutors,
-                      ZonedDateTime currentDateTime, int curSeconds, long now) {
+    private void send(ConcurrentMap<TimerKey, BaseAction[]> tickedExecutors, long now) {
+        ZonedDateTime currentDateTime = ZonedDateTime.now(DateTimeUtils.UTC);
+
         for (Map.Entry<TimerKey, BaseAction[]> entry : tickedExecutors.entrySet()) {
             TimerKey key = entry.getKey();
             BaseAction[] actions = entry.getValue();
-            if (key.time.isTickTime(curSeconds, currentDateTime)) {
+            if (key.time.isTickTime(currentDateTime)) {
                 User user = userDao.users.get(key.userKey);
                 if (user != null) {
                     DashBoard dash = user.profile.getDashById(key.dashId);
