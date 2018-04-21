@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import static cc.blynk.server.core.dao.ReportingDao.generateFilename;
 
@@ -78,7 +79,8 @@ public class ReportingWorker implements Runnable {
             return Collections.emptyMap();
         }
 
-        AggregationKey[] keys = (AggregationKey[]) map.keySet().toArray();
+        Set<AggregationKey> aggregationKeySet = map.keySet();
+        AggregationKey[] keys = aggregationKeySet.toArray(new AggregationKey[map.size()]);
         Arrays.sort(keys, AggregationKey.AGGREGATION_KEY_COMPARATOR);
 
         Map<AggregationKey, AggregationValue> removedKeys = new HashMap<>();
