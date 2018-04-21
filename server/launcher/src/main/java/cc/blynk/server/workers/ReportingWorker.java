@@ -80,7 +80,7 @@ public class ReportingWorker implements Runnable {
         }
 
         Set<AggregationKey> aggregationKeySet = map.keySet();
-        AggregationKey[] keys = aggregationKeySet.toArray(new AggregationKey[map.size()]);
+        AggregationKey[] keys = aggregationKeySet.toArray(new AggregationKey[aggregationKeySet.size()]);
         Arrays.sort(keys, AggregationKey.AGGREGATION_KEY_COMPARATOR);
 
         Map<AggregationKey, AggregationValue> removedKeys = new HashMap<>();
