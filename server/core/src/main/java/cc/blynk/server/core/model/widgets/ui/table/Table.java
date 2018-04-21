@@ -61,11 +61,9 @@ public class Table extends OnePinWidget {
                             int id = Integer.parseInt(values[1]);
                             String rowName = values[2];
                             String rowValue = values[3];
-                            for (Row row : rows) {
-                                if (row.id == id) {
-                                    row.update(rowName, rowValue);
-                                    break;
-                                }
+                            Row existingRow = get(id);
+                            if (existingRow != null) {
+                                existingRow.update(rowName, rowValue);
                             }
                         }
                         break;
