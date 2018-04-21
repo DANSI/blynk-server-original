@@ -4,7 +4,6 @@ import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.utils.structure.TableLimitedQueue;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
@@ -19,7 +18,6 @@ public class Table extends OnePinWidget {
 
     public Column[] columns;
 
-    @JsonSerialize(using = TableRowsSerializator.class)
     public final TableLimitedQueue<Row> rows = new TableLimitedQueue<>();
 
     public volatile int currentRowIndex;
@@ -80,17 +78,6 @@ public class Table extends OnePinWidget {
                     case "deselect" :
                         if (values.length > 1) {
                             selectRow(values[1], false);
-                        }
-                        break;
-                    case "order" :
-                        if (values.length > 2) {
-                            int oldIndex = Integer.parseInt(values[1]);
-                            int newIndex = Integer.parseInt(values[2]);
-                            try {
-                                rows.order(oldIndex, newIndex);
-                            } catch (Exception e) {
-                                //ignoring this error. as users may provide wrong indexes.
-                            }
                         }
                         break;
                 }

@@ -1,6 +1,6 @@
 package cc.blynk.utils.structure;
 
-import java.util.LinkedList;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  *
@@ -10,33 +10,28 @@ import java.util.LinkedList;
  * Created by Dmitriy Dumanskiy.
  * Created on 07.09.16.
  */
-public class TableLimitedQueue<T> extends LinkedList<T> {
+public class TableLimitedQueue<T> extends LinkedBlockingQueue<T> {
 
-    private static final int POOL_SIZE = Integer.parseInt(System.getProperty("table.rows.pool.size", "100"));
+    private static final int TABLE_POOL_SIZE = Integer.parseInt(System.getProperty("table.rows.pool.size", "100"));
 
     private final int limit;
 
     public TableLimitedQueue() {
-        this.limit = POOL_SIZE;
+        this(TABLE_POOL_SIZE);
     }
 
-    protected TableLimitedQueue(int limit) {
+    TableLimitedQueue(int limit) {
+        super(limit);
         this.limit = limit;
     }
 
     @Override
     public boolean add(T o) {
-        super.add(o);
-        if (size() > limit) {
-            super.remove();
+        if (size() > limit - 1) {
+            super.poll();
         }
+        super.add(o);
         return true;
     }
-
-    public void order(int oldIndex, int newIndex) {
-        T e = remove(oldIndex);
-        add(newIndex, e);
-    }
-
 
 }
