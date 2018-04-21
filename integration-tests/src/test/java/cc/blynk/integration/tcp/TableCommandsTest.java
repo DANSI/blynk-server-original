@@ -235,7 +235,7 @@ public class TableCommandsTest extends IntegrationBase {
         for (int i = 1; i <= 101; i++) {
             String cmd = "vw 123 add " + i + " Row0 row0";
             clientPair.hardwareClient.send("hardware " + cmd);
-            verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(i + 1, HARDWARE, b("1-0 " + cmd))));
+            verify(clientPair.appClient.responseMock, timeout(700)).channelRead(any(), eq(produce(i + 1, HARDWARE, b("1-0 " + cmd))));
         }
 
 
