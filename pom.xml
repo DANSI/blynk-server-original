@@ -62,15 +62,15 @@
     <profiles>
 
         <profile>
-            <id>java9</id>
+            <id>java10</id>
             <activation>
-                <jdk>9</jdk>
+                <jdk>10</jdk>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <jarClassifier>java9</jarClassifier>
-                <source>9</source>
-                <target>9</target>
+                <jarClassifier>java10</jarClassifier>
+                <source>10</source>
+                <target>10</target>
                 <!-- just fake property. means do not exclude anything -->
                 <version.specific.exclusions>**/ccxxyy.java</version.specific.exclusions>
             </properties>
@@ -131,6 +131,13 @@
                         <exclude>${version.specific.exclusions}</exclude>
                     </excludes>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>asm</artifactId>
+                        <version>6.1.1</version>
+                    </dependency>
+                </dependencies>
             </plugin>
 
             <plugin>
@@ -216,7 +223,7 @@
         <httpclient.version>4.5.2</httpclient.version>
         <commons-lang3.version>3.4</commons-lang3.version>
         <junit.version>4.12</junit.version>
-        <mockito-core.version>2.10.0</mockito-core.version>
+        <mockito-core.version>2.18.3</mockito-core.version>
         <commons-io.version>2.5</commons-io.version>
         <commons-lang.version>2.6</commons-lang.version>
         <jmh-core.version>1.19</jmh-core.version>
