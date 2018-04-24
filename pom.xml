@@ -65,12 +65,26 @@
             <id>java10</id>
             <activation>
                 <jdk>10</jdk>
-                <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
                 <jarClassifier>java10</jarClassifier>
                 <source>10</source>
                 <target>10</target>
+                <!-- just fake property. means do not exclude anything -->
+                <version.specific.exclusions>**/ccxxyy.java</version.specific.exclusions>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>java9</id>
+            <activation>
+                <jdk>9</jdk>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <jarClassifier>java9</jarClassifier>
+                <source>9</source>
+                <target>9</target>
                 <!-- just fake property. means do not exclude anything -->
                 <version.specific.exclusions>**/ccxxyy.java</version.specific.exclusions>
             </properties>
