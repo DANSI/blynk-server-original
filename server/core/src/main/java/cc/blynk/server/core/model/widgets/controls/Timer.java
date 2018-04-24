@@ -26,7 +26,7 @@ public class Timer extends OnePinWidget {
         return isValidTime(stopTime) && isValidValue(stopValue);
     }
 
-    private static boolean isValidTime(int time) {
+    public static boolean isValidTime(int time) {
         return time > -1 && time < 86400;
     }
 
