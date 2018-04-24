@@ -60,7 +60,7 @@ final class JobLauncher {
         scheduler.scheduleAtFixedRate(statsWorker, 1000,
                 holder.props.getIntProperty("stats.print.worker.period"), MILLISECONDS);
 
-        if (holder.sslContextHolder.isAutoGenerationEnabled) {
+        if (holder.sslContextHolder.runRenewalWorker()) {
             scheduler.scheduleAtFixedRate(
                     new CertificateRenewalWorker(holder.sslContextHolder.acmeClient, 21), 1, 1, TimeUnit.DAYS
             );

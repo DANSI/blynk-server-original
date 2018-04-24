@@ -54,7 +54,7 @@ public class AcmeTest extends BaseTest {
     public void testCorrectContext() {
         SslContextHolder sslContextHolder = holder2.sslContextHolder;
         assertNotNull(sslContextHolder);
-        assertTrue(sslContextHolder.isAutoGenerationEnabled);
+        assertTrue(sslContextHolder.runRenewalWorker());
         assertTrue(sslContextHolder.isNeedInitializeOnStart);
         assertNotNull(sslContextHolder.acmeClient);
     }

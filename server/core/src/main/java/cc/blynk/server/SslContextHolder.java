@@ -29,7 +29,7 @@ public class SslContextHolder {
 
     public final AcmeClient acmeClient;
 
-    public final boolean isAutoGenerationEnabled;
+    private final boolean isAutoGenerationEnabled;
 
     public final boolean isNeedInitializeOnStart;
 
@@ -93,6 +93,10 @@ public class SslContextHolder {
 
         SslProvider sslProvider = fetchSslProvider();
         this.sslCtx = initSslContext(certPath, keyPath, null, sslProvider);
+    }
+
+    public boolean runRenewalWorker() {
+        return isAutoGenerationEnabled && acmeClient != null;
     }
 
     public void generateInitialCertificates(ServerProperties props) {
