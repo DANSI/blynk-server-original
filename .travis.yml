@@ -1,14 +1,12 @@
 language: java
 
-before_install:
-  - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
+addons:
+  apt:
+    packages:
+      - oracle-java9-installer
 
-matrix:
-  include:
-      - env: JDK='Oracle JDK 10'
-        jdk: oraclejdk10
-      - env: JDK='OpenJDK 10'
-        install: . ./install-jdk.sh -F 10 -L GPL
+jdk:
+  - oraclejdk9
 
 addons:
   postgresql: "9.5"
