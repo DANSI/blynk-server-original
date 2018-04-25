@@ -55,21 +55,21 @@ messages between Blynk mobile application and various microcontroller boards and
 [ ![Build Status](https://travis-ci.org/blynkkk/blynk-server.svg?branch=master)](https://travis-ci.org/blynkkk/blynk-server)
 
 ## Requirements
-- Java 8/9 required (OpenJDK, Oracle) 
+- Java 8/10 required (OpenJDK, Oracle) 
 - Any OS that can run java 
 - At least 30 MB of RAM (could be less with tuning)
 - Open ports 9443 (for app), 8080 (for hardware without ssl), 8441 (for hardware with ssl)
 
 [Ubuntu java installation instruction](#install-java-for-ubuntu).
 
-For Windows download Java [here](http://download.oracle.com/otn-pub/java/jdk/9+181/jre-9_windows-x64_bin.exe) and install. 
+For Windows download Java [here](http://download.oracle.com/otn-pub/java/jdk/10.0.1+10/fb4372174a714e6b8c52526dc134031e/jdk-10.0.1_windows-x64_bin.exe) and install. 
 
 ## Quick local server setup
 
-+ Make sure you are using Java 9
++ Make sure you are using Java 10
 
         java -version
-        Output: java version "9"
+        Output: java version "10"
 
 + Run the server on default 'hardware port 8080' and default 'application port 9443' (SSL port)
 
@@ -595,15 +595,15 @@ As an output you'll retrieve server.crt and server.pem files that you need to pr
 
 ### Install java for Ubuntu
 
+        sudo add-apt-repository ppa:linuxuprising/java
+        sudo apt-get update
+        sudo apt-get install oracle-java10-installer
+        
+or if above doesn't work:
+
         sudo apt-add-repository ppa:webupd8team/java
         sudo apt-get update
-        sudo apt-get install oracle-java9-installer
-        
-or 
-
         sudo apt-get install oracle-java8-installer
-        
-in case your system doesn't have Java 9 yet.
         
 ### Port forwarding for HTTP/S API
 
