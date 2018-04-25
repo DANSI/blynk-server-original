@@ -35,7 +35,7 @@ public enum GraphPeriod {
     ALL(12 * 30 * 24, HOURLY),
 
     N_DAY(24, HOURLY),
-    TWO_DAY2(2 * 24, HOURLY),
+    TWO_DAYS(2 * 24, HOURLY),
     N_THREE_DAYS(3 * 24, HOURLY),
     N_WEEK(7 * 24, HOURLY),
     N_TWO_WEEKS(14 * 24, HOURLY),
