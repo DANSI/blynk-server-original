@@ -2,8 +2,6 @@ package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.UserDao;
-import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ArrayUtil;
@@ -35,14 +33,14 @@ public class UpdateFaceLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        int parentDashId = Integer.parseInt(message.body);
+        var parentDashId = Integer.parseInt(message.body);
 
-        DashBoard dash = user.profile.getDashByIdOrThrow(parentDashId);
+        var dash = user.profile.getDashByIdOrThrow(parentDashId);
 
-        HashSet<String> appIds = new HashSet<>();
-        for (DashBoard dashBoard : user.profile.dashBoards) {
+        var appIds = new HashSet<String>();
+        for (var dashBoard : user.profile.dashBoards) {
             if (dashBoard.parentId == parentDashId) {
-                for (App app : user.profile.apps) {
+                for (var app : user.profile.apps) {
                     if (ArrayUtil.contains(app.projectIds, dashBoard.id)) {
                         appIds.add(app.id);
                     }
@@ -59,8 +57,8 @@ public class UpdateFaceLogic {
         boolean hasFaces = false;
         int count = 0;
         log.info("Updating face {} for user {}.", parentDashId, user.email);
-        for (User existingUser : userDao.users.values()) {
-            for (DashBoard existingDash : existingUser.profile.dashBoards) {
+        for (var existingUser : userDao.users.values()) {
+            for (var existingDash : existingUser.profile.dashBoards) {
                 if (existingDash.parentId == parentDashId && (existingUser == user
                         || appIds.contains(existingUser.appName))) {
                     hasFaces = true;

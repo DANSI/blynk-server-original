@@ -1,14 +1,11 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.widget;
 
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
-import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
-import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -41,13 +38,13 @@ public class CreateWidgetLogic {
 
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
         //format is "dashId widget_json" or "dashId widgetId templateId widget_json"
-        String[] split = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
+        var split = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
         if (split.length < 2) {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        int dashId = Integer.parseInt(split[0]);
+        var dashId = Integer.parseInt(split[0]);
 
         long widgetAddToId;
         long templateIdAddToId;
@@ -70,10 +67,10 @@ public class CreateWidgetLogic {
             throw new NotAllowedException("Widget is larger then limit.", message.id);
         }
 
-        User user = state.user;
-        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
+        var user = state.user;
+        var dash = user.profile.getDashByIdOrThrow(dashId);
 
-        Widget newWidget = JsonParser.parseWidget(widgetString, message.id);
+        var newWidget = JsonParser.parseWidget(widgetString, message.id);
 
         if (newWidget.width < 1 || newWidget.height < 1) {
             throw new NotAllowedException("Widget has wrong dimensions.", message.id);
@@ -81,7 +78,7 @@ public class CreateWidgetLogic {
 
         log.debug("Creating new widget {} for dashId {}.", widgetString, dashId);
 
-        for (Widget widget : dash.widgets) {
+        for (var widget : dash.widgets) {
             if (widget.id == newWidget.id) {
                 throw new NotAllowedException("Widget with same id already exists.", message.id);
             }
@@ -93,7 +90,7 @@ public class CreateWidgetLogic {
             }
         }
 
-        int price = newWidget.getPrice();
+        var price = newWidget.getPrice();
         if (user.notEnoughEnergy(price)) {
             log.debug("Not enough energy.");
             ctx.writeAndFlush(energyLimit(message.id), ctx.voidPromise());
@@ -106,8 +103,8 @@ public class CreateWidgetLogic {
             dash.widgets = ArrayUtil.add(dash.widgets, newWidget, Widget.class);
         } else {
             //right now we can only add to DeviceTiles widget
-            DeviceTiles deviceTiles = (DeviceTiles) dash.getWidgetByIdOrThrow(widgetAddToId);
-            TileTemplate tileTemplate = deviceTiles.getTileTemplateByIdOrThrow(templateIdAddToId);
+            var deviceTiles = (DeviceTiles) dash.getWidgetByIdOrThrow(widgetAddToId);
+            var tileTemplate = deviceTiles.getTileTemplateByIdOrThrow(templateIdAddToId);
             tileTemplate.widgets = ArrayUtil.add(tileTemplate.widgets, newWidget, Widget.class);
         }
 

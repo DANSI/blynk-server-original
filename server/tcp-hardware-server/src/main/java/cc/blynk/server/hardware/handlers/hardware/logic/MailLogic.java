@@ -1,8 +1,6 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
 import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.notifications.Mail;
 import cc.blynk.server.core.processors.NotificationBase;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
@@ -41,10 +39,10 @@ public class MailLogic extends NotificationBase {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
-        User user = state.user;
-        DashBoard dash = state.dash;
+        var user = state.user;
+        var dash = state.dash;
 
-        Mail mail = dash.getWidgetByType(Mail.class);
+        var mail = dash.getWidgetByType(Mail.class);
 
         if (mail == null || !dash.isActive) {
             throw new NotAllowedException("User has no mail widget or active dashboard.", message.id);
@@ -56,7 +54,7 @@ public class MailLogic extends NotificationBase {
 
         user.checkDailyEmailLimit();
 
-        String[] bodyParts = message.body.split("\0");
+        var bodyParts = message.body.split("\0");
 
         if (bodyParts.length < 2) {
             throw new IllegalCommandException("Invalid mail notification body.");

@@ -6,7 +6,6 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
-import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.StringUtils;
@@ -44,20 +43,20 @@ public class AppMailLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        String[] split = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
+        var splitBody = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
         //mail type
-        switch (split[0]) {
+        switch (splitBody[0]) {
             case "template":
-                sendTemplateIdEmail(ctx, user, split, message.id);
+                sendTemplateIdEmail(ctx, user, splitBody, message.id);
                 break;
             default:
-                int dashId = Integer.parseInt(split[0]);
-                DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
+                var dashId = Integer.parseInt(splitBody[0]);
+                var dash = user.profile.getDashByIdOrThrow(dashId);
 
                 //dashId deviceId
-                if (split.length == 2) {
-                    int deviceId = Integer.parseInt(split[1]);
+                if (splitBody.length == 2) {
+                    int deviceId = Integer.parseInt(splitBody[1]);
                     Device device = dash.getDeviceById(deviceId);
 
                     if (device == null || device.token == null) {
@@ -80,17 +79,17 @@ public class AppMailLogic {
     }
 
     private void sendTemplateIdEmail(ChannelHandlerContext ctx, User user, String[] split, int msgId) {
-        int dashId = Integer.parseInt(split[1]);
-        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
+        var dashId = Integer.parseInt(split[1]);
+        var dash = user.profile.getDashByIdOrThrow(dashId);
 
-        long widgetId = Long.parseLong(split[2]);
-        DeviceTiles deviceTiles = (DeviceTiles) dash.getWidgetById(widgetId);
+        var widgetId = Long.parseLong(split[2]);
+        var deviceTiles = (DeviceTiles) dash.getWidgetById(widgetId);
 
-        long templateId = Long.parseLong(split[3]);
-        TileTemplate template = deviceTiles.getTileTemplateByIdOrThrow(templateId);
+        var templateId = Long.parseLong(split[3]);
+        var template = deviceTiles.getTileTemplateByIdOrThrow(templateId);
 
-        String subj = "Template ID for " + template.name;
-        String body = templateIdMailBody
+        var subj = "Template ID for " + template.name;
+        var body = templateIdMailBody
                 .replace("{template_name}", template.name)
                 .replace("{template_id}", template.templateId);
 
@@ -99,22 +98,22 @@ public class AppMailLogic {
     }
 
     private void makeSingleTokenEmail(ChannelHandlerContext ctx, DashBoard dash, Device device, String to, int msgId) {
-        String dashName = dash.name == null ? "New Project" : dash.name;
-        String deviceName = device.name == null ? "New Device" : device.name;
-        String subj = "Auth Token for " + dashName + " project and device " + deviceName;
-        String body = "Auth Token : " + device.token + "\n";
+        var dashName = dash.name == null ? "New Project" : dash.name;
+        var deviceName = device.name == null ? "New Device" : device.name;
+        var subj = "Auth Token for " + dashName + " project and device " + deviceName;
+        var body = "Auth Token : " + device.token + "\n";
 
         log.trace("Sending single token mail for user {}, with token : '{}'.", to, device.token);
         mail(ctx.channel(), to, subj, body + tokenMailBody, msgId, false);
     }
 
     private void sendMultiTokenEmail(ChannelHandlerContext ctx, DashBoard dash, String to, int msgId) {
-        String dashName = dash.name == null ? "New Project" : dash.name;
-        String subj = "Auth Tokens for " + dashName + " project and " + dash.devices.length + " devices";
+        var dashName = dash.name == null ? "New Project" : dash.name;
+        var subj = "Auth Tokens for " + dashName + " project and " + dash.devices.length + " devices";
 
-        StringBuilder body = new StringBuilder();
-        for (Device device : dash.devices) {
-            String deviceName = device.name == null ? "New Device" : device.name;
+        var body = new StringBuilder();
+        for (var device : dash.devices) {
+            var deviceName = device.name == null ? "New Device" : device.name;
             body.append("Auth Token for device '")
                 .append(deviceName)
                 .append("' : ")

@@ -36,12 +36,12 @@ public class GetProjectByClonedTokenLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, StringMessage message) {
-        String token = message.body;
+        var token = message.body;
 
         blockingIOProcessor.executeDB(() -> {
             MessageBase result;
             try {
-                String json = dbManager.selectClonedProject(token);
+                var json = dbManager.selectClonedProject(token);
                 //no cloned project in DB, checking local storage on disk
                 if (json == null) {
                     json = fileManager.readClonedProjectFromDisk(token);

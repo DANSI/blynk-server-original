@@ -2,12 +2,8 @@ package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.auth.Session;
-import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,21 +34,21 @@ public class ActivateDashboardLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
-        User user = state.user;
-        String dashBoardIdString = message.body;
+        var user = state.user;
+        var dashBoardIdString = message.body;
 
-        int dashId = Integer.parseInt(dashBoardIdString);
+        var dashId = Integer.parseInt(dashBoardIdString);
 
         log.debug("Activating dash {} for user {}", dashBoardIdString, user.email);
-        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
+        var dash = user.profile.getDashByIdOrThrow(dashId);
         dash.activate();
         user.lastModifiedTs = dash.updatedAt;
 
-        Session session = sessionDao.userSession.get(state.userKey);
+        var session = sessionDao.userSession.get(state.userKey);
 
         if (session.isHardwareConnected(dashId)) {
             for (Device device : dash.devices) {
-                String pmBody = dash.buildPMMessage(device.id);
+                var pmBody = dash.buildPMMessage(device.id);
                 if (pmBody == null) {
                     if (!session.isHardwareConnected(dashId, device.id)) {
                         log.debug("No device in session.");
@@ -76,7 +72,7 @@ public class ActivateDashboardLogic {
             }
         }
 
-        for (Channel appChannel : session.appChannels) {
+        for (var appChannel : session.appChannels) {
             //send activate for shared apps
             if (appChannel != ctx.channel() && getAppState(appChannel) != null && appChannel.isWritable()) {
                 appChannel.write(makeUTF8StringMessage(message.command, message.id, message.body));

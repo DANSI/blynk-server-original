@@ -37,7 +37,7 @@ final class JobLauncher {
 
         long startDelay;
 
-        ReportingWorker reportingWorker = new ReportingWorker(
+        var reportingWorker = new ReportingWorker(
                 holder.reportingDao,
                 ReportingUtil.getReportingFolder(holder.props.getProperty("data.folder")),
                 holder.dbManager
@@ -49,14 +49,13 @@ final class JobLauncher {
         scheduler.scheduleAtFixedRate(reportingWorker, startDelay,
                 AverageAggregatorProcessor.MINUTE, MILLISECONDS);
 
-        ProfileSaverWorker profileSaverWorker =
-                new ProfileSaverWorker(holder.userDao, holder.fileManager, holder.dbManager);
+        var profileSaverWorker = new ProfileSaverWorker(holder.userDao, holder.fileManager, holder.dbManager);
 
         //running 1 sec later after reporting
         scheduler.scheduleAtFixedRate(profileSaverWorker, startDelay + 1000,
                 holder.props.getIntProperty("profile.save.worker.period"), MILLISECONDS);
 
-        StatsWorker statsWorker = new StatsWorker(holder);
+        var statsWorker = new StatsWorker(holder);
         scheduler.scheduleAtFixedRate(statsWorker, 1000,
                 holder.props.getIntProperty("stats.print.worker.period"), MILLISECONDS);
 
@@ -68,12 +67,12 @@ final class JobLauncher {
         scheduler.scheduleAtFixedRate(LRUCache.LOGIN_TOKENS_CACHE::clear, 1, 1, HOURS);
 
         //running once every 3 day
-        HistoryGraphUnusedPinDataCleanerWorker reportingDataDiskCleaner =
+        var reportingDataDiskCleaner =
                 new HistoryGraphUnusedPinDataCleanerWorker(holder.userDao, holder.reportingDao);
         //once every 3 days
         scheduler.scheduleAtFixedRate(reportingDataDiskCleaner, 72, 72, HOURS);
 
-        ReportingTruncateWorker reportingTruncateWorker = new ReportingTruncateWorker(holder.reportingDao);
+        var reportingTruncateWorker = new ReportingTruncateWorker(holder.reportingDao);
         //once every week
         scheduler.scheduleAtFixedRate(reportingTruncateWorker, 1, 144, HOURS);
 
@@ -81,7 +80,7 @@ final class JobLauncher {
         startDelay = 1000 - (System.currentTimeMillis() % 1000);
 
         //separate thread for timer and reading widgets
-        ScheduledExecutorService ses = Executors.newScheduledThreadPool(1);
+        var ses = Executors.newScheduledThreadPool(1);
         ses.scheduleAtFixedRate(holder.timerWorker, startDelay, 1000, MILLISECONDS);
         ses.scheduleAtFixedRate(holder.readingWidgetsWorker, startDelay + 400, 1000, MILLISECONDS);
 

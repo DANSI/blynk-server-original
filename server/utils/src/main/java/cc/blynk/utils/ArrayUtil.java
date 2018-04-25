@@ -15,21 +15,21 @@ public final class ArrayUtil {
     }
 
     public static <T> T[] add(T[] array, T element, Class<T> type) {
-        T[] newArray = copyArrayGrow1(array, type);
+        var newArray = copyArrayGrow1(array, type);
         newArray[newArray.length - 1] = element;
         return newArray;
     }
 
     @SuppressWarnings("unchecked")
     private static <T> T[] copyArrayGrow1(final T[] array, Class<T> type) {
-        T[] newArray = (T[]) Array.newInstance(type, array.length + 1);
+        var newArray = (T[]) Array.newInstance(type, array.length + 1);
         System.arraycopy(array, 0, newArray, 0, array.length);
         return newArray;
     }
 
     @SuppressWarnings("unchecked")
     public static <T> T[] remove(final T[] array, final int index, Class<T> type) {
-        final T[] result = (T[]) Array.newInstance(type, array.length - 1);
+        var result = (T[]) Array.newInstance(type, array.length - 1);
         System.arraycopy(array, 0, result, 0, index);
         if (index < array.length - 1) {
             System.arraycopy(array, index + 1, result, index, array.length - index - 1);
@@ -39,13 +39,13 @@ public final class ArrayUtil {
     }
 
     public static <T> T[] copyAndReplace(T[] array, T element, int index) {
-        T[] newArray = Arrays.copyOf(array, array.length);
+        var newArray = Arrays.copyOf(array, array.length);
         newArray[index] = element;
         return newArray;
     }
 
     public static boolean contains(final int[] ar, final int val) {
-        for (final int arVal : ar) {
+        for (var arVal : ar) {
             if (arVal == val) {
                 return true;
             }
@@ -54,7 +54,7 @@ public final class ArrayUtil {
     }
 
     public static int[] convertIntegersToInt(List<Integer> integers) {
-        int[] result = new int[integers.size()];
+        var result = new int[integers.size()];
         for (int i = 0; i < result.length; i++) {
             result[i] = integers.get(i);
         }

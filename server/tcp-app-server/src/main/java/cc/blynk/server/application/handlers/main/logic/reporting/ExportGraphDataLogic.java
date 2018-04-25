@@ -53,37 +53,37 @@ public class ExportGraphDataLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        String[] messageParts = message.body.split(BODY_SEPARATOR_STRING);
+        var messageParts = message.body.split(BODY_SEPARATOR_STRING);
 
         if (messageParts.length < 2) {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        String[] dashIdAndDeviceId = split2Device(messageParts[0]);
-        int dashId = Integer.parseInt(dashIdAndDeviceId[0]);
-        int targetId = -1;
+        var dashIdAndDeviceId = split2Device(messageParts[0]);
+        var dashId = Integer.parseInt(dashIdAndDeviceId[0]);
+        var targetId = -1;
 
         if (dashIdAndDeviceId.length == 2) {
             targetId = Integer.parseInt(dashIdAndDeviceId[1]);
         }
 
-        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
+        var dash = user.profile.getDashByIdOrThrow(dashId);
 
-        long widgetId = Long.parseLong(messageParts[1]);
+        var widgetId = Long.parseLong(messageParts[1]);
 
-        Widget widget = dash.getWidgetById(widgetId);
+        var widget = dash.getWidgetById(widgetId);
         if (widget == null) {
             widget = dash.getWidgetByIdInDeviceTilesOrThrow(widgetId);
         }
 
         if (widget instanceof HistoryGraph) {
-            HistoryGraph historyGraph = (HistoryGraph) widget;
+            var historyGraph = (HistoryGraph) widget;
 
             blockingIOProcessor.executeHistory(
                     new ExportHistoryGraphJob(ctx, dash, historyGraph, message.id, user)
             );
         } else if (widget instanceof EnhancedHistoryGraph) {
-            EnhancedHistoryGraph enhancedHistoryGraph = (EnhancedHistoryGraph) widget;
+            var enhancedHistoryGraph = (EnhancedHistoryGraph) widget;
 
             blockingIOProcessor.executeHistory(
                     new ExportEnhancedHistoryGraphJob(ctx, dash, targetId, enhancedHistoryGraph, message.id, user)
@@ -113,21 +113,21 @@ public class ExportGraphDataLogic {
         @Override
         public void run() {
             try {
-                String dashName = dash.getNameOrEmpty();
-                ArrayList<FileLink> pinsCSVFilePath = new ArrayList<>();
-                int deviceId = historyGraph.deviceId;
-                for (DataStream dataStream : historyGraph.dataStreams) {
+                var dashName = dash.getNameOrEmpty();
+                var pinsCSVFilePath = new ArrayList<FileLink>();
+                var deviceId = historyGraph.deviceId;
+                for (var dataStream : historyGraph.dataStreams) {
                     if (dataStream != null) {
                         try {
-                            int[] deviceIds = new int[] {deviceId};
+                            var deviceIds = new int[] {deviceId};
                             //special case, this is not actually a deviceId but device selector widget id
                             if (deviceId >= DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-                                Widget deviceSelector = dash.getWidgetById(deviceId);
-                                if (deviceSelector != null && deviceSelector instanceof DeviceSelector) {
+                                var deviceSelector = dash.getWidgetById(deviceId);
+                                if (deviceSelector instanceof DeviceSelector) {
                                     deviceIds = ((DeviceSelector) deviceSelector).deviceIds;
                                 }
                             }
-                            Path path = reportingDao.csvGenerator.createCSV(
+                            var path = reportingDao.csvGenerator.createCSV(
                                     user, dash.id, deviceId, dataStream.pinType, dataStream.pin, deviceIds);
                             pinsCSVFilePath.add(
                                     new FileLink(path.getFileName(), dashName, dataStream.pinType, dataStream.pin));
@@ -140,7 +140,7 @@ public class ExportGraphDataLogic {
                 if (pinsCSVFilePath.size() == 0) {
                     ctx.writeAndFlush(noData(msgId), ctx.voidPromise());
                 } else {
-                    String title = "History graph data for project " + dashName;
+                    var title = "History graph data for project " + dashName;
                     mailWrapper.sendHtml(user.email, title, makeBody(pinsCSVFilePath));
                     ctx.writeAndFlush(ok(msgId), ctx.voidPromise());
                 }
@@ -176,15 +176,15 @@ public class ExportGraphDataLogic {
         @Override
         public void run() {
             try {
-                String dashName = dash.getNameOrEmpty();
-                ArrayList<FileLink> pinsCSVFilePath = new ArrayList<>();
+                var dashName = dash.getNameOrEmpty();
+                var pinsCSVFilePath = new ArrayList<FileLink>();
                 for (GraphDataStream graphDataStream : enhancedHistoryGraph.dataStreams) {
                     DataStream dataStream = graphDataStream.dataStream;
                     //special case, for device tiles widget targetID may be overrided
-                    int deviceId = graphDataStream.getTargetId(targetId);
+                    var deviceId = graphDataStream.getTargetId(targetId);
                     if (dataStream != null) {
                         try {
-                            int[] deviceIds = new int[] {deviceId};
+                            var deviceIds = new int[] {deviceId};
                             //special case, this is not actually a deviceId but device selector widget id
                             //todo refactor/simplify/test
                             if (deviceId >= DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
@@ -193,12 +193,12 @@ public class ExportGraphDataLogic {
                                 if (deviceSelector == null) {
                                     deviceSelector = dash.getWidgetByIdInDeviceTilesOrThrow(targetId);
                                 }
-                                if (deviceSelector != null && deviceSelector instanceof DeviceSelector) {
+                                if (deviceSelector instanceof DeviceSelector) {
                                     deviceIds = ((DeviceSelector) deviceSelector).deviceIds;
                                 }
                             }
 
-                            Path path = reportingDao.csvGenerator.createCSV(
+                            var path = reportingDao.csvGenerator.createCSV(
                                     user, dash.id, deviceId, dataStream.pinType, dataStream.pin, deviceIds);
                             pinsCSVFilePath.add(
                                     new FileLink(path.getFileName(), dashName, dataStream.pinType, dataStream.pin));
@@ -225,7 +225,7 @@ public class ExportGraphDataLogic {
     }
 
     private String makeBody(ArrayList<FileLink> fileUrls) {
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         sb.append("<html><body>");
         for (FileLink link : fileUrls) {
             sb.append(link.toString()).append("<br>");

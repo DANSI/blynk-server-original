@@ -21,9 +21,9 @@ public final class ByteUtils {
 
     public static byte[] compress(String value) throws IOException {
         byte[] stringData = value.getBytes(StandardCharsets.UTF_8);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(stringData.length);
+        var baos = new ByteArrayOutputStream(stringData.length);
 
-        try (OutputStream out = new DeflaterOutputStream(baos)) {
+        try (var out = new DeflaterOutputStream(baos)) {
             out.write(stringData);
         }
 
@@ -31,11 +31,11 @@ public final class ByteUtils {
     }
 
     public static byte[] compress(byte[][] values) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(8192);
+        var baos = new ByteArrayOutputStream(8192);
 
-        try (OutputStream out = new DeflaterOutputStream(baos)) {
-            for (byte[] data : values) {
-                ByteBuffer bb = ByteBuffer.allocate(4);
+        try (var out = new DeflaterOutputStream(baos)) {
+            for (var data : values) {
+                var bb = ByteBuffer.allocate(4);
                 bb.putInt(data.length / REPORTING_RECORD_SIZE_BYTES);
                 out.write(bb.array());
                 out.write(data);
@@ -46,11 +46,11 @@ public final class ByteUtils {
     }
 
     public static byte[] compress(int dashId, byte[][] values) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(8192);
+        var baos = new ByteArrayOutputStream(8192);
 
-        try (OutputStream out = new DeflaterOutputStream(baos)) {
+        try (var out = new DeflaterOutputStream(baos)) {
             writeInt(out, dashId);
-            for (byte[] data : values) {
+            for (var data : values) {
                 writeInt(out, data.length / REPORTING_RECORD_SIZE_BYTES);
                 out.write(data);
             }
@@ -66,15 +66,15 @@ public final class ByteUtils {
     }
 
     public static int parseColor(String fieldValue) {
-        int decodedColor = Integer.decode(fieldValue);
+        var decodedColor = Integer.decode(fieldValue);
         return convertARGBtoRGBA(setAlphaComponent(decodedColor, 255));
     }
 
     private static int convertARGBtoRGBA(int color) {
-        final int a = (color & 0xff000000) >> 24;
-        final int r = (color & 0x00ff0000) >> 16;
-        final int g = (color & 0x0000ff00) >> 8;
-        final int b = (color & 0x000000ff);
+        var a = (color & 0xff000000) >> 24;
+        var r = (color & 0x00ff0000) >> 16;
+        var g = (color & 0x0000ff00) >> 8;
+        var b = (color & 0x000000ff);
 
         return (r << 24) | (g << 16) | (b << 8) | (a & 0xff);
     }

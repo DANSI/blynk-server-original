@@ -66,7 +66,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.registrationLimitChecker = new LimitChecker(holder.limits.hourlyRegistrationsLimit, 3_600_000L);
 
-        String[] allowedUsersArray = holder.props.getCommaSeparatedValueAsArray("allowed.users.list");
+        var allowedUsersArray = holder.props.getCommaSeparatedValueAsArray("allowed.users.list");
         if (allowedUsersArray != null && allowedUsersArray.length > 0
                 && allowedUsersArray[0] != null && !allowedUsersArray[0].isEmpty()) {
             allowedUsers = new HashSet<>(Arrays.asList(allowedUsersArray));
@@ -84,7 +84,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
             return;
         }
 
-        String[] messageParts = StringUtils.split3(message.body);
+        var messageParts = StringUtils.split3(message.body);
 
         //expecting message with 2 parts at least.
         if (messageParts.length < 2) {
@@ -93,9 +93,9 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
             return;
         }
 
-        String email = messageParts[0].trim().toLowerCase();
-        String pass = messageParts[1];
-        String appName = messageParts.length == 3 ? messageParts[2] : AppNameUtil.BLYNK;
+        var email = messageParts[0].trim().toLowerCase();
+        var pass = messageParts[1];
+        var appName = messageParts.length == 3 ? messageParts[2] : AppNameUtil.BLYNK;
         log.info("Trying register user : {}, app : {}", email, appName);
 
         if (BlynkEmailValidator.isNotValidEmail(email)) {
@@ -116,7 +116,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
             return;
         }
 
-        User newUser = userDao.add(email, pass, appName);
+        var newUser = userDao.add(email, pass, appName);
 
         log.info("Registered {}.", email);
 
@@ -164,10 +164,10 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
         }
 
         int dashId = app.projectIds[0];
-        DashBoard dash = parentUser.profile.getDashByIdOrThrow(dashId);
+        var dash = parentUser.profile.getDashByIdOrThrow(dashId);
 
         //todo ugly, but quick. refactor
-        DashBoard clonedDash = JsonParser.parseDashboard(JsonParser.toJsonRestrictiveDashboard(dash), msgId);
+        var clonedDash = JsonParser.parseDashboard(JsonParser.toJsonRestrictiveDashboard(dash), msgId);
 
         clonedDash.id = 1;
         clonedDash.parentId = dash.parentId;

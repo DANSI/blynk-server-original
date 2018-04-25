@@ -80,10 +80,10 @@ public class ReportingWorker implements Runnable {
         }
 
         Set<AggregationKey> aggregationKeySet = map.keySet();
-        AggregationKey[] keys = aggregationKeySet.toArray(new AggregationKey[aggregationKeySet.size()]);
+        AggregationKey[] keys = aggregationKeySet.toArray(new AggregationKey[0]);
         Arrays.sort(keys, AggregationKey.AGGREGATION_KEY_COMPARATOR);
 
-        Map<AggregationKey, AggregationValue> removedKeys = new HashMap<>();
+        var removedKeys = new HashMap<AggregationKey, AggregationValue>();
 
         long nowTruncatedToPeriod = System.currentTimeMillis() / type.period;
         for (AggregationKey keyToRemove : keys) {

@@ -1,7 +1,6 @@
 package cc.blynk.server.hardware.handlers.hardware;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.core.session.StateHolderBase;
@@ -110,10 +109,10 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
     }
 
     @Override
-    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) {
         if (evt instanceof BridgeForwardMessage) {
-            BridgeForwardMessage bridgeForwardMessage = (BridgeForwardMessage) evt;
-            TokenValue tokenValue = bridgeForwardMessage.tokenValue;
+            var bridgeForwardMessage = (BridgeForwardMessage) evt;
+            var tokenValue = bridgeForwardMessage.tokenValue;
             try {
                 hardware.messageReceived(ctx, bridgeForwardMessage.message,
                         bridgeForwardMessage.userKey, tokenValue.user, tokenValue.dash, tokenValue.device);

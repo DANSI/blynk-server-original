@@ -5,7 +5,6 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.DBManager;
-import cc.blynk.server.db.model.Redeem;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,7 +41,7 @@ public class RedeemLogic {
 
     private MessageBase verifyToken(StringMessage message, String redeemToken, User user) {
         try {
-            Redeem redeem = dbManager.selectRedeemByToken(redeemToken);
+            var redeem = dbManager.selectRedeemByToken(redeemToken);
             if (redeem != null) {
                 if (redeem.isRedeemed && redeem.email.equals(user.email)) {
                     return ok(message.id);

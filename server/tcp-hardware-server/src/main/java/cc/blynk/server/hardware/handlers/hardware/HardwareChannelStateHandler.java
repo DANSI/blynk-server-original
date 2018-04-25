@@ -7,10 +7,8 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
-import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.utils.properties.ServerProperties;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -46,12 +44,12 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        Channel hardwareChannel = ctx.channel();
-        HardwareStateHolder state = getHardState(hardwareChannel);
+        var hardwareChannel = ctx.channel();
+        var state = getHardState(hardwareChannel);
         if (state != null) {
-            Session session = sessionDao.userSession.get(state.userKey);
+            var session = sessionDao.userSession.get(state.userKey);
             if (session != null) {
-                Device device = state.device;
+                var device = state.device;
                 log.trace("Hardware channel disconnect for {}, dashId {}, deviceId {}, token {}.",
                         state.userKey, state.dash.id, device.id, device.token);
                 sentOfflineMessage(ctx, session, state.dash, device);
@@ -75,7 +73,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         //in case hardware quickly reconnects we do not mark it as disconnected
         //as it is already online after quick disconnect.
         //https://github.com/blynkkk/blynk-server/issues/403
-        boolean isHardwareConnected = session.isHardwareConnected(dashBoard.id, device.id);
+        var isHardwareConnected = session.isHardwareConnected(dashBoard.id, device.id);
         if (!isHardwareConnected) {
             log.trace("Changing device status. DeviceId {}, dashId {}", device.id, dashBoard.id);
             device.disconnected();
@@ -85,7 +83,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
             return;
         }
 
-        Notification notification = dashBoard.getWidgetByType(Notification.class);
+        var notification = dashBoard.getWidgetByType(Notification.class);
 
         if (notification != null && notification.notifyWhenOffline) {
             sendPushNotification(ctx, notification, dashBoard.id, device);
@@ -96,8 +94,8 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
 
     private void sendPushNotification(ChannelHandlerContext ctx,
                                       Notification notification, int dashId, Device device) {
-        String deviceName = ((device == null || device.name == null) ? "device" : device.name);
-        String message = pushNotificationBody.replace(ServerProperties.DEVICE_NAME, deviceName);
+        var deviceName = ((device == null || device.name == null) ? "device" : device.name);
+        var message = pushNotificationBody.replace(ServerProperties.DEVICE_NAME, deviceName);
         if (notification.notifyWhenOfflineIgnorePeriod == 0 || device == null) {
             notification.push(gcmWrapper,
                     message,

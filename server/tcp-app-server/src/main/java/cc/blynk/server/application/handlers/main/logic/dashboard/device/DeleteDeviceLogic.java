@@ -3,8 +3,6 @@ package cc.blynk.server.application.handlers.main.logic.dashboard.device;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
-import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -34,23 +32,23 @@ public class DeleteDeviceLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
-        String[] split = split2(message.body);
+        var split = split2(message.body);
 
         if (split.length < 2) {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        int dashId = Integer.parseInt(split[0]);
-        int deviceId = Integer.parseInt(split[1]);
+        var dashId = Integer.parseInt(split[0]);
+        var deviceId = Integer.parseInt(split[1]);
 
-        DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
+        var dash = state.user.profile.getDashByIdOrThrow(dashId);
 
         log.debug("Deleting device with id {}.", deviceId);
 
-        int existingDeviceIndex = dash.getDeviceIndexById(deviceId);
-        Device device = dash.devices[existingDeviceIndex];
+        var existingDeviceIndex = dash.getDeviceIndexById(deviceId);
+        var device = dash.devices[existingDeviceIndex];
         tokenManager.deleteDevice(device);
-        Session session = sessionDao.userSession.get(state.userKey);
+        var session = sessionDao.userSession.get(state.userKey);
         session.closeHardwareChannelByDeviceId(dashId, deviceId);
 
         dash.devices = ArrayUtil.remove(dash.devices, existingDeviceIndex, Device.class);

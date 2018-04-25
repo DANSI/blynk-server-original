@@ -3,10 +3,7 @@ package cc.blynk.server.application.handlers.main.logic.reporting;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.widgets.Target;
-import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
@@ -40,31 +37,31 @@ public class DeleteEnhancedGraphDataLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        String[] messageParts = StringUtils.split3(message.body);
+        var messageParts = StringUtils.split3(message.body);
 
         if (messageParts.length < 2) {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        String[] dashIdAndDeviceId = split2Device(messageParts[0]);
-        int dashId = Integer.parseInt(dashIdAndDeviceId[0]);
-        long widgetId = Long.parseLong(messageParts[1]);
-        int streamIndex = -1;
+        var dashIdAndDeviceId = split2Device(messageParts[0]);
+        var dashId = Integer.parseInt(dashIdAndDeviceId[0]);
+        var widgetId = Long.parseLong(messageParts[1]);
+        var streamIndex = -1;
         if (message.body.length() == 3) {
             streamIndex = Integer.parseInt(messageParts[2]);
         }
-        int targetId = -1;
+        var targetId = -1;
         if (dashIdAndDeviceId.length == 2) {
             targetId = Integer.parseInt(dashIdAndDeviceId[1]);
         }
 
-        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
+        var dash = user.profile.getDashByIdOrThrow(dashId);
 
-        Widget widget = dash.getWidgetById(widgetId);
+        var widget = dash.getWidgetById(widgetId);
         if (widget == null) {
             widget = dash.getWidgetByIdInDeviceTilesOrThrow(widgetId);
         }
-        EnhancedHistoryGraph enhancedHistoryGraph = (EnhancedHistoryGraph) widget;
+        var enhancedHistoryGraph = (EnhancedHistoryGraph) widget;
 
         if (streamIndex == -1 || streamIndex > enhancedHistoryGraph.dataStreams.length - 1) {
             delete(ctx.channel(), message.id, user, dash, targetId, enhancedHistoryGraph.dataStreams);
@@ -78,10 +75,10 @@ public class DeleteEnhancedGraphDataLogic {
         blockingIOProcessor.executeHistory(() -> {
             try {
                 for (GraphDataStream graphDataStream : dataStreams) {
-                    Target target = dash.getTarget(graphDataStream.getTargetId(targetId));
-                    DataStream dataStream = graphDataStream.dataStream;
+                    var target = dash.getTarget(graphDataStream.getTargetId(targetId));
+                    var dataStream = graphDataStream.dataStream;
                     if (target != null && dataStream != null && dataStream.pinType != null) {
-                        int deviceId = target.getDeviceId();
+                        var deviceId = target.getDeviceId();
                         reportingDao.delete(user, dash.id, deviceId, dataStream.pinType, dataStream.pin);
                     }
                 }

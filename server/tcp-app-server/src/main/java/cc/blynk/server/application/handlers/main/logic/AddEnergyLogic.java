@@ -2,7 +2,6 @@ package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.DBManager;
@@ -64,19 +63,19 @@ public class AddEnergyLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
-        String[] bodyParts = split2(message.body);
-        User user = state.user;
+        var splitBody = split2(message.body);
+        var user = state.user;
 
-        int energyAmountToAdd = Integer.parseInt(bodyParts[0]);
+        var energyAmountToAdd = Integer.parseInt(splitBody[0]);
         ResponseMessage response;
-        if (bodyParts.length == 2 && isValidTransactionId(bodyParts[1])) {
-            insertPurchase(user.email, energyAmountToAdd, bodyParts[1]);
+        if (splitBody.length == 2 && isValidTransactionId(splitBody[1])) {
+            insertPurchase(user.email, energyAmountToAdd, splitBody[1]);
             user.addEnergy(energyAmountToAdd);
             response = ok(message.id);
         } else {
             if (!wasErrorPrinted) {
                 log.warn("Purchase {} with invalid transaction id '{}'. {} ({}).",
-                        bodyParts[0], bodyParts[1], user.email, state.version);
+                        splitBody[0], splitBody[1], user.email, state.version);
                 wasErrorPrinted = true;
             }
             response = notAllowed(message.id);

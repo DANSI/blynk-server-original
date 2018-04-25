@@ -3,8 +3,6 @@ package cc.blynk.server.application.handlers.main.logic.dashboard;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
@@ -45,7 +43,7 @@ public class CreateDashLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
-        boolean generateTokensForDevices = true;
+        var generateTokensForDevices = true;
         final String dashString;
         if (message.body.startsWith("no_token")) {
             generateTokensForDevices = false;
@@ -63,14 +61,14 @@ public class CreateDashLogic {
         }
 
         log.debug("Trying to parse user newDash : {}", dashString);
-        DashBoard newDash = JsonParser.parseDashboard(dashString, message.id);
+        var newDash = JsonParser.parseDashboard(dashString, message.id);
 
-        User user = state.user;
+        var user = state.user;
         if (user.profile.dashBoards.length >= dashMaxLimit) {
             throw new QuotaLimitException("Dashboards limit reached.", message.id);
         }
 
-        for (DashBoard dashBoard : user.profile.dashBoards) {
+        for (var dashBoard : user.profile.dashBoards) {
             if (dashBoard.id == newDash.id) {
                 throw new NotAllowedException("Dashboard already exists.", message.id);
             }
@@ -94,7 +92,7 @@ public class CreateDashLogic {
         if (newDash.devices == null) {
             newDash.devices = EmptyArraysUtil.EMPTY_DEVICES;
         } else {
-            for (Device device : newDash.devices) {
+            for (var device : newDash.devices) {
                 //this case only possible for clone,
                 device.erase();
                 if (generateTokensForDevices) {

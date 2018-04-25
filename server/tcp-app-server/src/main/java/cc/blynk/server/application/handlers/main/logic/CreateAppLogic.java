@@ -2,7 +2,6 @@ package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.model.auth.App;
-import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
@@ -33,7 +32,7 @@ public class CreateAppLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
-        String appString = message.body;
+        var appString = message.body;
 
         if (appString == null || appString.isEmpty()) {
             throw new IllegalCommandException("Income app message is empty.");
@@ -43,7 +42,7 @@ public class CreateAppLogic {
             throw new NotAllowedException("App is larger then limit.", message.id);
         }
 
-        App newApp = JsonParser.parseApp(appString, message.id);
+        var newApp = JsonParser.parseApp(appString, message.id);
 
         newApp.id = AppNameUtil.BLYNK.toLowerCase() + StringUtils.randomString(8);
 
@@ -53,7 +52,7 @@ public class CreateAppLogic {
 
         log.debug("Creating new app {}.", newApp);
 
-        User user = state.user;
+        var user = state.user;
 
         if (user.profile.apps.length > 25) {
             throw new NotAllowedException("App limit is reached.", message.id);

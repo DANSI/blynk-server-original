@@ -25,11 +25,10 @@ public class MQTTHardwareServer extends BaseServer {
         super(holder.props.getProperty("listen.address"),
                 holder.props.getIntProperty("hardware.mqtt.port"), holder.transportTypeHolder);
 
-        int hardTimeoutSecs = holder.limits.hardwareIdleTimeout;
-        MqttHardwareLoginHandler mqttHardwareLoginHandler = new MqttHardwareLoginHandler(holder);
-        AlreadyLoggedHandler alreadyLoggedHandler = new AlreadyLoggedHandler();
-        HardwareChannelStateHandler hardwareChannelStateHandler =
-                new HardwareChannelStateHandler(holder);
+        var hardTimeoutSecs = holder.limits.hardwareIdleTimeout;
+        var mqttHardwareLoginHandler = new MqttHardwareLoginHandler(holder);
+        var alreadyLoggedHandler = new AlreadyLoggedHandler();
+        var hardwareChannelStateHandler = new HardwareChannelStateHandler(holder);
 
         channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override

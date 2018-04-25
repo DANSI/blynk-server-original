@@ -6,7 +6,6 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.App;
-import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.workers.timer.TimerWorker;
@@ -14,7 +13,6 @@ import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 
@@ -36,19 +34,19 @@ public final class DeleteAppLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
-        String id = message.body;
+        var id = message.body;
 
-        User user = state.user;
+        var user = state.user;
 
-        int existingAppIndex = user.profile.getAppIndexById(id);
+        var existingAppIndex = user.profile.getAppIndexById(id);
 
         if (existingAppIndex == -1) {
             throw new NotAllowedException("App with passed is not exists.", message.id);
         }
 
-        int[] projectIds = user.profile.apps[existingAppIndex].projectIds;
+        var projectIds = user.profile.apps[existingAppIndex].projectIds;
 
-        List<DashBoard> result = new ArrayList<>();
+        var result = new ArrayList<DashBoard>();
         for (DashBoard dash : user.profile.dashBoards) {
             if (ArrayUtil.contains(projectIds, dash.id)) {
                 timerWorker.deleteTimers(state.userKey, dash);
@@ -59,7 +57,7 @@ public final class DeleteAppLogic {
             }
         }
 
-        user.profile.dashBoards = result.toArray(new DashBoard[result.size()]);
+        user.profile.dashBoards = result.toArray(new DashBoard[0]);
         user.profile.apps = ArrayUtil.remove(user.profile.apps, existingAppIndex, App.class);
         user.lastModifiedTs = System.currentTimeMillis();
 

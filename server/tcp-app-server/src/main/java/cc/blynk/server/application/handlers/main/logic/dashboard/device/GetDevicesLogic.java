@@ -1,6 +1,5 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.device;
 
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -24,11 +23,11 @@ public final class GetDevicesLogic {
     }
 
     public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        int dashId = Integer.parseInt(message.body);
+        var dashId = Integer.parseInt(message.body);
 
-        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
+        var dash = user.profile.getDashByIdOrThrow(dashId);
 
-        String response = JsonParser.toJson(dash.devices);
+        var response = JsonParser.toJson(dash.devices);
         if (response == null) {
             response = "[]";
         }

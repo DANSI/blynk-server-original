@@ -1,6 +1,5 @@
 package cc.blynk.utils;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,9 +17,9 @@ public final class ReflectionUtil {
      * Used to generate map of class fields where key is field value and value is field name.
      */
     public static Map<Integer, String> generateMapOfValueNameInteger(Class<?> clazz) {
-        Map<Integer, String> valuesName = new HashMap<>();
+        var valuesName = new HashMap<Integer, String>();
         try {
-            for (Field field : clazz.getFields()) {
+            for (var field : clazz.getFields()) {
                 valuesName.put((Integer) field.get(int.class), field.getName());
             }
         } catch (IllegalAccessException e) {

@@ -1,11 +1,8 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
 import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
-import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import io.netty.channel.ChannelHandlerContext;
@@ -36,7 +33,7 @@ public class SetWidgetPropertyLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
-        String[] bodyParts = split3(message.body);
+        var bodyParts = split3(message.body);
 
         if (bodyParts.length != 3) {
             log.debug("SetWidgetProperty command body has wrong format. {}", message.body);
@@ -44,8 +41,8 @@ public class SetWidgetPropertyLogic {
             return;
         }
 
-        String property = bodyParts[1];
-        String propertyValue = bodyParts[2];
+        var property = bodyParts[1];
+        var propertyValue = bodyParts[2];
 
         if (property.length() == 0 || propertyValue.length() == 0) {
             log.debug("SetWidgetProperty command body has wrong format. {}", message.body);
@@ -53,13 +50,13 @@ public class SetWidgetPropertyLogic {
             return;
         }
 
-        DashBoard dash = state.dash;
+        var dash = state.dash;
 
         if (!dash.isActive) {
             return;
         }
 
-        WidgetProperty widgetProperty = WidgetProperty.getProperty(property);
+        var widgetProperty = WidgetProperty.getProperty(property);
 
         if (widgetProperty == null) {
             log.debug("Unsupported set property {}.", property);
@@ -67,11 +64,11 @@ public class SetWidgetPropertyLogic {
             return;
         }
 
-        int deviceId = state.device.id;
-        byte pin = Byte.parseByte(bodyParts[0]);
+        var deviceId = state.device.id;
+        var pin = Byte.parseByte(bodyParts[0]);
 
         //for now supporting only virtual pins
-        Widget widget = dash.findWidgetByPin(deviceId, pin, PinType.VIRTUAL);
+        var widget = dash.findWidgetByPin(deviceId, pin, PinType.VIRTUAL);
 
         if (widget != null) {
             try {
@@ -87,7 +84,7 @@ public class SetWidgetPropertyLogic {
             dash.putPinPropertyStorageValue(deviceId, PinType.VIRTUAL, pin, widgetProperty, propertyValue);
         }
 
-        Session session = sessionDao.userSession.get(state.userKey);
+        var session = sessionDao.userSession.get(state.userKey);
         session.sendToApps(SET_WIDGET_PROPERTY, message.id, dash.id, deviceId, message.body);
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

@@ -4,8 +4,6 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.processors.BaseProcessorHandler;
 import cc.blynk.server.core.processors.WebhookProcessor;
@@ -54,17 +52,17 @@ public class HardwareResendFromBTLogic extends BaseProcessorHandler {
             return;
         }
 
-        String[] split = split2(message.body);
+        var split = split2(message.body);
 
         //here we have "1-200000"
-        String[] dashIdAndTargetIdString = split2Device(split[0]);
-        int dashId = Integer.parseInt(dashIdAndTargetIdString[0]);
-        int deviceId = Integer.parseInt(dashIdAndTargetIdString[1]);
+        var dashIdAndTargetIdString = split2Device(split[0]);
+        var dashId = Integer.parseInt(dashIdAndTargetIdString[0]);
+        var deviceId = Integer.parseInt(dashIdAndTargetIdString[1]);
 
-        DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
+        var dash = state.user.profile.getDashByIdOrThrow(dashId);
 
         if (isWriteOperation(split[1])) {
-            String[] splitBody = split3(split[1]);
+            var splitBody = split3(split[1]);
 
             if (splitBody.length < 3 || splitBody[0].length() == 0 || splitBody[2].length() == 0) {
                 log.debug("Write command is wrong.");
@@ -72,15 +70,15 @@ public class HardwareResendFromBTLogic extends BaseProcessorHandler {
                 return;
             }
 
-            PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
-            byte pin = Byte.parseByte(splitBody[1]);
-            String value = splitBody[2];
-            long now = System.currentTimeMillis();
+            var pinType = PinType.getPinType(splitBody[0].charAt(0));
+            var pin = Byte.parseByte(splitBody[1]);
+            var value = splitBody[2];
+            var now = System.currentTimeMillis();
 
             reportingDao.process(state.user, dash, deviceId, pin, pinType, value, now);
             dash.update(deviceId, pin, pinType, value, now);
 
-            Session session = sessionDao.userSession.get(state.userKey);
+            var session = sessionDao.userSession.get(state.userKey);
             processEventorAndWebhook(state.user, dash, deviceId, session, pin, pinType, value, now);
         }
     }

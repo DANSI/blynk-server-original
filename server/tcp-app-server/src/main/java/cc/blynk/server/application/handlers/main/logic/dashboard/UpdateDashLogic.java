@@ -1,8 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard;
 
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
-import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
@@ -34,7 +32,7 @@ public class UpdateDashLogic {
 
     //todo should accept only dash info and ignore widgets. should be fixed after migration
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
-        String dashString = message.body;
+        var dashString = message.body;
 
         if (dashString == null || dashString.isEmpty()) {
             throw new IllegalCommandException("Income create dash message is empty.");
@@ -45,7 +43,7 @@ public class UpdateDashLogic {
         }
 
         log.debug("Trying to parse user dash : {}", dashString);
-        DashBoard updatedDash = JsonParser.parseDashboard(dashString, message.id);
+        var updatedDash = JsonParser.parseDashboard(dashString, message.id);
 
         if (updatedDash == null) {
             throw new IllegalCommandException("Project parsing error.");
@@ -53,9 +51,9 @@ public class UpdateDashLogic {
 
         log.debug("Saving dashboard.");
 
-        User user = state.user;
+        var user = state.user;
 
-        DashBoard existingDash = user.profile.getDashByIdOrThrow(updatedDash.id);
+        var existingDash = user.profile.getDashByIdOrThrow(updatedDash.id);
 
         timerWorker.deleteTimers(state.userKey, existingDash);
         updatedDash.addTimers(timerWorker, state.userKey);

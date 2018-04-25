@@ -1,7 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.widgets.AppSyncWidget;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import io.netty.channel.ChannelHandlerContext;
@@ -24,11 +23,11 @@ public final class AppSyncLogic {
     }
 
     public static void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
-        String[] dashIdAndTargetIdString = split2Device(message.body);
-        int dashId = Integer.parseInt(dashIdAndTargetIdString[0]);
-        int targetId = AppSyncWidget.ANY_TARGET;
+        var dashIdAndTargetIdString = split2Device(message.body);
+        var dashId = Integer.parseInt(dashIdAndTargetIdString[0]);
+        var targetId = AppSyncWidget.ANY_TARGET;
 
-        DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
+        var dash = state.user.profile.getDashByIdOrThrow(dashId);
 
         if (dashIdAndTargetIdString.length == 2) {
             targetId = Integer.parseInt(dashIdAndTargetIdString[1]);

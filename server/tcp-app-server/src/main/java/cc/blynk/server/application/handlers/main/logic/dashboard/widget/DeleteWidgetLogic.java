@@ -2,7 +2,6 @@ package cc.blynk.server.application.handlers.main.logic.dashboard.widget;
 
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.dao.UserKey;
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
@@ -39,17 +38,17 @@ public class DeleteWidgetLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
-        String[] split = split2(message.body);
+        var split = split2(message.body);
 
         if (split.length < 2) {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        int dashId = Integer.parseInt(split[0]);
-        long widgetId = Long.parseLong(split[1]);
+        var dashId = Integer.parseInt(split[0]);
+        var widgetId = Long.parseLong(split[1]);
 
-        User user = state.user;
-        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
+        var user = state.user;
+        var dash = user.profile.getDashByIdOrThrow(dashId);
 
         log.debug("Removing widget with id {} for dashId {}.", widgetId, dashId);
 

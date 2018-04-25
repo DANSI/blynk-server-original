@@ -4,9 +4,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.TextHolder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.ProvisionType;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.DBManager;
@@ -15,7 +13,6 @@ import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.mail.QrHolder;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.TokenGeneratorUtil;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import net.glxn.qrgen.core.image.ImageType;
 import net.glxn.qrgen.javase.QRCode;
@@ -51,13 +48,13 @@ public class MailQRsLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        String[] split = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
+        var split = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
-        int dashId = Integer.parseInt(split[0]);
-        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
+        var dashId = Integer.parseInt(split[0]);
+        var dash = user.profile.getDashByIdOrThrow(dashId);
 
-        String appId = split[1];
-        App app = user.profile.getAppById(appId);
+        var appId = split[1];
+        var app = user.profile.getAppById(appId);
 
         if (app == null) {
             log.debug("App with passed id not found.");
@@ -78,21 +75,21 @@ public class MailQRsLogic {
     private void makePublishPreviewEmail(ChannelHandlerContext ctx, DashBoard dash,
                                          ProvisionType provisionType, String to,
                                          String publishAppName, String publishAppId, int msgId) {
-        String subj = publishAppName + " - App details";
-        Channel channel = ctx.channel();
+        var subj = publishAppName + " - App details";
+        var channel = ctx.channel();
         if (provisionType == ProvisionType.DYNAMIC) {
             blockingIOProcessor.execute(() -> {
                 try {
-                    String newToken = TokenGeneratorUtil.generateNewToken();
-                    QrHolder qrHolder = new QrHolder(dash.id, -1, null, newToken,
+                    var newToken = TokenGeneratorUtil.generateNewToken();
+                    var qrHolder = new QrHolder(dash.id, -1, null, newToken,
                                 QRCode.from(newToken).to(ImageType.JPG).stream().toByteArray());
-                    FlashedToken flashedToken = new FlashedToken(to, newToken, publishAppId, dash.id, -1);
+                    var flashedToken = new FlashedToken(to, newToken, publishAppId, dash.id, -1);
 
                     if (!dbManager.insertFlashedTokens(flashedToken)) {
                         throw new Exception("App Publishing Preview requires enabled DB.");
                     }
 
-                    String finalBody = textHolder.dynamicMailBody
+                    var finalBody = textHolder.dynamicMailBody
                             .replace("{project_name}", dash.name);
 
                     mailWrapper.sendWithAttachment(to, subj, finalBody, qrHolder);
@@ -105,13 +102,13 @@ public class MailQRsLogic {
         } else {
             blockingIOProcessor.execute(() -> {
                 try {
-                    QrHolder[] qrHolders = makeQRs(to, publishAppId, dash);
-                    StringBuilder sb = new StringBuilder();
+                    var qrHolders = makeQRs(to, publishAppId, dash);
+                    var sb = new StringBuilder();
                     for (QrHolder qrHolder : qrHolders) {
                         qrHolder.attach(sb);
                     }
 
-                    String finalBody = textHolder.staticMailBody
+                    var finalBody = textHolder.staticMailBody
                             .replace("{project_name}", dash.name)
                             .replace("{device_section}", sb.toString());
 
@@ -127,13 +124,13 @@ public class MailQRsLogic {
 
 
     private QrHolder[] makeQRs(String username, String appId, DashBoard dash) throws Exception {
-        int tokensCount = dash.devices.length;
-        QrHolder[] qrHolders = new QrHolder[tokensCount];
-        FlashedToken[] flashedTokens = new FlashedToken[tokensCount];
+        var tokensCount = dash.devices.length;
+        var qrHolders = new QrHolder[tokensCount];
+        var flashedTokens = new FlashedToken[tokensCount];
 
-        int i = 0;
-        for (Device device : dash.devices) {
-            String newToken = TokenGeneratorUtil.generateNewToken();
+        var i = 0;
+        for (var device : dash.devices) {
+            var newToken = TokenGeneratorUtil.generateNewToken();
             qrHolders[i] = new QrHolder(dash.id, device.id, device.name, newToken,
                     QRCode.from(newToken).to(ImageType.JPG).stream().toByteArray());
             flashedTokens[i++] = new FlashedToken(username, newToken, appId, dash.id, device.id);

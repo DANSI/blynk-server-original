@@ -1,6 +1,5 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.tags;
 
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -28,22 +27,22 @@ public final class CreateTagLogic {
     }
 
     public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        String[] split = split2(message.body);
+        var split = split2(message.body);
 
         if (split.length < 2) {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        int dashId = Integer.parseInt(split[0]);
-        String deviceString = split[1];
+        var dashId = Integer.parseInt(split[0]);
+        var deviceString = split[1];
 
         if (deviceString == null || deviceString.isEmpty()) {
             throw new IllegalCommandException("Income tag message is empty.");
         }
 
-        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
+        var dash = user.profile.getDashByIdOrThrow(dashId);
 
-        Tag newTag = JsonParser.parseTag(deviceString, message.id);
+        var newTag = JsonParser.parseTag(deviceString, message.id);
 
         log.debug("Creating new tag {}.", newTag);
 

@@ -1,6 +1,5 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.processors.NotificationBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -45,8 +44,8 @@ public class TwitLogic extends NotificationBase {
             return;
         }
 
-        DashBoard dash = state.dash;
-        Twitter twitterWidget = dash.getWidgetByType(Twitter.class);
+        var dash = state.dash;
+        var twitterWidget = dash.getWidgetByType(Twitter.class);
 
         if (twitterWidget == null || !dash.isActive
                 || twitterWidget.token == null || twitterWidget.token.isEmpty()
@@ -64,9 +63,9 @@ public class TwitLogic extends NotificationBase {
 
     private void twit(Channel channel, String email, String token, String secret, String body, int msgId) {
         twitterWrapper.send(token, secret, body,
-                new AsyncCompletionHandler<Response>() {
+                new AsyncCompletionHandler<>() {
                     @Override
-                    public Response onCompleted(Response response) throws Exception {
+                    public Response onCompleted(Response response) {
                         if (response.getStatusCode() == HttpResponseStatus.OK.code()) {
                             channel.writeAndFlush(ok(msgId), channel.voidPromise());
                         }

@@ -43,15 +43,15 @@ public class GetServerHandler extends SimpleChannelInboundHandler<GetServerMessa
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, GetServerMessage msg) throws Exception {
-        String[] parts = StringUtils.split2(msg.body);
+        var parts = StringUtils.split2(msg.body);
 
         if (parts.length < 2) {
             ctx.writeAndFlush(illegalCommand(msg.id), ctx.voidPromise());
             return;
         }
 
-        String email = parts[0] == null ? null : parts[0].toLowerCase();
-        String appName = parts[1];
+        var email = parts[0] == null ? null : parts[0].toLowerCase();
+        var appName = parts[1];
 
         if (appName == null || appName.isEmpty() || appName.length() > 100) {
             ctx.writeAndFlush(illegalCommand(msg.id), ctx.voidPromise());
@@ -70,7 +70,7 @@ public class GetServerHandler extends SimpleChannelInboundHandler<GetServerMessa
             log.debug("Searching user {}-{} on another server.", email, appName);
             //user is on other server
             blockingIOProcessor.executeDB(() -> {
-                String userServer = dbManager.getUserServerIp(email, appName);
+                var userServer = dbManager.getUserServerIp(email, appName);
                 if (userServer == null || userServer.isEmpty()) {
                     log.info("Could not find user ip for {}-{}. Returning current ip.", email, appName);
                     userServer = currentIp;

@@ -1,6 +1,5 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.widgets.notifications.SMS;
 import cc.blynk.server.core.processors.NotificationBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -44,8 +43,8 @@ public class SmsLogic extends NotificationBase {
             return;
         }
 
-        DashBoard dash = state.dash;
-        SMS smsWidget = dash.getWidgetByType(SMS.class);
+        var dash = state.dash;
+        var smsWidget = dash.getWidgetByType(SMS.class);
 
         if (smsWidget == null || !dash.isActive
                 || smsWidget.to == null || smsWidget.to.isEmpty()) {

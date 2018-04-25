@@ -49,14 +49,14 @@ public abstract class BaseServer {
     private void buildServerAndRun(EventLoopGroup bossGroup, EventLoopGroup workerGroup,
                                    Class<? extends ServerChannel> channelClass) throws Exception {
 
-        ServerBootstrap b = new ServerBootstrap();
+        var b = new ServerBootstrap();
         try {
             b.group(bossGroup, workerGroup)
                     .channel(channelClass)
                     .childOption(ChannelOption.SO_KEEPALIVE, true)
                     .childHandler(getChannelInitializer());
 
-            InetSocketAddress listenTo = (listenAddress == null || listenAddress.isEmpty())
+            var listenTo = (listenAddress == null || listenAddress.isEmpty())
                     ? new InetSocketAddress(port)
                     : new InetSocketAddress(listenAddress, port);
             this.cf = b.bind(listenTo).sync();
