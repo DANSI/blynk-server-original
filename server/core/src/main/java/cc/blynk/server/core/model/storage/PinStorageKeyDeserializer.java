@@ -2,6 +2,7 @@ package cc.blynk.server.core.model.storage;
 
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
+import cc.blynk.utils.StringUtils;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.KeyDeserializer;
 
@@ -15,7 +16,7 @@ public class PinStorageKeyDeserializer extends KeyDeserializer {
     @Override
     public PinStorageKey deserializeKey(String key, DeserializationContext ctx) {
         //parsing "123-v24"
-        var split = key.split("-");
+        var split = StringUtils.split3(StringUtils.DEVICE_SEPARATOR, key);
 
         var deviceId = Integer.parseInt(split[0]);
         var pinType = PinType.getPinType(split[1].charAt(0));
