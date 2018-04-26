@@ -1,5 +1,6 @@
-package cc.blynk.server.core.model;
+package cc.blynk.server.core.model.storage;
 
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.StringUtils;

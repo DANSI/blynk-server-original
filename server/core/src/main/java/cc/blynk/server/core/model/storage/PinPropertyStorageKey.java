@@ -1,4 +1,4 @@
-package cc.blynk.server.core.model;
+package cc.blynk.server.core.model.storage;
 
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;

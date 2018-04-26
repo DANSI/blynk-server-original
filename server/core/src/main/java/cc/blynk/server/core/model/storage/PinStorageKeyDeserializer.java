@@ -1,11 +1,9 @@
-package cc.blynk.server.core.model;
+package cc.blynk.server.core.model.storage;
 
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.KeyDeserializer;
-
-import java.io.IOException;
 
 /**
  * The Blynk Project.
@@ -15,12 +13,12 @@ import java.io.IOException;
 public class PinStorageKeyDeserializer extends KeyDeserializer {
 
     @Override
-    public PinStorageKey deserializeKey(String key, DeserializationContext ctx) throws IOException {
+    public PinStorageKey deserializeKey(String key, DeserializationContext ctx) {
         //parsing "123-v24"
-        String[] split = key.split("-");
+        var split = key.split("-");
 
-        int deviceId = Integer.parseInt(split[0]);
-        PinType pinType = PinType.getPinType(split[1].charAt(0));
+        var deviceId = Integer.parseInt(split[0]);
+        var pinType = PinType.getPinType(split[1].charAt(0));
         byte pin = 0;
         try {
             pin = Byte.parseByte(split[1].substring(1, split[1].length()));
@@ -29,7 +27,7 @@ public class PinStorageKeyDeserializer extends KeyDeserializer {
             return new PinStorageKey(deviceId, pinType, pin);
         }
         if (split.length == 3) {
-            WidgetProperty widgetProperty = WidgetProperty.getProperty(split[2]);
+            var widgetProperty = WidgetProperty.getProperty(split[2]);
             if (widgetProperty == null) {
                 widgetProperty = WidgetProperty.LABEL;
             }

@@ -1,6 +1,6 @@
 package cc.blynk.server.core.model.serialization;
 
-import cc.blynk.server.core.model.PinStorageKey;
+import cc.blynk.server.core.model.storage.PinStorageKey;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.Map;

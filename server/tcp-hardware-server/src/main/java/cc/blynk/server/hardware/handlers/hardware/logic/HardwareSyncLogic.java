@@ -2,9 +2,9 @@ package cc.blynk.server.hardware.handlers.hardware.logic;
 
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
-import cc.blynk.server.core.model.PinPropertyStorageKey;
-import cc.blynk.server.core.model.PinStorageKey;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.storage.PinPropertyStorageKey;
+import cc.blynk.server.core.model.storage.PinStorageKey;
 import cc.blynk.server.core.model.widgets.HardwareSyncWidget;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;

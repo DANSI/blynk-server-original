@@ -4,6 +4,8 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.storage.PinPropertyStorageKey;
+import cc.blynk.server.core.model.storage.PinStorageKey;
 import org.junit.Test;
 
 import java.util.HashMap;
