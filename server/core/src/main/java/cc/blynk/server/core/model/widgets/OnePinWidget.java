@@ -46,7 +46,7 @@ public abstract class OnePinWidget extends Widget implements AppSyncWidget, Hard
     public void sendAppSync(Channel appChannel, int dashId, int targetId) {
         //do not send SYNC message for widgets assigned to device selector
         //as it will be duplicated later.
-        if (this.deviceId >= DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
+        if (isAssignedToDeviceSelector()) {
             return;
         }
         if (targetId == ANY_TARGET || this.deviceId == targetId) {
@@ -56,6 +56,10 @@ public abstract class OnePinWidget extends Widget implements AppSyncWidget, Hard
                 appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body));
             }
         }
+    }
+
+    private boolean isAssignedToDeviceSelector() {
+        return this.deviceId >= DeviceSelector.DEVICE_SELECTOR_STARTING_ID;
     }
 
     public boolean isValid() {
