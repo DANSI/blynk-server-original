@@ -33,7 +33,8 @@ public class PinStorageValueDeserializer extends JsonDeserializer {
                 JsonNode multiValueNode = p.getCodec().readTree(p);
                 var type = multiValueNode.get("type");
                 if (type != null) {
-                    var multiPinStorageValue = new MultiPinStorageValue(MultiPinStorageValueType.valueOf(type.textValue()));
+                    var multiPinStorageValue =
+                            new MultiPinStorageValue(MultiPinStorageValueType.valueOf(type.textValue()));
 
                     var values = multiValueNode.get("values");
                     if (values != null) {
