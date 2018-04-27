@@ -28,7 +28,6 @@ import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.model.widgets.ui.tiles.templates.ButtonTileTemplate;
 import cc.blynk.server.core.model.widgets.ui.tiles.templates.PageTileTemplate;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
-import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
@@ -1706,7 +1705,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.verifyResult(ok(2));
 
         clientPair.hardwareClient.send("hardware vw 111 1");
-        clientPair.appClient.verifyResult(new HardwareMessage(1, b("1-0 vw 111 1")));
+        clientPair.appClient.verifyResult(hardware(1, "1-0 vw 111 1"));
 
         clientPair.appClient.send("loadProfileGzipped 1");
         DashBoard dashBoard = clientPair.appClient.getDash(4);
@@ -1732,7 +1731,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.verifyResult(ok(1));
 
         TileTemplate tileTemplate = new PageTileTemplate(1,
-                null, null, "name", "name", "iconName", "ESP8266", null,
+                null, new int[] {0}, "name", "name", "iconName", "ESP8266", null,
                 false, null, null, null, 0, 0, FontSize.LARGE, false);
 
         clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
@@ -1740,7 +1739,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
 
         //send value before we have tile for that pin
         clientPair.hardwareClient.send("hardware vw 5 111");
-        clientPair.appClient.verifyResult(new HardwareMessage(1, b("1-0 vw 5 111")));
+        clientPair.appClient.verifyResult(hardware(1, "1-0 vw 5 111"));
 
         DataStream dataStream = new DataStream((byte) 5, PinType.VIRTUAL);
 
@@ -1750,11 +1749,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         valueDisplay.pin = dataStream.pin;
         valueDisplay.pinType = dataStream.pinType;
 
-        tileTemplate = new PageTileTemplate(1,
-                new Widget[]{valueDisplay}, new int[]{0}, "name", "name", "iconName", "ESP8266", dataStream,
-                false, null, null, null, 0, 0, FontSize.LARGE, false);
-
-        clientPair.appClient.updateTemplate(1, widgetId, tileTemplate);
+        clientPair.appClient.createWidget(1, deviceTiles.id, 1, valueDisplay);
         clientPair.appClient.verifyResult(ok(3));
 
         clientPair.appClient.reset();
@@ -1776,7 +1771,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 13 60 143 158")));
 
         clientPair.hardwareClient.send("hardware vw 5 112");
-        clientPair.appClient.verifyResult(new HardwareMessage(2, b("1-0 vw 5 112")));
+        clientPair.appClient.verifyResult(hardware(2, "1-0 vw 5 112"));
 
 
         clientPair.appClient.reset();
@@ -1814,7 +1809,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.verifyResult(ok(1));
 
         TileTemplate tileTemplate = new PageTileTemplate(1,
-                null, null, "name", "name", "iconName", "ESP8266", null,
+                null, new int[] {0}, "name", "name", "iconName", "ESP8266", null,
                 false, null, null, null, 0, 0, FontSize.LARGE, false);
 
         clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
@@ -1828,16 +1823,12 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         valueDisplay.pin = dataStream.pin;
         valueDisplay.pinType = dataStream.pinType;
 
-        tileTemplate = new PageTileTemplate(1,
-                new Widget[]{valueDisplay}, new int[]{0}, "name", "name", "iconName", "ESP8266", dataStream,
-                false, null, null, null, 0, 0, FontSize.LARGE, false);
-
-        clientPair.appClient.updateTemplate(1, widgetId, tileTemplate);
+        clientPair.appClient.createWidget(1, deviceTiles.id, 1, valueDisplay);
         clientPair.appClient.verifyResult(ok(3));
 
         //send value after we have tile for that pin
         clientPair.hardwareClient.send("hardware vw 5 111");
-        clientPair.appClient.verifyResult(new HardwareMessage(1, b("1-0 vw 5 111")));
+        clientPair.appClient.verifyResult(hardware(1, "1-0 vw 5 111"));
 
         clientPair.appClient.reset();
         clientPair.appClient.sync(1, 0);
@@ -1859,7 +1850,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 5 111")));
 
         clientPair.hardwareClient.send("hardware vw 5 112");
-        clientPair.appClient.verifyResult(new HardwareMessage(2, b("1-0 vw 5 112")));
+        clientPair.appClient.verifyResult(hardware(2, "1-0 vw 5 112"));
 
 
         clientPair.appClient.reset();
