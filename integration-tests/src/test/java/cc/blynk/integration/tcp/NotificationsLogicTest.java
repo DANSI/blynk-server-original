@@ -529,6 +529,18 @@ public class NotificationsLogicTest extends IntegrationBase {
     }
 
     @Test
+    public void testPushHandlerWithPlaceHolder() throws Exception {
+        clientPair.hardwareClient.send("push Yo {DEVICE_NAME}!");
+
+        ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
+        verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
+        AndroidGCMMessage message = objectArgumentCaptor.getValue();
+
+        String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Yo My Device!", 1).toJson();
+        assertEquals(expectedJson, message.toJson());
+    }
+
+    @Test
     public void testOfflineMessageIsSentToBothApps()  throws Exception  {
         TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
         appClient.start();
