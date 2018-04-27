@@ -261,7 +261,7 @@ public class HistoryGraphTest extends IntegrationBase {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -327,7 +327,7 @@ Device device = clientPair.appClient.getDevice();
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -393,7 +393,7 @@ Device device = clientPair.appClient.getDevice();
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -459,7 +459,7 @@ Device device = clientPair.appClient.getDevice();
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -525,7 +525,7 @@ Device device = clientPair.appClient.getDevice();
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -706,10 +706,11 @@ Device device = clientPair.appClient.getDevice();
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphPeriod.DAY.granularityType));
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphPeriod.ONE_HOUR.granularityType));
 
-        FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
-        FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
+        for (int point = 0; point < GraphPeriod.ONE_HOUR.numberOfPoints + 1; point++) {
+            FileUtils.write(pinReportingDataPath, (double) point, 1111111 + point);
+        }
 
         EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
         enhancedHistoryGraph.id = 432;
@@ -725,7 +726,7 @@ Device device = clientPair.appClient.getDevice();
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.DAY);
+        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.ONE_HOUR);
 
         BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
 
@@ -734,11 +735,11 @@ Device device = clientPair.appClient.getDevice();
         ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
 
         assertEquals(1, bb.getInt());
-        assertEquals(2, bb.getInt());
-        assertEquals(1.11D, bb.getDouble(), 0.1);
-        assertEquals(1111111, bb.getLong());
-        assertEquals(1.22D, bb.getDouble(), 0.1);
-        assertEquals(2222222, bb.getLong());
+        assertEquals(60, bb.getInt());
+        for (int point = 1; point < GraphPeriod.ONE_HOUR.numberOfPoints + 1; point++) {
+            assertEquals(point, bb.getDouble(), 0.1);
+            assertEquals(1111111 + point , bb.getLong());
+        }
     }
 
     @Test
