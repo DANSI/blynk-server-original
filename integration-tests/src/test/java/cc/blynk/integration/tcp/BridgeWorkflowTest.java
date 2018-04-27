@@ -12,7 +12,6 @@ import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
-import cc.blynk.utils.TokenGeneratorUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,7 +35,6 @@ public class BridgeWorkflowTest extends IntegrationBase {
     private BaseServer appServer;
     private BaseServer hardwareServer;
     private ClientPair clientPair;
-    private String token = TokenGeneratorUtil.generateNewToken();
 
     @Before
     public void init() throws Exception {
