@@ -5,6 +5,8 @@ import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.storage.PinStorageValue;
+import cc.blynk.server.core.model.storage.SinglePinStorageValue;
 import cc.blynk.server.core.model.widgets.controls.Button;
 import cc.blynk.server.core.model.widgets.controls.FieldInput;
 import cc.blynk.server.core.model.widgets.controls.OneAxisJoystick;
@@ -207,6 +209,10 @@ public abstract class Widget implements CopyObject<Widget> {
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
         }
+    }
+
+    public PinStorageValue getPinStorageValue() {
+        return new SinglePinStorageValue();
     }
 
     public void setProperty(WidgetProperty property, String propertyValue) {

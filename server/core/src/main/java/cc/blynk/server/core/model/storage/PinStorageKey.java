@@ -2,8 +2,11 @@ package cc.blynk.server.core.model.storage;
 
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.MultiPinWidget;
+import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.StringUtils;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 import static cc.blynk.server.core.model.widgets.AppSyncWidget.SYNC_DEFAULT_MESSAGE_ID;
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
@@ -27,6 +30,22 @@ public class PinStorageKey {
         this.deviceId = deviceId;
         this.pinTypeChar = pinType.pintTypeChar;
         this.pin = pin;
+    }
+
+    public boolean isSamePin(OnePinWidget onePinWidget) {
+        return this.pin == onePinWidget.pin && this.pinTypeChar == onePinWidget.pinType.pintTypeChar;
+    }
+
+    public boolean isSamePin(MultiPinWidget multiPinWidget) {
+        if (multiPinWidget.dataStreams == null) {
+            return false;
+        }
+        for (var dataStream : multiPinWidget.dataStreams) {
+           if (dataStream.isSame(this.pin, PinType.getPinType(this.pinTypeChar))) {
+               return true;
+           }
+        }
+        return false;
     }
 
     public String makeHardwareBody(String value) {
@@ -71,6 +90,7 @@ public class PinStorageKey {
     }
 
     @Override
+    @JsonValue
     public String toString() {
         return "" + deviceId + StringUtils.DEVICE_SEPARATOR + pinTypeChar + pin;
     }

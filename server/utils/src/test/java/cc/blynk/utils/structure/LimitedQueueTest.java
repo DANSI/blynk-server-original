@@ -13,7 +13,7 @@ public class LimitedQueueTest {
 
     @Test
     public void addLimitTest() {
-        TableLimitedQueue<String> list = new TableLimitedQueue<>(2);
+        BaseLimitedQueue<String> list = new BaseLimitedQueue<>(2);
         list.add("1");
         list.add("2");
         list.add("3");
@@ -22,8 +22,8 @@ public class LimitedQueueTest {
         assertEquals("3", list.poll());
     }
 
-    private static TableLimitedQueue<String> makeList() {
-        return new TableLimitedQueue<String>(3) {{
+    private static BaseLimitedQueue<String> makeList() {
+        return new BaseLimitedQueue<>(3) {{
             add("1");
             add("2");
             add("3");

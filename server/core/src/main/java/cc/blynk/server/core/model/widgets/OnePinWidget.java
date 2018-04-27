@@ -58,7 +58,7 @@ public abstract class OnePinWidget extends Widget implements AppSyncWidget, Hard
         }
     }
 
-    private boolean isAssignedToDeviceSelector() {
+    public boolean isAssignedToDeviceSelector() {
         return this.deviceId >= DeviceSelector.DEVICE_SELECTOR_STARTING_ID;
     }
 

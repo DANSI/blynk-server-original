@@ -2,6 +2,9 @@ package cc.blynk.server.core.model.widgets.ui.table;
 
 import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.storage.MultiPinStorageValue;
+import cc.blynk.server.core.model.storage.MultiPinStorageValueType;
+import cc.blynk.server.core.model.storage.PinStorageValue;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.utils.structure.TableLimitedQueue;
 import io.netty.channel.ChannelHandlerContext;
@@ -103,6 +106,11 @@ public class Table extends OnePinWidget {
             }
         }
         return null;
+    }
+
+    @Override
+    public PinStorageValue getPinStorageValue() {
+        return new MultiPinStorageValue(MultiPinStorageValueType.TABLE);
     }
 
     @Override

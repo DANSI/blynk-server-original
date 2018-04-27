@@ -8,6 +8,7 @@ import cc.blynk.server.core.model.auth.FacebookTokenResponse;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
+import cc.blynk.server.core.model.storage.SinglePinStorageValue;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
@@ -31,8 +32,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.StringJoiner;
 import java.util.zip.DeflaterOutputStream;
+
+import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 
 /**
  * User: ddumanskiy
@@ -291,8 +295,24 @@ public final class JsonParser {
         }
     }
 
+    public static String valueToJsonAsString(Collection<String> values) {
+        StringJoiner sj = new StringJoiner(",", "[", "]");
+        for (String value : values) {
+            sj.add(makeJsonStringValue(value));
+        }
+        return sj.toString();
+    }
 
-    public static String valueToJsonAsString(String[] values) {
+    public static String valueToJsonAsString(SinglePinStorageValue singlePinStorageValue) {
+        Collection<String> singleValueList = singlePinStorageValue.values();
+        if (singleValueList.size() == 0) {
+            return "[]";
+        }
+        String[] values = singleValueList.iterator().next().split(BODY_SEPARATOR_STRING);
+        return valueToJsonAsString(values);
+    }
+
+    private static String valueToJsonAsString(String[] values) {
         StringJoiner sj = new StringJoiner(",", "[", "]");
         for (String value : values) {
             sj.add(makeJsonStringValue(value));

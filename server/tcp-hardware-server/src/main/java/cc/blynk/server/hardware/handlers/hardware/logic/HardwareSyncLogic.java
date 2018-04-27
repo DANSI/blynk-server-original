@@ -51,8 +51,10 @@ public final class HardwareSyncLogic {
         for (var entry : dash.pinsStorage.entrySet()) {
             var key = entry.getKey();
             if (deviceId == key.deviceId && !(key instanceof PinPropertyStorageKey) && ctx.channel().isWritable()) {
-                var body = key.makeHardwareBody(entry.getValue());
-                ctx.write(makeUTF8StringMessage(HARDWARE, msgId, body), ctx.voidPromise());
+                for (String value : entry.getValue().values()) {
+                    var body = key.makeHardwareBody(value);
+                    ctx.write(makeUTF8StringMessage(HARDWARE, msgId, body), ctx.voidPromise());
+                }
             }
         }
 
@@ -78,10 +80,12 @@ public final class HardwareSyncLogic {
                 var widget = dash.findWidgetByPin(deviceId, pin, pinType);
                 if (ctx.channel().isWritable()) {
                     if (widget == null) {
-                        var value = dash.pinsStorage.get(new PinStorageKey(deviceId, pinType, pin));
-                        if (value != null) {
-                            var body = DataStream.makeHardwareBody(pinType, pin, value);
-                            ctx.write(makeUTF8StringMessage(HARDWARE, msgId, body), ctx.voidPromise());
+                        var pinStorageValue = dash.pinsStorage.get(new PinStorageKey(deviceId, pinType, pin));
+                        if (pinStorageValue != null) {
+                            for (String value : pinStorageValue.values()) {
+                                var body = DataStream.makeHardwareBody(pinType, pin, value);
+                                ctx.write(makeUTF8StringMessage(HARDWARE, msgId, body), ctx.voidPromise());
+                            }
                         }
                     } else if (widget instanceof HardwareSyncWidget) {
                         ((HardwareSyncWidget) widget).sendHardSync(ctx, msgId, deviceId);

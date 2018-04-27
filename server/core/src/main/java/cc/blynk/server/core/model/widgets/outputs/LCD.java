@@ -3,10 +3,13 @@ package cc.blynk.server.core.model.widgets.outputs;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.storage.MultiPinStorageValue;
+import cc.blynk.server.core.model.storage.MultiPinStorageValueType;
+import cc.blynk.server.core.model.storage.PinStorageValue;
 import cc.blynk.server.core.model.widgets.FrequencyWidget;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
-import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.utils.structure.LCDLimitedQueue;
 import cc.blynk.utils.structure.LimitedArrayDeque;
 import io.netty.channel.Channel;
 
@@ -33,8 +36,8 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
 
     private transient long lastRequestTS;
 
-    private static final int POOL_SIZE = Integer.parseInt(System.getProperty("lcd.strings.pool.size", "6"));
-    private transient final LimitedArrayDeque<String> lastCommands = new LimitedArrayDeque<>(POOL_SIZE);
+    //todo move to persistent LCDLimitedQueue?
+    private transient final LimitedArrayDeque<String> lastCommands = new LimitedArrayDeque<>(LCDLimitedQueue.POOL_SIZE);
 
     private static void sendSyncOnActivate(DataStream dataStream, int dashId, int deviceId, Channel appChannel) {
         if (dataStream.notEmptyAndIsValid()) {
@@ -69,7 +72,7 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
 
         //do not send SYNC message for widgets assigned to device selector
         //as it will be duplicated later.
-        if (this.deviceId >= DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
+        if (isAssignedToDeviceSelector()) {
             return;
         }
 
@@ -113,6 +116,11 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
                 channel.write(msg, channel.voidPromise());
             }
         }
+    }
+
+    @Override
+    public PinStorageValue getPinStorageValue() {
+        return new MultiPinStorageValue(MultiPinStorageValueType.LCD);
     }
 
     @Override

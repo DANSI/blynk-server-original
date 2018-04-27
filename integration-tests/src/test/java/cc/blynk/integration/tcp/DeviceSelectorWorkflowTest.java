@@ -6,10 +6,15 @@ import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.dao.ReportingDao;
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.controls.Terminal;
+import cc.blynk.server.core.model.widgets.outputs.LCD;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
+import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
+import cc.blynk.server.core.model.widgets.ui.table.Table;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
@@ -619,4 +624,152 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         verify(hardClient2.responseMock, after(500).never()).channelRead(any(), eq(hardware(5, "vw 88 100")));
     }
 
+    @Test
+    public void terminalWithDeviceSelectorStoreMultipleCommands() throws Exception {
+        var device0 = new Device(0, "My Dashboard", "UNO");
+        device0.status = Status.ONLINE;
+        var device1 = new Device(1, "My Device", "ESP8266");
+        device1.status = Status.OFFLINE;
+
+        clientPair.appClient.createDevice(1, device1);
+        var device = clientPair.appClient.getDevice();
+        assertNotNull(device);
+        assertNotNull(device.token);
+        clientPair.appClient.verifyResult(createDevice(1, device));
+
+        var deviceSelector = new DeviceSelector();
+        deviceSelector.id = 200000;
+        deviceSelector.x = 0;
+        deviceSelector.y = 0;
+        deviceSelector.width = 1;
+        deviceSelector.height = 1;
+        deviceSelector.deviceIds = new int[] {0, 1};
+
+        var terminal = new Terminal();
+        terminal.id = 88;
+        terminal.width = 1;
+        terminal.height = 1;
+        terminal.deviceId = (int) deviceSelector.id;
+        terminal.pinType = PinType.VIRTUAL;
+        terminal.pin = 88;
+
+        clientPair.appClient.createWidget(1, deviceSelector);
+        clientPair.appClient.createWidget(1, terminal);
+        clientPair.appClient.verifyResult(ok(2));
+        clientPair.appClient.verifyResult(ok(3));
+
+        for (var i = 1; i <= 26; i++) {
+            clientPair.hardwareClient.send("hardware vw 88 " + i);
+            clientPair.appClient.verifyResult(hardware(i, "1-0 vw 88 " + i));
+        }
+
+        clientPair.appClient.reset();
+        clientPair.appClient.sync(1, 0);
+        clientPair.appClient.verifyResult(ok(1));
+        //expecting 25 syncs and not 26
+        verify(clientPair.appClient.responseMock, timeout(1000).times(11 + 25)).channelRead(any(), any());
+
+        for (var i = 2; i <= 26; i++) {
+            clientPair.appClient.verifyResult(appSync("1-0 vw 88 " + i));
+        }
+    }
+
+    @Test
+    public void TableWithDeviceSelectorStoreMultipleCommands() throws Exception {
+        var device0 = new Device(0, "My Dashboard", "UNO");
+        device0.status = Status.ONLINE;
+        var device1 = new Device(1, "My Device", "ESP8266");
+        device1.status = Status.OFFLINE;
+
+        clientPair.appClient.createDevice(1, device1);
+        var device = clientPair.appClient.getDevice();
+        assertNotNull(device);
+        assertNotNull(device.token);
+        clientPair.appClient.verifyResult(createDevice(1, device));
+
+        var deviceSelector = new DeviceSelector();
+        deviceSelector.id = 200000;
+        deviceSelector.x = 0;
+        deviceSelector.y = 0;
+        deviceSelector.width = 1;
+        deviceSelector.height = 1;
+        deviceSelector.deviceIds = new int[] {0, 1};
+
+        var table = new Table();
+        table.id = 88;
+        table.width = 1;
+        table.height = 1;
+        table.deviceId = (int) deviceSelector.id;
+        table.pinType = PinType.VIRTUAL;
+        table.pin = 88;
+
+        clientPair.appClient.createWidget(1, deviceSelector);
+        clientPair.appClient.createWidget(1, table);
+        clientPair.appClient.verifyResult(ok(2));
+        clientPair.appClient.verifyResult(ok(3));
+
+        for (var i = 1; i <= 101; i++) {
+            clientPair.hardwareClient.send("hardware vw 88 " + i);
+            clientPair.appClient.verifyResult(hardware(i, "1-0 vw 88 " + i));
+        }
+
+        clientPair.appClient.reset();
+        clientPair.appClient.sync(1, 0);
+        clientPair.appClient.verifyResult(ok(1));
+        //expecting 25 syncs and not 26
+        verify(clientPair.appClient.responseMock, timeout(1000).times(11 + 100)).channelRead(any(), any());
+
+        for (var i = 2; i <= 101; i++) {
+            clientPair.appClient.verifyResult(appSync("1-0 vw 88 " + i));
+        }
+    }
+
+    @Test
+    public void LCDWithDeviceSelectorStoreMultipleCommands() throws Exception {
+        var device0 = new Device(0, "My Dashboard", "UNO");
+        device0.status = Status.ONLINE;
+        var device1 = new Device(1, "My Device", "ESP8266");
+        device1.status = Status.OFFLINE;
+
+        clientPair.appClient.createDevice(1, device1);
+        var device = clientPair.appClient.getDevice();
+        assertNotNull(device);
+        assertNotNull(device.token);
+        clientPair.appClient.verifyResult(createDevice(1, device));
+
+        var deviceSelector = new DeviceSelector();
+        deviceSelector.id = 200000;
+        deviceSelector.x = 0;
+        deviceSelector.y = 0;
+        deviceSelector.width = 1;
+        deviceSelector.height = 1;
+        deviceSelector.deviceIds = new int[] {0, 1};
+
+        var lcd = new LCD();
+        lcd.id = 88;
+        lcd.width = 1;
+        lcd.height = 1;
+        lcd.deviceId = (int) deviceSelector.id;
+        lcd.dataStreams = new DataStream[] {new DataStream((byte) 88, PinType.VIRTUAL)};
+
+        clientPair.appClient.createWidget(1, deviceSelector);
+        clientPair.appClient.createWidget(1, lcd);
+        clientPair.appClient.verifyResult(ok(2));
+        clientPair.appClient.verifyResult(ok(3));
+
+        for (var i = 1; i <= 7; i++) {
+            clientPair.hardwareClient.send("hardware vw 88 " + i);
+            clientPair.appClient.verifyResult(hardware(i, "1-0 vw 88 " + i));
+        }
+
+        clientPair.appClient.reset();
+        clientPair.appClient.sync(1, 0);
+        clientPair.appClient.verifyResult(ok(1));
+        //expecting 25 syncs and not 26
+        verify(clientPair.appClient.responseMock, timeout(1000).times(11 + 6)).channelRead(any(), any());
+
+        for (var i = 2; i <= 7; i++) {
+            clientPair.appClient.verifyResult(appSync("1-0 vw 88 " + i));
+        }
+    }
 }

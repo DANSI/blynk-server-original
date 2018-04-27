@@ -3,8 +3,12 @@ package cc.blynk.server.core.model.widgets.controls;
 import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.storage.MultiPinStorageValue;
+import cc.blynk.server.core.model.storage.MultiPinStorageValueType;
+import cc.blynk.server.core.model.storage.PinStorageValue;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.utils.structure.LimitedArrayDeque;
+import cc.blynk.utils.structure.TerminalLimitedQueue;
 import io.netty.channel.Channel;
 
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
@@ -18,8 +22,9 @@ import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
  */
 public class Terminal extends OnePinWidget {
 
-    private static final int POOL_SIZE = Integer.parseInt(System.getProperty("terminal.strings.pool.size", "25"));
-    private transient final LimitedArrayDeque<String> lastCommands = new LimitedArrayDeque<>(POOL_SIZE);
+    //todo move to persistent LCDLimitedQueue?
+    private transient final LimitedArrayDeque<String> lastCommands =
+            new LimitedArrayDeque<>(TerminalLimitedQueue.POOL_SIZE);
 
     public boolean autoScrollOn;
 
@@ -60,6 +65,11 @@ public class Terminal extends OnePinWidget {
         }
         //terminal supports only virtual pins
         return makeHardwareBody(pinType, pin, lastCommands.getLast());
+    }
+
+    @Override
+    public PinStorageValue getPinStorageValue() {
+        return new MultiPinStorageValue(MultiPinStorageValueType.TERMINAL);
     }
 
     @Override
