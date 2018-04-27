@@ -79,7 +79,7 @@ public class AppAndHttpsServer extends BaseServer {
         var userNotLoggedHandler = new UserNotLoggedHandler();
         var getServerHandler = new GetServerHandler(holder);
 
-        var hardTimeoutSecs = holder.limits.hardwareIdleTimeout;
+        var hardwareIdleTimeout = holder.limits.hardwareIdleTimeout;
         var appIdleTimeout = holder.limits.appIdleTimeout;
 
         var hardwareChannelStateHandler = new HardwareChannelStateHandler(holder);
@@ -209,7 +209,7 @@ public class AppAndHttpsServer extends BaseServer {
                 var pipeline = ctx.pipeline();
 
                 //websockets specific handlers
-                pipeline.addFirst("WSIdleStateHandler", new IdleStateHandler(hardTimeoutSecs, 0, 0))
+                pipeline.addFirst("WSIdleStateHandler", new IdleStateHandler(hardwareIdleTimeout, 0, 0))
                         .addLast("WSChannelState", hardwareChannelStateHandler)
                         .addLast("WSWebSocketServerProtocolHandler",
                         new WebSocketServerProtocolHandler(websocketPath, true))
