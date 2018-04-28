@@ -22,7 +22,7 @@ public class AlreadyLoggedHandler extends SimpleChannelInboundHandler<MessageBas
     private static final Logger log = LogManager.getLogger(AlreadyLoggedHandler.class);
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, MessageBase msg) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, MessageBase msg) {
         if (msg instanceof LoginMessage) {
             if (ctx.channel().isWritable()) {
                 ctx.writeAndFlush(alreadyRegistered(msg.id), ctx.voidPromise());
@@ -36,7 +36,7 @@ public class AlreadyLoggedHandler extends SimpleChannelInboundHandler<MessageBas
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         handleGeneralException(ctx, cause);
     }
 

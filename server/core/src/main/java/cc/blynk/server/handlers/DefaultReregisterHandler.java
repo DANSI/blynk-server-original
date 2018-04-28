@@ -16,7 +16,7 @@ public interface DefaultReregisterHandler {
         ChannelFuture cf = ctx.deregister();
         cf.addListener(new ChannelFutureListener() {
             @Override
-            public void operationComplete(ChannelFuture channelFuture) throws Exception {
+            public void operationComplete(ChannelFuture channelFuture) {
                 session.initialEventLoop.register(channelFuture.channel()).addListener(completeHandler);
             }
         });

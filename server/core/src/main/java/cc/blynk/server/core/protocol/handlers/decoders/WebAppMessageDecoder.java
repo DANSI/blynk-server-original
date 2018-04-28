@@ -70,7 +70,7 @@ public class WebAppMessageDecoder extends ChannelInboundHandlerAdapter {
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         if (cause instanceof WebSocketHandshakeException) {
             log.debug("Web Socket Handshake Exception.", cause);
         }

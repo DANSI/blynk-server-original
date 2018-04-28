@@ -74,7 +74,7 @@ public class MqttHardwareLoginHandler extends SimpleChannelInboundHandler<MqttCo
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, MqttConnectMessage message) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, MqttConnectMessage message) {
         String username = message.payload().userName().toLowerCase();
         String token = new String(message.payload().passwordInBytes(), CharsetUtil.UTF_8);
 
@@ -107,7 +107,7 @@ public class MqttHardwareLoginHandler extends SimpleChannelInboundHandler<MqttCo
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         DefaultExceptionHandler.handleGeneralException(ctx, cause);
     }
 

@@ -70,7 +70,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, LoginMessage message) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, LoginMessage message) {
         var messageParts = message.body.split(BODY_SEPARATOR_STRING);
 
         if (messageParts.length < 2) {
@@ -103,7 +103,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
         asyncHttpClient.prepareGet(URL + token)
                 .execute(new AsyncCompletionHandler<Response>() {
                     @Override
-                    public Response onCompleted(Response response) throws Exception {
+                    public Response onCompleted(Response response) {
                         if (response.getStatusCode() != 200) {
                             String errMessage = response.getResponseBody();
                             if (errMessage != null && errMessage.contains("expired")) {
@@ -219,7 +219,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         handleGeneralException(ctx, cause);
     }
 

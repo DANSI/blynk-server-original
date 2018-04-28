@@ -18,7 +18,7 @@ public class ClientReplayingMessageDecoder extends ClientMessageDecoder {
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         //server goes down
         if (cause instanceof IOException) {
             ctx.close();

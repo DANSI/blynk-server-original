@@ -63,7 +63,7 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> {
     }
 
     @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+    public void channelInactive(ChannelHandlerContext ctx) {
         if (decoder != null) {
             decoder.cleanFiles();
         }
@@ -74,7 +74,7 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> {
     }
 
     @Override
-    public void channelRead0(ChannelHandlerContext ctx, HttpObject msg) throws Exception {
+    public void channelRead0(ChannelHandlerContext ctx, HttpObject msg) {
         if (msg instanceof HttpRequest) {
             HttpRequest req = (HttpRequest) msg;
 
@@ -174,7 +174,7 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> {
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         handleGeneralException(ctx, cause);
     }
 }

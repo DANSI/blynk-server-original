@@ -140,7 +140,7 @@ public class TimerWorker implements Runnable {
             getExecutorOrCreate(time.time).put(
                     new TimerKey(userKey, dashId, deviceId, widgetId, additionalId,
                             deviceTilesId, templateId, time),
-                    validActions.toArray(new BaseAction[validActions.size()]));
+                    validActions.toArray(new BaseAction[0]));
         }
     }
 

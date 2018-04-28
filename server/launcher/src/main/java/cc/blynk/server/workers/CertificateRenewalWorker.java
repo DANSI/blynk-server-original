@@ -44,14 +44,12 @@ public class CertificateRenewalWorker implements Runnable {
                 Date oneWeekAheadDate = getNowDatePlusDays(renewBeforeDays);
                 if (expirationDate.before(oneWeekAheadDate)) {
                     log.warn("Trying to renew...");
-                    if (acmeClient.requestCertificate()) {
-                        log.info("Success! The certificate for your domain has been renewed!");
-                    }
-                }
-            } else {
-                if (acmeClient.requestCertificate()) {
+                    acmeClient.requestCertificate();
                     log.info("Success! The certificate for your domain has been renewed!");
                 }
+            } else {
+                acmeClient.requestCertificate();
+                log.info("Success! The certificate for your domain has been renewed!");
             }
         } catch (Exception e) {
             log.error("Error during certificate renewal.", e);

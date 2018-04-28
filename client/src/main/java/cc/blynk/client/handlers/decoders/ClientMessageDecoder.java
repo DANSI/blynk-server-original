@@ -33,7 +33,7 @@ public class ClientMessageDecoder extends ByteToMessageDecoder {
     protected static final Logger log = LogManager.getLogger(ClientMessageDecoder.class);
 
     @Override
-    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
         if (in.readableBytes() < 5) {
             return;
         }
@@ -78,7 +78,7 @@ public class ClientMessageDecoder extends ByteToMessageDecoder {
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         DefaultExceptionHandler.handleGeneralException(ctx, cause);
     }
 }

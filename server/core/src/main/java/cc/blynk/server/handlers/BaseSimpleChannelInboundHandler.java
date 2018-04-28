@@ -37,7 +37,7 @@ public abstract class BaseSimpleChannelInboundHandler<I> extends ChannelInboundH
 
     @Override
     @SuppressWarnings("unchecked")
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
         if (type.isInstance(msg)) {
             try {
                 messageReceived(ctx, (I) msg);
@@ -69,7 +69,7 @@ public abstract class BaseSimpleChannelInboundHandler<I> extends ChannelInboundH
     public abstract StateHolderBase getState();
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         handleGeneralException(ctx, cause);
     }
 }

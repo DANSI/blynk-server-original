@@ -131,7 +131,7 @@ public class WebhookProcessor extends NotificationBase {
             }
 
             @Override
-            public Response onCompleted(Response response) throws Exception {
+            public Response onCompleted(Response response) {
                 if (isValidResponseCode(response.getStatusCode())) {
                     webHook.failureCounter = 0;
                     if (response.hasResponseBody()) {

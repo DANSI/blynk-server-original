@@ -27,7 +27,7 @@ public class WebSocketHandler extends ChannelInboundHandlerAdapter {
     }
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
         globalStats.markWithoutGlobal(Command.WEB_SOCKETS);
         if (msg instanceof BinaryWebSocketFrame) {
             ctx.fireChannelRead(((BinaryWebSocketFrame) msg).content());
@@ -35,7 +35,7 @@ public class WebSocketHandler extends ChannelInboundHandlerAdapter {
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         if (cause instanceof WebSocketHandshakeException) {
             log.debug("Web Socket Handshake Exception.", cause);
         }

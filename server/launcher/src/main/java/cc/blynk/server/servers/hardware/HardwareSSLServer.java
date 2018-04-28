@@ -31,9 +31,9 @@ public class HardwareSSLServer extends BaseServer {
 
         var hardTimeoutSecs = holder.limits.hardwareIdleTimeout;
 
-        this.channelInitializer = new ChannelInitializer<SocketChannel>() {
+        this.channelInitializer = new ChannelInitializer<>() {
             @Override
-            protected void initChannel(SocketChannel ch) throws Exception {
+            protected void initChannel(SocketChannel ch) {
                 ch.pipeline()
                     .addLast("HSSL_ReadTimeout", new IdleStateHandler(hardTimeoutSecs, hardTimeoutSecs, 0))
                     .addLast("HSSL", holder.sslContextHolder.sslCtx.newHandler(ch.alloc()))

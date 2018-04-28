@@ -50,7 +50,7 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
                 list.add(tile);
             }
         }
-        tiles = list.toArray(new Tile[list.size()]);
+        tiles = list.toArray(new Tile[0]);
     }
 
     public TileTemplate findTemplateByDeviceId(int deviceId) {
@@ -96,7 +96,7 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
                 }
             }
         }
-        this.tiles = list.toArray(new Tile[list.size()]);
+        this.tiles = list.toArray(new Tile[0]);
     }
 
     public TileTemplate getTileTemplateByIdOrThrow(long id) {

@@ -103,9 +103,7 @@ public class Options {
 
         // if the option is required add it to the required list
         if (opt.isRequired()) {
-            if (requiredOpts.contains(key)) {
-                requiredOpts.remove(requiredOpts.indexOf(key));
-            }
+            requiredOpts.remove(key);
             requiredOpts.add(key);
         }
 

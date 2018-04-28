@@ -5,7 +5,6 @@
  */
 module cc.blynk.server.notifications.twitter {
     requires async.http.client;
-    requires io.netty.codec.http;
     requires cc.blynk.utils;
 
     exports cc.blynk.server.notifications.twitter;

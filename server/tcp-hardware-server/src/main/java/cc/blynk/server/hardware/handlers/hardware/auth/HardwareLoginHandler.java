@@ -91,7 +91,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, LoginMessage message) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, LoginMessage message) {
         String token = message.body.trim();
         TokenValue tokenValue = holder.tokenManager.getTokenValueByToken(token);
 

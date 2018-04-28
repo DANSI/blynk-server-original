@@ -69,7 +69,7 @@ public class CommandLine {
             }
         }
 
-        return values.isEmpty() ? null : values.toArray(new String[values.size()]);
+        return values.isEmpty() ? null : values.toArray(new String[0]);
     }
 
     /**

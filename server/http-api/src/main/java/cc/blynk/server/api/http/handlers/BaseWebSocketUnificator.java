@@ -15,10 +15,10 @@ import static cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler.han
 public abstract class BaseWebSocketUnificator extends ChannelInboundHandlerAdapter {
 
     @Override
-    public abstract void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception;
+    public abstract void channelRead(ChannelHandlerContext ctx, Object msg);
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         handleUnexpectedException(ctx, cause);
     }
 }

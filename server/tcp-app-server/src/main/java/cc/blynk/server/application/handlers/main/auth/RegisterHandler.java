@@ -77,7 +77,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, RegisterMessage message) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, RegisterMessage message) {
         if (registrationLimitChecker.isLimitReached()) {
             log.error("Register Handler. Registration limit reached. {}", message);
             ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());

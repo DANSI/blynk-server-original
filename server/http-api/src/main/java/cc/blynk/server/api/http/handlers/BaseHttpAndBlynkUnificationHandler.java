@@ -19,7 +19,7 @@ import static cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler.han
 public abstract class BaseHttpAndBlynkUnificationHandler extends ByteToMessageDecoder {
 
     @Override
-    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
         // Will use the first 4 bytes to detect a protocol.
         if (in.readableBytes() < 4) {
             return;
@@ -60,7 +60,7 @@ public abstract class BaseHttpAndBlynkUnificationHandler extends ByteToMessageDe
     public abstract ChannelPipeline buildBlynkPipeline(ChannelPipeline pipeline);
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         handleUnexpectedException(ctx, cause);
     }
 }

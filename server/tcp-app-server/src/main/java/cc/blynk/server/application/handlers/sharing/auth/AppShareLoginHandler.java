@@ -43,7 +43,7 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, ShareLoginMessage message) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, ShareLoginMessage message) {
         var messageParts = message.body.split("\0");
 
         if (messageParts.length < 2) {

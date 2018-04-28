@@ -19,7 +19,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class HardwareEchoHandler extends SimpleChannelInboundHandler<HardwareMessage> {
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, HardwareMessage msg) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, HardwareMessage msg) {
         if (msg.body.charAt(1) == 'm') {
             return;
         }

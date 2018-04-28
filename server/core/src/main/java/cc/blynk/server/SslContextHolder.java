@@ -103,11 +103,10 @@ public class SslContextHolder {
         if (isAutoGenerationEnabled && isNeedInitializeOnStart) {
             System.out.println("Generating own initial certificates...");
             try {
-                if (this.acmeClient.requestCertificate()) {
-                    System.out.println("Success! The certificate for your domain "
-                            + props.getProperty("server.host") + " has been generated!");
-                    regenerate();
-                }
+                this.acmeClient.requestCertificate();
+                System.out.println("Success! The certificate for your domain "
+                        + props.getProperty("server.host") + " has been generated!");
+                regenerate();
             } catch (Exception e) {
                 System.out.println("Error during certificate generation.");
                 System.out.println(e.getMessage());

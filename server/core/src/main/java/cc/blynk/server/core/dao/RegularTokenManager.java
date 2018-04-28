@@ -73,7 +73,7 @@ class RegularTokenManager {
                 removedTokens.add(device.token);
             }
         }
-        return removedTokens.toArray(new String[removedTokens.size()]);
+        return removedTokens.toArray(new String[0]);
     }
 
 }

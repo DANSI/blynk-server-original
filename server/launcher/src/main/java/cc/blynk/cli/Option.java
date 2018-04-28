@@ -42,7 +42,7 @@ public class Option implements Cloneable {
     /**
      * description of the option
      */
-    private String description;
+    private final String description;
 
     /**
      * specifies whether this option is required to be present
@@ -342,7 +342,7 @@ public class Option implements Cloneable {
      * or null if there are no values
      */
     public String[] getValues() {
-        return hasNoValues() ? null : values.toArray(new String[values.size()]);
+        return hasNoValues() ? null : values.toArray(new String[0]);
     }
 
     /**

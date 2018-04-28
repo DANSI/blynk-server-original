@@ -42,7 +42,7 @@ public class GetServerHandler extends SimpleChannelInboundHandler<GetServerMessa
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, GetServerMessage msg) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, GetServerMessage msg) {
         var parts = StringUtils.split2(msg.body);
 
         if (parts.length < 2) {

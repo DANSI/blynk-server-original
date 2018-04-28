@@ -39,6 +39,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static cc.blynk.server.core.model.widgets.AppSyncWidget.ANY_TARGET;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DEVICES;
@@ -584,33 +585,19 @@ public class DashBoard {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         DashBoard dashBoard = (DashBoard) o;
-
-        if (id != dashBoard.id) {
-            return false;
-        }
-        if (name != null ? !name.equals(dashBoard.name) : dashBoard.name != null) {
-            return false;
-        }
-        if (!Arrays.equals(widgets, dashBoard.widgets)) {
-            return false;
-        }
-
-        return true;
+        return id == dashBoard.id &&
+                Objects.equals(name, dashBoard.name) &&
+                Arrays.equals(widgets, dashBoard.widgets);
     }
 
     @Override
     public int hashCode() {
-        int result = (id ^ (id >>> 32));
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (widgets != null ? Arrays.hashCode(widgets) : 0);
+
+        int result = Objects.hash(id, name);
+        result = 31 * result + Arrays.hashCode(widgets);
         return result;
     }
 

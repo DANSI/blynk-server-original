@@ -20,7 +20,7 @@ public class NoMatchHandler extends ChannelInboundHandlerAdapter {
     private static final Logger log = LogManager.getLogger(NoMatchHandler.class);
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
         try {
             if (msg instanceof HttpRequest) {
                 HttpRequest req = (HttpRequest) msg;

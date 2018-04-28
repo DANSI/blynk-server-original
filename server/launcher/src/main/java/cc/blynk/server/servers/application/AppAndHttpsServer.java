@@ -116,7 +116,7 @@ public class AppAndHttpsServer extends BaseServer {
 
         var baseWebSocketUnificator = new BaseWebSocketUnificator() {
             @Override
-            public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+            public void channelRead(ChannelHandlerContext ctx, Object msg) {
                 var req = (FullHttpRequest) msg;
                 var uri = req.uri();
 
@@ -229,9 +229,9 @@ public class AppAndHttpsServer extends BaseServer {
             }
         };
 
-        channelInitializer = new ChannelInitializer<SocketChannel>() {
+        channelInitializer = new ChannelInitializer<>() {
             @Override
-            protected void initChannel(SocketChannel ch) throws Exception {
+            protected void initChannel(SocketChannel ch) {
                 ch.pipeline()
                 .addLast(holder.sslContextHolder.sslCtx.newHandler(ch.alloc()))
                 .addLast(new BaseHttpAndBlynkUnificationHandler() {

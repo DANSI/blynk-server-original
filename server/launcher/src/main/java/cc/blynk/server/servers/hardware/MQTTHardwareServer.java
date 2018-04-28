@@ -30,9 +30,9 @@ public class MQTTHardwareServer extends BaseServer {
         var alreadyLoggedHandler = new AlreadyLoggedHandler();
         var hardwareChannelStateHandler = new HardwareChannelStateHandler(holder);
 
-        channelInitializer = new ChannelInitializer<SocketChannel>() {
+        channelInitializer = new ChannelInitializer<>() {
             @Override
-            protected void initChannel(SocketChannel ch) throws Exception {
+            protected void initChannel(SocketChannel ch) {
                 ch.pipeline()
                     .addLast("MqttIdleStateHandler", new IdleStateHandler(hardTimeoutSecs, hardTimeoutSecs, 0))
                     .addLast(hardwareChannelStateHandler)

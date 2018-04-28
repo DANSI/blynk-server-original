@@ -149,9 +149,9 @@ public class EventorProcessor {
         }
 
         twitterWrapper.send(twitterWidget.token, twitterWidget.secret, body,
-                new AsyncCompletionHandler<Response>() {
+                new AsyncCompletionHandler<>() {
                     @Override
-                    public Response onCompleted(Response response) throws Exception {
+                    public Response onCompleted(Response response) {
                         if (response.getStatusCode() != HttpResponseStatus.OK.code()) {
                             log.debug("Error sending twit from eventor. Reason : {}.", response.getResponseBody());
                         }

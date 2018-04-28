@@ -64,9 +64,9 @@ public class AcmeClient {
         this.contentHolder = contentHolder;
     }
 
-    public boolean requestCertificate() throws Exception {
+    public void requestCertificate() throws Exception {
         log.info("Starting up certificate retrieval process for host {} and email {}.", host, email);
-        return fetchCertificate(email, host);
+        fetchCertificate(email, host);
     }
 
     /**
@@ -76,7 +76,7 @@ public class AcmeClient {
      * @param domain
      *            Domains to get a common certificate for
      */
-    private boolean fetchCertificate(String contact, String domain) throws IOException, AcmeException {
+    private void fetchCertificate(String contact, String domain) throws IOException, AcmeException {
         // Load the user key file. If there is no key file, create a new one.
         // Keep this key pair in a safe place! In a production environment, you will not be
         // able to access your account again if you should lose the key pair.
@@ -116,8 +116,6 @@ public class AcmeClient {
         try (FileWriter fw = new FileWriter(DOMAIN_CHAIN_FILE)) {
             CertificateUtils.writeX509CertificateChain(fw, cert, chain);
         }
-
-        return true;
     }
 
     /**

@@ -34,7 +34,7 @@ public class AcmeTest extends BaseTest {
     private Holder holder2;
 
     @After
-    public void shutdown() throws Exception {
+    public void shutdown() {
         httpServer.close();
     }
 
@@ -65,7 +65,7 @@ public class AcmeTest extends BaseTest {
         final String STAGING = "acme://letsencrypt.org/staging";
         ContentHolder contentHolder = holder2.sslContextHolder.contentHolder;
         AcmeClient acmeClient = new AcmeClient(STAGING, "test@blynk.cc", "test.blynk.cc", contentHolder);
-        assertTrue(acmeClient.requestCertificate());
+        acmeClient.requestCertificate();
     }
 
     @Test

@@ -37,7 +37,7 @@ public class HttpAPIPerformanceTest extends BaseTest {
     }
 
     @Test
-    public void testKeepAlive() throws Exception {
+    public void testKeepAlive() {
         makeTest();
     }
 

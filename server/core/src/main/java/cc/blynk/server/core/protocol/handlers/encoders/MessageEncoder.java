@@ -23,7 +23,7 @@ public class MessageEncoder extends MessageToByteEncoder<MessageBase> {
     }
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, MessageBase message, ByteBuf out) throws Exception {
+    protected void encode(ChannelHandlerContext ctx, MessageBase message, ByteBuf out) {
         out.writeByte(message.command);
         out.writeShort(message.id);
 

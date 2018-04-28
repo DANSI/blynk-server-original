@@ -134,7 +134,7 @@ public class DeleteWidgetLogic {
         }
 
         user.addEnergy(removedWidgetPrice);
-        return zeroTabWidgets.toArray(new Widget[zeroTabWidgets.size()]);
+        return zeroTabWidgets.toArray(new Widget[0]);
     }
 
 }

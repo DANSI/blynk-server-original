@@ -34,7 +34,7 @@ public class AppClientMessageDecoder extends ByteToMessageDecoder {
     protected static final Logger log = LogManager.getLogger(AppClientMessageDecoder.class);
 
     @Override
-    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
         if (in.readableBytes() < AppMessageDecoder.PROTOCOL_APP_HEADER_SIZE) {
             return;
         }
@@ -79,7 +79,7 @@ public class AppClientMessageDecoder extends ByteToMessageDecoder {
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         handleGeneralException(ctx, cause);
     }
 }

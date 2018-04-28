@@ -3,7 +3,6 @@ package cc.blynk.utils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -29,14 +28,14 @@ public final class SHA256Util {
             byte[] byteData = md.digest(makeHash(salt.toLowerCase()));
 
             return Base64.getEncoder().encodeToString(byteData);
-        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+        } catch (NoSuchAlgorithmException e) {
             log.error("Unable to make hash for pass. No hashing.", e);
         }
 
         return password;
     }
 
-    private static byte[] makeHash(String val) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    private static byte[] makeHash(String val) throws NoSuchAlgorithmException {
         return MessageDigest.getInstance("SHA-256").digest(val.getBytes(StandardCharsets.UTF_8));
     }
 

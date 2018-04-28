@@ -22,7 +22,7 @@ public class UserNotLoggedHandler extends SimpleChannelInboundHandler<MessageBas
     private static final Logger log = LogManager.getLogger(Logger.class);
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, MessageBase msg) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, MessageBase msg) {
         log.debug("User not logged. {}. Closing.", ctx.channel().remoteAddress());
         if (msg instanceof RegisterMessage) {
             if (ctx.channel().isWritable()) {
@@ -33,7 +33,7 @@ public class UserNotLoggedHandler extends SimpleChannelInboundHandler<MessageBas
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         handleGeneralException(ctx, cause);
     }
 
