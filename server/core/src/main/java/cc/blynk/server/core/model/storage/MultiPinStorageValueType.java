@@ -21,11 +21,11 @@ public enum MultiPinStorageValueType {
     public BaseLimitedQueue<String> getQueue() {
         switch (this) {
             case LCD:
-                return new LCDLimitedQueue();
+                return new LCDLimitedQueue<>();
             case TERMINAL:
-                return new TerminalLimitedQueue();
+                return new TerminalLimitedQueue<>();
             case TABLE:
-                return new TableLimitedQueue();
+                return new TableLimitedQueue<>();
             default:
                 throw new RuntimeException("not supported");
         }

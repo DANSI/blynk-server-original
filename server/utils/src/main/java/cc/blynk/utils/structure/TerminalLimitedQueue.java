@@ -8,7 +8,7 @@ package cc.blynk.utils.structure;
  * Created by Dmitriy Dumanskiy.
  * Created on 07.09.16.
  */
-public class TerminalLimitedQueue extends BaseLimitedQueue {
+public class TerminalLimitedQueue<T> extends BaseLimitedQueue<T> {
 
     public static final int POOL_SIZE = Integer.parseInt(System.getProperty("terminal.strings.pool.size", "25"));
 

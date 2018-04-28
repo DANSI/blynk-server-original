@@ -8,7 +8,7 @@ package cc.blynk.utils.structure;
  * Created by Dmitriy Dumanskiy.
  * Created on 07.09.16.
  */
-public class LCDLimitedQueue extends BaseLimitedQueue {
+public class LCDLimitedQueue<T> extends BaseLimitedQueue<T> {
 
     public static final int POOL_SIZE = Integer.parseInt(System.getProperty("lcd.strings.pool.size", "6"));
 
