@@ -585,17 +585,20 @@ public class DashBoard {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         DashBoard dashBoard = (DashBoard) o;
-        return id == dashBoard.id &&
-                Objects.equals(name, dashBoard.name) &&
-                Arrays.equals(widgets, dashBoard.widgets);
+        return id == dashBoard.id
+                && Objects.equals(name, dashBoard.name)
+                && Arrays.equals(widgets, dashBoard.widgets);
     }
 
     @Override
     public int hashCode() {
-
         int result = Objects.hash(id, name);
         result = 31 * result + Arrays.hashCode(widgets);
         return result;

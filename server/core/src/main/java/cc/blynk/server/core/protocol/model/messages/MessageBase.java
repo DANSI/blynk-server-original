@@ -42,8 +42,8 @@ public abstract class MessageBase {
             return false;
         }
         MessageBase that = (MessageBase) o;
-        return command == that.command &&
-                id == that.id;
+        return command == that.command
+                && id == that.id;
     }
 
     @Override
