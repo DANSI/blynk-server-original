@@ -1,7 +1,6 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
 import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.model.widgets.notifications.Mail;
 import cc.blynk.server.core.processors.NotificationBase;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
@@ -42,7 +41,7 @@ public class MailLogic extends NotificationBase {
         var user = state.user;
         var dash = state.dash;
 
-        var mail = dash.getWidgetByType(Mail.class);
+        var mail = dash.getMailWidget();
 
         if (mail == null || !dash.isActive) {
             throw new NotAllowedException("User has no mail widget or active dashboard.", message.id);

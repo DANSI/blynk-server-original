@@ -29,7 +29,7 @@ public final class LogoutLogic {
 
         String uid = msg.body;
         for (DashBoard dash : user.profile.dashBoards) {
-            Notification notification = dash.getWidgetByType(Notification.class);
+            Notification notification = dash.getNotificationWidget();
             if (notification != null) {
                 if (uid == null || uid.isEmpty()) {
                     notification.androidTokens.clear();

@@ -83,7 +83,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
             return;
         }
 
-        var notification = dashBoard.getWidgetByType(Notification.class);
+        var notification = dashBoard.getNotificationWidget();
 
         if (notification != null && notification.notifyWhenOffline) {
             sendPushNotification(ctx, notification, dashBoard.id, device);

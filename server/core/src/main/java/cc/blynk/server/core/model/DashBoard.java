@@ -19,7 +19,9 @@ import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
+import cc.blynk.server.core.model.widgets.notifications.Mail;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
+import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
@@ -363,6 +365,22 @@ public class DashBoard {
         return null;
     }
 
+    public Notification getNotificationWidget() {
+        return getWidgetByType(Notification.class);
+    }
+
+    public Eventor getEventorWidget() {
+        return getWidgetByType(Eventor.class);
+    }
+
+    public Twitter getTwitterWidget() {
+        return getWidgetByType(Twitter.class);
+    }
+
+    public Mail getMailWidget() {
+        return getWidgetByType(Mail.class);
+    }
+
     @SuppressWarnings("unchecked")
     public <T> T getWidgetByType(Class<T> clazz) {
         for (Widget widget : widgets) {
@@ -518,9 +536,9 @@ public class DashBoard {
         this.isAppConnectedOn = updatedDashboard.isAppConnectedOn;
         this.isNotificationsOff = updatedDashboard.isNotificationsOff;
 
-        Notification newNotification = updatedDashboard.getWidgetByType(Notification.class);
+        Notification newNotification = updatedDashboard.getNotificationWidget();
         if (newNotification != null) {
-            Notification oldNotification = this.getWidgetByType(Notification.class);
+            Notification oldNotification = this.getNotificationWidget();
             if (oldNotification != null) {
                 newNotification.iOSTokens = oldNotification.iOSTokens;
                 newNotification.androidTokens = oldNotification.androidTokens;

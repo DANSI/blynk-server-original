@@ -58,9 +58,37 @@ public class EventorProcessor {
         this.globalStats = stats;
     }
 
+    public static void push(GCMWrapper gcmWrapper, DashBoard dash, String body) {
+        if (Notification.isWrongBody(body)) {
+            log.debug("Wrong push body.");
+            return;
+        }
+
+        Notification widget = dash.getNotificationWidget();
+
+        if (widget == null || widget.hasNoToken()) {
+            log.debug("User has no access token provided for eventor push.");
+            return;
+        }
+
+        widget.push(gcmWrapper, body, dash.id);
+    }
+
+    private void execute(User user, DashBoard dash, String triggerValue, NotificationAction notificationAction) {
+        String body = PIN_PATTERN.matcher(notificationAction.message).replaceAll(triggerValue);
+        if (notificationAction instanceof NotifyAction) {
+            push(gcmWrapper, dash, body);
+        } else if (notificationAction instanceof TwitAction) {
+            twit(dash, body);
+        } else if (notificationAction instanceof MailAction) {
+            MailAction mailAction = (MailAction) notificationAction;
+            email(user, dash, mailAction.subject, body);
+        }
+    }
+
     public void process(User user, Session session, DashBoard dash, int deviceId, byte pin,
                         PinType type, String triggerValue, long now) {
-        Eventor eventor = dash.getWidgetByType(Eventor.class);
+        Eventor eventor = dash.getEventorWidget();
         if (eventor == null || eventor.rules == null
                 || eventor.deviceId != deviceId || !dash.isActive) {
             return;
@@ -91,20 +119,8 @@ public class EventorProcessor {
         }
     }
 
-    private void execute(User user, DashBoard dash, String triggerValue, NotificationAction notificationAction) {
-        String body = PIN_PATTERN.matcher(notificationAction.message).replaceAll(triggerValue);
-        if (notificationAction instanceof NotifyAction) {
-            push(gcmWrapper, dash, body);
-        } else if (notificationAction instanceof TwitAction) {
-            twit(dash, body);
-        } else if (notificationAction instanceof MailAction) {
-            MailAction mailAction = (MailAction) notificationAction;
-            email(user, dash, mailAction.subject, body);
-        }
-    }
-
     private void email(User user, DashBoard dash, String subject, String body) {
-        Mail mail = dash.getWidgetByType(Mail.class);
+        Mail mail = dash.getMailWidget();
 
         if (mail == null) {
             log.debug("User has no mail widget.");
@@ -137,7 +153,7 @@ public class EventorProcessor {
             return;
         }
 
-        Twitter twitterWidget = dash.getWidgetByType(Twitter.class);
+        Twitter twitterWidget = dash.getTwitterWidget();
 
         if (twitterWidget == null
                 || twitterWidget.token == null
@@ -164,22 +180,6 @@ public class EventorProcessor {
                     }
                 }
         );
-    }
-
-    public static void push(GCMWrapper gcmWrapper, DashBoard dash, String body) {
-        if (Notification.isWrongBody(body)) {
-            log.debug("Wrong push body.");
-            return;
-        }
-
-        Notification widget = dash.getWidgetByType(Notification.class);
-
-        if (widget == null || widget.hasNoToken()) {
-            log.debug("User has no access token provided for eventor push.");
-            return;
-        }
-
-        widget.push(gcmWrapper, body, dash.id);
     }
 
     private void execute(Session session, DashBoard dash, int deviceId, SetPinAction action, long now) {

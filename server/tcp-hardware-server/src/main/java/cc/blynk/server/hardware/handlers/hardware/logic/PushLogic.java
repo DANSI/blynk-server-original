@@ -50,7 +50,7 @@ public class PushLogic extends NotificationBase {
             return;
         }
 
-        var widget = dash.getWidgetByType(Notification.class);
+        var widget = dash.getNotificationWidget();
 
         if (widget == null || widget.hasNoToken()) {
             log.debug("User has no access token provided for push widget.");

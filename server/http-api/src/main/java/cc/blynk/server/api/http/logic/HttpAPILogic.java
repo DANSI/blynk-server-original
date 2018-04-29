@@ -32,7 +32,6 @@ import cc.blynk.server.core.model.storage.SinglePinStorageValue;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.model.widgets.notifications.Mail;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
@@ -593,7 +592,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             return badRequest("Project is not active.");
         }
 
-        Notification notification = dash.getWidgetByType(Notification.class);
+        Notification notification = dash.getNotificationWidget();
 
         if (notification == null || notification.hasNoToken()) {
             log.debug("No notification tokens.");
@@ -617,21 +616,21 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
     public Response email(@PathParam("token") String token,
                           EmailPojo message) {
 
-        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
+        var tokenValue = tokenManager.getTokenValueByToken(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
             return badRequest("Invalid token.");
         }
 
-        DashBoard dash = tokenValue.dash;
+        var dash = tokenValue.dash;
 
         if (dash == null || !dash.isActive) {
             log.debug("Project is not active.");
             return badRequest("Project is not active.");
         }
 
-        Mail mail = dash.getWidgetByType(Mail.class);
+        var mail = dash.getMailWidget();
 
         if (mail == null) {
             log.debug("No email widget.");

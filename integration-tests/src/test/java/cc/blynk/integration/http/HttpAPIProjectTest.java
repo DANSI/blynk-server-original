@@ -71,7 +71,7 @@ public class HttpAPIProjectTest extends BaseTest {
         dashBoard = user.profile.getDashById(dashId);
 
         //cleanup of sensetive data
-        Notification notification = dashBoard.getWidgetByType(Notification.class);
+        Notification notification = dashBoard.getNotificationWidget();
         notification.iOSTokens = null;
         notification.androidTokens = null;
         for (Device device : dashBoard.devices) {

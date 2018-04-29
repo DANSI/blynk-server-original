@@ -121,9 +121,9 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         DashBoard serverDash = serverProfile.dashBoards[0];
 
         Profile profile = parseProfile(readTestUserProfile());
-        Twitter twitter = profile.dashBoards[0].getWidgetByType(Twitter.class);
+        Twitter twitter = profile.dashBoards[0].getTwitterWidget();
         clearPrivateData(twitter);
-        Notification notification = profile.dashBoards[0].getWidgetByType(Notification.class);
+        Notification notification = profile.dashBoards[0].getNotificationWidget();
         clearPrivateData(notification);
 
         profile.dashBoards[0].updatedAt = serverDash.updatedAt;
@@ -138,12 +138,12 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         profile = clientPair.appClient.getProfile(2);
 
         profile.dashBoards[0].updatedAt = 0;
-        Notification originalNotification = profile.dashBoards[0].getWidgetByType(Notification.class);
+        Notification originalNotification = profile.dashBoards[0].getNotificationWidget();
         assertNotNull(originalNotification);
         assertEquals(1, originalNotification.androidTokens.size());
         assertEquals("token", originalNotification.androidTokens.get("uid"));
 
-        Twitter originalTwitter = profile.dashBoards[0].getWidgetByType(Twitter.class);
+        Twitter originalTwitter = profile.dashBoards[0].getTwitterWidget();
         assertNotNull(originalTwitter);
         assertEquals("token", originalTwitter.token);
         assertEquals("secret", originalTwitter.secret);
@@ -662,9 +662,9 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         appClient2.send("loadProfileGzipped");
         String body2 = appClient2.getBody(2);
 
-        Twitter twitter = parentProfile.dashBoards[0].getWidgetByType(Twitter.class);
+        Twitter twitter = parentProfile.dashBoards[0].getTwitterWidget();
         clearPrivateData(twitter);
-        Notification notification = parentProfile.dashBoards[0].getWidgetByType(Notification.class);
+        Notification notification = parentProfile.dashBoards[0].getNotificationWidget();
         clearPrivateData(notification);
         for (Device device : parentProfile.dashBoards[0].devices) {
             device.token = null;
@@ -702,9 +702,9 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
         appClient2.send("loadProfileGzipped 1");
         String body2 = appClient2.getBody(2);
 
-        Twitter twitter = parentProfile.dashBoards[0].getWidgetByType(Twitter.class);
+        Twitter twitter = parentProfile.dashBoards[0].getTwitterWidget();
         clearPrivateData(twitter);
-        Notification notification = parentProfile.dashBoards[0].getWidgetByType(Notification.class);
+        Notification notification = parentProfile.dashBoards[0].getNotificationWidget();
         clearPrivateData(notification);
         for (Device device : parentProfile.dashBoards[0].devices) {
             device.token = null;
@@ -772,9 +772,9 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
 
         assertNotNull(dashboard);
         Profile profile = parseProfile(readTestUserProfile());
-        Twitter twitter = profile.dashBoards[0].getWidgetByType(Twitter.class);
+        Twitter twitter = profile.dashBoards[0].getTwitterWidget();
         clearPrivateData(twitter);
-        Notification notification = profile.dashBoards[0].getWidgetByType(Notification.class);
+        Notification notification = profile.dashBoards[0].getNotificationWidget();
         clearPrivateData(notification);
 
         //one field update, cause it is hard to compare.

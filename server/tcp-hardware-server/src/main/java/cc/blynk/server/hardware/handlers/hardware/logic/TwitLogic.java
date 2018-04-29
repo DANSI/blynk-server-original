@@ -45,7 +45,7 @@ public class TwitLogic extends NotificationBase {
         }
 
         var dash = state.dash;
-        var twitterWidget = dash.getWidgetByType(Twitter.class);
+        var twitterWidget = dash.getTwitterWidget();
 
         if (twitterWidget == null || !dash.isActive
                 || twitterWidget.token == null || twitterWidget.token.isEmpty()

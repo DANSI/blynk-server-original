@@ -558,10 +558,10 @@ public class PublishingPreviewFlow extends IntegrationBase {
         assertEquals(1, dashBoard.id);
         assertEquals(1, dashBoard.parentId);
         assertEquals(16, dashBoard.widgets.length);
-        Notification notification = dashBoard.getWidgetByType(Notification.class);
+        Notification notification = dashBoard.getNotificationWidget();
         assertEquals(0, notification.androidTokens.size());
         assertEquals(0, notification.iOSTokens.size());
-        Twitter twitter = dashBoard.getWidgetByType(Twitter.class);
+        Twitter twitter = dashBoard.getTwitterWidget();
         assertNull(twitter.username);
         assertNull(twitter.token);
         assertNull(twitter.secret);
