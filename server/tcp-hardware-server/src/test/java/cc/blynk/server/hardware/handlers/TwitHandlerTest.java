@@ -1,8 +1,5 @@
 package cc.blynk.server.hardware.handlers;
 
-import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
@@ -38,25 +35,10 @@ import static org.mockito.Mockito.when;
 public class TwitHandlerTest {
 
 	@Mock
-	private static ServerProperties props;
-
-	@Mock
-	private BlockingIOProcessor blockingIOProcessor;
-
-	@Mock
 	private TwitterWrapper twitterWrapper;
 
 	@Mock
 	private ChannelHandlerContext ctx;
-
-	@Mock
-	private UserDao userDao;
-
-	@Mock
-	private SessionDao sessionDao;
-
-	@Mock
-	private TwitLogic tweetHandler;
 
 	@Mock
 	private User user;
@@ -78,7 +60,7 @@ public class TwitHandlerTest {
     }
 
 	@Test(expected = QuotaLimitException.class)
-	public void testSendQuotaLimitationException() throws InterruptedException {
+	public void testSendQuotaLimitationException() {
 		StringMessage twitMessage = (StringMessage) MessageFactory.produce(1, Command.TWEET, "this is a test tweet");
 		TwitLogic tweetHandler = spy(new TwitLogic(twitterWrapper, 60));
         state.user.profile = profile;
@@ -86,7 +68,7 @@ public class TwitHandlerTest {
 		twitter.token = "token";
 		twitter.secret = "secret_token";
 		when(state.user.profile.getDashByIdOrThrow(1)).thenReturn(dash);
-		when(dash.getWidgetByType(Twitter.class)).thenReturn(twitter);
+		when(dash.getTwitterWidget()).thenReturn(twitter);
 		dash.isActive = true;
 
 		tweetHandler.messageReceived(ctx, state, twitMessage);
@@ -105,7 +87,7 @@ public class TwitHandlerTest {
 		twitter.token = "token";
 		twitter.secret = "secret_token";
 		when(state.user.profile.getDashByIdOrThrow(1)).thenReturn(dash);
-		when(dash.getWidgetByType(Twitter.class)).thenReturn(twitter);
+		when(dash.getTwitterWidget()).thenReturn(twitter);
 		dash.isActive = true;
 
 		tweetHandler.messageReceived(ctx, state, twitMessage);

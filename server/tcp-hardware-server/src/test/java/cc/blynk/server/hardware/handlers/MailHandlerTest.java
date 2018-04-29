@@ -54,25 +54,25 @@ public class MailHandlerTest {
     private Device device;
 
     @Test(expected = NotAllowedException.class)
-	public void testNoEmailWidget() throws InterruptedException {
+	public void testNoEmailWidget() {
         StringMessage mailMessage = (StringMessage) MessageFactory.produce(1, Command.EMAIL, "body");
 
         user.profile = profile;
         when(profile.getDashByIdOrThrow(1)).thenReturn(dashBoard);
-        when(dashBoard.getWidgetByType(Mail.class)).thenReturn(null);
+        when(dashBoard.getMailWidget()).thenReturn(null);
 
         HardwareStateHolder state = new HardwareStateHolder(user, dashBoard, device);
         mailHandler.messageReceived(ctx, state, mailMessage);
     }
 
     @Test(expected = IllegalCommandException.class)
-	public void testNoToBody() throws InterruptedException {
+	public void testNoToBody() {
         StringMessage mailMessage = (StringMessage) MessageFactory.produce(1, Command.EMAIL, "".replaceAll(" ", "\0"));
 
         user.profile = profile;
         when(profile.getDashByIdOrThrow(1)).thenReturn(dashBoard);
         Mail mail = new Mail();
-        when(dashBoard.getWidgetByType(Mail.class)).thenReturn(mail);
+        when(dashBoard.getMailWidget()).thenReturn(mail);
         dashBoard.isActive = true;
 
         HardwareStateHolder state = new HardwareStateHolder(user, dashBoard, device);
@@ -80,12 +80,12 @@ public class MailHandlerTest {
     }
 
     @Test(expected = IllegalCommandException.class)
-	public void testNoBody() throws InterruptedException {
+	public void testNoBody() {
         StringMessage mailMessage = (StringMessage) MessageFactory.produce(1, Command.EMAIL, "body".replaceAll(" ", "\0"));
 
         user.profile = profile;
         when(profile.getDashByIdOrThrow(1)).thenReturn(dashBoard);
-        when(dashBoard.getWidgetByType(Mail.class)).thenReturn(new Mail());
+        when(dashBoard.getMailWidget()).thenReturn(new Mail());
         dashBoard.isActive = true;
 
         HardwareStateHolder state = new HardwareStateHolder(user, dashBoard, device);
