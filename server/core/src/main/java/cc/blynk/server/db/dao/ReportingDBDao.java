@@ -32,13 +32,13 @@ import java.util.Map;
 public class ReportingDBDao {
 
     public static final String insertMinute =
-            "INSERT INTO reporting_average_minute (email, project_id, device_id, pin, pinType, ts, value) "
+            "INSERT INTO reporting_average_minute (email, project_id, device_id, pin, pin_type, ts, value) "
                     + "VALUES (?, ?, ?, ?, ?, ?, ?)";
     private static final String insertHourly =
-            "INSERT INTO reporting_average_hourly (email, project_id, device_id, pin, pinType, ts, value) "
+            "INSERT INTO reporting_average_hourly (email, project_id, device_id, pin, pin_type, ts, value) "
                     + "VALUES (?, ?, ?, ?, ?, ?, ?)";
     private static final String insertDaily =
-            "INSERT INTO reporting_average_daily (email, project_id, device_id, pin, pinType, ts, value) "
+            "INSERT INTO reporting_average_daily (email, project_id, device_id, pin, pin_type, ts, value) "
                     + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
     private static final String insertRawData =
@@ -116,7 +116,7 @@ public class ReportingDBDao {
         ps.setInt(2, dashId);
         ps.setInt(3, deviceId);
         ps.setByte(4, pin);
-        ps.setString(5, pinType.pinTypeString);
+        ps.setInt(5, pinType.ordinal());
         ps.setTimestamp(6, new Timestamp(ts), DateTimeUtils.UTC_CALENDAR);
         ps.setDouble(7, value);
     }

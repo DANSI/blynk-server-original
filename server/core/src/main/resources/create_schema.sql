@@ -72,34 +72,34 @@ CREATE TABLE reporting_raw_data (
 CREATE TABLE reporting_average_minute (
   email text,
   project_id int4,
-  device_id int4,
+  device_id int8,
   pin int2,
-  pinType char,
-  ts timestamp,
+  pin_type int2,
+  ts timestamp with time zone,
   value float8,
-  PRIMARY KEY (email, project_id, device_id, pin, pinType, ts)
+  PRIMARY KEY (email, project_id, device_id, pin, pin_type, ts)
 );
 
 CREATE TABLE reporting_average_hourly (
   email text,
   project_id int4,
-  device_id int4,
+  device_id int8,
   pin int2,
-  pinType char,
-  ts timestamp,
+  pin_type int2,
+  ts timestamp with time zone,
   value float8,
-  PRIMARY KEY (email, project_id, device_id, pin, pinType, ts)
+  PRIMARY KEY (email, project_id, device_id, pin, pin_type, ts)
 );
 
 CREATE TABLE reporting_average_daily (
   email text,
   project_id int4,
-  device_id int4,
+  device_id int8,
   pin int2,
-  pinType char,
-  ts timestamp,
+  pin_type int2,
+  ts timestamp with time zone,
   value float8,
-  PRIMARY KEY (email, project_id, device_id, pin, pinType, ts)
+  PRIMARY KEY (email, project_id, device_id, pin, pin_type, ts)
 );
 
 CREATE TABLE reporting_app_stat_minute (

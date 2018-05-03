@@ -129,7 +129,7 @@ public class DBManagerTest {
                 assertEquals(1, rs.getInt("project_id"));
                 assertEquals(2, rs.getInt("device_id"));
                 assertEquals(0, rs.getByte("pin"));
-                assertEquals("v", rs.getString("pinType"));
+                assertEquals(PinType.VIRTUAL, PinType.values()[rs.getInt("pin_type")]);
                 assertEquals(startMinute, rs.getTimestamp("ts", UTC).getTime());
                 assertEquals((double) i, rs.getDouble("value"), 0.0001);
                 startMinute += AverageAggregatorProcessor.MINUTE;
