@@ -6,6 +6,7 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.App;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.workers.timer.TimerWorker;
@@ -34,19 +35,19 @@ public final class DeleteAppLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
-        var id = message.body;
+        String id = message.body;
 
-        var user = state.user;
+        User user = state.user;
 
-        var existingAppIndex = user.profile.getAppIndexById(id);
+        int existingAppIndex = user.profile.getAppIndexById(id);
 
         if (existingAppIndex == -1) {
             throw new NotAllowedException("App with passed is not exists.", message.id);
         }
 
-        var projectIds = user.profile.apps[existingAppIndex].projectIds;
+        int[] projectIds = user.profile.apps[existingAppIndex].projectIds;
 
-        var result = new ArrayList<DashBoard>();
+        ArrayList<DashBoard> result = new ArrayList<>();
         for (DashBoard dash : user.profile.dashBoards) {
             if (ArrayUtil.contains(projectIds, dash.id)) {
                 timerWorker.deleteTimers(state.userKey, dash);

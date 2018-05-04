@@ -28,6 +28,7 @@ import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.Tile;
+import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.workers.timer.TimerWorker;
@@ -140,7 +141,7 @@ public class DashBoard {
     }
 
     private PinStorageValue initStorageValueForStorageKey(PinStorageKey key) {
-        var widget = getWidgetForStorageKey(key);
+        Widget widget = getWidgetForStorageKey(key);
         if (widget == null) {
             return new SinglePinStorageValue();
         }
@@ -148,29 +149,29 @@ public class DashBoard {
     }
 
     private Widget getWidgetForStorageKey(PinStorageKey key) {
-        for (var widget : widgets) {
+        for (Widget widget : widgets) {
             if (widget instanceof OnePinWidget) {
-                var onePinWidget = (OnePinWidget) widget;
+                OnePinWidget onePinWidget = (OnePinWidget) widget;
                 //pim matches and widget assigned to device selector
                 if (onePinWidget.isAssignedToDeviceSelector() && key.isSamePin(onePinWidget)) {
-                    var deviceSelector = getDeviceSelector(onePinWidget.deviceId);
+                    DeviceSelector deviceSelector = getDeviceSelector(onePinWidget.deviceId);
                     if (deviceSelector != null && ArrayUtil.contains(deviceSelector.deviceIds, key.deviceId)) {
                         return widget;
                     }
                 }
             } else if (widget instanceof MultiPinWidget) {
-                var multiPinWidget = (MultiPinWidget) widget;
+                MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
                 if (multiPinWidget.isAssignedToDeviceSelector() && key.isSamePin(multiPinWidget)) {
-                    var deviceSelector = getDeviceSelector(multiPinWidget.deviceId);
+                    DeviceSelector deviceSelector = getDeviceSelector(multiPinWidget.deviceId);
                     if (deviceSelector != null && ArrayUtil.contains(deviceSelector.deviceIds, key.deviceId)) {
                         return widget;
                     }
                 }
             } else if (widget instanceof DeviceTiles) {
-                var deviceTiles = (DeviceTiles) widget;
-                for (var template : deviceTiles.templates) {
+                DeviceTiles deviceTiles = (DeviceTiles) widget;
+                for (TileTemplate template : deviceTiles.templates) {
                     if (ArrayUtil.contains(template.deviceIds, key.deviceId)) {
-                        for (var tileWidget : template.widgets) {
+                        for (Widget tileWidget : template.widgets) {
                             if (tileWidget instanceof OnePinWidget) {
                                 if (key.isSamePin((OnePinWidget) tileWidget)) {
                                     return tileWidget;

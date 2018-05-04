@@ -24,13 +24,13 @@ class LimitChecker {
     }
 
     boolean isLimitReached() {
-        var now = System.currentTimeMillis();
+        long now = System.currentTimeMillis();
         if (now - lastResetTime >= resetPeriodMillis) {
             this.counter.set(0);
             lastResetTime = System.currentTimeMillis();
         }
 
-        var val = counter.get();
+        int val = counter.get();
         if (val > limit) {
             return true;
         }

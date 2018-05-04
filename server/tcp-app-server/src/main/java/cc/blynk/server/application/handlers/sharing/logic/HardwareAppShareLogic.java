@@ -3,11 +3,14 @@ package cc.blynk.server.application.handlers.sharing.logic;
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareStateHolder;
 import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.processors.BaseProcessorHandler;
 import cc.blynk.server.core.processors.WebhookProcessor;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -47,21 +50,21 @@ public class HardwareAppShareLogic extends BaseProcessorHandler {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, AppShareStateHolder state, StringMessage message) {
-        var session = sessionDao.userSession.get(state.userKey);
+        Session session = sessionDao.userSession.get(state.userKey);
 
-        var split = split2(message.body);
+        String[] split = split2(message.body);
 
-        var dashIdAndTargetIdString = split2Device(split[0]);
-        var dashId = Integer.parseInt(dashIdAndTargetIdString[0]);
+        String[] dashIdAndTargetIdString = split2Device(split[0]);
+        int dashId = Integer.parseInt(dashIdAndTargetIdString[0]);
         //deviceId or tagId or device selector widget id
-        var targetId = 0;
+        int targetId = 0;
 
         //new logic for multi devices
         if (dashIdAndTargetIdString.length == 2) {
             targetId = Integer.parseInt(dashIdAndTargetIdString[1]);
         }
 
-        var dash = state.user.profile.getDashByIdOrThrow(dashId);
+        DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
 
         if (!dash.isActive) {
             log.trace("No active dashboard.");
@@ -76,23 +79,23 @@ public class HardwareAppShareLogic extends BaseProcessorHandler {
         }
 
         //sending message only if widget assigned to device or tag has assigned devices
-        var target = dash.getTarget(targetId);
+        Target target = dash.getTarget(targetId);
         if (target == null) {
             log.debug("No assigned target id for received command.");
             return;
         }
 
-        var deviceIds = target.getDeviceIds();
+        int[] deviceIds = target.getDeviceIds();
 
         if (deviceIds.length == 0) {
             log.debug("No devices assigned to target.");
             return;
         }
 
-        var operation = split[1].charAt(1);
+        char operation = split[1].charAt(1);
         switch (operation) {
             case 'u' :
-                var splitBody = split3(split[1]);
+                String[] splitBody = split3(split[1]);
                 processDeviceSelectorCommand(ctx, session, dash, message, splitBody);
                 break;
             case 'w':
@@ -104,10 +107,10 @@ public class HardwareAppShareLogic extends BaseProcessorHandler {
                     return;
                 }
 
-                var pinType = PinType.getPinType(splitBody[0].charAt(0));
-                var pin = Byte.parseByte(splitBody[1]);
-                var value = splitBody[2];
-                var now = System.currentTimeMillis();
+                PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
+                byte pin = Byte.parseByte(splitBody[1]);
+                String value = splitBody[2];
+                long now = System.currentTimeMillis();
 
                 for (int deviceId : deviceIds) {
                     dash.update(deviceId, pin, pinType, value, now);
@@ -118,9 +121,9 @@ public class HardwareAppShareLogic extends BaseProcessorHandler {
                     dash.update(targetId, pin, pinType, value, now);
                 }
 
-                var sharedToken = state.token;
+                String sharedToken = state.token;
                 if (sharedToken != null) {
-                    for (var appChannel : session.appChannels) {
+                    for (Channel appChannel : session.appChannels) {
                         if (appChannel != ctx.channel() && appChannel.isWritable()
                                 && Session.needSync(appChannel, sharedToken)) {
                             appChannel.writeAndFlush(

@@ -36,7 +36,7 @@ public class Table extends OnePinWidget {
     @Override
     public boolean updateIfSame(int deviceId, byte pin, PinType type, String value) {
         if (isSame(deviceId, pin, type)) {
-            var values = value.split(BODY_SEPARATOR_STRING);
+            String[] values = value.split(BODY_SEPARATOR_STRING);
             if (values.length > 0) {
                 String tableCommand = values[0];
                 switch (tableCommand) {

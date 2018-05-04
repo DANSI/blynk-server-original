@@ -1,6 +1,8 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
@@ -24,15 +26,15 @@ public final class AddPushLogic {
     }
 
     public static void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
-        var splitBody = StringUtils.split3(message.body);
+        String[] splitBody = StringUtils.split3(message.body);
 
-        var dashId = Integer.parseInt(splitBody[0]);
-        var uid = splitBody[1];
-        var token = splitBody[2];
+        int dashId = Integer.parseInt(splitBody[0]);
+        String uid = splitBody[1];
+        String token = splitBody[2];
 
-        var dash = state.user.profile.getDashByIdOrThrow(dashId);
+        DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
 
-        var notification = dash.getNotificationWidget();
+        Notification notification = dash.getNotificationWidget();
 
         if (notification == null) {
             log.error("No notification widget.");

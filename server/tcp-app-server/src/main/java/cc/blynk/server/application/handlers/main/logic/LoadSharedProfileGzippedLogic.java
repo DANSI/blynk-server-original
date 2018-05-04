@@ -3,6 +3,7 @@ package cc.blynk.server.application.handlers.main.logic;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareStateHolder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -22,16 +23,16 @@ public final class LoadSharedProfileGzippedLogic {
 
     public static void messageReceived(ChannelHandlerContext ctx, AppShareStateHolder state, StringMessage message) {
         byte[] data;
-        var user = state.user;
+        User user = state.user;
         if (message.body.length() == 0) {
-            var dash = user.profile.getDashByIdOrThrow(state.dashId);
-            var profile = new Profile();
+            DashBoard dash = user.profile.getDashByIdOrThrow(state.dashId);
+            Profile profile = new Profile();
             profile.dashBoards = new DashBoard[] {dash};
             data = gzipProfileRestrictive(profile);
         } else {
             //load specific by id
-            var dashId = Integer.parseInt(message.body);
-            var dash = user.profile.getDashByIdOrThrow(dashId);
+            int dashId = Integer.parseInt(message.body);
+            DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
             data = gzipDashRestrictive(dash);
         }
         LoadProfileGzippedLogic.write(ctx, data, message.id);

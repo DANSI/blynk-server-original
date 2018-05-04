@@ -40,7 +40,7 @@ public class PinStorageKey {
         if (multiPinWidget.dataStreams == null) {
             return false;
         }
-        for (var dataStream : multiPinWidget.dataStreams) {
+        for (DataStream dataStream : multiPinWidget.dataStreams) {
            if (dataStream.isSame(this.pin, PinType.getPinType(this.pinTypeChar))) {
                return true;
            }

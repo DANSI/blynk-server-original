@@ -21,6 +21,7 @@ import java.io.File;
 import java.net.BindException;
 import java.security.Security;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Entry point for server launch.
@@ -50,9 +51,9 @@ public final class ServerLauncher {
     }
 
     public static void main(String[] args) throws Exception {
-        var cmdProperties = ArgumentsParser.parse(args);
+        Map<String, String> cmdProperties = ArgumentsParser.parse(args);
 
-        var serverProperties = new ServerProperties(cmdProperties);
+        ServerProperties serverProperties = new ServerProperties(cmdProperties);
 
         LoggerUtil.configureLogging(serverProperties);
 
@@ -62,27 +63,27 @@ public final class ServerLauncher {
         //required to avoid dependencies within model to server.properties
         setGlobalProperties(serverProperties);
 
-        var mailProperties = new MailProperties(cmdProperties);
-        var smsProperties = new SmsProperties(cmdProperties);
-        var gcmProperties = new GCMProperties(cmdProperties);
-        var twitterProperties = new TwitterProperties(cmdProperties);
+        MailProperties mailProperties = new MailProperties(cmdProperties);
+        SmsProperties smsProperties = new SmsProperties(cmdProperties);
+        GCMProperties gcmProperties = new GCMProperties(cmdProperties);
+        TwitterProperties twitterProperties = new TwitterProperties(cmdProperties);
 
         Security.addProvider(new BouncyCastleProvider());
 
-        var restore = Boolean.parseBoolean(cmdProperties.get(ArgumentsParser.RESTORE_OPTION));
+        boolean restore = Boolean.parseBoolean(cmdProperties.get(ArgumentsParser.RESTORE_OPTION));
         start(serverProperties, mailProperties, smsProperties, gcmProperties, twitterProperties, restore);
     }
 
     private static void setGlobalProperties(ServerProperties serverProperties) {
-        var globalProps = new HashMap<String, String>(4);
+        HashMap<String, String> globalProps = new HashMap<>(4);
         globalProps.put("terminal.strings.pool.size", "25");
         globalProps.put("initial.energy", "2000");
         globalProps.put("table.rows.pool.size", "100");
         globalProps.put("csv.export.data.points.max", "43200");
 
-        for (var entry : globalProps.entrySet()) {
-            var name = entry.getKey();
-            var value = serverProperties.getProperty(name, entry.getValue());
+        for (Map.Entry<String, String> entry : globalProps.entrySet()) {
+            String name = entry.getKey();
+            String value = serverProperties.getProperty(name, entry.getValue());
             System.setProperty(name, value);
         }
     }
@@ -91,11 +92,11 @@ public final class ServerLauncher {
                               SmsProperties smsProperties, GCMProperties gcmProperties,
                               TwitterProperties twitterProperties,
                               boolean restore) {
-        var holder = new Holder(serverProperties,
+        Holder holder = new Holder(serverProperties,
                 mailProperties, smsProperties, gcmProperties, twitterProperties,
                 restore);
 
-        var servers = new BaseServer[] {
+        BaseServer[] servers = new BaseServer[] {
                 new HardwareSSLServer(holder),
                 new HardwareAndHttpAPIServer(holder),
                 new AppAndHttpsServer(holder),
@@ -108,7 +109,7 @@ public final class ServerLauncher {
 
             System.out.println();
             System.out.println("Blynk Server " + JarUtil.getServerVersion() + " successfully started.");
-            var path = new File(System.getProperty("logs.folder")).getAbsolutePath().replace("/./", "/");
+            String path = new File(System.getProperty("logs.folder")).getAbsolutePath().replace("/./", "/");
             System.out.println("All server output is stored in folder '" + path + "' file.");
 
             holder.sslContextHolder.generateInitialCertificates(holder.props);
@@ -118,14 +119,14 @@ public final class ServerLauncher {
     }
 
     private static void createSuperUser(Holder holder) {
-        var email = holder.props.getProperty("admin.email", "admin@blynk.cc");
-        var pass = holder.props.getProperty("admin.pass", "admin");
+        String email = holder.props.getProperty("admin.email", "admin@blynk.cc");
+        String pass = holder.props.getProperty("admin.pass", "admin");
 
         if (!holder.userDao.isSuperAdminExists()) {
             System.out.println("Your Admin login email is " + email);
             System.out.println("Your Admin password is " + pass);
 
-            var hash = SHA256Util.makeHash(pass, email);
+            String hash = SHA256Util.makeHash(pass, email);
             holder.userDao.add(email, hash, AppNameUtil.BLYNK, true);
         }
     }

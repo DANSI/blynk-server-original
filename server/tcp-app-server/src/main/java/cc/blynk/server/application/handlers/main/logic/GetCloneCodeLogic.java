@@ -3,6 +3,7 @@ package cc.blynk.server.application.handlers.main.logic;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.FileManager;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
@@ -38,17 +39,17 @@ public class GetCloneCodeLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        var dashId = Integer.parseInt(message.body);
+        int dashId = Integer.parseInt(message.body);
 
-        var dash = user.profile.getDashByIdOrThrow(dashId);
+        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
-        var qrToken = TokenGeneratorUtil.generateNewToken();
-        var json = JsonParser.toJsonRestrictiveDashboard(dash);
+        String qrToken = TokenGeneratorUtil.generateNewToken();
+        String json = JsonParser.toJsonRestrictiveDashboard(dash);
 
         blockingIOProcessor.executeDB(() -> {
             MessageBase result;
             try {
-                var insertStatus = dbManager.insertClonedProject(qrToken, json);
+                boolean insertStatus = dbManager.insertClonedProject(qrToken, json);
                 if (insertStatus || fileManager.writeCloneProjectToDisk(qrToken, json)) {
                     result = makeASCIIStringMessage(GET_CLONE_CODE, message.id, qrToken);
                 } else {

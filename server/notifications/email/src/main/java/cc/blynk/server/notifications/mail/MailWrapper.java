@@ -14,7 +14,7 @@ public class MailWrapper {
     private final String emailBody;
 
     public MailWrapper(MailProperties mailProperties, String productName) {
-        var host = mailProperties.getProperty("mail.smtp.host");
+        String host = mailProperties.getProperty("mail.smtp.host");
         if (host != null && host.contains("sparkpostmail")) {
             client = new SparkPostMailClient(mailProperties, productName);
         } else {

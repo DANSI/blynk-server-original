@@ -3,9 +3,12 @@ package cc.blynk.server.application.handlers.main.logic;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.TokenManager;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.DBManager;
+import cc.blynk.server.db.model.FlashedToken;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,14 +40,14 @@ public class AssignTokenLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        var split = split2(message.body);
+        String[] split = split2(message.body);
 
-        var dashId = Integer.parseInt(split[0]);
-        var token = split[1];
-        var dash = user.profile.getDashByIdOrThrow(dashId);
+        int dashId = Integer.parseInt(split[0]);
+        String token = split[1];
+        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
         blockingIOProcessor.executeDB(() -> {
-            var dbFlashedToken = dbManager.selectFlashedToken(token);
+            FlashedToken dbFlashedToken = dbManager.selectFlashedToken(token);
 
             if (dbFlashedToken == null) {
                 log.error("{} token not exists for app {}.", token, user.appName);
@@ -58,7 +61,7 @@ public class AssignTokenLogic {
                 return;
             }
 
-            var device = dash.getDeviceById(dbFlashedToken.deviceId);
+            Device device = dash.getDeviceById(dbFlashedToken.deviceId);
 
             if (device == null) {
                 log.error("Device with {} id not exists in dashboards.", dbFlashedToken.deviceId);

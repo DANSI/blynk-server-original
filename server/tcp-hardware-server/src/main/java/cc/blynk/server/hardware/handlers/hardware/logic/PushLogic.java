@@ -1,5 +1,6 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.processors.NotificationBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -42,7 +43,7 @@ public class PushLogic extends NotificationBase {
             return;
         }
 
-        var dash = state.dash;
+        DashBoard dash = state.dash;
 
         if (!dash.isActive) {
             log.debug("No active dashboard.");
@@ -50,7 +51,7 @@ public class PushLogic extends NotificationBase {
             return;
         }
 
-        var widget = dash.getNotificationWidget();
+        Notification widget = dash.getNotificationWidget();
 
         if (widget == null || widget.hasNoToken()) {
             log.debug("User has no access token provided for push widget.");
@@ -58,11 +59,11 @@ public class PushLogic extends NotificationBase {
             return;
         }
 
-        var now = System.currentTimeMillis();
+        long now = System.currentTimeMillis();
         checkIfNotificationQuotaLimitIsNotReached(now);
 
-        var deviceName = state.device.name;
-        var updatedBody = message.body;
+        String deviceName = state.device.name;
+        String updatedBody = message.body;
         if (deviceName != null) {
             updatedBody = updatedBody.replace(ServerProperties.DEVICE_NAME, state.device.name);
             if (Notification.isWrongBody(updatedBody)) {

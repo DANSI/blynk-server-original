@@ -1,5 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.tags;
 
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -19,17 +20,17 @@ public final class GetTagsLogic {
     }
 
     public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        var dashId = Integer.parseInt(message.body);
+        int dashId = Integer.parseInt(message.body);
 
-        var dash = user.profile.getDashByIdOrThrow(dashId);
+        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
-        var response = JsonParser.toJson(dash.tags);
-        if (response == null) {
-            response = "[]";
+        String json = JsonParser.toJson(dash.tags);
+        if (json == null) {
+            json = "[]";
         }
 
         if (ctx.channel().isWritable()) {
-            ctx.writeAndFlush(makeUTF8StringMessage(GET_TAGS, message.id, response), ctx.voidPromise());
+            ctx.writeAndFlush(makeUTF8StringMessage(GET_TAGS, message.id, json), ctx.voidPromise());
         }
     }
 

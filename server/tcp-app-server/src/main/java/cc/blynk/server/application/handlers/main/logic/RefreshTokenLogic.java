@@ -4,6 +4,10 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.auth.Session;
+import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
@@ -28,24 +32,24 @@ public class RefreshTokenLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
-        var split = StringUtils.split2(message.body);
+        String[] split = StringUtils.split2(message.body);
 
-        var dashId = Integer.parseInt(split[0]);
-        var deviceId = 0;
+        int dashId = Integer.parseInt(split[0]);
+        int deviceId = 0;
 
         //new value for multi devices
         if (split.length == 2) {
             deviceId = Integer.parseInt(split[1]);
         }
 
-        var user = state.user;
+        User user = state.user;
 
-        var dash = user.profile.getDashByIdOrThrow(dashId);
-        var device = dash.getDeviceById(deviceId);
+        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
+        Device device = dash.getDeviceById(deviceId);
 
-        var token = tokenManager.refreshToken(user, dash, device);
+        String token = tokenManager.refreshToken(user, dash, device);
 
-        var session = sessionDao.userSession.get(state.userKey);
+        Session session = sessionDao.userSession.get(state.userKey);
         session.closeHardwareChannelByDeviceId(dashId, deviceId);
 
         if (ctx.channel().isWritable()) {

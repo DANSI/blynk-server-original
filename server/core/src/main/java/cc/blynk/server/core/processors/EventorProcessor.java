@@ -165,7 +165,7 @@ public class EventorProcessor {
         }
 
         twitterWrapper.send(twitterWidget.token, twitterWidget.secret, body,
-                new AsyncCompletionHandler<>() {
+                new AsyncCompletionHandler<Response>() {
                     @Override
                     public Response onCompleted(Response response) {
                         if (response.getStatusCode() != HttpResponseStatus.OK.code()) {

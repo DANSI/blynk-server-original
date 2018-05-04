@@ -2,6 +2,7 @@ package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.DBManager;
@@ -63,10 +64,10 @@ public class AddEnergyLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
-        var splitBody = split2(message.body);
-        var user = state.user;
+        String[] splitBody = split2(message.body);
+        User user = state.user;
 
-        var energyAmountToAdd = Integer.parseInt(splitBody[0]);
+        int energyAmountToAdd = Integer.parseInt(splitBody[0]);
         ResponseMessage response;
         if (splitBody.length == 2 && isValidTransactionId(splitBody[1])) {
             insertPurchase(user.email, energyAmountToAdd, splitBody[1]);

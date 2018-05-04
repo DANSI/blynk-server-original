@@ -31,15 +31,15 @@ public class PinStorageValueDeserializer extends JsonDeserializer {
 
             if (jsonToken == START_OBJECT) {
                 JsonNode multiValueNode = p.getCodec().readTree(p);
-                var type = multiValueNode.get("type");
+                JsonNode type = multiValueNode.get("type");
                 if (type != null) {
-                    var multiPinStorageValue =
+                    MultiPinStorageValue multiPinStorageValue =
                             new MultiPinStorageValue(MultiPinStorageValueType.valueOf(type.textValue()));
 
-                    var values = multiValueNode.get("values");
+                    JsonNode values = multiValueNode.get("values");
                     if (values != null) {
                         if (values.isArray()) {
-                            for (var objNode : values) {
+                            for (JsonNode objNode : values) {
                                 multiPinStorageValue.values.add(objNode.textValue());
                             }
                         }

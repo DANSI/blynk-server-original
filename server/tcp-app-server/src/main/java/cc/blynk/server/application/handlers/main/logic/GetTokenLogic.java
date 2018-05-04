@@ -2,6 +2,7 @@ package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.TokenManager;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -28,7 +29,7 @@ public class GetTokenLogic {
 
     //todo this old and outdated handle just for back compatibility
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        var dashBoardIdString = message.body;
+        String dashBoardIdString = message.body;
 
         String[] parts;
         if (dashBoardIdString.contains(StringUtils.BODY_SEPARATOR_STRING)) {
@@ -39,13 +40,13 @@ public class GetTokenLogic {
             parts = new String[] {dashBoardIdString};
         }
 
-        var dashId = Integer.parseInt(parts[0]);
-        var deviceId = parts.length == 1 ? 0 : Integer.parseInt(parts[1]);
+        int dashId = Integer.parseInt(parts[0]);
+        int deviceId = parts.length == 1 ? 0 : Integer.parseInt(parts[1]);
 
-        var dash = user.profile.getDashByIdOrThrow(dashId);
+        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
-        var device = dash.getDeviceById(deviceId);
-        var token = device == null ? null : device.token;
+        Device device = dash.getDeviceById(deviceId);
+        String token = device == null ? null : device.token;
 
         //if token not exists. generate new one
         if (token == null) {

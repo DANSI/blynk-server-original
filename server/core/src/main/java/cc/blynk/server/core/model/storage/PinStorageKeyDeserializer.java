@@ -16,10 +16,10 @@ public class PinStorageKeyDeserializer extends KeyDeserializer {
     @Override
     public PinStorageKey deserializeKey(String key, DeserializationContext ctx) {
         //parsing "123-v24"
-        var split = StringUtils.split3(StringUtils.DEVICE_SEPARATOR, key);
+        String[] split = StringUtils.split3(StringUtils.DEVICE_SEPARATOR, key);
 
-        var deviceId = Integer.parseInt(split[0]);
-        var pinType = PinType.getPinType(split[1].charAt(0));
+        int deviceId = Integer.parseInt(split[0]);
+        PinType pinType = PinType.getPinType(split[1].charAt(0));
         byte pin = 0;
         try {
             pin = Byte.parseByte(split[1].substring(1, split[1].length()));
@@ -28,7 +28,7 @@ public class PinStorageKeyDeserializer extends KeyDeserializer {
             return new PinStorageKey(deviceId, pinType, pin);
         }
         if (split.length == 3) {
-            var widgetProperty = WidgetProperty.getProperty(split[2]);
+            WidgetProperty widgetProperty = WidgetProperty.getProperty(split[2]);
             if (widgetProperty == null) {
                 widgetProperty = WidgetProperty.LABEL;
             }

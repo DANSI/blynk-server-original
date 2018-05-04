@@ -5,6 +5,7 @@ import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.ArrayUtil;
@@ -35,7 +36,7 @@ public class DeleteDashLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
-        var dashId = Integer.parseInt(message.body);
+        int dashId = Integer.parseInt(message.body);
 
         deleteDash(state, dashId);
         state.user.lastModifiedTs = System.currentTimeMillis();
@@ -44,12 +45,12 @@ public class DeleteDashLogic {
     }
 
     private void deleteDash(AppStateHolder state, int dashId) {
-        var user = state.user;
-        var index = user.profile.getDashIndexOrThrow(dashId);
+        User user = state.user;
+        int index = user.profile.getDashIndexOrThrow(dashId);
 
         log.debug("Deleting dashboard {}.", dashId);
 
-        var dash = user.profile.dashBoards[index];
+        DashBoard dash = user.profile.dashBoards[index];
 
         user.addEnergy(dash.energySum());
 
