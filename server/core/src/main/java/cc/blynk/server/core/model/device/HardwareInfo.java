@@ -20,6 +20,8 @@ public class HardwareInfo {
 
     public final String build;
 
+    public final String templateId;
+
     public final int heartbeatInterval;
 
     @JsonCreator
@@ -28,12 +30,14 @@ public class HardwareInfo {
                         @JsonProperty("cpuType") String cpuType,
                         @JsonProperty("connectionType") String connectionType,
                         @JsonProperty("build") String build,
+                        @JsonProperty("templateId") String templateId,
                         @JsonProperty("heartbeatInterval") int heartbeatInterval) {
         this.version = version;
         this.boardType = boardType;
         this.cpuType = cpuType;
         this.connectionType = connectionType;
         this.build = build;
+        this.templateId = templateId;
         this.heartbeatInterval = heartbeatInterval;
     }
 
@@ -44,6 +48,7 @@ public class HardwareInfo {
         this.cpuType = hardwareInfoPrivate.cpuType;
         this.connectionType = hardwareInfoPrivate.connectionType;
         this.build = hardwareInfoPrivate.build;
+        this.templateId = hardwareInfoPrivate.templateId;
         this.heartbeatInterval = hardwareInfoPrivate.heartbeatInterval;
     }
 
@@ -53,6 +58,7 @@ public class HardwareInfo {
         private String boardType;
         private String cpuType;
         private String connectionType;
+        private String templateId;
         private String build;
         private int heartbeatInterval;
 
@@ -84,6 +90,9 @@ public class HardwareInfo {
                     break;
                 case "con" :
                     this.connectionType = value;
+                    break;
+                case "tmpl" :
+                    this.templateId = value;
                     break;
                 case "build" :
                     this.build = value;

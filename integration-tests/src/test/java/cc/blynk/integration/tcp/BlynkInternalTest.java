@@ -73,14 +73,13 @@ public class BlynkInternalTest extends IntegrationBase {
         hardClient2.login(token2);
         hardClient2.verifyResult(ok(1));
 
-        hardClient2.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100"));
+        hardClient2.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 tmpl tmpl00123"));
 
         hardClient2.verifyResult(ok(2));
 
         clientPair.appClient.reset();
 
-
-        HardwareInfo hardwareInfo = new HardwareInfo("0.3.1", "Arduino", "ATmega328P", "W5100", null, 10);
+        HardwareInfo hardwareInfo = new HardwareInfo("0.3.1", "Arduino", "ATmega328P", "W5100", null, "tmpl00123", 10);
 
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = clientPair.appClient.getProfile();
