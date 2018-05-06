@@ -139,10 +139,10 @@ public class HistoryGraphTest extends IntegrationBase {
         DataStream dataStream2 = new DataStream((byte) 9, PinType.DIGITAL);
         DataStream dataStream3 = new DataStream((byte) 10, PinType.DIGITAL);
         DataStream dataStream4 = new DataStream((byte) 11, PinType.DIGITAL);
-        GraphDataStream graphDataStream1 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream1, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
-        GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream2, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
-        GraphDataStream graphDataStream3 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream3, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
-        GraphDataStream graphDataStream4 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream4, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
+        GraphDataStream graphDataStream1 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream1, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0);
+        GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream2, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0);
+        GraphDataStream graphDataStream3 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream3, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0);
+        GraphDataStream graphDataStream4 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream4, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream1,
                 graphDataStream2,
@@ -230,8 +230,8 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
         DataStream dataStream2 = new DataStream((byte) 89, PinType.VIRTUAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, dataStream, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
-        GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 1, dataStream2, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, dataStream, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0);
+        GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 1, dataStream2, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream,
                 graphDataStream2
@@ -298,7 +298,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, dataStream, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, dataStream, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -364,7 +364,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, dataStream, AggregationFunctionType.MIN, 0, null, null, null, 0, 0, false, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, dataStream, AggregationFunctionType.MIN, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -430,7 +430,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, dataStream, AggregationFunctionType.SUM, 0, null, null, null, 0, 0, false, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, dataStream, AggregationFunctionType.SUM, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -496,7 +496,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, dataStream, AggregationFunctionType.AVG, 0, null, null, null, 0, 0, false, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, dataStream, AggregationFunctionType.AVG, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -562,7 +562,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, dataStream, AggregationFunctionType.MED, 0, null, null, null, 0, 0, false, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, dataStream, AggregationFunctionType.MED, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -640,7 +640,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, dataStream, AggregationFunctionType.MED, 0, null, null, null, 0, 0, false, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, dataStream, AggregationFunctionType.MED, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -683,7 +683,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, null, null, 0, null, null, null, 0, 0, false, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, null, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -717,7 +717,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 8, PinType.DIGITAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -763,8 +763,8 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 8, PinType.DIGITAL);
         DataStream dataStream2 = new DataStream((byte) 9, PinType.DIGITAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false);
-        GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream2, null, 0, null, null, null, 0, 0, false, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0);
+        GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream2, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream,
                 graphDataStream2
@@ -810,7 +810,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 8, null);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -838,7 +838,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -905,7 +905,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -934,7 +934,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -1000,7 +1000,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -1110,7 +1110,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 8, PinType.DIGITAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -1159,7 +1159,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 8, PinType.DIGITAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -1210,7 +1210,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 8, PinType.DIGITAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -1249,7 +1249,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 8, PinType.DIGITAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -1269,7 +1269,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 8, PinType.DIGITAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -1362,7 +1362,7 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
         DataStream dataStream = new DataStream((byte) 8, PinType.DIGITAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 200_000, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 200_000, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -1581,9 +1581,9 @@ public class HistoryGraphTest extends IntegrationBase {
         DataStream dataStream1 = new DataStream((byte) 8, PinType.DIGITAL);
         DataStream dataStream2 = new DataStream((byte) 9, PinType.DIGITAL);
         DataStream dataStream3 = new DataStream((byte) 10, PinType.DIGITAL);
-        GraphDataStream graphDataStream1 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream1, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
-        GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream2, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
-        GraphDataStream graphDataStream3 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream3, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
+        GraphDataStream graphDataStream1 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream1, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0);
+        GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream2, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0);
+        GraphDataStream graphDataStream3 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream3, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream1,
                 graphDataStream2,
@@ -1653,8 +1653,8 @@ public class HistoryGraphTest extends IntegrationBase {
         enhancedHistoryGraph.height = 4;
         DataStream dataStream1 = new DataStream((byte) 8, PinType.DIGITAL);
         DataStream dataStream2 = new DataStream((byte) 9, PinType.DIGITAL);
-        GraphDataStream graphDataStream1 = new GraphDataStream(null, GraphType.LINE, 0, -1, dataStream1, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
-        GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, -1, dataStream2, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
+        GraphDataStream graphDataStream1 = new GraphDataStream(null, GraphType.LINE, 0, -1, dataStream1, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0);
+        GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, -1, dataStream2, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream1,
                 graphDataStream2,
@@ -1731,9 +1731,9 @@ public class HistoryGraphTest extends IntegrationBase {
         DataStream dataStream1 = new DataStream((byte) 8, PinType.DIGITAL);
         DataStream dataStream2 = new DataStream((byte) 9, PinType.DIGITAL);
         DataStream dataStream3 = new DataStream((byte) 10, PinType.DIGITAL);
-        GraphDataStream graphDataStream1 = new GraphDataStream(null, GraphType.LINE, 0, 200000, dataStream1, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
-        GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 200000, dataStream2, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
-        GraphDataStream graphDataStream3 = new GraphDataStream(null, GraphType.LINE, 0, 200000, dataStream3, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false);
+        GraphDataStream graphDataStream1 = new GraphDataStream(null, GraphType.LINE, 0, 200000, dataStream1, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0);
+        GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 200000, dataStream2, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0);
+        GraphDataStream graphDataStream3 = new GraphDataStream(null, GraphType.LINE, 0, 200000, dataStream3, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream1,
                 graphDataStream2,
