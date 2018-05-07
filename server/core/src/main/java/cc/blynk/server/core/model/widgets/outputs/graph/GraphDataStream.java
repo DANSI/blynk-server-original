@@ -87,7 +87,7 @@ public class GraphDataStream {
         this.cubicSmoothingEnabled = cubicSmoothingEnabled;
         this.connectMissingPointsEnabled = connectMissingPointsEnabled;
         this.isPercentMaxMin = isPercentMaxMin;
-        this.yAxisScale = yAxisScale;
+        this.yAxisScale = yAxisScale == null ? YAxisScale.UNSET : yAxisScale;
         this.delta = delta;
     }
 
