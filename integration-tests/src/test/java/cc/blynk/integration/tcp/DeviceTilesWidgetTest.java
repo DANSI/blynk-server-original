@@ -58,15 +58,9 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static junit.framework.TestCase.assertNull;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.contains;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * The Blynk Project.
@@ -1731,18 +1725,16 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, deviceTiles);
         clientPair.appClient.verifyResult(ok(1));
 
+        DataStream dataStream = new DataStream((byte) 5, PinType.VIRTUAL);
         TileTemplate tileTemplate = new PageTileTemplate(1,
-                null, new int[] {0}, "name", "name", "iconName", "ESP8266", null,
+                null, new int[] {0}, "name", "name", "iconName", "ESP8266", dataStream,
                 false, null, null, null, 0, 0, FontSize.LARGE, false);
 
         clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
         clientPair.appClient.verifyResult(ok(2));
 
-        //send value before we have tile for that pin
         clientPair.hardwareClient.send("hardware vw 5 111");
         clientPair.appClient.verifyResult(hardware(1, "1-0 vw 5 111"));
-
-        DataStream dataStream = new DataStream((byte) 5, PinType.VIRTUAL);
 
         ValueDisplay valueDisplay = new ValueDisplay();
         valueDisplay.width = 2;
@@ -1756,7 +1748,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.reset();
         clientPair.appClient.sync(1, 0);
 
-        verify(clientPair.appClient.responseMock, timeout(500).times(11)).channelRead(any(), any());
+        verify(clientPair.appClient.responseMock, timeout(500).times(12)).channelRead(any(), any());
 
         clientPair.appClient.verifyResult(ok(1));
 
@@ -1770,6 +1762,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 0 89.888037459418")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 1 -58.74774244674501")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 13 60 143 158")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 5 111")));
 
         clientPair.hardwareClient.send("hardware vw 5 112");
         clientPair.appClient.verifyResult(hardware(2, "1-0 vw 5 112"));
@@ -1793,6 +1786,9 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 1 -58.74774244674501")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 13 60 143 158")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 5 112")));
+
+        clientPair.hardwareClient.sync(PinType.VIRTUAL, 5);
+        clientPair.hardwareClient.verifyResult(produce(3, HARDWARE, b("vw 5 112")));
     }
 
     @Test
