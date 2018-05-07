@@ -58,9 +58,15 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static junit.framework.TestCase.assertNull;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.contains;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -977,7 +983,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         GraphDataStream graphDataStream = new GraphDataStream(
                 null, GraphType.LINE, 0, 100_000,
                 new DataStream((byte) 88, PinType.VIRTUAL),
-                AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0);
+                AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -1016,7 +1022,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         GraphDataStream graphDataStream = new GraphDataStream(
                 null, GraphType.LINE, 0, 100_000,
                 new DataStream((byte) 88, PinType.VIRTUAL),
-                AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0);
+                AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
@@ -1055,7 +1061,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         GraphDataStream graphDataStream = new GraphDataStream(
                 null, GraphType.LINE, 0, 0,
                 new DataStream((byte) 88, PinType.VIRTUAL),
-                AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0);
+                AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
