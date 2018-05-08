@@ -43,6 +43,8 @@ public final class Command {
     public static final short SHARING = 26;
     public static final short ADD_PUSH_TOKEN = 27;
     public static final short EXPORT_GRAPH_DATA = 28;
+
+    public static final short HARDWARE_LOGIN = 29;
     //app sharing commands
     public static final short GET_SHARE_TOKEN = 30;
     public static final short REFRESH_SHARE_TOKEN = 31;
@@ -134,6 +136,7 @@ public final class Command {
             Map.entry(HARDWARE_CONNECTED, "HardwareConnected"),
             Map.entry(REGISTER, "Register"),
             Map.entry(LOGIN, "Login"),
+            Map.entry(HARDWARE_LOGIN, "LoginHardware"),
             Map.entry(LOGOUT, "Logout"),
             Map.entry(LOAD_PROFILE_GZIPPED, "LoadProfile"),
             Map.entry(APP_SYNC, "AppSync"),

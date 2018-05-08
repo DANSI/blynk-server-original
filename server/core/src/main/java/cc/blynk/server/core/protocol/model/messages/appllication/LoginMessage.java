@@ -15,6 +15,10 @@ public class LoginMessage extends StringMessage {
         super(messageId, LOGIN, body);
     }
 
+    public LoginMessage(int messageId, short command, String body) {
+        super(messageId, command, body);
+    }
+
     @Override
     public String toString() {
         return "LoginMessage{" + super.toString() + "}";
