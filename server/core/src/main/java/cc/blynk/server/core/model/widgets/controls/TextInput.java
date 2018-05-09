@@ -17,7 +17,7 @@ public class TextInput extends OnePinWidget {
 
     public int limit;
 
-    public SendValueTrigger ValueTrigger;
+    public SendValueTrigger valueTrigger;
 
     public FontSize fontSize;
 
