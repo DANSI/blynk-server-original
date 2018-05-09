@@ -8,7 +8,7 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.storage.PinStorageValue;
 import cc.blynk.server.core.model.storage.SinglePinStorageValue;
 import cc.blynk.server.core.model.widgets.controls.Button;
-import cc.blynk.server.core.model.widgets.controls.FieldInput;
+import cc.blynk.server.core.model.widgets.controls.NumberInput;
 import cc.blynk.server.core.model.widgets.controls.OneAxisJoystick;
 import cc.blynk.server.core.model.widgets.controls.QR;
 import cc.blynk.server.core.model.widgets.controls.RGB;
@@ -16,6 +16,7 @@ import cc.blynk.server.core.model.widgets.controls.Slider;
 import cc.blynk.server.core.model.widgets.controls.Step;
 import cc.blynk.server.core.model.widgets.controls.StyledButton;
 import cc.blynk.server.core.model.widgets.controls.Terminal;
+import cc.blynk.server.core.model.widgets.controls.TextInput;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.controls.TwoAxisJoystick;
 import cc.blynk.server.core.model.widgets.controls.VerticalSlider;
@@ -81,7 +82,8 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
         //controls
         @JsonSubTypes.Type(value = Button.class, name = "BUTTON"),
         @JsonSubTypes.Type(value = StyledButton.class, name = "STYLED_BUTTON"),
-        @JsonSubTypes.Type(value = FieldInput.class, name = "FIELD_INPUT"),
+        @JsonSubTypes.Type(value = TextInput.class, name = "TEXT_INPUT"),
+        @JsonSubTypes.Type(value = NumberInput.class, name = "NUMBER_INPUT"),
         @JsonSubTypes.Type(value = Slider.class, name = "SLIDER"),
         @JsonSubTypes.Type(value = VerticalSlider.class, name = "VERTICAL_SLIDER"),
         @JsonSubTypes.Type(value = RGB.class, name = "RGB"),
