@@ -21,8 +21,6 @@ public class TextInput extends OnePinWidget {
 
     public FontSize fontSize;
 
-    public int buttonColor;
-
     public boolean clearFieldOn;
 
     @Override

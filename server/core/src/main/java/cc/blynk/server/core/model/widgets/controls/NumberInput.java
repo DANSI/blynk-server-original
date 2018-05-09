@@ -25,8 +25,6 @@ public class NumberInput extends OnePinWidget {
 
     public FontSize fontSize;
 
-    public int buttonColor;
-
     @Override
     public PinMode getModeType() {
         return PinMode.out;
