@@ -76,7 +76,6 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
  */
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
-        include = JsonTypeInfo.As.PROPERTY,
         property = "type")
 @JsonSubTypes({
 
