@@ -11,10 +11,6 @@ import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
  */
 public class NumberInput extends OnePinWidget {
 
-    public float defaultValue;
-
-    public String hint;
-
     public String suffix;
 
     public float step;

@@ -11,17 +11,11 @@ import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
  */
 public class TextInput extends OnePinWidget {
 
-    public String defaultValue;
-
     public String hint;
 
     public int limit;
 
-    public SendValueTrigger valueTrigger;
-
     public FontSize fontSize;
-
-    public boolean clearFieldOn;
 
     @Override
     public PinMode getModeType() {
