@@ -13,6 +13,7 @@ import cc.blynk.server.core.model.widgets.controls.NumberInput;
 import cc.blynk.server.core.model.widgets.controls.OneAxisJoystick;
 import cc.blynk.server.core.model.widgets.controls.QR;
 import cc.blynk.server.core.model.widgets.controls.RGB;
+import cc.blynk.server.core.model.widgets.controls.SegmentedControl;
 import cc.blynk.server.core.model.widgets.controls.Slider;
 import cc.blynk.server.core.model.widgets.controls.Step;
 import cc.blynk.server.core.model.widgets.controls.StyledButton;
@@ -96,6 +97,7 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
         @JsonSubTypes.Type(value = VerticalStep.class, name = "VERTICAL_STEP"),
         @JsonSubTypes.Type(value = QR.class, name = "QR"),
         @JsonSubTypes.Type(value = TimeInput.class, name = "TIME_INPUT"),
+        @JsonSubTypes.Type(value = SegmentedControl.class, name = "SEGMENTED_CONTROL"),
 
         //outputs
         @JsonSubTypes.Type(value = LED.class, name = "LED"),
