@@ -1664,7 +1664,7 @@ public class HistoryGraphTest extends IntegrationBase {
                         enhancedHistoryGraph
                 },
                 deviceIds, "123", "name", "iconName", "ESP8266", new DataStream((byte) 1, PinType.VIRTUAL),
-                false, null, null, null, 0, 0, FontSize.LARGE, false);
+                false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
 
         clientPair.appClient.send("createTemplate " + b("1 " + deviceTiles.id + " ")
                 + MAPPER.writeValueAsString(tileTemplate));

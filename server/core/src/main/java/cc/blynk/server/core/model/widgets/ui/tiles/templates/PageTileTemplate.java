@@ -28,6 +28,8 @@ public class PageTileTemplate extends TileTemplate {
 
     private final boolean showTileLabel;
 
+    private final int maximumFractionDigits;
+
     @JsonCreator
     public PageTileTemplate(@JsonProperty("id") long id,
                             @JsonProperty("widgets") Widget[] widgets,
@@ -44,7 +46,8 @@ public class PageTileTemplate extends TileTemplate {
                             @JsonProperty("color") int color,
                             @JsonProperty("tileColor")int tileColor,
                             @JsonProperty("fontSize") FontSize fontSize,
-                            @JsonProperty("showTileLabel")boolean showTileLabel) {
+                            @JsonProperty("showTileLabel")boolean showTileLabel,
+                            @JsonProperty("maximumFractionDigits") int maximumFractionDigits) {
         super(id, widgets, deviceIds, templateId, name, iconName, boardType, dataStream, showDeviceName);
         this.valueName = valueName;
         this.valueFormatting = valueFormatting;
@@ -53,5 +56,6 @@ public class PageTileTemplate extends TileTemplate {
         this.tileColor = tileColor;
         this.fontSize = fontSize;
         this.showTileLabel = showTileLabel;
+        this.maximumFractionDigits = maximumFractionDigits;
     }
 }
