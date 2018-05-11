@@ -14,16 +14,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class DimmerTileTemplate extends TileTemplate {
 
-    private final String valueName;
-
-    private final String valueFormatting;
-
-    private final String valueSuffix;
-
     public final int color;
-
     public final int tileColor;
-
+    private final String valueName;
+    private final String valueFormatting;
+    private final String valueSuffix;
     private final FontSize fontSize;
 
     private final boolean showTileLabel;
