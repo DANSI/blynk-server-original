@@ -19,17 +19,12 @@ public enum GraphPeriod {
     SIX_HOURS(6 * 60, MINUTE),
     TWELVE_HOURS(12 * 60, MINUTE),
 
-    @Deprecated
     DAY(24 * 60, MINUTE),
     @Deprecated
     THREE_DAYS(24 * 3, HOURLY),
-    @Deprecated
     WEEK(24 * 7, HOURLY),
-    @Deprecated
     TWO_WEEKS(24 * 14, HOURLY),
-    @Deprecated
     MONTH(30 * 24, HOURLY),
-    @Deprecated
     THREE_MONTHS(3 * 30 * 24, HOURLY),
     @Deprecated
     ALL(12 * 30 * 24, HOURLY),
@@ -37,8 +32,8 @@ public enum GraphPeriod {
     N_DAY(24, HOURLY),
     TWO_DAYS(2 * 24, HOURLY),
     N_THREE_DAYS(3 * 24, HOURLY),
-    N_WEEK(7 * 24, HOURLY),
-    N_TWO_WEEKS(14 * 24, HOURLY),
+    N_WEEK(7, DAILY),
+    N_TWO_WEEKS(14, DAILY),
     N_MONTH(30, DAILY),
     N_THREE_MONTHS(3 * 30, DAILY),
     SIX_MONTHS(6 * 30, DAILY),

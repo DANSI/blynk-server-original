@@ -106,5 +106,4 @@ public class MailLogic extends NotificationBase {
             }
         });
     }
-
 }

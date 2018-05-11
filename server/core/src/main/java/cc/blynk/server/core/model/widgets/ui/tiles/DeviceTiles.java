@@ -5,6 +5,7 @@ import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.AppSyncWidget;
+import cc.blynk.server.core.model.widgets.HardwareSyncWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.outputs.TextAlignment;
@@ -12,11 +13,13 @@ import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DEVICE_TILES;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_TEMPLATES;
@@ -27,7 +30,7 @@ import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
  * Created by Dmitriy Dumanskiy.
  * Created on 02.10.17.
  */
-public class DeviceTiles extends Widget implements AppSyncWidget {
+public class DeviceTiles extends Widget implements AppSyncWidget, HardwareSyncWidget {
 
     public volatile TileTemplate[] templates = EMPTY_TEMPLATES;
 
@@ -170,6 +173,18 @@ public class DeviceTiles extends Widget implements AppSyncWidget {
                 String hardBody = tile.dataStream.makeHardwareBody();
                 String body = prependDashIdAndDeviceId(dashId, targetId, hardBody);
                 appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body));
+            }
+        }
+    }
+
+    @Override
+    public void sendHardSync(ChannelHandlerContext ctx, int msgId, int deviceId) {
+        for (Tile tile : tiles) {
+            if (tile.deviceId == deviceId && tile.isValidDataStream() && tile.dataStream.isNotEmpty()) {
+                String body = tile.dataStream.makeHardwareBody();
+                if (body != null) {
+                    ctx.write(makeUTF8StringMessage(HARDWARE, msgId, body), ctx.voidPromise());
+                }
             }
         }
     }

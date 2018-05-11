@@ -3,6 +3,7 @@ package cc.blynk.integration.tools;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.Redeem;
+import cc.blynk.utils.TokenGeneratorUtil;
 import net.glxn.qrgen.core.image.ImageType;
 import net.glxn.qrgen.javase.QRCode;
 
@@ -12,9 +13,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
+ * Used for Redeem QRs generation.
+ *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 22.03.16.
@@ -23,30 +25,16 @@ public class QRGenerator {
 
     public static void main(String[] args) throws Exception {
         DBManager dbManager = new DBManager("db.properties", new BlockingIOProcessor(4, 100), true);
-        List<Redeem> redeems;
-
-        redeems = generateQR(361, "/home/doom369/QR/blynk25", "Blynk", 25000);
-        dbManager.insertRedeems(redeems);
-
-        redeems = generateQR(1950, "/home/doom369/QR/blynk100", "Blynk", 100000);
-        dbManager.insertRedeems(redeems);
-
-        redeems = generateQR(90, "/home/doom369/QR/bluz", "Bluz", 100000);
-        dbManager.insertRedeems(redeems);
-
-        redeems = generateQR(210, "/home/doom369/QR/oak", "Digistump Oak", 100000);
-        dbManager.insertRedeems(redeems);
-
-        redeems = generateQR(160, "/home/doom369/QR/onion", "Onion Omega", 100000);
+        List<Redeem> redeems = generateQR(10, "/home/doom369/QR/test", "test", 50000);
         dbManager.insertRedeems(redeems);
     }
 
     private static List<Redeem> generateQR(int count, String outputFolder, String campaign, int reward) throws Exception {
-        List<Redeem> redeems = new ArrayList<>(count);
+        var redeems = new ArrayList<Redeem>(count);
         for (int i = 0; i < count; i++) {
-            String token = UUID.randomUUID().toString().replace("-", "");
+            String token = TokenGeneratorUtil.generateNewToken();
 
-            Redeem redeem = new Redeem(token, campaign, reward);
+            var redeem = new Redeem(token, campaign, reward);
             redeems.add(redeem);
 
             Path path = Paths.get(outputFolder, String.format("%d.jpg", i));

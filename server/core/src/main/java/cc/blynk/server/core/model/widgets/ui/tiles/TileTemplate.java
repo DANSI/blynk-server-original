@@ -4,6 +4,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.ui.tiles.templates.ButtonTileTemplate;
+import cc.blynk.server.core.model.widgets.ui.tiles.templates.DimmerTileTemplate;
 import cc.blynk.server.core.model.widgets.ui.tiles.templates.PageTileTemplate;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -19,12 +20,12 @@ import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_WIDGETS;
  */
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
-        include = JsonTypeInfo.As.PROPERTY,
         property = "mode",
         defaultImpl = PageTileTemplate.class)
 @JsonSubTypes({
         @JsonSubTypes.Type(value = PageTileTemplate.class, name = "PAGE"),
-        @JsonSubTypes.Type(value = ButtonTileTemplate.class, name = "BUTTON")
+        @JsonSubTypes.Type(value = ButtonTileTemplate.class, name = "BUTTON"),
+        @JsonSubTypes.Type(value = DimmerTileTemplate.class, name = "DIMMER")
 })
 public abstract class TileTemplate {
 

@@ -72,7 +72,7 @@ public class TestHardClient extends BaseTestHardwareClient {
     }
 
     public void login(String token) {
-        send("login " + token);
+        send("hardwareLogin " + token);
     }
 
     public void setProperty(int pin, String property, String value) {

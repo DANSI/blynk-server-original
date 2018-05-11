@@ -38,6 +38,7 @@ import static cc.blynk.server.core.protocol.enums.Command.GET_TAGS;
 import static cc.blynk.server.core.protocol.enums.Command.GET_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.GET_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_LOGIN;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_RESEND_FROM_BLUETOOTH;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
@@ -96,6 +97,8 @@ public final class CommandParserUtil {
                 return REFRESH_TOKEN;
             case "login" :
                 return LOGIN;
+            case "hardwarelogin" :
+                return HARDWARE_LOGIN;
             case "logout" :
                 return LOGOUT;
             case "getgraphdata" :

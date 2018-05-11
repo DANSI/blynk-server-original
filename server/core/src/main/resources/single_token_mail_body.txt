@@ -6,7 +6,7 @@ Documentation -> http://docs.blynk.cc/
 Sketch generator -> https://examples.blynk.cc/
 
 Latest Blynk library -> https://github.com/blynkkk/blynk-library/releases/download/v0.5.2/Blynk_Release_v0.5.2.zip
-Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.36.1/server-0.36.1.jar
+Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.36.2/server-0.36.2.jar
 -
 https://www.blynk.cc
 twitter.com/blynk_app

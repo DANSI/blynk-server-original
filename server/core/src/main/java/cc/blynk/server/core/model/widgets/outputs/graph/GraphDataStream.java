@@ -46,6 +46,12 @@ public class GraphDataStream {
 
     private final boolean isPercentMaxMin;
 
+    private final YAxisScale yAxisScale;
+
+    private final float delta;
+
+    private final boolean userDeltaModifyAllowed;
+
     @JsonCreator
     public GraphDataStream(@JsonProperty("title") String title,
                            @JsonProperty("graphType") GraphType graphType,
@@ -63,7 +69,10 @@ public class GraphDataStream {
                            @JsonProperty("suffix") String suffix,
                            @JsonProperty("cubicSmoothingEnabled") boolean cubicSmoothingEnabled,
                            @JsonProperty("connectMissingPointsEnabled") boolean connectMissingPointsEnabled,
-                           @JsonProperty("isPercentMaxMin") boolean isPercentMaxMin) {
+                           @JsonProperty("isPercentMaxMin") boolean isPercentMaxMin,
+                           @JsonProperty("yAxisScale") YAxisScale yAxisScale,
+                           @JsonProperty("delta") float delta,
+                           @JsonProperty("userDeltaModifyAllowed") boolean userDeltaModifyAllowed) {
         this.title = title;
         this.graphType = graphType;
         this.color = color;
@@ -81,6 +90,9 @@ public class GraphDataStream {
         this.cubicSmoothingEnabled = cubicSmoothingEnabled;
         this.connectMissingPointsEnabled = connectMissingPointsEnabled;
         this.isPercentMaxMin = isPercentMaxMin;
+        this.yAxisScale = yAxisScale == null ? YAxisScale.UNSET : yAxisScale;
+        this.delta = delta;
+        this.userDeltaModifyAllowed = userDeltaModifyAllowed;
     }
 
     public int getTargetId(int targetIdOverride) {

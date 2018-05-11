@@ -23,6 +23,7 @@ import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
 import static cc.blynk.server.core.protocol.enums.Command.BRIDGE;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_LOGIN;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.LOGIN;
 import static cc.blynk.server.core.protocol.enums.Command.PING;
@@ -102,6 +103,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
                 break;
             //may when firmware is bad written
             case LOGIN:
+            case HARDWARE_LOGIN:
                 if (ctx.channel().isWritable()) {
                     ctx.writeAndFlush(alreadyRegistered(msg.id), ctx.voidPromise());
                 }

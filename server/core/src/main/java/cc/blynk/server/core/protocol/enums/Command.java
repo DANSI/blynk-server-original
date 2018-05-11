@@ -45,6 +45,8 @@ public final class Command {
     public static final short SHARING = 26;
     public static final short ADD_PUSH_TOKEN = 27;
     public static final short EXPORT_GRAPH_DATA = 28;
+
+    public static final short HARDWARE_LOGIN = 29;
     //app sharing commands
     public static final short GET_SHARE_TOKEN = 30;
     public static final short REFRESH_SHARE_TOKEN = 31;
@@ -137,6 +139,7 @@ public final class Command {
             put(HARDWARE_CONNECTED, "HardwareConnected");
             put(REGISTER, "Register");
             put(LOGIN, "Login");
+            put(HARDWARE_LOGIN, "LoginHardware");
             put(LOGOUT, "Logout");
             put(LOAD_PROFILE_GZIPPED, "LoadProfile");
             put(APP_SYNC, "AppSync");

@@ -2,14 +2,22 @@ package cc.blynk.server.core.model.widgets.controls;
 
 import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
+import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 21.03.15.
  */
-//todo only for back compatibiltiy
-public class FieldInput extends OnePinWidget {
+public class NumberInput extends OnePinWidget {
+
+    public String suffix;
+
+    public float step;
+
+    public boolean isLoopOn;
+
+    public FontSize fontSize;
 
     @Override
     public PinMode getModeType() {
