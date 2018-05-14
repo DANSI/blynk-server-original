@@ -198,12 +198,6 @@ public class DashBoard {
         updatedAt = System.currentTimeMillis();
     }
 
-    public Widget findWidgetByPin(int deviceId, String[] splitted) {
-        PinType type = PinType.getPinType(splitted[0].charAt(0));
-        byte pin = Byte.parseByte(splitted[1]);
-        return findWidgetByPin(deviceId, pin, type);
-    }
-
     public Widget findWidgetByPin(int deviceId, byte pin, PinType pinType) {
         for (Widget widget : widgets) {
             if (widget.isSame(deviceId, pin, pinType)) {

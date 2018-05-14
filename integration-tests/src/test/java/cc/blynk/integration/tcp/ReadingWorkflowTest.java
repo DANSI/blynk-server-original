@@ -4,7 +4,6 @@ import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
@@ -19,7 +18,6 @@ import java.util.concurrent.TimeUnit;
 
 import static cc.blynk.server.core.model.widgets.FrequencyWidget.READING_MSG_ID;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND_BODY;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.after;
@@ -54,12 +52,6 @@ public class ReadingWorkflowTest extends IntegrationBase {
         this.appServer.close();
         this.hardwareServer.close();
         this.clientPair.stop();
-    }
-
-    @Test
-    public void testNoReadingWidgetOnPin() throws Exception {
-        clientPair.appClient.send("hardware 1 ar 111");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND_BODY)));
     }
 
     @Test
