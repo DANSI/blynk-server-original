@@ -699,7 +699,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void settingsUpdateCommand() throws Exception{
-        DashboardSettings settings = new DashboardSettings("New Name", true, Theme.BlynkLight, true, true, false);
+        DashboardSettings settings = new DashboardSettings("New Name", true, Theme.BlynkLight, true, true, false, false);
 
         clientPair.appClient.send("updateSettings 1\0" + JsonParser.toJson(settings));
         clientPair.appClient.verifyResult(ok(1));

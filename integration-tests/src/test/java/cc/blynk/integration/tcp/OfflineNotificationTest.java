@@ -127,7 +127,7 @@ public class OfflineNotificationTest extends IntegrationBase {
 
     @Test
     public void testTurnOffNotifications() throws Exception{
-        DashboardSettings settings = new DashboardSettings("New Name", true, Theme.BlynkLight, true, true, true);
+        DashboardSettings settings = new DashboardSettings("New Name", true, Theme.BlynkLight, true, true, true, false);
 
         clientPair.appClient.send("updateSettings 1\0" + JsonParser.toJson(settings));
         clientPair.appClient.verifyResult(ok(1));
@@ -143,6 +143,7 @@ public class OfflineNotificationTest extends IntegrationBase {
         assertEquals(settings.isShared, dashBoard.isShared);
         assertEquals(settings.keepScreenOn, dashBoard.keepScreenOn);
         assertEquals(settings.theme, dashBoard.theme);
+        assertEquals(settings.widgetBackgroundOn, dashBoard.widgetBackgroundOn);
 
         clientPair.hardwareClient.stop();
 
@@ -165,7 +166,7 @@ public class OfflineNotificationTest extends IntegrationBase {
 
         assertEquals(1, devices[1].id);
 
-        settings = new DashboardSettings("New Name", true, Theme.BlynkLight, true, true, false);
+        settings = new DashboardSettings("New Name", true, Theme.BlynkLight, true, true, false, false);
         clientPair.appClient.send("updateSettings 1\0" + JsonParser.toJson(settings));
         clientPair.appClient.verifyResult(ok(5));
 

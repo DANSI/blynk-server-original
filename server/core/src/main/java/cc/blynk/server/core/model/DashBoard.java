@@ -88,6 +88,8 @@ public class DashBoard {
 
     public volatile boolean isActive;
 
+    public volatile boolean widgetBackgroundOn;
+
     public volatile String sharedToken;
 
     @JsonDeserialize(keyUsing = PinStorageKeyDeserializer.class,
@@ -519,6 +521,7 @@ public class DashBoard {
         this.keepScreenOn = settings.keepScreenOn;
         this.isAppConnectedOn = settings.isAppConnectedOn;
         this.isNotificationsOff = settings.isNotificationsOff;
+        this.widgetBackgroundOn = settings.widgetBackgroundOn;
         this.updatedAt = System.currentTimeMillis();
     }
 
