@@ -229,7 +229,7 @@ Device device = clientPair.appClient.getDevice();
         clientPair.appClient.verifyResult(appSync(b("1-0 aw 7 3")));
         clientPair.appClient.verifyResult(appSync(b("1-0 aw 30 3")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 0 89.888037459418")));
-        clientPair.appClient.verifyResult(appSync(b("1-0 vw 1 -58.74774244674501")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 11 -58.74774244674501")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 13 60 143 158")));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 88 100"))));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 88 100"))));

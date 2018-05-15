@@ -79,7 +79,7 @@ public class BlynkInternalTest extends IntegrationBase {
 
         clientPair.appClient.reset();
 
-        HardwareInfo hardwareInfo = new HardwareInfo("0.3.1", "Arduino", "ATmega328P", "W5100", null, "tmpl00123", 10, -1);
+        HardwareInfo hardwareInfo = new HardwareInfo("0.3.1", "Arduino", "ATmega328P", "W5100", null, "tmpl00123", 10, 256);
 
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = clientPair.appClient.getProfile();

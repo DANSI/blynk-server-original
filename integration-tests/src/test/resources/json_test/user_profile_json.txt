@@ -32,7 +32,7 @@
                                     "min":-100,
                                     "max":100
                                 },
-                                {   "pin":1,
+                                {   "pin":11,
                                     "pwmMode":false,
                                     "rangeMappingOn":false,
                                     "pinType":"VIRTUAL",
