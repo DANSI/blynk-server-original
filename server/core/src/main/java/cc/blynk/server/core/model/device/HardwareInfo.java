@@ -4,6 +4,11 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
+ * This is piece of the information that hardware sends to the server
+ * via "internal" command right after it is connected to the Blynk Cloud.
+ *
+ * May be absent in some cases (old firmware, java,  js, python clients)
+ *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 18.05.16.
@@ -24,6 +29,8 @@ public class HardwareInfo {
 
     public final int heartbeatInterval;
 
+    public final int buffIn;
+
     @JsonCreator
     public HardwareInfo(@JsonProperty("version") String version,
                         @JsonProperty("boardType") String boardType,
@@ -31,7 +38,8 @@ public class HardwareInfo {
                         @JsonProperty("connectionType") String connectionType,
                         @JsonProperty("build") String build,
                         @JsonProperty("templateId") String templateId,
-                        @JsonProperty("heartbeatInterval") int heartbeatInterval) {
+                        @JsonProperty("heartbeatInterval") int heartbeatInterval,
+                        @JsonProperty("buffIn") int buffIn) {
         this.version = version;
         this.boardType = boardType;
         this.cpuType = cpuType;
@@ -39,6 +47,7 @@ public class HardwareInfo {
         this.build = build;
         this.templateId = templateId;
         this.heartbeatInterval = heartbeatInterval;
+        this.buffIn = buffIn;
     }
 
     public HardwareInfo(String[] info) {
@@ -50,6 +59,7 @@ public class HardwareInfo {
         this.build = hardwareInfoPrivate.build;
         this.templateId = hardwareInfoPrivate.templateId;
         this.heartbeatInterval = hardwareInfoPrivate.heartbeatInterval;
+        this.buffIn = hardwareInfoPrivate.buffIn;
     }
 
     //utility class to make fields of HardwareInfo final, used instead of hashmap
@@ -61,6 +71,7 @@ public class HardwareInfo {
         private String templateId;
         private String build;
         private int heartbeatInterval;
+        private int buffIn;
 
         private HardwareInfoPrivate(String[] info) {
             for (int i = 0; i < info.length; i++) {
@@ -97,8 +108,14 @@ public class HardwareInfo {
                 case "build" :
                     this.build = value;
                     break;
+                case "buff-in" :
+                    try {
+                        this.buffIn = Integer.parseInt(value);
+                    } catch (NumberFormatException nfe) {
+                        this.buffIn = -1;
+                    }
+                    break;
             }
         }
     }
-
 }
