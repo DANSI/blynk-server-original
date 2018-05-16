@@ -626,18 +626,18 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
 
     @Test
     public void terminalWithDeviceSelectorStoreMultipleCommands() throws Exception {
-        var device0 = new Device(0, "My Dashboard", "UNO");
+        Device device0 = new Device(0, "My Dashboard", "UNO");
         device0.status = Status.ONLINE;
-        var device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", "ESP8266");
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        var device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
 
-        var deviceSelector = new DeviceSelector();
+        DeviceSelector deviceSelector = new DeviceSelector();
         deviceSelector.id = 200000;
         deviceSelector.x = 0;
         deviceSelector.y = 0;
@@ -645,7 +645,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         deviceSelector.height = 1;
         deviceSelector.deviceIds = new int[] {0, 1};
 
-        var terminal = new Terminal();
+        Terminal terminal = new Terminal();
         terminal.id = 88;
         terminal.width = 1;
         terminal.height = 1;
@@ -658,7 +658,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         clientPair.appClient.verifyResult(ok(2));
         clientPair.appClient.verifyResult(ok(3));
 
-        for (var i = 1; i <= 26; i++) {
+        for (int i = 1; i <= 26; i++) {
             clientPair.hardwareClient.send("hardware vw 88 " + i);
             clientPair.appClient.verifyResult(hardware(i, "1-0 vw 88 " + i));
         }
@@ -669,25 +669,25 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         //expecting 25 syncs and not 26
         verify(clientPair.appClient.responseMock, timeout(1000).times(11 + 25)).channelRead(any(), any());
 
-        for (var i = 2; i <= 26; i++) {
+        for (int i = 2; i <= 26; i++) {
             clientPair.appClient.verifyResult(appSync("1-0 vw 88 " + i));
         }
     }
 
     @Test
     public void TableWithDeviceSelectorStoreMultipleCommands() throws Exception {
-        var device0 = new Device(0, "My Dashboard", "UNO");
+        Device device0 = new Device(0, "My Dashboard", "UNO");
         device0.status = Status.ONLINE;
-        var device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", "ESP8266");
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        var device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
 
-        var deviceSelector = new DeviceSelector();
+        DeviceSelector deviceSelector = new DeviceSelector();
         deviceSelector.id = 200000;
         deviceSelector.x = 0;
         deviceSelector.y = 0;
@@ -695,7 +695,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         deviceSelector.height = 1;
         deviceSelector.deviceIds = new int[] {0, 1};
 
-        var table = new Table();
+        Table table = new Table();
         table.id = 88;
         table.width = 1;
         table.height = 1;
@@ -708,7 +708,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         clientPair.appClient.verifyResult(ok(2));
         clientPair.appClient.verifyResult(ok(3));
 
-        for (var i = 1; i <= 101; i++) {
+        for (int i = 1; i <= 101; i++) {
             clientPair.hardwareClient.send("hardware vw 88 " + i);
             clientPair.appClient.verifyResult(hardware(i, "1-0 vw 88 " + i));
         }
@@ -719,25 +719,25 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         //expecting 25 syncs and not 26
         verify(clientPair.appClient.responseMock, timeout(1000).times(11 + 100)).channelRead(any(), any());
 
-        for (var i = 2; i <= 101; i++) {
+        for (int i = 2; i <= 101; i++) {
             clientPair.appClient.verifyResult(appSync("1-0 vw 88 " + i));
         }
     }
 
     @Test
     public void LCDWithDeviceSelectorStoreMultipleCommands() throws Exception {
-        var device0 = new Device(0, "My Dashboard", "UNO");
+        Device device0 = new Device(0, "My Dashboard", "UNO");
         device0.status = Status.ONLINE;
-        var device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", "ESP8266");
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        var device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.getDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
 
-        var deviceSelector = new DeviceSelector();
+        DeviceSelector deviceSelector = new DeviceSelector();
         deviceSelector.id = 200000;
         deviceSelector.x = 0;
         deviceSelector.y = 0;
@@ -745,7 +745,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         deviceSelector.height = 1;
         deviceSelector.deviceIds = new int[] {0, 1};
 
-        var lcd = new LCD();
+        LCD lcd = new LCD();
         lcd.id = 88;
         lcd.width = 1;
         lcd.height = 1;
@@ -757,7 +757,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         clientPair.appClient.verifyResult(ok(2));
         clientPair.appClient.verifyResult(ok(3));
 
-        for (var i = 1; i <= 7; i++) {
+        for (int i = 1; i <= 7; i++) {
             clientPair.hardwareClient.send("hardware vw 88 " + i);
             clientPair.appClient.verifyResult(hardware(i, "1-0 vw 88 " + i));
         }
@@ -768,7 +768,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         //expecting 25 syncs and not 26
         verify(clientPair.appClient.responseMock, timeout(1000).times(11 + 6)).channelRead(any(), any());
 
-        for (var i = 2; i <= 7; i++) {
+        for (int i = 2; i <= 7; i++) {
             clientPair.appClient.verifyResult(appSync("1-0 vw 88 " + i));
         }
     }

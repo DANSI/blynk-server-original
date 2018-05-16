@@ -30,11 +30,11 @@ public class QRGenerator {
     }
 
     private static List<Redeem> generateQR(int count, String outputFolder, String campaign, int reward) throws Exception {
-        var redeems = new ArrayList<Redeem>(count);
+        ArrayList<Redeem> redeems = new ArrayList<Redeem>(count);
         for (int i = 0; i < count; i++) {
             String token = TokenGeneratorUtil.generateNewToken();
 
-            var redeem = new Redeem(token, campaign, reward);
+            Redeem redeem = new Redeem(token, campaign, reward);
             redeems.add(redeem);
 
             Path path = Paths.get(outputFolder, String.format("%d.jpg", i));

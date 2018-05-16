@@ -23,7 +23,7 @@ public class LimitedQueueTest {
     }
 
     private static BaseLimitedQueue<String> makeList() {
-        return new BaseLimitedQueue<>(3) {{
+        return new BaseLimitedQueue<String>(3) {{
             add("1");
             add("2");
             add("3");
