@@ -3,6 +3,8 @@ package cc.blynk.server.core.model.device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.Target;
 
+import static cc.blynk.server.core.model.device.HardwareInfo.DEFAULT_HARDWARE_BUFFER_SIZE;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -108,6 +110,13 @@ public class Device implements Target {
     public void updateOTAInfo(String initiatedBy) {
         long now = System.currentTimeMillis();
         this.deviceOtaInfo = new DeviceOtaInfo(initiatedBy, now, now);
+    }
+
+    public boolean fitsBufferSize(int bodySize) {
+        if (hardwareInfo == null) {
+            return bodySize <= DEFAULT_HARDWARE_BUFFER_SIZE;
+        }
+        return bodySize + 5 <= hardwareInfo.buffIn;
     }
 
     @Override

@@ -15,6 +15,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class HardwareInfo {
 
+    public static final int DEFAULT_HARDWARE_BUFFER_SIZE = 255 - 5; //5 is for blynk header
+
     public final String version;
 
     public final String boardType;
@@ -112,7 +114,7 @@ public class HardwareInfo {
                     try {
                         this.buffIn = Integer.parseInt(value);
                     } catch (NumberFormatException nfe) {
-                        this.buffIn = -1;
+                        this.buffIn = DEFAULT_HARDWARE_BUFFER_SIZE;
                     }
                     break;
             }

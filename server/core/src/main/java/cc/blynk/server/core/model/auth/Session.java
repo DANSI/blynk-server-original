@@ -87,34 +87,45 @@ public class Session {
         }
     }
 
-    private Set<Channel> filter(int activeDashId, int[] deviceIds) {
+    private Set<Channel> filter(int bodySize, int activeDashId, int[] deviceIds) {
         Set<Channel> targetChannels = new HashSet<>();
         for (Channel channel : hardwareChannels) {
             HardwareStateHolder hardwareState = getHardState(channel);
             if (hardwareState != null && hardwareState.dash.id == activeDashId
                     && (deviceIds.length == 0 || ArrayUtil.contains(deviceIds, hardwareState.device.id))) {
-                targetChannels.add(channel);
+                if (hardwareState.device.fitsBufferSize(bodySize)) {
+                    targetChannels.add(channel);
+                } else {
+                    log.trace("Message is to large. Size {}.", bodySize);
+                }
             }
         }
         return targetChannels;
     }
 
-    private Set<Channel> filter(int activeDashId, int deviceId) {
+    private Set<Channel> filter(int bodySize, int activeDashId, int deviceId) {
         Set<Channel> targetChannels = new HashSet<>();
         for (Channel channel : hardwareChannels) {
-            if (isSameDashAndDeviceId(channel, activeDashId, deviceId)) {
-                targetChannels.add(channel);
+            HardwareStateHolder hardwareState = getHardState(channel);
+            if (hardwareState != null && hardwareState.isSameDashAndDeviceId(activeDashId, deviceId)) {
+                if (hardwareState.device.fitsBufferSize(bodySize)) {
+                    targetChannels.add(channel);
+                } else {
+                    log.trace("Message is to large. Size {}.", bodySize);
+                }
             }
         }
         return targetChannels;
     }
 
     public boolean sendMessageToHardware(int activeDashId, short cmd, int msgId, String body, int deviceId) {
-        return hardwareChannels.size() == 0 || sendMessageToHardware(filter(activeDashId, deviceId), cmd, msgId, body);
+        return hardwareChannels.size() == 0
+                || sendMessageToHardware(filter(body.length(), activeDashId, deviceId), cmd, msgId, body);
     }
 
     public boolean sendMessageToHardware(int activeDashId, short cmd, int msgId, String body, int... deviceIds) {
-        return hardwareChannels.size() == 0 || sendMessageToHardware(filter(activeDashId, deviceIds), cmd, msgId, body);
+        return hardwareChannels.size() == 0
+                || sendMessageToHardware(filter(body.length(), activeDashId, deviceIds), cmd, msgId, body);
     }
 
     public boolean sendMessageToHardware(short cmd, int msgId, String body) {

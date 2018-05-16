@@ -114,4 +114,29 @@ public class BlynkInternalTest extends IntegrationBase {
         clientPair.hardwareClient.verifyResult(internal(7777, "adis"));
     }
 
+    @Test
+    public void testBuffInIsHandled() throws Exception {
+        clientPair.hardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 12 dev Arduino cpu ATmega328P con W5100 tmpl tmpl00123"));
+        clientPair.hardwareClient.verifyResult(ok(1));
+
+        clientPair.appClient.send("hardware 1-0 vw 1 12");
+        clientPair.hardwareClient.verifyResult(hardware(1, "vw 1 12"));
+
+        clientPair.appClient.send("hardware 1-0 vw 1 123");
+        clientPair.hardwareClient.never(hardware(2, "vw 1 123"));
+
+        clientPair.hardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 dev Arduino cpu ATmega328P con W5100 tmpl tmpl00123"));
+        clientPair.hardwareClient.verifyResult(ok(2));
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 245; i++) {
+            sb.append("a");
+        }
+
+        String s = sb.toString();
+
+        clientPair.appClient.send("hardware 1-0 vw 1 " + s);
+        clientPair.hardwareClient.never(hardware(3, "vw 1 " + s));
+    }
+
 }
