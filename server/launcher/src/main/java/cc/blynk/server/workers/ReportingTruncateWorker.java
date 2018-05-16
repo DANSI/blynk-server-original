@@ -59,16 +59,24 @@ public class ReportingTruncateWorker implements Runnable {
         try (DirectoryStream<Path> reportingFolder = Files.newDirectoryStream(reportingFolderPath, "*")) {
             for (Path userReportingDirectory : reportingFolder) {
                 if (Files.isDirectory(userReportingDirectory)) {
-                    try (DirectoryStream<Path> userReportingFolder = directoryStream(userReportingDirectory)) {
-                        for (Path userReportingFile : userReportingFolder) {
-                            long fileSize = Files.size(userReportingFile);
-                            if (fileSize > MAX_RECORD_COUNT * REPORTING_RECORD_SIZE) {
-                                ByteBuffer userReportingData = FileUtils.read(userReportingFile, MAX_RECORD_COUNT);
-                                try (OutputStream os = Files.newOutputStream(userReportingFile, TRUNCATE_EXISTING)) {
-                                    os.write(userReportingData.array());
+                    int filesCounter = 0;
+                    try {
+                        try (DirectoryStream<Path> userReportingFolder = directoryStream(userReportingDirectory)) {
+                            for (Path userReportingFile : userReportingFolder) {
+                                filesCounter++;
+                                long fileSize = Files.size(userReportingFile);
+                                if (fileSize > MAX_RECORD_COUNT * REPORTING_RECORD_SIZE) {
+                                    ByteBuffer userReportingData = FileUtils.read(userReportingFile, MAX_RECORD_COUNT);
+                                    try (OutputStream os =
+                                                 Files.newOutputStream(userReportingFile, TRUNCATE_EXISTING)) {
+                                        os.write(userReportingData.array());
+                                    }
+                                    truncatedFilesCounter++;
                                 }
-                                truncatedFilesCounter++;
                             }
+                        }
+                        if (filesCounter == 0) {
+                            Files.delete(userReportingDirectory);
                         }
                     } catch (Exception e) {
                         log.error("Truncation failed for {}. Reason : {}.", userReportingDirectory, e.getMessage());

@@ -536,7 +536,7 @@ public class DeviceSelectorWorkflowTest extends IntegrationBase {
         clientPair.appClient.verifyResult(appSync(b("1-0 aw 7 3")));
         clientPair.appClient.verifyResult(appSync(b("1-0 aw 30 3")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 0 89.888037459418")));
-        clientPair.appClient.verifyResult(appSync(b("1-0 vw 1 -58.74774244674501")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 11 -58.74774244674501")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 13 60 143 158")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 99 82800 82860 Europe/Kiev 1")));
     }

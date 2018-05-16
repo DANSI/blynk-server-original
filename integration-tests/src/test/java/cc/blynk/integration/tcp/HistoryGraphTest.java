@@ -1900,6 +1900,8 @@ public class HistoryGraphTest extends IntegrationBase {
             assertEquals(1.11D, bb.getDouble(), 0.001D);
             assertEquals(i, bb.getLong());
         }
+
+        assertTrue(Files.exists(userReportFolder));
     }
 
     @Test
@@ -1915,5 +1917,20 @@ public class HistoryGraphTest extends IntegrationBase {
             Files.createDirectories(userReportFolder);
         }
         truncateWorker.run();
+    }
+
+    @Test
+    public void truncateReportingDataDeletesEmptyFolder() throws Exception {
+        ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDao);
+        String tempDir = holder.props.getProperty("data.folder");
+
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+        truncateWorker.run();
+
+        assertTrue(Files.notExists(userReportFolder));
     }
 }

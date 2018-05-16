@@ -70,20 +70,23 @@ public class SetWidgetPropertyLogic {
         int deviceId = state.device.id;
         byte pin = Byte.parseByte(bodyParts[0]);
 
-        //for now supporting only virtual pins
-        Widget widget = dash.findWidgetByPin(deviceId, pin, PinType.VIRTUAL);
-
-        if (widget != null) {
-            try {
-                widget.setProperty(widgetProperty, propertyValue);
-                dash.updatedAt = System.currentTimeMillis();
-            } catch (Exception e) {
-                log.debug("Error setting widget property. Reason : {}", e.getMessage());
-                ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
-                return;
+        Widget widget = null;
+        for (Widget dashWidget : dash.widgets) {
+            if (dashWidget.isSame(deviceId, pin, PinType.VIRTUAL)) {
+                try {
+                    dashWidget.setProperty(widgetProperty, propertyValue);
+                    dash.updatedAt = System.currentTimeMillis();
+                } catch (Exception e) {
+                    log.debug("Error setting widget property. Reason : {}", e.getMessage());
+                    ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+                    return;
+                }
+                widget = dashWidget;
             }
-        } else {
-            //this is possible case for device selector
+        }
+
+        //this is possible case for device selector
+        if (widget == null) {
             dash.putPinPropertyStorageValue(deviceId, PinType.VIRTUAL, pin, widgetProperty, propertyValue);
         }
 

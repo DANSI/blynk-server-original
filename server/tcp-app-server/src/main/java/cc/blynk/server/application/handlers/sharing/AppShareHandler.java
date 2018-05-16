@@ -20,7 +20,6 @@ import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.ADD_PUSH_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
-import static cc.blynk.server.core.protocol.enums.Command.DELETE_ENHANCED_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICES;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.GET_GRAPH_DATA;
@@ -73,9 +72,6 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
                 break;
             case GET_ENHANCED_GRAPH_DATA :
                 enhancedGraphDataLogic.messageReceived(ctx, state, msg);
-                break;
-            case DELETE_ENHANCED_GRAPH_DATA :
-                deleteEnhancedGraphDataLogic.messageReceived(ctx, state.user, msg);
                 break;
             case GET_DEVICES :
                 GetDevicesLogic.messageReceived(ctx, state.user, msg);

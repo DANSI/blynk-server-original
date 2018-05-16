@@ -610,7 +610,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.verifyResult(appSync(b("1-0 aw 7 3")));
         clientPair.appClient.verifyResult(appSync(b("1-0 aw 30 3")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 0 89.888037459418")));
-        clientPair.appClient.verifyResult(appSync(b("1-0 vw 1 -58.74774244674501")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 11 -58.74774244674501")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 13 60 143 158")));
 
         clientPair.appClient.verifyResult(appSync(1111, b("1-0 vw 5 101")));
@@ -685,7 +685,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.verifyResult(appSync(b("1-0 aw 7 3")));
         clientPair.appClient.verifyResult(appSync(b("1-0 aw 30 3")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 0 89.888037459418")));
-        clientPair.appClient.verifyResult(appSync(b("1-0 vw 1 -58.74774244674501")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 11 -58.74774244674501")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 13 60 143 158")));
 
         verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(READING_MSG_ID, HARDWARE, b("vr 77"))));
@@ -1766,7 +1766,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.verifyResult(appSync(b("1-0 aw 7 3")));
         clientPair.appClient.verifyResult(appSync(b("1-0 aw 30 3")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 0 89.888037459418")));
-        clientPair.appClient.verifyResult(appSync(b("1-0 vw 1 -58.74774244674501")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 11 -58.74774244674501")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 13 60 143 158")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 5 111")));
 
@@ -1789,7 +1789,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.verifyResult(appSync(b("1-0 aw 7 3")));
         clientPair.appClient.verifyResult(appSync(b("1-0 aw 30 3")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 0 89.888037459418")));
-        clientPair.appClient.verifyResult(appSync(b("1-0 vw 1 -58.74774244674501")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 11 -58.74774244674501")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 13 60 143 158")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 5 112")));
 
@@ -1848,7 +1848,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.verifyResult(appSync(b("1-0 aw 7 3")));
         clientPair.appClient.verifyResult(appSync(b("1-0 aw 30 3")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 0 89.888037459418")));
-        clientPair.appClient.verifyResult(appSync(b("1-0 vw 1 -58.74774244674501")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 11 -58.74774244674501")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 13 60 143 158")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 5 111")));
 
@@ -1871,7 +1871,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.verifyResult(appSync(b("1-0 aw 7 3")));
         clientPair.appClient.verifyResult(appSync(b("1-0 aw 30 3")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 0 89.888037459418")));
-        clientPair.appClient.verifyResult(appSync(b("1-0 vw 1 -58.74774244674501")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 11 -58.74774244674501")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 13 60 143 158")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 5 112")));
     }
@@ -1924,7 +1924,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.verifyResult(appSync(b("1-0 aw 7 3")));
         clientPair.appClient.verifyResult(appSync(b("1-0 aw 30 3")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 0 89.888037459418")));
-        clientPair.appClient.verifyResult(appSync(b("1-0 vw 1 -58.74774244674501")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vw 11 -58.74774244674501")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 13 60 143 158")));
 
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 6 111")));

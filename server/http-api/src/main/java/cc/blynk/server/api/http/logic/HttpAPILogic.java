@@ -360,26 +360,30 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             return badRequest("Wrong pin format.");
         }
 
-        //for now supporting only virtual pins
-        Widget widget = dash.findWidgetByPin(deviceId, pin, pinType);
-
-        if (widget == null || pinType != PinType.VIRTUAL) {
-            log.debug("No widget for SetWidgetProperty command.");
-            return badRequest("No widget for SetWidgetProperty command.");
-        }
-
         WidgetProperty widgetProperty = WidgetProperty.getProperty(property);
         if (widgetProperty == null) {
             log.debug("Property not exists. Property : {}", property);
             return badRequest("Property not exists.");
         }
 
-        try {
-            //todo for now supporting only single property
-            widget.setProperty(widgetProperty, values[0]);
-        } catch (Exception e) {
-            log.debug("Error setting widget property. Reason : {}", e.getMessage());
-            return badRequest("Error setting widget property.");
+        //for now supporting only virtual pins
+        Widget widget = null;
+        for (Widget dashWidget : dash.widgets) {
+            if (dashWidget.isSame(deviceId, pin, pinType)) {
+                try {
+                    //todo for now supporting only single property
+                    dashWidget.setProperty(widgetProperty, values[0]);
+                } catch (Exception e) {
+                    log.debug("Error setting widget property. Reason : {}", e.getMessage());
+                    return badRequest("Error setting widget property.");
+                }
+                widget = dashWidget;
+            }
+        }
+
+        if (widget == null || pinType != PinType.VIRTUAL) {
+            log.debug("No widget for SetWidgetProperty command.");
+            return badRequest("No widget for SetWidgetProperty command.");
         }
 
         Session session = sessionDao.userSession.get(new UserKey(user));

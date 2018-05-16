@@ -119,20 +119,20 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
         clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody();
         clientPair.appClient.reset();
-        clientPair.appClient.updateWidget(1, "{\"id\":1, \"width\":1, \"height\":1,  \"x\":1, \"y\":1, \"label\":\"Some Text\", \"type\":\"BUTTON\",         \"pinType\":\"VIRTUAL\", \"pin\":1, \"value\":\"1\"}");
+        clientPair.appClient.updateWidget(1, "{\"id\":1, \"width\":1, \"height\":1,  \"x\":1, \"y\":1, \"label\":\"Some Text\", \"type\":\"BUTTON\",         \"pinType\":\"VIRTUAL\", \"pin\":2, \"value\":\"1\"}");
         clientPair.appClient.verifyResult(ok(1));
 
-        Future<Response> f = httpclient.prepareGet(httpsServerUrl + token + "/update/v1?onLabel=newOnButtonLabel").execute();
+        Future<Response> f = httpclient.prepareGet(httpsServerUrl + token + "/update/v2?onLabel=newOnButtonLabel").execute();
         Response response = f.get();
 
         assertEquals(200, response.getStatusCode());
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(111, "1-0 1 onLabel newOnButtonLabel")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(111, "1-0 2 onLabel newOnButtonLabel")));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = clientPair.appClient.getProfile();
 
-        Button button = (Button) profile.dashBoards[0].findWidgetByPin(0, (byte) 1, PinType.VIRTUAL);
+        Button button = (Button) profile.dashBoards[0].findWidgetByPin(0, (byte) 2, PinType.VIRTUAL);
         assertNotNull(button);
         assertEquals("newOnButtonLabel", button.onLabel);
     }

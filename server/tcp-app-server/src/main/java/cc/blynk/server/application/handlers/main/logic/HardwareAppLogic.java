@@ -6,14 +6,12 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.widgets.FrequencyWidget;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.processors.BaseProcessorHandler;
 import cc.blynk.server.core.processors.WebhookProcessor;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -156,26 +154,6 @@ public class HardwareAppLogic extends BaseProcessorHandler {
                 }
 
                 processEventorAndWebhook(state.user, dash, targetId, session, pin, pinType, value, now);
-
-                break;
-
-
-            //todo fully remove this section???
-            case 'r' :
-                Widget widget = dash.findWidgetByPin(targetId, split[1].split(StringUtils.BODY_SEPARATOR_STRING));
-                if (widget == null) {
-                    log.debug("No widget for read command.");
-                    ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
-                    return;
-                }
-                //corner case for 3-d parties. sometimes users need to read pin state even from non-frequency widgets
-                if (!(widget instanceof FrequencyWidget)) {
-                    if (session.sendMessageToHardware(dashId, HARDWARE, message.id, split[1], targetId)
-                            && !dash.isNotificationsOff) {
-                        log.debug("No device in session.");
-                        ctx.writeAndFlush(deviceNotInNetwork(message.id), ctx.voidPromise());
-                    }
-                }
                 break;
         }
     }

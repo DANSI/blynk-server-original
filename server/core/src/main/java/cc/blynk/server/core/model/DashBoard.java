@@ -89,6 +89,8 @@ public class DashBoard {
 
     public volatile boolean isActive;
 
+    public volatile boolean widgetBackgroundOn;
+
     public volatile String sharedToken;
 
     @JsonDeserialize(keyUsing = PinStorageKeyDeserializer.class,
@@ -197,12 +199,6 @@ public class DashBoard {
     public void deactivate() {
         isActive = false;
         updatedAt = System.currentTimeMillis();
-    }
-
-    public Widget findWidgetByPin(int deviceId, String[] splitted) {
-        PinType type = PinType.getPinType(splitted[0].charAt(0));
-        byte pin = Byte.parseByte(splitted[1]);
-        return findWidgetByPin(deviceId, pin, type);
     }
 
     public Widget findWidgetByPin(int deviceId, byte pin, PinType pinType) {
@@ -526,6 +522,7 @@ public class DashBoard {
         this.keepScreenOn = settings.keepScreenOn;
         this.isAppConnectedOn = settings.isAppConnectedOn;
         this.isNotificationsOff = settings.isNotificationsOff;
+        this.widgetBackgroundOn = settings.widgetBackgroundOn;
         this.updatedAt = System.currentTimeMillis();
     }
 

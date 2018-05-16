@@ -57,11 +57,10 @@ public class BlynkInternalLogic {
             case 'v' :
                 parseHardwareInfo(ctx, messageParts, state, message.id);
                 break;
-            case 'a' :
-                break;
             case 'r' :
                 sendRTC(ctx, state, message.id);
                 break;
+            case 'a' :
             case 'o' :
                 break;
         }
