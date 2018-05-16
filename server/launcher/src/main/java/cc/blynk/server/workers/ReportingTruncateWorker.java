@@ -78,7 +78,7 @@ public class ReportingTruncateWorker implements Runnable {
                         if (filesCounter == 0) {
                             Files.delete(userReportingDirectory);
                         }
-                    } catch (Exception e){
+                    } catch (Exception e) {
                         log.error("Truncation failed for {}. Reason : {}.", userReportingDirectory, e.getMessage());
                     }
                 }
