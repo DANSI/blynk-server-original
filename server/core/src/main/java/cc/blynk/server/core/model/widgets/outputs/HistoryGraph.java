@@ -11,6 +11,7 @@ import io.netty.channel.Channel;
  * Created by Dmitriy Dumanskiy.
  * Created on 12.08.15.
  */
+@Deprecated
 public class HistoryGraph extends MultiPinWidget {
 
     public GraphPeriod period;

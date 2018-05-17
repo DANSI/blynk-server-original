@@ -9,6 +9,7 @@ import io.netty.channel.ChannelHandlerContext;
  * Created by Dmitriy Dumanskiy.
  * Created on 21.03.15.
  */
+@Deprecated
 public class Graph extends OnePinReadingWidget {
 
     public boolean isBar;

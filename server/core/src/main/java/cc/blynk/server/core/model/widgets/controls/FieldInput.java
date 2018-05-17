@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.widgets.OnePinWidget;
  * Created on 21.03.15.
  */
 //todo only for back compatibiltiy
+@Deprecated
 public class FieldInput extends OnePinWidget {
 
     @Override
