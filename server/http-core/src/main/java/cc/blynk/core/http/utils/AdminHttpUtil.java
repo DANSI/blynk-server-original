@@ -1,4 +1,4 @@
-package cc.blynk.utils;
+package cc.blynk.core.http.utils;
 
 import cc.blynk.core.http.model.NameCountResponse;
 import cc.blynk.server.core.model.serialization.JsonParser;

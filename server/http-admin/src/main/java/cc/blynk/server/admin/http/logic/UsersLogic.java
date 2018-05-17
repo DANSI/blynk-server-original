@@ -35,7 +35,7 @@ import static cc.blynk.core.http.Response.appendTotalCountHeader;
 import static cc.blynk.core.http.Response.badRequest;
 import static cc.blynk.core.http.Response.notFound;
 import static cc.blynk.core.http.Response.ok;
-import static cc.blynk.utils.AdminHttpUtil.sort;
+import static cc.blynk.core.http.utils.AdminHttpUtil.sort;
 
 
 /**

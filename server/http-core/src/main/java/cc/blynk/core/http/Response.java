@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import static cc.blynk.utils.ListUtils.subList;
+import static cc.blynk.core.http.utils.ListUtils.subList;
 import static cc.blynk.utils.http.MediaType.APPLICATION_JSON;
 import static cc.blynk.utils.http.MediaType.TEXT_PLAIN;
 import static io.netty.handler.codec.http.HttpHeaderNames.ACCESS_CONTROL_ALLOW_ORIGIN;
