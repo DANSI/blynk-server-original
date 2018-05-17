@@ -193,6 +193,19 @@ public class AppMailTest extends IntegrationBase {
     }
 
     @Test
+    public void testPlaceholderForDeivceNameWorks() throws Exception {
+        reset(blockingIOProcessor);
+
+        //adding email widget
+        clientPair.appClient.createWidget(1, "{\"id\":432, \"contentType\":\"TEXT_PLAIN\", \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"type\":\"EMAIL\"}");
+        clientPair.appClient.verifyResult(ok(1));
+
+        clientPair.hardwareClient.send("email to@to.com SUBJ_{DEVICE_NAME} BODY_{DEVICE_NAME}");
+        verify(mailWrapper, timeout(500)).sendText(eq("to@to.com"), eq("SUBJ_My Device"), eq("BODY_My Device"));
+        clientPair.hardwareClient.verifyResult(ok(1));
+    }
+
+    @Test
     public void testEmailWorkWithEmailFromApp() throws Exception {
         reset(blockingIOProcessor);
 

@@ -1,11 +1,11 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.processors.NotificationBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.notifications.push.GCMWrapper;
-import cc.blynk.utils.properties.ServerProperties;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,7 +42,7 @@ public class PushLogic extends NotificationBase {
             return;
         }
 
-        var dash = state.dash;
+        DashBoard dash = state.dash;
 
         if (!dash.isActive) {
             log.debug("No active dashboard.");
@@ -50,7 +50,7 @@ public class PushLogic extends NotificationBase {
             return;
         }
 
-        var widget = dash.getNotificationWidget();
+        Notification widget = dash.getNotificationWidget();
 
         if (widget == null || widget.hasNoToken()) {
             log.debug("User has no access token provided for push widget.");
@@ -58,18 +58,15 @@ public class PushLogic extends NotificationBase {
             return;
         }
 
-        var now = System.currentTimeMillis();
+        long now = System.currentTimeMillis();
         checkIfNotificationQuotaLimitIsNotReached(now);
 
-        var deviceName = state.device.name;
-        var updatedBody = message.body;
-        if (deviceName != null) {
-            updatedBody = updatedBody.replace(ServerProperties.DEVICE_NAME, state.device.name);
-            if (Notification.isWrongBody(updatedBody)) {
-                log.debug("Notification message is larger than limit.");
-                ctx.writeAndFlush(notificationInvalidBody(message.id), ctx.voidPromise());
-                return;
-            }
+        String updatedBody = state.device.updateWithPlaceholder(message.body);
+
+        if (Notification.isWrongBody(updatedBody)) {
+            log.debug("Notification message is larger than limit.");
+            ctx.writeAndFlush(notificationInvalidBody(message.id), ctx.voidPromise());
+            return;
         }
 
         log.trace("Sending push for user {}, with message : '{}'.", state.user.email, message.body);
