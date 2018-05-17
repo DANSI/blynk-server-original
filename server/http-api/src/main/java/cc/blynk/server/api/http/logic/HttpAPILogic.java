@@ -168,16 +168,6 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
     @Metric(HTTP_GET_PIN_DATA)
     public Response getWidgetPinDataNew(@PathParam("token") String token,
                                         @PathParam("pin") String pinString) {
-        return getWidgetPinData(token, pinString);
-    }
-
-    //todo old API.
-    @GET
-    @Path("{token}/pin/{pin}")
-    @Metric(HTTP_GET_PIN_DATA)
-    public Response getWidgetPinData(@PathParam("token") String token,
-                                     @PathParam("pin") String pinString) {
-
         TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
 
         if (tokenValue == null) {
