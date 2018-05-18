@@ -101,15 +101,13 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
     private static String makeBody(DashBoard dash, int deviceId, byte pin, PinType pinType, String pinValue) {
         Widget widget = dash.findWidgetByPin(deviceId, pin, pinType);
-        if (widget == null) {
-            return DataStream.makeHardwareBody(pinType, pin, pinValue);
-        } else {
-            if (widget instanceof OnePinWidget) {
-                return ((OnePinWidget) widget).makeHardwareBody();
-            } else {
-                return ((MultiPinWidget) widget).makeHardwareBody(pin, pinType);
-            }
+        if (widget instanceof OnePinWidget) {
+            return ((OnePinWidget) widget).makeHardwareBody();
+        } else if (widget instanceof MultiPinWidget) {
+            return ((MultiPinWidget) widget).makeHardwareBody(pin, pinType);
         }
+
+        return DataStream.makeHardwareBody(pinType, pin, pinValue);
     }
 
     @GET
