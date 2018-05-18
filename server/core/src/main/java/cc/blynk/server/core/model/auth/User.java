@@ -95,13 +95,15 @@ public class User {
         return price > energy && AppNameUtil.BLYNK.equals(appName);
     }
 
+    @SuppressWarnings("NonAtomicOperationOnVolatileField")
     public void subtractEnergy(int price) {
-        //non-atomic. we are fine with that
+        //non-atomic. we are fine with that, always updated from 1 thread
         this.energy -= price;
     }
 
+    @SuppressWarnings("NonAtomicOperationOnVolatileField")
     public void addEnergy(int price) {
-        //non-atomic. we are fine with that
+        //non-atomic. we are fine with that, always updated from 1 thread
         this.energy += price;
         this.lastModifiedTs = System.currentTimeMillis();
     }
