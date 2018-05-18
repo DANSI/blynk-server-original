@@ -31,6 +31,7 @@ module cc.blynk.core {
     requires cc.blynk.server.notifications.push;
     requires cc.blynk.server.notifications.sms;
     requires cc.blynk.server.notifications.twitter;
+    requires cc.blynk.server.acme;
     requires cc.blynk.utils;
     requires io.netty.transport.epoll;
     requires io.netty.common;
@@ -40,9 +41,9 @@ module cc.blynk.core {
     requires io.netty.codec;
     requires io.netty.codec.http;
     requires async.http.client;
-    requires cc.blynk.server.acme;
-    requires org.apache.logging.log4j;
     requires com.zaxxer.hikari;
     requires java.sql;
     requires com.fasterxml.jackson.databind;
+    requires jackson.annotations;
+    requires org.apache.logging.log4j;
 }
