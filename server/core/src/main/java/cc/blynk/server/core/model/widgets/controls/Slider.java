@@ -17,6 +17,8 @@ public class Slider extends OnePinWidget {
 
     public int maximumFractionDigits;
 
+    public boolean showValueOn = true;
+
     @Override
     public PinMode getModeType() {
         return PinMode.out;
