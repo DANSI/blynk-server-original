@@ -68,7 +68,7 @@ public class HardwareLogic extends BaseProcessorHandler {
             String[] splitBody = split3(body);
 
             if (splitBody.length < 3 || splitBody[0].length() == 0 || splitBody[2].length() == 0) {
-                log.debug("Write command is wrong {}.", body);
+                log.debug("Write command is wrong {} for {} and deviceId {}.", body, user.email, device.id);
                 ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
                 return;
             }

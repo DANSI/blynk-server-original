@@ -1,4 +1,4 @@
-package cc.blynk.utils;
+package cc.blynk.core.http.utils;
 
 import cc.blynk.core.http.UriTemplate;
 import cc.blynk.core.http.annotation.Consumes;

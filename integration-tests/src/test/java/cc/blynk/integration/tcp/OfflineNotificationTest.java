@@ -180,6 +180,20 @@ public class OfflineNotificationTest extends IntegrationBase {
     }
 
     @Test
+    public void testTurnOffNotificationsAndNoDevices() throws Exception{
+        DashboardSettings settings = new DashboardSettings("New Name", true, Theme.BlynkLight, true, true, true, false);
+
+        clientPair.appClient.send("updateSettings 1\0" + JsonParser.toJson(settings));
+        clientPair.appClient.verifyResult(ok(1));
+
+        clientPair.hardwareClient.stop();
+        clientPair.appClient.neverAfter(500, deviceOffline(0, "1-0"));
+
+        clientPair.appClient.activate(1);
+        clientPair.appClient.verifyResult(ok(2));
+    }
+
+    @Test
     public void deviceGoesOfflineAfterBeingIdle() throws Exception {
         Device device2 = new Device(1, "My Device", "ESP8266");
         device2.status = Status.OFFLINE;

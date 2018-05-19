@@ -1,6 +1,6 @@
 package cc.blynk.core.http.handlers;
 
-import cc.blynk.utils.ContentTypeUtil;
+import cc.blynk.core.http.utils.ContentTypeUtil;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.properties.ServerProperties;
 import io.netty.buffer.Unpooled;

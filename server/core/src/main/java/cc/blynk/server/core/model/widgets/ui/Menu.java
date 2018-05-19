@@ -4,6 +4,7 @@ import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.outputs.TextAlignment;
+import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 import cc.blynk.utils.StringUtils;
 
 /**
@@ -18,6 +19,10 @@ public class Menu extends OnePinWidget {
     public String hint;
 
     public TextAlignment alignment;
+
+    public FontSize fontSize;
+
+    public int iconColor;
 
     @Override
     public PinMode getModeType() {

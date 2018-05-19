@@ -83,8 +83,11 @@ public class MailLogic extends NotificationBase {
             throw new IllegalCommandException("Invalid mail receiver.");
         }
 
-        log.trace("Sending Mail for user {}, with message : '{}'.", user.email, message.body);
-        mail(ctx.channel(), user.email, to, subj, body, message.id, mail.isText());
+        String updatedSubj = state.device.updateWithPlaceholder(subj);
+        String updatedBody = state.device.updateWithPlaceholder(body);
+
+        log.trace("Sending Mail for user {}, with message : '{}'.", user.email, updatedBody);
+        mail(ctx.channel(), user.email, to, updatedSubj, updatedBody, message.id, mail.isText());
         user.emailMessages++;
     }
 

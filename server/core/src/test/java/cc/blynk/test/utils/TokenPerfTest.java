@@ -1,5 +1,6 @@
-package cc.blynk.utils;
+package cc.blynk.test.utils;
 
+import cc.blynk.utils.TokenGeneratorUtil;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;

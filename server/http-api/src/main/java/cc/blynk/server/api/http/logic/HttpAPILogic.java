@@ -102,15 +102,13 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
     private static String makeBody(DashBoard dash, int deviceId, byte pin, PinType pinType, String pinValue) {
         Widget widget = dash.findWidgetByPin(deviceId, pin, pinType);
-        if (widget == null) {
-            return DataStream.makeHardwareBody(pinType, pin, pinValue);
-        } else {
-            if (widget instanceof OnePinWidget) {
-                return ((OnePinWidget) widget).makeHardwareBody();
-            } else {
-                return ((MultiPinWidget) widget).makeHardwareBody(pin, pinType);
-            }
+        if (widget instanceof OnePinWidget) {
+            return ((OnePinWidget) widget).makeHardwareBody();
+        } else if (widget instanceof MultiPinWidget) {
+            return ((MultiPinWidget) widget).makeHardwareBody(pin, pinType);
         }
+
+        return DataStream.makeHardwareBody(pinType, pin, pinValue);
     }
 
     @GET
@@ -169,16 +167,6 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
     @Metric(HTTP_GET_PIN_DATA)
     public Response getWidgetPinDataNew(@PathParam("token") String token,
                                         @PathParam("pin") String pinString) {
-        return getWidgetPinData(token, pinString);
-    }
-
-    //todo old API.
-    @GET
-    @Path("{token}/pin/{pin}")
-    @Metric(HTTP_GET_PIN_DATA)
-    public Response getWidgetPinData(@PathParam("token") String token,
-                                     @PathParam("pin") String pinString) {
-
         TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
 
         if (tokenValue == null) {

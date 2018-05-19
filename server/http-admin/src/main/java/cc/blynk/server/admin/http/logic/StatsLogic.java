@@ -27,10 +27,10 @@ import java.util.List;
 import java.util.Map;
 
 import static cc.blynk.core.http.Response.ok;
-import static cc.blynk.utils.AdminHttpUtil.convertMapToPair;
-import static cc.blynk.utils.AdminHttpUtil.convertObjectToMap;
-import static cc.blynk.utils.AdminHttpUtil.sort;
-import static cc.blynk.utils.AdminHttpUtil.sortStringAsInt;
+import static cc.blynk.core.http.utils.AdminHttpUtil.convertMapToPair;
+import static cc.blynk.core.http.utils.AdminHttpUtil.convertObjectToMap;
+import static cc.blynk.core.http.utils.AdminHttpUtil.sort;
+import static cc.blynk.core.http.utils.AdminHttpUtil.sortStringAsInt;
 
 /**
  * The Blynk Project.

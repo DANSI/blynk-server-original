@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.widgets.OnePinWidget;
  * Created on 21.03.15.
  */
 //todo remove in future versions. no longer supported.
+@Deprecated
 public class OneAxisJoystick extends OnePinWidget {
 
     public boolean autoReturnOn;

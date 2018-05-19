@@ -3,20 +3,13 @@
     <parent>
         <artifactId>notifications</artifactId>
         <groupId>cc.blynk.server.notifications</groupId>
-        <version>0.36.4-SNAPSHOT</version>
+        <version>0.36.5-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>email</artifactId>
 
     <dependencies>
-
-        <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-api</artifactId>
-            <version>${javaee-api.version}</version>
-            <scope>provided</scope>
-        </dependency>
 
         <dependency>
             <groupId>com.sun.mail</groupId>

@@ -1,5 +1,6 @@
-package cc.blynk.utils;
+package cc.blynk.test.utils;
 
+import cc.blynk.utils.StringUtils;
 import org.junit.Test;
 
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;

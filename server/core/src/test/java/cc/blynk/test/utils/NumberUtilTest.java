@@ -1,4 +1,4 @@
-package cc.blynk.utils;
+package cc.blynk.test.utils;
 
 import org.junit.Test;
 

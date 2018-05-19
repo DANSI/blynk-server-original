@@ -1,4 +1,4 @@
-package cc.blynk.utils;
+package cc.blynk.test.utils;
 
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.UserKey;

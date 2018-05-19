@@ -2,6 +2,7 @@ package cc.blynk.server.core.model.widgets.ui;
 
 import cc.blynk.server.core.model.widgets.NoPinWidget;
 import cc.blynk.server.core.model.widgets.Target;
+import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_INTS;
 
@@ -18,6 +19,10 @@ public class DeviceSelector extends NoPinWidget implements Target {
     public volatile int value = 0;
 
     public int[] deviceIds = EMPTY_INTS;
+
+    public FontSize fontSize;
+
+    public int iconColor;
 
     @Override
     public int[] getDeviceIds() {

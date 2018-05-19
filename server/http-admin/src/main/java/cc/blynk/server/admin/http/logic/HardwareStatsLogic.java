@@ -10,9 +10,9 @@ import cc.blynk.server.core.dao.UserDao;
 import io.netty.channel.ChannelHandler;
 
 import static cc.blynk.core.http.Response.ok;
-import static cc.blynk.utils.AdminHttpUtil.convertMapToPair;
-import static cc.blynk.utils.AdminHttpUtil.sort;
-import static cc.blynk.utils.AdminHttpUtil.sortStringAsInt;
+import static cc.blynk.core.http.utils.AdminHttpUtil.convertMapToPair;
+import static cc.blynk.core.http.utils.AdminHttpUtil.sort;
+import static cc.blynk.core.http.utils.AdminHttpUtil.sortStringAsInt;
 
 /**
  * The Blynk Project.
