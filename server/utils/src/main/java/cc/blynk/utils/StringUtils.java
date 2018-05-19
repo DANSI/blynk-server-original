@@ -55,7 +55,7 @@ public final class StringUtils {
      * @throws java.lang.NumberFormatException in case parsed pin not a Number.
      *
      */
-    static String fetchPin(String body) {
+    public static String fetchPin(String body) {
         int i = START_INDEX;
         while (i < body.length()) {
             if (body.charAt(i) == BODY_SEPARATOR) {

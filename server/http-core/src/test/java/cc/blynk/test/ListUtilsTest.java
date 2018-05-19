@@ -1,4 +1,4 @@
-package cc.blynk.utils;
+package cc.blynk.test;
 
 import cc.blynk.core.http.utils.ListUtils;
 import org.junit.Test;
