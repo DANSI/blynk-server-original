@@ -70,14 +70,13 @@ public class ActivateDashboardLogic {
                     }
                 }
             }
-
-            ctx.write(ok(message.id), ctx.voidPromise());
         } else {
             log.debug("No device in session.");
             if (!dash.isNotificationsOff) {
                 ctx.write(deviceNotInNetwork(message.id), ctx.voidPromise());
             }
         }
+        ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
 
         for (var appChannel : session.appChannels) {
             //send activate for shared apps
