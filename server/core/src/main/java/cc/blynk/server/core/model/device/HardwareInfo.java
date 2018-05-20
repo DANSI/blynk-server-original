@@ -49,7 +49,7 @@ public class HardwareInfo {
         this.build = build;
         this.templateId = templateId;
         this.heartbeatInterval = heartbeatInterval;
-        this.buffIn = buffIn <= 0 ? DEFAULT_HARDWARE_BUFFER_SIZE : buffIn;;
+        this.buffIn = buffIn <= 0 ? DEFAULT_HARDWARE_BUFFER_SIZE : buffIn;
     }
 
     public HardwareInfo(String[] info) {
