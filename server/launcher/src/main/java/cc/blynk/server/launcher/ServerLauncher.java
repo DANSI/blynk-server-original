@@ -3,6 +3,7 @@ package cc.blynk.server.launcher;
 import cc.blynk.server.Holder;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
+import cc.blynk.server.servers.application.AppServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.server.servers.hardware.HardwareSSLServer;
 import cc.blynk.server.servers.hardware.MQTTHardwareServer;
@@ -97,6 +98,7 @@ public final class ServerLauncher {
 
         var servers = new BaseServer[] {
                 new HardwareSSLServer(holder),
+                new AppServer(holder),
                 new HardwareAndHttpAPIServer(holder),
                 new AppAndHttpsServer(holder),
                 new MQTTHardwareServer(holder)
