@@ -49,7 +49,7 @@ public class HardwareInfo {
         this.build = build;
         this.templateId = templateId;
         this.heartbeatInterval = heartbeatInterval;
-        this.buffIn = buffIn == 0 ? DEFAULT_HARDWARE_BUFFER_SIZE : buffIn;;
+        this.buffIn = buffIn <= 0 ? DEFAULT_HARDWARE_BUFFER_SIZE : buffIn;;
     }
 
     public HardwareInfo(String[] info) {
@@ -61,7 +61,7 @@ public class HardwareInfo {
         this.build = hardwareInfoPrivate.build;
         this.templateId = hardwareInfoPrivate.templateId;
         this.heartbeatInterval = hardwareInfoPrivate.heartbeatInterval;
-        this.buffIn = hardwareInfoPrivate.buffIn == 0 ? DEFAULT_HARDWARE_BUFFER_SIZE : hardwareInfoPrivate.buffIn;
+        this.buffIn = hardwareInfoPrivate.buffIn <= 0 ? DEFAULT_HARDWARE_BUFFER_SIZE : hardwareInfoPrivate.buffIn;
     }
 
     //utility class to make fields of HardwareInfo final, used instead of hashmap
