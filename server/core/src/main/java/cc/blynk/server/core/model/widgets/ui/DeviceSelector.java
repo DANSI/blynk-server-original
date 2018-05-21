@@ -24,6 +24,8 @@ public class DeviceSelector extends NoPinWidget implements Target {
 
     public int iconColor;
 
+    public String hint;
+
     @Override
     public int[] getDeviceIds() {
         return new int[] {value};

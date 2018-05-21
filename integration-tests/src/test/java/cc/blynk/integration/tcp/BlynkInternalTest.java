@@ -128,6 +128,15 @@ public class BlynkInternalTest extends IntegrationBase {
         clientPair.hardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 dev Arduino cpu ATmega328P con W5100 tmpl tmpl00123"));
         clientPair.hardwareClient.verifyResult(ok(2));
 
+        clientPair.appClient.send("hardware 1-0 vw 1 12");
+        clientPair.hardwareClient.verifyResult(hardware(3, "vw 1 12"));
+
+        clientPair.hardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 0 dev Arduino cpu ATmega328P con W5100 tmpl tmpl00123"));
+        clientPair.hardwareClient.verifyResult(ok(3));
+
+        clientPair.appClient.send("hardware 1-0 vw 1 12");
+        clientPair.hardwareClient.verifyResult(hardware(4, "vw 1 12"));
+
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 245; i++) {
             sb.append("a");
@@ -136,7 +145,7 @@ public class BlynkInternalTest extends IntegrationBase {
         String s = sb.toString();
 
         clientPair.appClient.send("hardware 1-0 vw 1 " + s);
-        clientPair.hardwareClient.never(hardware(3, "vw 1 " + s));
+        clientPair.hardwareClient.never(hardware(5, "vw 1 " + s));
     }
 
 }
