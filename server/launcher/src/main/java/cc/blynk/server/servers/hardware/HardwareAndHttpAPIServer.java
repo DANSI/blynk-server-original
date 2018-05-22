@@ -69,7 +69,7 @@ public class HardwareAndHttpAPIServer extends BaseServer {
                 var req = (FullHttpRequest) msg;
                 var uri = req.uri();
 
-                log.debug("In http and websocket unificator handler.");
+                log.trace("In http and websocket unificator handler.");
                 if (uri.equals("/")) {
                     //for local server do redirect to admin page
                     try {

@@ -73,7 +73,6 @@ public class UpdateFaceLogic {
                         log.error("Error updating face for user {}, dashId {}.",
                                 existingUser.email, existingDash.id, e);
                         ctx.writeAndFlush(notAllowed(message.id));
-                        return;
                     }
                 }
             }
