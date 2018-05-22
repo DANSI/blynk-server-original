@@ -63,6 +63,7 @@ public class UpdateFaceLogic {
                         || appIds.contains(existingUser.appName))) {
                     hasFaces = true;
                     //we found child project-face
+                    log.debug("Found face for {}-{}.", existingUser.email, existingUser.appName);
                     try {
                         existingDash.updateFaceFields(dash);
                         count++;
