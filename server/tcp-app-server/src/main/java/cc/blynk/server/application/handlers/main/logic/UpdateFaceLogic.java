@@ -3,6 +3,7 @@ package cc.blynk.server.application.handlers.main.logic;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.ChannelHandlerContext;
@@ -56,7 +57,8 @@ public class UpdateFaceLogic {
 
         boolean hasFaces = false;
         int count = 0;
-        log.info("Updating face {} for user {}.", parentDashId, user.email);
+        log.info("Updating face {} for user {}-{}. App Ids : {}", parentDashId,
+                user.email, user.appName, JsonParser.valueToJsonAsString(appIds));
         for (var existingUser : userDao.users.values()) {
             for (var existingDash : existingUser.profile.dashBoards) {
                 if (existingDash.parentId == parentDashId && (existingUser == user
