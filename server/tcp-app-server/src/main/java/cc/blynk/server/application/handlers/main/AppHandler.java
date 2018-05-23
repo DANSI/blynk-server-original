@@ -45,6 +45,7 @@ import cc.blynk.server.application.handlers.main.logic.dashboard.widget.UpdateWi
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.tile.CreateTileTemplateLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.tile.DeleteTileTemplateLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.tile.UpdateTileTemplateLogic;
+import cc.blynk.server.application.handlers.main.logic.reporting.DeleteDeviceDataLogic;
 import cc.blynk.server.application.handlers.main.logic.reporting.DeleteEnhancedGraphDataLogic;
 import cc.blynk.server.application.handlers.main.logic.reporting.ExportGraphDataLogic;
 import cc.blynk.server.application.handlers.main.logic.reporting.GetEnhancedGraphDataLogic;
@@ -75,6 +76,7 @@ import static cc.blynk.server.core.protocol.enums.Command.DEACTIVATE_DASHBOARD;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_APP;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.DELETE_DEVICE_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_ENHANCED_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_TILE_TEMPLATE;
@@ -158,6 +160,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final GetCloneCodeLogic getCloneCodeLogic;
     private final GetProjectByClonedTokenLogic getProjectByCloneCodeLogic;
     private final GetProvisionTokenLogic getProvisionTokenLogic;
+    private final DeleteDeviceDataLogic deleteDeviceDataLogic;
 
     private final GlobalStats stats;
 
@@ -209,6 +212,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.getCloneCodeLogic = new GetCloneCodeLogic(holder);
         this.getProjectByCloneCodeLogic = new GetProjectByClonedTokenLogic(holder);
         this.getProvisionTokenLogic = new GetProvisionTokenLogic(holder);
+        this.deleteDeviceDataLogic = new DeleteDeviceDataLogic(holder.reportingDao, holder.blockingIOProcessor);
 
         this.state = state;
         this.stats = holder.stats;
@@ -388,6 +392,9 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 break;
             case GET_PROVISION_TOKEN :
                 getProvisionTokenLogic.messageReceived(ctx, state.user, msg);
+                break;
+            case DELETE_DEVICE_DATA :
+                deleteDeviceDataLogic.messageReceived(ctx, state.user, msg);
                 break;
         }
     }

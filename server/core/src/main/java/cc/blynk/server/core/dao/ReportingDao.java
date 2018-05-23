@@ -19,12 +19,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.Closeable;
+import java.io.IOException;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Function;
@@ -192,13 +195,29 @@ public class ReportingDao implements Closeable {
         return removedFilesCounter;
     }
 
-    public void delete(User user, int dashId, int deviceId, PinType pinType, byte pin) {
-        log.debug("Removing {}{} pin data for dashId {}, deviceId {}.", pinType.pintTypeChar, pin, dashId, deviceId);
-        String userReportingDir = getUserReportingFolderPath(user).toString();
-
-        for (GraphGranularityType reportGranularity : GraphGranularityType.values()) {
-            delete(userReportingDir, dashId, deviceId, pinType, pin, reportGranularity);
+    private static boolean containsPrefix(List<String> prefixes, String filename) {
+        for (String prefix : prefixes) {
+            if (filename.startsWith(prefix)) {
+                return true;
+            }
         }
+        return false;
+    }
+
+    private static String generateFilename(int dashId, int deviceId, char pinType, byte pin, String type) {
+        return generateFilenamePrefix(dashId, deviceId) + pinType + pin + "_" + type + ".bin";
+    }
+
+    private static String generateFilenamePrefix(int dashId, int deviceId, String pin) {
+        return generateFilenamePrefix(dashId, deviceId) + pin + "_";
+    }
+
+    private static String generateFilenamePrefix(int dashId, int deviceId) {
+        //todo this is back compatibility code. should be removed in future versions.
+        if (deviceId == 0) {
+            return "history_" + dashId + "_";
+        }
+        return "history_" + dashId + DEVICE_SEPARATOR + deviceId + "_";
     }
 
     private static void delete(String userReportingDir, int dashId, int deviceId, PinType pinType, byte pin,
@@ -213,12 +232,51 @@ public class ReportingDao implements Closeable {
         return generateFilename(dashId, deviceId, pinType.pintTypeChar, pin, type.label);
     }
 
-    private static String generateFilename(int dashId, int deviceId, char pinType, byte pin, String type) {
-        //todo this is back compatibility code. should be removed in future versions.
-        if (deviceId == 0) {
-            return "history_" + dashId + "_" + pinType + pin + "_" + type + ".bin";
+    public int delete(User user, int dashId, int deviceId, String[] pins) throws IOException {
+        log.debug("Removing selected pin data for dashId {}, deviceId {}.", dashId, deviceId);
+        Path userReportingPath = getUserReportingFolderPath(user);
+
+        int count = 0;
+        List<String> prefixes = new ArrayList<>();
+        for (String pin : pins) {
+            prefixes.add(generateFilenamePrefix(dashId, deviceId, pin));
         }
-        return "history_" + dashId + DEVICE_SEPARATOR + deviceId + "_" + pinType + pin + "_" + type + ".bin";
+        try (DirectoryStream<Path> userReportingFolder = Files.newDirectoryStream(userReportingPath, "*")) {
+            for (Path reportingFile : userReportingFolder) {
+                String userFileName = reportingFile.getFileName().toString();
+                if (containsPrefix(prefixes, userFileName)) {
+                    FileUtils.deleteQuietly(reportingFile);
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    public int delete(User user, int dashId, int deviceId) throws IOException {
+        log.debug("Removing all pin data for dashId {}, deviceId {}.", dashId, deviceId);
+        Path userReportingPath = getUserReportingFolderPath(user);
+
+        int count = 0;
+        String fileNamePrefix = generateFilenamePrefix(dashId, deviceId);
+        try (DirectoryStream<Path> userReportingFolder = Files.newDirectoryStream(userReportingPath, "*")) {
+            for (Path reportingFile : userReportingFolder) {
+                if (reportingFile.getFileName().toString().startsWith(fileNamePrefix)) {
+                    FileUtils.deleteQuietly(reportingFile);
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    public void delete(User user, int dashId, int deviceId, PinType pinType, byte pin) {
+        log.debug("Removing {}{} pin data for dashId {}, deviceId {}.", pinType.pintTypeChar, pin, dashId, deviceId);
+        String userReportingDir = getUserReportingFolderPath(user).toString();
+
+        for (GraphGranularityType reportGranularity : GraphGranularityType.values()) {
+            delete(userReportingDir, dashId, deviceId, pinType, pin, reportGranularity);
+        }
     }
 
     public void process(User user, DashBoard dash, int deviceId, byte pin, PinType pinType, String value, long ts) {

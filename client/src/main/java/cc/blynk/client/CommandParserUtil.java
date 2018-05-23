@@ -17,6 +17,7 @@ import static cc.blynk.server.core.protocol.enums.Command.DEACTIVATE_DASHBOARD;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_APP;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.DELETE_DEVICE_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_ENHANCED_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_TILE_TEMPLATE;
@@ -214,6 +215,8 @@ public final class CommandParserUtil {
                 return GET_PROJECT_BY_CLONE_CODE;
             case "getprovisiontoken" :
                 return GET_PROVISION_TOKEN;
+            case "deletedevicedata" :
+                return DELETE_DEVICE_DATA;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");
