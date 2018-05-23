@@ -532,6 +532,7 @@ public class DashBoard {
         this.keepScreenOn = updatedDashboard.keepScreenOn;
         this.isAppConnectedOn = updatedDashboard.isAppConnectedOn;
         this.isNotificationsOff = updatedDashboard.isNotificationsOff;
+        this.widgetBackgroundOn = updatedDashboard.widgetBackgroundOn;
 
         Notification newNotification = updatedDashboard.getNotificationWidget();
         if (newNotification != null) {
@@ -553,6 +554,7 @@ public class DashBoard {
         this.keepScreenOn = parent.keepScreenOn;
         this.isAppConnectedOn = parent.isAppConnectedOn;
         this.isNotificationsOff = parent.isNotificationsOff;
+        this.widgetBackgroundOn = parent.widgetBackgroundOn;
         this.tags = copyTags(parent.tags);
         //do not update devices by purpose
         //this.devices = parent.devices;
