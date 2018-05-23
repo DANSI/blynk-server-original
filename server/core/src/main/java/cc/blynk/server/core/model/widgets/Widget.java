@@ -60,6 +60,7 @@ import cc.blynk.server.core.model.widgets.ui.Image;
 import cc.blynk.server.core.model.widgets.ui.Menu;
 import cc.blynk.server.core.model.widgets.ui.Tabs;
 import cc.blynk.server.core.model.widgets.ui.TimeInput;
+import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.model.widgets.ui.table.Table;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.utils.ByteUtils;
@@ -135,6 +136,7 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
         @JsonSubTypes.Type(value = Player.class, name = "PLAYER"),
         @JsonSubTypes.Type(value = Table.class, name = "TABLE"),
         @JsonSubTypes.Type(value = Image.class, name = "IMAGE"),
+        @JsonSubTypes.Type(value = ReportingWidget.class, name = "REPORT"),
 
         //others
         @JsonSubTypes.Type(value = RTC.class, name = "RTC"),

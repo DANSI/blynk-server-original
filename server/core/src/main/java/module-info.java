@@ -20,7 +20,9 @@ module cc.blynk.core {
     exports cc.blynk.server.core.model.widgets;
     exports cc.blynk.server.core.model.widgets.notifications;
     exports cc.blynk.server.core.model.widgets.others.rtc;
+    exports cc.blynk.server.core.model.widgets.outputs.graph;
     exports cc.blynk.server.core.model.widgets.ui.tiles;
+    exports cc.blynk.server.core.model.widgets.ui.reporting;
     exports cc.blynk.server.core.processors;
     exports cc.blynk.server.core.protocol.exceptions;
     exports cc.blynk.server.db;
@@ -46,4 +48,5 @@ module cc.blynk.core {
     requires com.fasterxml.jackson.databind;
     requires jackson.annotations;
     requires org.apache.logging.log4j;
+    requires com.fasterxml.jackson.core;
 }
