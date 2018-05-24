@@ -8,6 +8,7 @@ import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DashboardSettings;
 import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.Theme;
@@ -1439,13 +1440,22 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
-    public void newUserReceivesGrettingEmail() throws Exception {
+    public void newUserReceivesGrettingEmailAndNoIPLogged() throws Exception {
         TestAppClient appClient1 = new TestAppClient("localhost", tcpAppPort, properties);
         appClient1.start();
 
         appClient1.register("test@blynk.cc", "a", "Blynk");
         appClient1.verifyResult(ok(1));
 
+        User user = holder.userDao.getByName("test@blynk.cc", "Blynk");
+        assertNull(user.lastLoggedIP);
+
         verify(mailWrapper).sendWelcomeEmailForNewUser(eq("test@blynk.cc"));
+
+        appClient1.login("test@blynk.cc", "a");
+        appClient1.verifyResult(ok(2));
+
+        user = holder.userDao.getByName("test@blynk.cc", "Blynk");
+        assertNull(user.lastLoggedIP);
     }
 }

@@ -55,10 +55,12 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
 
     private final Holder holder;
     private final DefaultAsyncHttpClient asyncHttpClient;
+    private final boolean allowStoreIp;
 
     public AppLoginHandler(Holder holder) {
         this.holder = holder;
         this.asyncHttpClient = holder.asyncHttpClient;
+        this.allowStoreIp = holder.props.getAllowStoreIp();
     }
 
     private static void cleanPipeline(DefaultChannelPipeline pipeline) {
@@ -195,7 +197,9 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
     }
 
     private void completeLogin(Channel channel, Session session, User user, int msgId, Version version) {
-        user.lastLoggedIP = IPUtils.getIp(channel.remoteAddress());
+        if (allowStoreIp) {
+            user.lastLoggedIP = IPUtils.getIp(channel.remoteAddress());
+        }
         user.lastLoggedAt = System.currentTimeMillis();
 
         session.addAppChannel(channel);
