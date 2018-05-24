@@ -16,6 +16,8 @@ import org.junit.Test;
 
 import java.time.ZoneId;
 
+import static cc.blynk.server.core.model.widgets.ui.reporting.ReportOutput.CSV_FILE_PER_DEVICE;
+
 public class ReportingModelTest {
 
     private ObjectWriter ow = JsonParser.init().writerWithDefaultPrettyPrinter().forType(ReportingWidget.class);
@@ -32,22 +34,22 @@ public class ReportingModelTest {
         Report report = new Report("My One Time Report",
                 new ReportSource[] {reportSource},
                 new OneTimeReportType(86400), "test@gmail.com",
-                GraphGranularityType.MINUTE, true, ZoneId.of("UTC"));
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
 
         Report report2 = new Report("My Daily Report",
                 new ReportSource[] {reportSource},
                 new DailyReportType(60, ReportDurationType.CUSTOM, 100, 200), "test@gmail.com",
-                GraphGranularityType.MINUTE, true, ZoneId.of("UTC"));
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
 
         Report report3 = new Report("My Daily Report",
                 new ReportSource[] {reportSource},
                 new WeeklyReportType(60, ReportDurationType.CUSTOM, 100, 200, 1), "test@gmail.com",
-                GraphGranularityType.MINUTE, true, ZoneId.of("UTC"));
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
 
         Report report4 = new Report("My Daily Report",
                 new ReportSource[] {reportSource},
                 new MonthlyReportType(60, ReportDurationType.CUSTOM, 100, 200, 1), "test@gmail.com",
-                GraphGranularityType.MINUTE, true, ZoneId.of("UTC"));
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
 
         ReportingWidget reportingWidget = new ReportingWidget();
         reportingWidget.reportSources = new ReportSource[] {

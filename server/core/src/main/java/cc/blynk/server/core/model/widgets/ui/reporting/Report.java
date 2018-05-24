@@ -31,6 +31,8 @@ public class Report {
 
     public final boolean isActive;
 
+    public final ReportOutput reportOutput;
+
     @JsonSerialize(using = ZoneIdToString.class)
     @JsonDeserialize(using = StringToZoneId.class, as = ZoneId.class)
     public final ZoneId tzName;
@@ -42,6 +44,7 @@ public class Report {
                   @JsonProperty("recipients") String recipients,
                   @JsonProperty("granularityType") GraphGranularityType granularityType,
                   @JsonProperty("isActive") boolean isActive,
+                  @JsonProperty("reportOutput") ReportOutput reportOutput,
                   @JsonProperty("tzName") ZoneId tzName) {
         this.name = name;
         this.reportSources = reportSources;
@@ -49,6 +52,7 @@ public class Report {
         this.recipients = recipients;
         this.granularityType = granularityType;
         this.isActive = isActive;
+        this.reportOutput = reportOutput;
         this.tzName = tzName;
     }
 }
