@@ -50,6 +50,7 @@ import static cc.blynk.server.core.protocol.enums.Command.PUSH_NOTIFICATION;
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_SHARE_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.REGISTER;
+import static cc.blynk.server.core.protocol.enums.Command.RESOLVE_EVENT;
 import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
 import static cc.blynk.server.core.protocol.enums.Command.SHARE_LOGIN;
 import static cc.blynk.server.core.protocol.enums.Command.SHARING;
@@ -215,6 +216,8 @@ public final class CommandParserUtil {
                 return GET_PROJECT_BY_CLONE_CODE;
             case "getprovisiontoken" :
                 return GET_PROVISION_TOKEN;
+            case "resolveevent" :
+                return RESOLVE_EVENT;
             case "deletedevicedata" :
                 return DELETE_DEVICE_DATA;
 
