@@ -1,8 +1,13 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.device;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
+import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -25,35 +30,47 @@ public class DeleteDeviceLogic {
 
     private final TokenManager tokenManager;
     private final SessionDao sessionDao;
+    private final ReportingDao reportingDao;
+    private final BlockingIOProcessor blockingIOProcessor;
 
-    public DeleteDeviceLogic(TokenManager tokenManager, SessionDao sessionDao) {
-        this.tokenManager = tokenManager;
-        this.sessionDao = sessionDao;
+    public DeleteDeviceLogic(Holder holder) {
+        this.tokenManager = holder.tokenManager;
+        this.sessionDao = holder.sessionDao;
+        this.reportingDao = holder.reportingDao;
+        this.blockingIOProcessor = holder.blockingIOProcessor;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
-        var split = split2(message.body);
+        String[] split = split2(message.body);
 
         if (split.length < 2) {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        var dashId = Integer.parseInt(split[0]);
-        var deviceId = Integer.parseInt(split[1]);
+        int dashId = Integer.parseInt(split[0]);
+        int deviceId = Integer.parseInt(split[1]);
 
-        var dash = state.user.profile.getDashByIdOrThrow(dashId);
+        DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
 
         log.debug("Deleting device with id {}.", deviceId);
 
-        var existingDeviceIndex = dash.getDeviceIndexById(deviceId);
-        var device = dash.devices[existingDeviceIndex];
+        int existingDeviceIndex = dash.getDeviceIndexById(deviceId);
+        Device device = dash.devices[existingDeviceIndex];
         tokenManager.deleteDevice(device);
-        var session = sessionDao.userSession.get(state.userKey);
+        Session session = sessionDao.userSession.get(state.userKey);
         session.closeHardwareChannelByDeviceId(dashId, deviceId);
 
         dash.devices = ArrayUtil.remove(dash.devices, existingDeviceIndex, Device.class);
         dash.updatedAt = System.currentTimeMillis();
         state.user.lastModifiedTs = dash.updatedAt;
+
+        blockingIOProcessor.executeHistory(() -> {
+            try {
+                reportingDao.delete(state.user, dashId, deviceId);
+            } catch (Exception e) {
+                log.warn("Error removing device data. Reason : {}.", e.getMessage());
+            }
+        });
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

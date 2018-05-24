@@ -3,10 +3,13 @@ package cc.blynk.integration.tcp;
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestHardClient;
+import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.device.Tag;
+import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
@@ -14,12 +17,17 @@ import cc.blynk.server.notifications.push.enums.Priority;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
+import cc.blynk.utils.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK;
@@ -486,11 +494,36 @@ public class DeviceWorkflowTest extends IntegrationBase {
         hardClient2.verifyResult(ok(1));
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(hardwareConnected(1, "1-1")));
 
+        String tempDir = holder.props.getProperty("data.folder");
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
+        Path pinReportingDataPath11 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
+        Path pinReportingDataPath12 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.DAILY));
+        Path pinReportingDataPath13 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 9, GraphGranularityType.DAILY));
+
+        FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
+        FileUtils.write(pinReportingDataPath11, 1.11D, 1111111);
+        FileUtils.write(pinReportingDataPath12, 1.11D, 1111111);
+        FileUtils.write(pinReportingDataPath13, 1.11D, 1111111);
+
         clientPair.appClient.send("deleteDevice 1\0" + "1");
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
 
         assertFalse(clientPair.hardwareClient.isClosed());
         assertTrue(hardClient2.isClosed());
+
+        assertTrue(Files.notExists(pinReportingDataPath10));
+        assertTrue(Files.notExists(pinReportingDataPath11));
+        assertTrue(Files.notExists(pinReportingDataPath12));
+        assertTrue(Files.notExists(pinReportingDataPath13));
     }
 
     @Test

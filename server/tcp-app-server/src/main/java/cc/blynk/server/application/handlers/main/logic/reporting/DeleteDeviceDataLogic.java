@@ -80,7 +80,7 @@ public class DeleteDeviceDataLogic {
                 }
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {
-                log.debug("Error removing enhanced graph data. Reason : {}.", e.getMessage());
+                log.warn("Error removing device data. Reason : {}.", e.getMessage());
                 channel.writeAndFlush(illegalCommand(msgId), channel.voidPromise());
             }
         });
@@ -93,7 +93,7 @@ public class DeleteDeviceDataLogic {
                 log.debug("Removed {} files for dashId {} and deviceId {}", removedCounter, dash.id, deviceId);
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {
-                log.debug("Error removing enhanced graph data. Reason : {}.", e.getMessage());
+                log.warn("Error removing device data. Reason : {}.", e.getMessage());
                 channel.writeAndFlush(illegalCommand(msgId), channel.voidPromise());
             }
         });

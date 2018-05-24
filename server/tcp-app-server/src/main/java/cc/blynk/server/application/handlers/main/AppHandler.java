@@ -194,7 +194,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.updateDashSettingLogic = new UpdateDashSettingLogic(holder.limits.widgetSizeLimitBytes);
 
         this.createDeviceLogic = new CreateDeviceLogic(holder);
-        this.deleteDeviceLogic = new DeleteDeviceLogic(holder.tokenManager, holder.sessionDao);
+        this.deleteDeviceLogic = new DeleteDeviceLogic(holder);
 
         this.shareLogic = new ShareLogic(holder.sessionDao);
         this.redeemLogic = new RedeemLogic(holder.dbManager, holder.blockingIOProcessor);
