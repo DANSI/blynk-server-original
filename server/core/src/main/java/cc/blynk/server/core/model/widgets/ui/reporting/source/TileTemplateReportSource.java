@@ -24,4 +24,14 @@ public class TileTemplateReportSource extends ReportSource {
         this.templateId = templateId;
         this.deviceIds = deviceIds == null ? EMPTY_INTS : deviceIds;
     }
+
+    @Override
+    public boolean isValid() {
+        return deviceIds.length > 0 && super.isValid();
+    }
+
+    @Override
+    public int[] getDeviceIds() {
+        return deviceIds;
+    }
 }

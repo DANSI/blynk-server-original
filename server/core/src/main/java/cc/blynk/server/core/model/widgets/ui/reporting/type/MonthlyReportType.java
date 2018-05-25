@@ -3,6 +3,8 @@ package cc.blynk.server.core.model.widgets.ui.reporting.type;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -20,5 +22,10 @@ public class MonthlyReportType extends DailyReportType {
                              @JsonProperty("dayOfTheMonth") int dayOfTheMonth) {
         super(atTime, durationType, startTs, endTs);
         this.dayOfTheMonth = dayOfTheMonth;
+    }
+
+    @Override
+    public long reportPeriodMillis() {
+        return TimeUnit.DAYS.toMillis(30);
     }
 }

@@ -21,4 +21,10 @@ public abstract class ReportSource {
     ReportSource(ReportDataStream[] reportDataStreams) {
         this.reportDataStreams = reportDataStreams == null ? EMPTY_REPORT_DATA_STREAMS : reportDataStreams;
     }
+
+    public abstract int[] getDeviceIds();
+
+    public boolean isValid() {
+        return reportDataStreams.length > 0;
+    }
 }

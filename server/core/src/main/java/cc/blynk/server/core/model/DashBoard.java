@@ -26,6 +26,7 @@ import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
+import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.Tile;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
@@ -375,6 +376,10 @@ public class DashBoard {
 
     public Mail getMailWidget() {
         return getWidgetByType(Mail.class);
+    }
+
+    public ReportingWidget getReportingWidget() {
+        return getWidgetByType(ReportingWidget.class);
     }
 
     @SuppressWarnings("unchecked")

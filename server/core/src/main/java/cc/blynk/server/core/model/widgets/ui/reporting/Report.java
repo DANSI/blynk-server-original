@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 /**
  * The Blynk Project.
@@ -37,6 +38,8 @@ public class Report {
     @JsonDeserialize(using = StringToZoneId.class, as = ZoneId.class)
     public final ZoneId tzName;
 
+    public volatile long lastProcessedAt;
+
     @JsonCreator
     public Report(@JsonProperty("name") String name,
                   @JsonProperty("reportSources") ReportSource[] reportSources,
@@ -54,5 +57,17 @@ public class Report {
         this.isActive = isActive;
         this.reportOutput = reportOutput;
         this.tzName = tzName;
+    }
+
+    public boolean isValid() {
+        return reportType != null && reportSources != null && reportSources.length > 0 && isActive;
+    }
+
+    public boolean isTime(ZonedDateTime nowTruncatedToHours) {
+        long nowMillis = nowTruncatedToHours.toInstant().toEpochMilli();
+        long timePassedSinceLastRun = nowMillis - lastProcessedAt;
+
+        return timePassedSinceLastRun >= reportType.reportPeriodMillis()
+                && reportType.isTime(nowTruncatedToHours);
     }
 }

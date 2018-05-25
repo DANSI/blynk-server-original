@@ -3,6 +3,10 @@ package cc.blynk.server.core.model.widgets.ui.reporting.type;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.time.ZonedDateTime;
+
+import static java.time.temporal.ChronoField.SECOND_OF_DAY;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -27,5 +31,23 @@ public class DailyReportType extends BaseReportType {
         this.durationType = durationType;
         this.startTs = startTs;
         this.endTs = endTs;
+    }
+
+    @Override
+    public long getPeriod() {
+        return 1L;
+    }
+
+    @Override
+    public boolean isTime(ZonedDateTime nowTruncatedToHours) {
+        return isValidDurationTime(nowTruncatedToHours) && atTime == nowTruncatedToHours.get(SECOND_OF_DAY);
+    }
+
+    boolean isValidDurationTime(ZonedDateTime nowTruncatedToHours) {
+        if (durationType == ReportDurationType.CUSTOM) {
+            long nowMillis = nowTruncatedToHours.toInstant().toEpochMilli();
+            return startTs <= nowMillis && nowMillis <= endTs;
+        }
+        return true;
     }
 }
