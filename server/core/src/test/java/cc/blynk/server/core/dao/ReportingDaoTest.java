@@ -13,9 +13,9 @@ import static org.junit.Assert.assertEquals;
  */
 public class ReportingDaoTest {
 
-    final String REPORTING_MINUTE_FILE_NAME = "history_%s_%c%d_minute.bin";
-    final String REPORTING_HOURLY_FILE_NAME = "history_%s_%c%d_hourly.bin";
-    final String REPORTING_DAILY_FILE_NAME = "history_%s_%c%d_daily.bin";
+    final String REPORTING_MINUTE_FILE_NAME = "history_%s-0_%c%d_minute.bin";
+    final String REPORTING_HOURLY_FILE_NAME = "history_%s-0_%c%d_hourly.bin";
+    final String REPORTING_DAILY_FILE_NAME = "history_%s-0_%c%d_daily.bin";
 
     @Test
     public void testFileName() {
