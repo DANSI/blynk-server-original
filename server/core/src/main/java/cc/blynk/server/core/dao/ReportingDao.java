@@ -213,10 +213,6 @@ public class ReportingDao implements Closeable {
     }
 
     private static String generateFilenamePrefix(int dashId, int deviceId) {
-        //todo this is back compatibility code. should be removed in future versions.
-        if (deviceId == 0) {
-            return "history_" + dashId + "_";
-        }
         return "history_" + dashId + DEVICE_SEPARATOR + deviceId + "_";
     }
 
@@ -331,6 +327,42 @@ public class ReportingDao implements Closeable {
         }
 
         return values;
+    }
+
+    public void renameOldReportingFiles() {
+        long now = System.currentTimeMillis();
+        log.info("Renaming of old reporting files started...");
+        try {
+            Path reportingPath = Paths.get(dataFolder);
+            try (DirectoryStream<Path> reportingFolder = Files.newDirectoryStream(reportingPath, "*")) {
+                for (Path userReportingDirectory : reportingFolder) {
+                    if (Files.isDirectory(userReportingDirectory)) {
+                        int filesCounter = 0;
+                        try (DirectoryStream<Path> userReportingDirectoryStream =
+                                     Files.newDirectoryStream(userReportingDirectory, "*")) {
+                            for (Path userReportingFile : userReportingDirectoryStream) {
+                                String oldFileName = userReportingFile.getFileName().toString();
+                                if (!oldFileName.contains("-")) {
+                                    int fromIndex = "history_".length();
+                                    int end = oldFileName.indexOf("_", fromIndex);
+                                    String newFileName = oldFileName.substring(0, end) + "-0"
+                                            + oldFileName.substring(end);
+                                    log.debug("Renaming {} -> {}", oldFileName, newFileName);
+                                    Files.move(userReportingFile, userReportingFile.resolveSibling(newFileName));
+                                    filesCounter++;
+                                }
+                            }
+                        }
+                        if (filesCounter > 0) {
+                            log.debug("Renamed {} files for {}", filesCounter, userReportingDirectory.getFileName());
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error("Error renaming old reporting files.", e);
+        }
+        log.info("Renaming of old reporting files finished after {} ms.", System.currentTimeMillis() - now);
     }
 
     @Override

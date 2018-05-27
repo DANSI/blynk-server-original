@@ -82,7 +82,8 @@ public class ReportGeneratorWorker implements Runnable {
                 for (int deviceId : reportSource.getDeviceIds()) {
                     for (ReportDataStream reportDataStream : reportSource.reportDataStreams) {
                         if (reportDataStream.isSelected) {
-
+                            //todo finish
+                            log.info("finish");
                         }
                     }
                 }

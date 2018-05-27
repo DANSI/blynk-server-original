@@ -49,4 +49,8 @@ public class ServerProperties extends BaseProperties {
     public boolean getAllowStoreIp() {
         return getBoolProperty("allow.store.ip");
     }
+
+    public boolean renameOldReportingFiles() {
+        return getBoolProperty("rename.old.reporting.files");
+    }
 }
