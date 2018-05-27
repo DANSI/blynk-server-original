@@ -87,4 +87,9 @@ public class Terminal extends OnePinWidget {
     public int getPrice() {
         return 200;
     }
+
+    @Override
+    public void erase() {
+        this.lastCommands.clear();
+    }
 }
