@@ -275,23 +275,8 @@ public class DashBoard {
 
     private boolean hasWidgetsByDeviceId(int deviceId) {
         for (Widget widget : widgets) {
-            if (widget instanceof OnePinWidget) {
-                OnePinWidget onePinWidget = (OnePinWidget) widget;
-                if (onePinWidget.deviceId == deviceId) {
-                    return true;
-                }
-            }
-            if (widget instanceof MultiPinWidget) {
-                MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
-                if (multiPinWidget.deviceId == deviceId) {
-                    return true;
-                }
-            }
-            if (widget instanceof DeviceSelector) {
-                DeviceSelector deviceSelector = (DeviceSelector) widget;
-                if (ArrayUtil.contains(deviceSelector.deviceIds, deviceId)) {
-                    return true;
-                }
+            if (!(widget instanceof DeviceTiles) && widget.isAssignedToDevice(deviceId)) {
+                return true;
             }
         }
         return false;
@@ -420,6 +405,21 @@ public class DashBoard {
         this.pinsStorage = Collections.emptyMap();
         for (Widget widget : widgets) {
             widget.erase();
+        }
+    }
+
+    public void eraseValuesForDevice(int deviceId) {
+        pinsStorage.entrySet().removeIf(entry -> entry.getKey().deviceId == deviceId);
+        for (Widget widget : widgets) {
+            if (widget.isAssignedToDevice(deviceId)) {
+                if (widget instanceof DeviceTiles) {
+                    //deviceTiles has a bit different removal logic, so we remove manually here
+                    DeviceTiles deviceTiles = (DeviceTiles) widget;
+                    deviceTiles.eraseTiles();
+                } else {
+                    widget.erase();
+                }
+            }
         }
     }
 

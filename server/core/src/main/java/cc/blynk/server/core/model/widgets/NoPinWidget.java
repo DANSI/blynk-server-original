@@ -23,4 +23,9 @@ public abstract class NoPinWidget extends Widget {
     @Override
     public void updateValue(Widget oldWidget) {
     }
+
+    @Override
+    public boolean isAssignedToDevice(int deviceId) {
+        return false;
+    }
 }

@@ -135,4 +135,9 @@ public abstract class MultiPinWidget extends Widget implements AppSyncWidget {
             }
         }
     }
+
+    @Override
+    public boolean isAssignedToDevice(int deviceId) {
+        return this.deviceId == deviceId;
+    }
 }

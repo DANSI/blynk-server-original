@@ -3,6 +3,7 @@ package cc.blynk.server.core.model.widgets.ui;
 import cc.blynk.server.core.model.widgets.NoPinWidget;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
+import cc.blynk.utils.ArrayUtil;
 
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_INTS;
 
@@ -49,6 +50,11 @@ public class DeviceSelector extends NoPinWidget implements Target {
     @Override
     public int getPrice() {
         return 1900;
+    }
+
+    @Override
+    public boolean isAssignedToDevice(int deviceId) {
+        return ArrayUtil.contains(this.deviceIds, deviceId);
     }
 
 }

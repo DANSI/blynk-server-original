@@ -61,6 +61,7 @@ public class DeleteDeviceLogic {
         session.closeHardwareChannelByDeviceId(dashId, deviceId);
 
         dash.devices = ArrayUtil.remove(dash.devices, existingDeviceIndex, Device.class);
+        dash.eraseValuesForDevice(deviceId);
         dash.updatedAt = System.currentTimeMillis();
         state.user.lastModifiedTs = dash.updatedAt;
 
