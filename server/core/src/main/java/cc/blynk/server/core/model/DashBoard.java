@@ -26,6 +26,7 @@ import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
+import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.Tile;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
@@ -378,6 +379,10 @@ public class DashBoard {
         return getWidgetByType(Mail.class);
     }
 
+    public ReportingWidget getReportingWidget() {
+        return getWidgetByType(ReportingWidget.class);
+    }
+
     @SuppressWarnings("unchecked")
     public <T> T getWidgetByType(Class<T> clazz) {
         for (Widget widget : widgets) {
@@ -533,6 +538,7 @@ public class DashBoard {
         this.keepScreenOn = updatedDashboard.keepScreenOn;
         this.isAppConnectedOn = updatedDashboard.isAppConnectedOn;
         this.isNotificationsOff = updatedDashboard.isNotificationsOff;
+        this.widgetBackgroundOn = updatedDashboard.widgetBackgroundOn;
 
         Notification newNotification = updatedDashboard.getNotificationWidget();
         if (newNotification != null) {
@@ -554,6 +560,7 @@ public class DashBoard {
         this.keepScreenOn = parent.keepScreenOn;
         this.isAppConnectedOn = parent.isAppConnectedOn;
         this.isNotificationsOff = parent.isNotificationsOff;
+        this.widgetBackgroundOn = parent.widgetBackgroundOn;
         this.tags = copyTags(parent.tags);
         //do not update devices by purpose
         //this.devices = parent.devices;

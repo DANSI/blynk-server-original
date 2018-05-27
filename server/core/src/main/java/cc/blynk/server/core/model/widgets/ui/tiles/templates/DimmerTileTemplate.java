@@ -14,11 +14,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class DimmerTileTemplate extends TileTemplate {
 
-    public final int color;
-    public final int tileColor;
     private final String valueName;
+
     private final String valueFormatting;
+
     private final String valueSuffix;
+
+    public final int color;
+
+    public final int tileColor;
+
+    //todo remove in future releases
+    @Deprecated
     private final FontSize fontSize;
 
     private final boolean showTileLabel;
@@ -26,6 +33,10 @@ public class DimmerTileTemplate extends TileTemplate {
     private final int maximumFractionDigits;
 
     private final int levelColor;
+
+    private Interaction interaction = Interaction.PAGE;
+
+    private float step = 1;
 
     @JsonCreator
     public DimmerTileTemplate(@JsonProperty("id") long id,

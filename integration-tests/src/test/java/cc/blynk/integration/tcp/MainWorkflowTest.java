@@ -4,9 +4,11 @@ import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
+import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DashboardSettings;
 import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.Theme;
@@ -16,12 +18,14 @@ import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Button;
 import cc.blynk.server.core.model.widgets.controls.Step;
 import cc.blynk.server.core.model.widgets.others.Player;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.ui.TimeInput;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
+import cc.blynk.utils.FileUtils;
 import io.netty.channel.ChannelFuture;
 import org.junit.After;
 import org.junit.Before;
@@ -31,6 +35,9 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.ZoneId;
 import java.util.List;
 
@@ -617,10 +624,34 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void testHardwareChannelClosedOnDashRemoval() throws Exception {
+        String tempDir = holder.props.getProperty("data.folder");
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
+        Path pinReportingDataPath11 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
+        Path pinReportingDataPath12 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.DAILY));
+        Path pinReportingDataPath13 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 9, GraphGranularityType.DAILY));
+
+        FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
+        FileUtils.write(pinReportingDataPath11, 1.11D, 1111111);
+        FileUtils.write(pinReportingDataPath12, 1.11D, 1111111);
+        FileUtils.write(pinReportingDataPath13, 1.11D, 1111111);
+
         clientPair.appClient.deleteDash(1);
         clientPair.appClient.verifyResult(ok(1));
 
         assertTrue(clientPair.hardwareClient.isClosed());
+        assertTrue(Files.notExists(pinReportingDataPath10));
+        assertTrue(Files.notExists(pinReportingDataPath11));
+        assertTrue(Files.notExists(pinReportingDataPath12));
+        assertTrue(Files.notExists(pinReportingDataPath13));
     }
 
     @Test
@@ -1409,13 +1440,22 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
-    public void newUserReceivesGrettingEmail() throws Exception {
+    public void newUserReceivesGrettingEmailAndNoIPLogged() throws Exception {
         TestAppClient appClient1 = new TestAppClient("localhost", tcpAppPort, properties);
         appClient1.start();
 
         appClient1.register("test@blynk.cc", "a", "Blynk");
         appClient1.verifyResult(ok(1));
 
+        User user = holder.userDao.getByName("test@blynk.cc", "Blynk");
+        assertNull(user.lastLoggedIP);
+
         verify(mailWrapper).sendWelcomeEmailForNewUser(eq("test@blynk.cc"));
+
+        appClient1.login("test@blynk.cc", "a");
+        appClient1.verifyResult(ok(2));
+
+        user = holder.userDao.getByName("test@blynk.cc", "Blynk");
+        assertNull(user.lastLoggedIP);
     }
 }

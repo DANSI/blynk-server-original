@@ -112,6 +112,8 @@ public final class Command {
     public static final short OUTDATED_APP_NOTIFICATION = 72;
     public static final short TRACK_DEVICE = 73;
     public static final short GET_PROVISION_TOKEN = 74;
+    public static final short RESOLVE_EVENT = 75;
+    public static final short DELETE_DEVICE_DATA = 76;
 
     //http codes. Used only for stats
     public static final short HTTP_IS_HARDWARE_CONNECTED = 82;
@@ -202,6 +204,8 @@ public final class Command {
             put(EMAIL_QR, "MailQRs");
             put(UPDATE_FACE, "UpdateFace");
             put(GET_PROVISION_TOKEN, "getProvisionToken");
+            put(RESOLVE_EVENT, "resolveEvent");
+            put(DELETE_DEVICE_DATA, "deleteDeviceData");
 
             put(HARDWARE_LOG_EVENT, "HardwareLogEvent");
             put(HARDWARE_RESEND_FROM_BLUETOOTH, "HardwareResendFromBluetooth");

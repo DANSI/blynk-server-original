@@ -45,4 +45,12 @@ public class ServerProperties extends BaseProperties {
     public boolean force80Port() {
         return getBoolProperty("force.port.80.for.csv");
     }
+
+    public boolean getAllowStoreIp() {
+        return getBoolProperty("allow.store.ip");
+    }
+
+    public boolean renameOldReportingFiles() {
+        return getBoolProperty("rename.old.reporting.files");
+    }
 }

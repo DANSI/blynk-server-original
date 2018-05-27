@@ -52,6 +52,8 @@ public class GraphDataStream {
 
     private final boolean userDeltaModifyAllowed;
 
+    private final int maximumFractionDigits;
+
     @JsonCreator
     public GraphDataStream(@JsonProperty("title") String title,
                            @JsonProperty("graphType") GraphType graphType,
@@ -72,7 +74,8 @@ public class GraphDataStream {
                            @JsonProperty("isPercentMaxMin") boolean isPercentMaxMin,
                            @JsonProperty("yAxisScale") YAxisScale yAxisScale,
                            @JsonProperty("delta") float delta,
-                           @JsonProperty("userDeltaModifyAllowed") boolean userDeltaModifyAllowed) {
+                           @JsonProperty("userDeltaModifyAllowed") boolean userDeltaModifyAllowed,
+                           @JsonProperty("maximumFractionDigits") int maximumFractionDigits) {
         this.title = title;
         this.graphType = graphType;
         this.color = color;
@@ -93,6 +96,7 @@ public class GraphDataStream {
         this.yAxisScale = yAxisScale == null ? YAxisScale.UNSET : yAxisScale;
         this.delta = delta;
         this.userDeltaModifyAllowed = userDeltaModifyAllowed;
+        this.maximumFractionDigits = maximumFractionDigits;
     }
 
     public int getTargetId(int targetIdOverride) {

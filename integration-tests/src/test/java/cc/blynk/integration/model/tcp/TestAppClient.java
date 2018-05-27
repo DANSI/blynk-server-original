@@ -28,12 +28,14 @@ import org.mockito.Mockito;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.StringJoiner;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_CLONE_CODE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROVISION_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
+import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.timeout;
@@ -261,6 +263,18 @@ public class TestAppClient extends BaseTestAppClient {
 
     public void getToken(int dashId) {
         send("getToken " + dashId);
+    }
+
+    public void deleteDeviceData(int dashId, int deviceId) {
+        send("deletedevicedata " + dashId + DEVICE_SEPARATOR + deviceId);
+    }
+
+    public void deleteDeviceData(int dashId, int deviceId, String... pins) {
+        StringJoiner sj = new StringJoiner(BODY_SEPARATOR_STRING);
+        for (String pin : pins) {
+            sj.add(pin);
+        }
+        send("deletedevicedata " + dashId + DEVICE_SEPARATOR + deviceId + BODY_SEPARATOR + sj.toString());
     }
 
     public void getEnhancedGraphData(int dashId, long widgetId, GraphPeriod period) {

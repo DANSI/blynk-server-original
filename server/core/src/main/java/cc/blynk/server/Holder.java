@@ -120,6 +120,10 @@ public class Holder {
         this.reportingDao = new ReportingDao(reportingFolder,
                 serverProperties.isRawDBEnabled() && dbManager.isDBEnabled());
 
+        if (serverProperties.renameOldReportingFiles()) {
+            reportingDao.renameOldReportingFiles();
+        }
+
         this.transportTypeHolder = new TransportTypeHolder(serverProperties);
 
         this.asyncHttpClient = new DefaultAsyncHttpClient(new DefaultAsyncHttpClientConfig.Builder()

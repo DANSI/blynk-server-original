@@ -1,6 +1,9 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.device;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
+import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.DashBoard;
@@ -27,10 +30,14 @@ public class DeleteDeviceLogic {
 
     private final TokenManager tokenManager;
     private final SessionDao sessionDao;
+    private final ReportingDao reportingDao;
+    private final BlockingIOProcessor blockingIOProcessor;
 
-    public DeleteDeviceLogic(TokenManager tokenManager, SessionDao sessionDao) {
-        this.tokenManager = tokenManager;
-        this.sessionDao = sessionDao;
+    public DeleteDeviceLogic(Holder holder) {
+        this.tokenManager = holder.tokenManager;
+        this.sessionDao = holder.sessionDao;
+        this.reportingDao = holder.reportingDao;
+        this.blockingIOProcessor = holder.blockingIOProcessor;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
@@ -56,6 +63,14 @@ public class DeleteDeviceLogic {
         dash.devices = ArrayUtil.remove(dash.devices, existingDeviceIndex, Device.class);
         dash.updatedAt = System.currentTimeMillis();
         state.user.lastModifiedTs = dash.updatedAt;
+
+        blockingIOProcessor.executeHistory(() -> {
+            try {
+                reportingDao.delete(state.user, dashId, deviceId);
+            } catch (Exception e) {
+                log.warn("Error removing device data. Reason : {}.", e.getMessage());
+            }
+        });
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

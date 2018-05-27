@@ -70,7 +70,7 @@ public class HardwareAndHttpAPIServer extends BaseServer {
                 FullHttpRequest req = (FullHttpRequest) msg;
                 String uri = req.uri();
 
-                log.debug("In http and websocket unificator handler.");
+                log.trace("In http and websocket unificator handler.");
                 if (uri.equals("/")) {
                     //for local server do redirect to admin page
                     try {

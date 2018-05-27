@@ -38,7 +38,7 @@ public class UrlReWriterHandler extends ChannelInboundHandlerAdapter {
 
             String requestUri = request.uri();
             String mapToURI = mapTo(requestUri);
-            log.debug("Mapping from {} to {}", requestUri, mapToURI);
+            log.trace("Mapping from {} to {}", requestUri, mapToURI);
             request.setUri(mapToURI);
         }
 

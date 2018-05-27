@@ -58,6 +58,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
     private final DBManager dbManager;
     private final BlockingIOProcessor blockingIOProcessor;
     private final String listenPort;
+    private final boolean allowStoreIp;
 
     public HardwareLoginHandler(Holder holder, int listenPort) {
         this.holder = holder;
@@ -65,9 +66,10 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         this.blockingIOProcessor = holder.blockingIOProcessor;
         boolean isForce80ForRedirect = holder.props.getBoolProperty("force.port.80.for.redirect");
         this.listenPort = isForce80ForRedirect ? "80" : String.valueOf(listenPort);
+        this.allowStoreIp = holder.props.getAllowStoreIp();
     }
 
-    private static void completeLogin(Channel channel, Session session, User user,
+    private void completeLogin(Channel channel, Session session, User user,
                                       DashBoard dash, Device device, int msgId) {
         log.debug("completeLogin. {}", channel);
 
@@ -85,7 +87,9 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         session.sendToApps(HARDWARE_CONNECTED, msgId, dash.id, responseBody);
         log.trace("Connected device id {}, dash id {}", device.id, dash.id);
         device.connected();
-        device.lastLoggedIP = IPUtils.getIp(channel.remoteAddress());
+        if (allowStoreIp) {
+            device.lastLoggedIP = IPUtils.getIp(channel.remoteAddress());
+        }
 
         log.info("{} hardware joined.", user.email);
     }

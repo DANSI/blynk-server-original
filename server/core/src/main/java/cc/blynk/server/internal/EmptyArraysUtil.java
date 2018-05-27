@@ -6,6 +6,9 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
+import cc.blynk.server.core.model.widgets.ui.reporting.Report;
+import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportDataStream;
+import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportSource;
 import cc.blynk.server.core.model.widgets.ui.tiles.Tile;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 
@@ -29,5 +32,8 @@ public final class EmptyArraysUtil {
     public static final byte[] EMPTY_BYTES = {};
     public static final App[] EMPTY_APPS = {};
     public static final GraphDataStream[] EMPTY_GRAPH_DATA_STREAMS = {};
+    public static final ReportDataStream[] EMPTY_REPORT_DATA_STREAMS = {};
+    public static final ReportSource[] EMPTY_REPORT_SOURCES = {};
+    public static final Report[] EMPTY_REPORTS = {};
 
 }
