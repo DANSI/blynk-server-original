@@ -1,7 +1,11 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.dao.UserKey;
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -28,20 +32,22 @@ public class UpdateFaceLogic {
     private static final Logger log = LogManager.getLogger(UpdateFaceLogic.class);
 
     private final UserDao userDao;
+    private final SessionDao sessionDao;
 
     public UpdateFaceLogic(Holder holder) {
         this.userDao = holder.userDao;
+        this.sessionDao = holder.sessionDao;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        var parentDashId = Integer.parseInt(message.body);
+        int parentDashId = Integer.parseInt(message.body);
 
-        var dash = user.profile.getDashByIdOrThrow(parentDashId);
+        DashBoard dash = user.profile.getDashByIdOrThrow(parentDashId);
 
-        var appIds = new HashSet<String>();
-        for (var dashBoard : user.profile.dashBoards) {
+        HashSet<String> appIds = new HashSet<>();
+        for (DashBoard dashBoard : user.profile.dashBoards) {
             if (dashBoard.parentId == parentDashId) {
-                for (var app : user.profile.apps) {
+                for (App app : user.profile.apps) {
                     if (ArrayUtil.contains(app.projectIds, dashBoard.id)) {
                         appIds.add(app.id);
                     }
@@ -59,8 +65,8 @@ public class UpdateFaceLogic {
         int count = 0;
         log.info("Updating face {} for user {}-{}. App Ids : {}", parentDashId,
                 user.email, user.appName, JsonParser.valueToJsonAsString(appIds));
-        for (var existingUser : userDao.users.values()) {
-            for (var existingDash : existingUser.profile.dashBoards) {
+        for (User existingUser : userDao.users.values()) {
+            for (DashBoard existingDash : existingUser.profile.dashBoards) {
                 if (existingDash.parentId == parentDashId && (existingUser == user
                         || appIds.contains(existingUser.appName))) {
                     hasFaces = true;
@@ -68,6 +74,10 @@ public class UpdateFaceLogic {
                     log.debug("Found face for {}-{}.", existingUser.email, existingUser.appName);
                     try {
                         existingDash.updateFaceFields(dash);
+                        //do not close connection for initiator
+                        if (existingUser != user) {
+                            sessionDao.closeAppChannelsByUser(new UserKey(existingUser));
+                        }
                         count++;
                     } catch (Exception e) {
                         log.error("Error updating face for user {}, dashId {}.",
