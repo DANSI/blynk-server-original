@@ -254,12 +254,14 @@ public class ReportingDao implements Closeable {
         Path userReportingPath = getUserReportingFolderPath(user);
 
         int count = 0;
-        String fileNamePrefix = generateFilenamePrefix(dashId, deviceId);
-        try (DirectoryStream<Path> userReportingFolder = Files.newDirectoryStream(userReportingPath, "*")) {
-            for (Path reportingFile : userReportingFolder) {
-                if (reportingFile.getFileName().toString().startsWith(fileNamePrefix)) {
-                    FileUtils.deleteQuietly(reportingFile);
-                    count++;
+        if (Files.exists(userReportingPath)) {
+            String fileNamePrefix = generateFilenamePrefix(dashId, deviceId);
+            try (DirectoryStream<Path> userReportingFolder = Files.newDirectoryStream(userReportingPath, "*")) {
+                for (Path reportingFile : userReportingFolder) {
+                    if (reportingFile.getFileName().toString().startsWith(fileNamePrefix)) {
+                        FileUtils.deleteQuietly(reportingFile);
+                        count++;
+                    }
                 }
             }
         }
