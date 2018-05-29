@@ -11,6 +11,7 @@ import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
+import cc.blynk.server.core.model.widgets.ui.reporting.Report;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.handlers.encoders.AppMessageEncoder;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
@@ -296,6 +297,18 @@ public class TestAppClient extends BaseTestAppClient {
     public void updateTemplate(int dashId, long widgetId, TileTemplate tileTemplate) throws Exception {
         send("updateTemplate " + dashId + BODY_SEPARATOR + widgetId + BODY_SEPARATOR
                 + JsonParser.MAPPER.writeValueAsString(tileTemplate));
+    }
+
+    public void createReport(int dashId, Report report) {
+        send("createReport " + dashId + BODY_SEPARATOR + report.toString());
+    }
+
+    public void updateReport(int dashId, Report report) {
+        send("updateReport " + dashId + BODY_SEPARATOR + report.toString());
+    }
+
+    public void deleteReport(int dashId, int reportId) {
+        send("deleteReport " + dashId + BODY_SEPARATOR + reportId);
     }
 
     public void send(String line) {

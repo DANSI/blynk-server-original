@@ -31,22 +31,22 @@ public class ReportingModelTest {
                 new int[] {0}
                 );
 
-        Report report = new Report("My One Time Report",
+        Report report = new Report(1, "My One Time Report",
                 new ReportSource[] {reportSource},
                 new OneTimeReportType(86400), "test@gmail.com",
                 GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
 
-        Report report2 = new Report("My Daily Report",
+        Report report2 = new Report(2, "My Daily Report",
                 new ReportSource[] {reportSource},
                 new DailyReportType(60, ReportDurationType.CUSTOM, 100, 200), "test@gmail.com",
                 GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
 
-        Report report3 = new Report("My Daily Report",
+        Report report3 = new Report(3, "My Daily Report",
                 new ReportSource[] {reportSource},
                 new WeeklyReportType(60, ReportDurationType.CUSTOM, 100, 200, 1), "test@gmail.com",
                 GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
 
-        Report report4 = new Report("My Daily Report",
+        Report report4 = new Report(4, "My Daily Report",
                 new ReportSource[] {reportSource},
                 new MonthlyReportType(60, ReportDurationType.CUSTOM, 100, 200, 1), "test@gmail.com",
                 GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));

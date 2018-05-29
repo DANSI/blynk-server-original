@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.widgets.ui.reporting;
 
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.others.rtc.StringToZoneId;
 import cc.blynk.server.core.model.widgets.others.rtc.ZoneIdToString;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
@@ -19,6 +20,8 @@ import java.time.ZonedDateTime;
  * Created on 22.05.18.
  */
 public class Report {
+
+    public final int id;
 
     public final String name;
 
@@ -41,7 +44,8 @@ public class Report {
     public volatile long lastProcessedAt;
 
     @JsonCreator
-    public Report(@JsonProperty("name") String name,
+    public Report(@JsonProperty("id") int id,
+                  @JsonProperty("name") String name,
                   @JsonProperty("reportSources") ReportSource[] reportSources,
                   @JsonProperty("reportType") BaseReportType reportType,
                   @JsonProperty("recipients") String recipients,
@@ -49,6 +53,7 @@ public class Report {
                   @JsonProperty("isActive") boolean isActive,
                   @JsonProperty("reportOutput") ReportOutput reportOutput,
                   @JsonProperty("tzName") ZoneId tzName) {
+        this.id = id;
         this.name = name;
         this.reportSources = reportSources;
         this.reportType = reportType;
@@ -69,5 +74,14 @@ public class Report {
 
         return timePassedSinceLastRun >= reportType.reportPeriodMillis()
                 && reportType.isTime(nowTruncatedToHours);
+    }
+
+    public static int getPrice() {
+        return 4900;
+    }
+
+    @Override
+    public String toString() {
+        return JsonParser.toJson(this);
     }
 }

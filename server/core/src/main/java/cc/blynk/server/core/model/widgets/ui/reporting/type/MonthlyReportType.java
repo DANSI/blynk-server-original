@@ -28,4 +28,9 @@ public class MonthlyReportType extends DailyReportType {
     public long reportPeriodMillis() {
         return TimeUnit.DAYS.toMillis(30);
     }
+
+    @Override
+    public long getPeriod() {
+        return 30L;
+    }
 }

@@ -6,6 +6,12 @@ import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
+import cc.blynk.server.core.model.widgets.ui.reporting.Report;
+import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
+import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportDataStream;
+import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportSource;
+import cc.blynk.server.core.model.widgets.ui.reporting.source.TileTemplateReportSource;
+import cc.blynk.server.core.model.widgets.ui.reporting.type.OneTimeReportType;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
@@ -19,7 +25,11 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.ZoneId;
 
+import static cc.blynk.server.core.model.widgets.ui.reporting.ReportOutput.CSV_FILE_PER_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
+import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -172,6 +182,57 @@ public class ReportingTest extends IntegrationBase {
         assertTrue(Files.notExists(pinReportingDataPath12));
         assertTrue(Files.notExists(pinReportingDataPath13));
         assertTrue(Files.notExists(pinReportingDataPath20));
+    }
+
+    @Test
+    public void createReportCRUD() throws Exception {
+        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportSource reportSource = new TileTemplateReportSource(
+                new ReportDataStream[] {reportDataStream},
+                1,
+                new int[] {0}
+        );
+
+        ReportingWidget reportingWidget = new ReportingWidget();
+        reportingWidget.height = 1;
+        reportingWidget.width = 1;
+        reportingWidget.reportSources = new ReportSource[] {
+                reportSource
+        };
+
+        clientPair.appClient.send("getEnergy");
+        clientPair.appClient.verifyResult(produce(1, GET_ENERGY, "7500"));
+
+        clientPair.appClient.createWidget(1, reportingWidget);
+        clientPair.appClient.verifyResult(ok(2));
+
+        clientPair.appClient.send("getEnergy");
+        clientPair.appClient.verifyResult(produce(3, GET_ENERGY, "7500"));
+
+        Report report = new Report(1, "My One Time Report",
+                new ReportSource[] {reportSource},
+                new OneTimeReportType(86400), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
+
+        clientPair.appClient.createReport(1, report);
+        clientPair.appClient.verifyResult(ok(4));
+
+        clientPair.appClient.send("getEnergy");
+        clientPair.appClient.verifyResult(produce(5, GET_ENERGY, "2600"));
+
+        report = new Report(1, "Updated",
+                new ReportSource[] {reportSource},
+                new OneTimeReportType(86400), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
+
+        clientPair.appClient.updateReport(1, report);
+        clientPair.appClient.verifyResult(ok(6));
+
+        clientPair.appClient.deleteReport(1, report.id);
+        clientPair.appClient.verifyResult(ok(7));
+
+        clientPair.appClient.send("getEnergy");
+        clientPair.appClient.verifyResult(produce(8, GET_ENERGY, "7500"));
     }
 }
 

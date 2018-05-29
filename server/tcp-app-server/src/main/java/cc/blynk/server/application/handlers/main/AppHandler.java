@@ -50,6 +50,9 @@ import cc.blynk.server.application.handlers.main.logic.graph.DeleteEnhancedGraph
 import cc.blynk.server.application.handlers.main.logic.graph.ExportGraphDataLogic;
 import cc.blynk.server.application.handlers.main.logic.graph.GetEnhancedGraphDataLogic;
 import cc.blynk.server.application.handlers.main.logic.graph.GetGraphDataLogic;
+import cc.blynk.server.application.handlers.main.logic.reporting.CreateReportLogic;
+import cc.blynk.server.application.handlers.main.logic.reporting.DeleteReportLogic;
+import cc.blynk.server.application.handlers.main.logic.reporting.UpdateReportLogic;
 import cc.blynk.server.application.handlers.main.logic.sharing.GetShareTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.sharing.RefreshShareTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.sharing.ShareLogic;
@@ -69,6 +72,7 @@ import static cc.blynk.server.core.protocol.enums.Command.ASSIGN_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_APP;
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_DEVICE;
+import static cc.blynk.server.core.protocol.enums.Command.CREATE_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_WIDGET;
@@ -78,6 +82,7 @@ import static cc.blynk.server.core.protocol.enums.Command.DELETE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_DEVICE_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_ENHANCED_GRAPH_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.DELETE_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_WIDGET;
@@ -111,6 +116,7 @@ import static cc.blynk.server.core.protocol.enums.Command.UPDATE_DASH;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_FACE;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_PROJECT_SETTINGS;
+import static cc.blynk.server.core.protocol.enums.Command.UPDATE_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_TILE_TEMPLATE;
 import static cc.blynk.server.core.protocol.enums.Command.UPDATE_WIDGET;
@@ -216,6 +222,10 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.getProjectByCloneCodeLogic = new GetProjectByClonedTokenLogic(holder);
         this.getProvisionTokenLogic = new GetProvisionTokenLogic(holder);
         this.deleteDeviceDataLogic = new DeleteDeviceDataLogic(holder.reportingDao, holder.blockingIOProcessor);
+
+        this.createReportLogic = new CreateReportLogic(holder);
+        this.updateReportLogic = new UpdateReportLogic(holder);
+        this.deleteReportLogic = new DeleteReportLogic(holder);
 
         this.state = state;
         this.stats = holder.stats;
@@ -399,7 +409,15 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
             case DELETE_DEVICE_DATA :
                 deleteDeviceDataLogic.messageReceived(ctx, state.user, msg);
                 break;
-
+            case CREATE_REPORT :
+                createReportLogic.messageReceived(ctx, state.user, msg);
+                break;
+            case UPDATE_REPORT :
+                updateReportLogic.messageReceived(ctx, state.user, msg);
+                break;
+            case DELETE_REPORT :
+                deleteReportLogic.messageReceived(ctx, state.user, msg);
+                break;
         }
     }
 

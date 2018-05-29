@@ -38,6 +38,7 @@ import static cc.blynk.server.core.protocol.enums.Command.DEVICE_OFFLINE;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL_QR;
 import static cc.blynk.server.core.protocol.enums.Command.EXPORT_GRAPH_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.EXPORT_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.GET_CLONE_CODE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICES;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
@@ -173,6 +174,7 @@ public final class MessageFactory {
             case CREATE_REPORT :
             case UPDATE_REPORT :
             case DELETE_REPORT :
+            case EXPORT_REPORT :
                 return new StringMessage(messageId, command, body);
 
             default: throw new UnsupportedCommandException("Command not supported. Code : " + command, messageId);

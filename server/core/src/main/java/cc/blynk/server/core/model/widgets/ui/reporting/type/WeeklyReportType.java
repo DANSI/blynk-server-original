@@ -28,4 +28,9 @@ public class WeeklyReportType extends DailyReportType {
     public long reportPeriodMillis() {
         return TimeUnit.DAYS.toMillis(7);
     }
+
+    @Override
+    public long getPeriod() {
+        return 7L;
+    }
 }

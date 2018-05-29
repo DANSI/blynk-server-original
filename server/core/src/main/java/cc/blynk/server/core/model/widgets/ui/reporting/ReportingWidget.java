@@ -19,8 +19,26 @@ public class ReportingWidget extends NoPinWidget {
 
     public volatile Report[] reports = EMPTY_REPORTS;
 
+    public Report getReportById(int id) {
+        for (Report report : reports) {
+            if (report.id == id) {
+                return report;
+            }
+        }
+        return null;
+    }
+
+    public int getReportIndexById(int id) {
+        for (int i = 0; i < reports.length; i++) {
+            if (id == reports[i].id) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     @Override
     public int getPrice() {
-        return 4900;
+        return Report.getPrice() * reports.length;
     }
 }

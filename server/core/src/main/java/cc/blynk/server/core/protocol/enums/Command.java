@@ -113,6 +113,11 @@ public final class Command {
     public static final short RESOLVE_EVENT = 75;
     public static final short DELETE_DEVICE_DATA = 76;
 
+    public static final short CREATE_REPORT = 77;
+    public static final short UPDATE_REPORT = 78;
+    public static final short DELETE_REPORT = 79;
+    public static final short EXPORT_REPORT = 80;
+
     //http codes. Used only for stats
     public static final short HTTP_IS_HARDWARE_CONNECTED = 82;
     public static final short HTTP_IS_APP_CONNECTED = 83;
@@ -200,6 +205,10 @@ public final class Command {
             Map.entry(DEVICE_OFFLINE, "deviceOffline"),
             Map.entry(OUTDATED_APP_NOTIFICATION, "outdatedAppNotification"),
             Map.entry(TRACK_DEVICE, "trackDevice"),
+            Map.entry(CREATE_REPORT, "createReport"),
+            Map.entry(UPDATE_REPORT, "updateReport"),
+            Map.entry(DELETE_REPORT, "deleteReport"),
+            Map.entry(EXPORT_REPORT, "exportReport"),
             Map.entry(HTTP_IS_HARDWARE_CONNECTED, "HttpIsHardwareConnected"),
             Map.entry(HTTP_IS_APP_CONNECTED, "HttpIsAppConnected"),
             Map.entry(HTTP_GET_PIN_DATA, "HttpGetPinData"),

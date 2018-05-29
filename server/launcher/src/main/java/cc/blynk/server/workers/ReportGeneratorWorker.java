@@ -75,21 +75,23 @@ public class ReportGeneratorWorker implements Runnable {
         return reportsCounter;
     }
 
-    private void sendReport(User user, DashBoard dash, Report report) {
-        long fetchCount = pointsNumber(report.granularityType, report.reportType.getPeriod());
+    private int sendReport(User user, DashBoard dash, Report report) {
+        int generatedReportsCount = 0;
+        int fetchCount = (int) pointsNumber(report.granularityType, report.reportType.getPeriod());
         for (ReportSource reportSource : report.reportSources) {
             if (reportSource.isValid()) {
                 for (int deviceId : reportSource.getDeviceIds()) {
                     for (ReportDataStream reportDataStream : reportSource.reportDataStreams) {
                         if (reportDataStream.isSelected) {
-                            //todo finish
-                            log.info("finish");
+                            generatedReportsCount++;
+                            reportingDao.getByteBufferFromDisk(user, dash.id, deviceId, reportDataStream.pinType,
+                                    reportDataStream.pin, fetchCount, report.granularityType, 0);
                         }
                     }
                 }
             }
         }
-
+        return generatedReportsCount;
     }
 
     public long pointsNumber(GraphGranularityType graphGranularityType, long duration) {
