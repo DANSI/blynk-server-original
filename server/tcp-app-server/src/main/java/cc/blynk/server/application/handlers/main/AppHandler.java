@@ -45,11 +45,11 @@ import cc.blynk.server.application.handlers.main.logic.dashboard.widget.UpdateWi
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.tile.CreateTileTemplateLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.tile.DeleteTileTemplateLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.tile.UpdateTileTemplateLogic;
-import cc.blynk.server.application.handlers.main.logic.reporting.DeleteDeviceDataLogic;
-import cc.blynk.server.application.handlers.main.logic.reporting.DeleteEnhancedGraphDataLogic;
-import cc.blynk.server.application.handlers.main.logic.reporting.ExportGraphDataLogic;
-import cc.blynk.server.application.handlers.main.logic.reporting.GetEnhancedGraphDataLogic;
-import cc.blynk.server.application.handlers.main.logic.reporting.GetGraphDataLogic;
+import cc.blynk.server.application.handlers.main.logic.graph.DeleteDeviceDataLogic;
+import cc.blynk.server.application.handlers.main.logic.graph.DeleteEnhancedGraphDataLogic;
+import cc.blynk.server.application.handlers.main.logic.graph.ExportGraphDataLogic;
+import cc.blynk.server.application.handlers.main.logic.graph.GetEnhancedGraphDataLogic;
+import cc.blynk.server.application.handlers.main.logic.graph.GetGraphDataLogic;
 import cc.blynk.server.application.handlers.main.logic.sharing.GetShareTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.sharing.RefreshShareTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.sharing.ShareLogic;
@@ -161,6 +161,9 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final GetProjectByClonedTokenLogic getProjectByCloneCodeLogic;
     private final GetProvisionTokenLogic getProvisionTokenLogic;
     private final DeleteDeviceDataLogic deleteDeviceDataLogic;
+    private final CreateReportLogic createReportLogic;
+    private final UpdateReportLogic updateReportLogic;
+    private final DeleteReportLogic deleteReportLogic;
 
     private final GlobalStats stats;
 
@@ -396,6 +399,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
             case DELETE_DEVICE_DATA :
                 deleteDeviceDataLogic.messageReceived(ctx, state.user, msg);
                 break;
+
         }
     }
 
