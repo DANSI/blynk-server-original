@@ -45,8 +45,6 @@ public class GetGraphDataLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        //warn: split may be optimized
-        //todo remove space after app migration
         String[] messageParts = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
         if (messageParts.length < 3) {

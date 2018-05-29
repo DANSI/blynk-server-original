@@ -31,12 +31,12 @@ public class PinStorageValueDeserializer extends JsonDeserializer {
 
             if (jsonToken == START_OBJECT) {
                 JsonNode multiValueNode = p.getCodec().readTree(p);
-                var type = multiValueNode.get("type");
+                JsonNode type = multiValueNode.get("type");
                 if (type != null) {
-                    var multiPinStorageValue =
+                    MultiPinStorageValue multiPinStorageValue =
                             new MultiPinStorageValue(MultiPinStorageValueType.valueOf(type.textValue()));
 
-                    var values = multiValueNode.get("values");
+                    JsonNode values = multiValueNode.get("values");
                     if (values != null) {
                         if (values.isArray()) {
                             for (var objNode : values) {
@@ -48,7 +48,6 @@ public class PinStorageValueDeserializer extends JsonDeserializer {
                 }
             }
         } catch (Exception e) {
-            //todo this try catch is temporary until we make sure this code is fine
             log.error("Error reading pin storage value.", e);
         }
 
