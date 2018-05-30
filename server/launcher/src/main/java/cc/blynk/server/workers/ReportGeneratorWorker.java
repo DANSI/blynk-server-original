@@ -82,11 +82,9 @@ public class ReportGeneratorWorker implements Runnable {
             if (reportSource.isValid()) {
                 for (int deviceId : reportSource.getDeviceIds()) {
                     for (ReportDataStream reportDataStream : reportSource.reportDataStreams) {
-                        if (reportDataStream.isSelected) {
-                            generatedReportsCount++;
-                            reportingDao.getByteBufferFromDisk(user, dash.id, deviceId, reportDataStream.pinType,
-                                    reportDataStream.pin, fetchCount, report.granularityType, 0);
-                        }
+                        generatedReportsCount++;
+                        reportingDao.getByteBufferFromDisk(user, dash.id, deviceId, reportDataStream.pinType,
+                                reportDataStream.pin, fetchCount, report.granularityType, 0);
                     }
                 }
             }

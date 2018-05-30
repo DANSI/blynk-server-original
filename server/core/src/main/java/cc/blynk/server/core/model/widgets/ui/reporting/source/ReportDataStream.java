@@ -17,16 +17,12 @@ public class ReportDataStream {
 
     public final String label;
 
-    public final boolean isSelected;
-
     @JsonCreator
     public ReportDataStream(@JsonProperty("pin") byte pin,
                             @JsonProperty("pinType") PinType pinType,
-                            @JsonProperty("label") String label,
-                            @JsonProperty("isSelected") boolean isSelected) {
+                            @JsonProperty("label") String label) {
         this.pin = pin;
         this.pinType = pinType;
         this.label = label;
-        this.isSelected = isSelected;
     }
 }
