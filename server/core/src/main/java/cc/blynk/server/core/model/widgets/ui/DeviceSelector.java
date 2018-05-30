@@ -25,6 +25,8 @@ public class DeviceSelector extends NoPinWidget implements Target {
 
     public int iconColor;
 
+    public boolean showIcon;
+
     public String hint;
 
     @Override
