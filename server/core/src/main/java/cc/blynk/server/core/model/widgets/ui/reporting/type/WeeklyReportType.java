@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class WeeklyReportType extends DailyReportType {
 
+    //starts from MONDAY (1)
     public final int dayOfTheWeek;
 
     @JsonCreator

@@ -25,6 +25,7 @@ public class TimeInput extends OnePinWidget {
 
     public String format;
 
+    //from 1 to 7, starts from MONDAY (1)
     public volatile int[] days;
 
     public volatile int startAt = -1;
