@@ -87,6 +87,9 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         session.sendToApps(HARDWARE_CONNECTED, msgId, dash.id, responseBody);
         log.trace("Connected device id {}, dash id {}", device.id, dash.id);
         device.connected();
+        if (device.firstConnectTime == 0) {
+            device.firstConnectTime = device.connectTime;
+        }
         if (allowStoreIp) {
             device.lastLoggedIP = IPUtils.getIp(channel.remoteAddress());
         }
