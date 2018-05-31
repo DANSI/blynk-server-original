@@ -6,11 +6,17 @@ import cc.blynk.server.core.model.widgets.others.rtc.ZoneIdToString;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportSource;
 import cc.blynk.server.core.model.widgets.ui.reporting.type.BaseReportType;
+import cc.blynk.server.core.model.widgets.ui.reporting.type.DailyReport;
+import cc.blynk.server.core.model.widgets.ui.reporting.type.OneTimeReport;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
@@ -20,6 +26,8 @@ import java.time.ZonedDateTime;
  * Created on 22.05.18.
  */
 public class Report {
+
+    private static final Logger log = LogManager.getLogger(Report.class);
 
     public final int id;
 
@@ -41,7 +49,9 @@ public class Report {
     @JsonDeserialize(using = StringToZoneId.class, as = ZoneId.class)
     public final ZoneId tzName;
 
-    public volatile long lastProcessedAt;
+    public volatile long nextReportAt;
+
+    public volatile long lastReportAt;
 
     @JsonCreator
     public Report(@JsonProperty("id") int id,
@@ -65,19 +75,36 @@ public class Report {
     }
 
     public boolean isValid() {
-        return reportType != null && reportSources != null && reportSources.length > 0 && isActive;
+        return reportType != null && reportType.isValid() && reportSources != null && reportSources.length > 0;
     }
 
-    public boolean isTime(ZonedDateTime nowTruncatedToHours) {
-        long nowMillis = nowTruncatedToHours.toInstant().toEpochMilli();
-        long timePassedSinceLastRun = nowMillis - lastProcessedAt;
-
-        return timePassedSinceLastRun >= reportType.reportPeriodMillis()
-                && reportType.isTime(nowTruncatedToHours);
+    public boolean isPeriodic() {
+        return !(reportType instanceof OneTimeReport);
     }
 
     public static int getPrice() {
         return 4900;
+    }
+
+    public long calculateDelayInSeconds() {
+        DailyReport basePeriodicReportType = (DailyReport) reportType;
+
+        ZonedDateTime zonedNow = ZonedDateTime.now(tzName);
+        ZonedDateTime zonedStartAt = basePeriodicReportType.getNextTriggerTime(zonedNow, tzName);
+        if (basePeriodicReportType.isExpired(zonedStartAt, tzName)) {
+            //todo more logging
+            throw new IllegalCommandException("Report is expired.");
+        }
+
+        Duration duration = Duration.between(zonedNow, zonedStartAt);
+        long initialDelaySeconds = duration.getSeconds();
+
+        if (initialDelaySeconds < 0) {
+            log.error("Initial delay in less than zero. {}", this);
+            throw new IllegalCommandException("Initial delay in less than zero.");
+        }
+
+        return initialDelaySeconds;
     }
 
     @Override

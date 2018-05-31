@@ -8,10 +8,14 @@ import cc.blynk.server.core.model.widgets.ui.reporting.Report;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.energyLimit;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
@@ -22,9 +26,13 @@ public class CreateReportLogic {
     private static final Logger log = LogManager.getLogger(CreateReportLogic.class);
 
     private final int reportsLimit;
+    private final ScheduledThreadPoolExecutor reportsExecutor;
+    private final MailWrapper mailWrapper;
 
     public CreateReportLogic(Holder holder) {
         this.reportsLimit = holder.limits.reportsLimit;
+        this.reportsExecutor = holder.reportsExecutor;
+        this.mailWrapper = holder.mailWrapper;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
@@ -65,8 +73,47 @@ public class CreateReportLogic {
         reportingWidget.reports = ArrayUtil.add(reportingWidget.reports, report, Report.class);
         dash.updatedAt = System.currentTimeMillis();
 
-        if (report.isValid()) {
-            log.info("Adding report to scheduler : {} for {}.", report, user.email);
+        if (!report.isValid()) {
+            log.debug("Report is not valid {} for {}.", report, user.email);
+            throw new IllegalCommandException("Report is not valid.");
+        }
+
+        if (report.isPeriodic()) {
+            log.info("Adding periodic report to scheduler : {} for {}.", report, user.email);
+
+            long initialDelaySeconds = report.calculateDelayInSeconds();
+
+            report.nextReportAt = System.currentTimeMillis() + initialDelaySeconds * 1000;
+
+            if (report.isActive) {
+                reportsExecutor.schedule(
+                        new ReportTask(user.email, user.appName, report) {
+                            @Override
+                            public void run() {
+                                try {
+                                    long now = System.currentTimeMillis();
+                                    mailWrapper.sendText(report.recipients, report.name, "Your report is ready.");
+                                    log.info("Processed report for  {},time {} ms. Report : {}.",
+                                            this.email, System.currentTimeMillis() - now, this.report);
+                                    this.report.lastReportAt = now;
+                                    long initialDelaySeconds = report.calculateDelayInSeconds();
+
+                                    //rescheduling report
+                                    reportsExecutor.schedule(this, initialDelaySeconds, TimeUnit.SECONDS);
+                                } catch (IllegalCommandException ice) {
+                                    log.debug("Seems like report {} is expired for {}.", report, user.email, ice);
+                                } catch (Exception e) {
+                                    log.debug("Error generating report {} for {}.", report, user.email, e);
+                                } finally {
+
+                                    this.report.lastReportAt = System.currentTimeMillis();
+                                }
+                            }
+                        },
+                        initialDelaySeconds,
+                        TimeUnit.SECONDS
+                );
+            }
         }
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());

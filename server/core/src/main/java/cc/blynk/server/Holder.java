@@ -30,6 +30,7 @@ import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 
 import java.util.Collections;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import static cc.blynk.server.internal.ReportingUtil.getReportingFolder;
 
@@ -67,6 +68,7 @@ public class Holder {
     public final String region;
     public final TimerWorker timerWorker;
     public final ReadingWidgetsWorker readingWidgetsWorker;
+    public final ScheduledThreadPoolExecutor reportsExecutor;
 
     public final EventorProcessor eventorProcessor;
     public final DefaultAsyncHttpClient asyncHttpClient;
@@ -146,6 +148,8 @@ public class Holder {
                 gcmWrapper, mailWrapper, twitterWrapper, blockingIOProcessor, stats);
         this.timerWorker = new TimerWorker(userDao, sessionDao, gcmWrapper);
         this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao, props.getAllowWithoutActiveApp());
+        this.reportsExecutor = new ScheduledThreadPoolExecutor(1);
+        this.reportsExecutor.setRemoveOnCancelPolicy(true);
         this.limits = new Limits(props);
         this.textHolder = new TextHolder(gcmProperties);
 
@@ -207,6 +211,8 @@ public class Holder {
 
         this.timerWorker = new TimerWorker(userDao, sessionDao, gcmWrapper);
         this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao, props.getAllowWithoutActiveApp());
+        this.reportsExecutor = new ScheduledThreadPoolExecutor(1);
+        this.reportsExecutor.setRemoveOnCancelPolicy(true);
         this.limits = new Limits(props);
         this.textHolder = new TextHolder(new GCMProperties(Collections.emptyMap()));
 

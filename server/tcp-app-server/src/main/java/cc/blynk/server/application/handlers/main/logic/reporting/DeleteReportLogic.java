@@ -12,6 +12,8 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.split2;
 
@@ -19,7 +21,10 @@ public class DeleteReportLogic {
 
     private static final Logger log = LogManager.getLogger(DeleteReportLogic.class);
 
+    private final ScheduledThreadPoolExecutor reportsExecutor;
+
     public DeleteReportLogic(Holder holder) {
+        this.reportsExecutor = holder.reportsExecutor;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
@@ -44,9 +49,12 @@ public class DeleteReportLogic {
             throw new IllegalCommandException("Cannot find report with provided id.");
         }
 
+        Report reportToRemove = reportingWidget.reports[existingReportIndex];
         user.addEnergy(Report.getPrice());
         reportingWidget.reports = ArrayUtil.remove(reportingWidget.reports, existingReportIndex, Report.class);
         dash.updatedAt = System.currentTimeMillis();
+
+        reportsExecutor.remove(new ReportTask(user.email, user.appName, reportToRemove));
 
         log.info("Deleting report {} in scheduler for {}", reportId, user.email);
 

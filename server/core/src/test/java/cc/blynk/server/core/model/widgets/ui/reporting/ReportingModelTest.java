@@ -6,11 +6,12 @@ import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportDataStream;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportSource;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.TileTemplateReportSource;
-import cc.blynk.server.core.model.widgets.ui.reporting.type.DailyReportType;
-import cc.blynk.server.core.model.widgets.ui.reporting.type.MonthlyReportType;
-import cc.blynk.server.core.model.widgets.ui.reporting.type.OneTimeReportType;
+import cc.blynk.server.core.model.widgets.ui.reporting.type.DailyReport;
+import cc.blynk.server.core.model.widgets.ui.reporting.type.DayOfMonth;
+import cc.blynk.server.core.model.widgets.ui.reporting.type.MonthlyReport;
+import cc.blynk.server.core.model.widgets.ui.reporting.type.OneTimeReport;
 import cc.blynk.server.core.model.widgets.ui.reporting.type.ReportDurationType;
-import cc.blynk.server.core.model.widgets.ui.reporting.type.WeeklyReportType;
+import cc.blynk.server.core.model.widgets.ui.reporting.type.WeeklyReport;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.junit.Test;
 
@@ -39,22 +40,22 @@ public class ReportingModelTest {
 
         Report report = new Report(1, "My One Time Report",
                 new ReportSource[] {reportSource2},
-                new OneTimeReportType(86400), "test@gmail.com",
+                new OneTimeReport(86400), "test@gmail.com",
                 GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("UTC"));
 
         Report report2 = new Report(2, "My Daily Report",
                 new ReportSource[] {reportSource2},
-                new DailyReportType(60, ReportDurationType.CUSTOM, 100, 200), "test@gmail.com",
+                new DailyReport(60, ReportDurationType.CUSTOM, 100, 200), "test@gmail.com",
                 GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("UTC"));
 
         Report report3 = new Report(3, "My Daily Report",
                 new ReportSource[] {reportSource2},
-                new WeeklyReportType(60, ReportDurationType.CUSTOM, 100, 200, 1), "test@gmail.com",
+                new WeeklyReport(60, ReportDurationType.CUSTOM, 100, 200, 1), "test@gmail.com",
                 GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("UTC"));
 
         Report report4 = new Report(4, "My Daily Report",
                 new ReportSource[] {reportSource2},
-                new MonthlyReportType(60, ReportDurationType.CUSTOM, 100, 200, 1), "test@gmail.com",
+                new MonthlyReport(60, ReportDurationType.CUSTOM, 100, 200, DayOfMonth.FIRST), "test@gmail.com",
                 GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("UTC"));
 
         ReportingWidget reportingWidget = new ReportingWidget();

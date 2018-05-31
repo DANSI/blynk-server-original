@@ -11,7 +11,7 @@ import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportDataStream;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportSource;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.TileTemplateReportSource;
-import cc.blynk.server.core.model.widgets.ui.reporting.type.OneTimeReportType;
+import cc.blynk.server.core.model.widgets.ui.reporting.type.OneTimeReport;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
@@ -211,7 +211,7 @@ public class ReportingTest extends IntegrationBase {
 
         Report report = new Report(1, "My One Time Report",
                 new ReportSource[] {reportSource},
-                new OneTimeReportType(86400), "test@gmail.com",
+                new OneTimeReport(86400), "test@gmail.com",
                 GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
 
         clientPair.appClient.createReport(1, report);
@@ -222,7 +222,7 @@ public class ReportingTest extends IntegrationBase {
 
         report = new Report(1, "Updated",
                 new ReportSource[] {reportSource},
-                new OneTimeReportType(86400), "test@gmail.com",
+                new OneTimeReport(86400), "test@gmail.com",
                 GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
 
         clientPair.appClient.updateReport(1, report);

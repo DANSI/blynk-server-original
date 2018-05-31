@@ -13,6 +13,8 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.split2;
 
@@ -20,8 +22,10 @@ public class UpdateReportLogic {
 
     private static final Logger log = LogManager.getLogger(UpdateReportLogic.class);
 
-    public UpdateReportLogic(Holder holder) {
+    private final ScheduledThreadPoolExecutor reportsExecutor;
 
+    public UpdateReportLogic(Holder holder) {
+        this.reportsExecutor = holder.reportsExecutor;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
