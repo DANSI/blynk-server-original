@@ -81,8 +81,9 @@ public class UpdateReportLogic {
 
         if (report.isPeriodic()) {
             long initialDelaySeconds = report.calculateDelayInSeconds();
-            log.info("Adding periodic report for user {} with delay {} to scheduler. {}.",
-                    user.email, initialDelaySeconds, report);
+            log.info("Adding periodic report for user {} with delay {} to scheduler.",
+                    user.email, initialDelaySeconds);
+            log.debug(reportJson);
 
             report.nextReportAt = System.currentTimeMillis() + initialDelaySeconds * 1000;
 

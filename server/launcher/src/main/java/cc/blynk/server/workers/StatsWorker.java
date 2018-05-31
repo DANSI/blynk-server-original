@@ -4,6 +4,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.model.widgets.ui.reporting.ReportScheduler;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.core.stats.model.Stat;
 import cc.blynk.server.db.DBManager;
@@ -29,6 +30,7 @@ public class StatsWorker implements Runnable {
     private final DBManager dbManager;
     private final String region;
     private final BlockingIOProcessor blockingIOProcessor;
+    private final ReportScheduler reportScheduler;
 
     public StatsWorker(Holder holder) {
         this.stats = holder.stats;
@@ -37,12 +39,13 @@ public class StatsWorker implements Runnable {
         this.dbManager = holder.dbManager;
         this.region = holder.region;
         this.blockingIOProcessor = holder.blockingIOProcessor;
+        this.reportScheduler = holder.reportScheduler;
     }
 
     @Override
     public void run() {
         try {
-            var stat = new Stat(sessionDao, userDao, blockingIOProcessor, stats, true);
+            var stat = new Stat(sessionDao, userDao, blockingIOProcessor, stats, reportScheduler, true);
             log.info(stat);
             dbManager.insertStat(this.region, stat);
         } catch (Exception e) {

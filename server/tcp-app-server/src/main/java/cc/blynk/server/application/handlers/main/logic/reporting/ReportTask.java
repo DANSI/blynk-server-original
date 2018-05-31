@@ -52,8 +52,9 @@ public class ReportTask implements Runnable {
             long now = System.currentTimeMillis();
             mailWrapper.sendText(report.recipients, report.name, "Your report is ready.");
             long newNow = System.currentTimeMillis();
-            log.info("Processed report for {}, time {} ms. Report : {}.",
-                    this.email, newNow - now, report);
+            log.info("Processed report for {}, time {} ms.",
+                    this.email, newNow - now);
+            log.debug(report);
 
             report.lastReportAt = newNow;
             long initialDelaySeconds = report.calculateDelayInSeconds();

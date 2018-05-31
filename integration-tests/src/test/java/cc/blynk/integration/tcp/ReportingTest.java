@@ -364,8 +364,8 @@ public class ReportingTest extends IntegrationBase {
         clientPair.appClient.verifyResult(ok(3));
         clientPair.appClient.verifyResult(ok(4));
 
-        verify(mailWrapper, timeout(1500)).sendText(eq("test@gmail.com"), eq("DailyReport"), eq("Your report is ready."));
-        verify(mailWrapper, timeout(1500)).sendText(eq("test@gmail.com"), eq("DailyReport2"), eq("Your report is ready."));
+        verify(mailWrapper, timeout(2500)).sendText(eq("test@gmail.com"), eq("DailyReport"), eq("Your report is ready."));
+        verify(mailWrapper, timeout(2500)).sendText(eq("test@gmail.com"), eq("DailyReport2"), eq("Your report is ready."));
         assertEquals(2, holder.reportScheduler.getCompletedTaskCount());
         assertEquals(4, holder.reportScheduler.getTaskCount());
 
@@ -379,6 +379,7 @@ public class ReportingTest extends IntegrationBase {
 
         assertEquals(2, holder.reportScheduler.getCompletedTaskCount());
         assertEquals(2, holder.reportScheduler.getTaskCount());
+        assertEquals(0, holder.reportScheduler.map.size());
     }
 }
 

@@ -8,6 +8,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.widgets.ui.reporting.ReportScheduler;
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.stats.GlobalStats;
 import io.netty.buffer.ByteBufAllocator;
@@ -44,7 +45,7 @@ public class Stat {
     public final transient long ts;
 
     public Stat(SessionDao sessionDao, UserDao userDao, BlockingIOProcessor blockingIOProcessor,
-                GlobalStats globalStats, boolean reset) {
+                GlobalStats globalStats, ReportScheduler reportScheduler, boolean reset) {
         //yeap, some stats updates may be lost (because of sumThenReset()),
         //but we don't care, cause this is just for general monitoring
         for (Short command : Command.VALUES_NAME.keySet()) {
@@ -118,7 +119,7 @@ public class Stat {
         this.activeMonth = activeMonth;
         this.registrations = userDao.users.size();
 
-        this.ioStat = new BlockingIOStat(blockingIOProcessor);
+        this.ioStat = new BlockingIOStat(blockingIOProcessor, reportScheduler);
         this.memoryStat = new MemoryStat(ByteBufAllocator.DEFAULT);
     }
 

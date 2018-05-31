@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class ReportScheduler extends ScheduledThreadPoolExecutor {
 
-    private final ConcurrentHashMap<Runnable, ScheduledFuture<?>> map;
+    public final ConcurrentHashMap<Runnable, ScheduledFuture<?>> map;
 
     public ReportScheduler(int corePoolSize) {
         super(corePoolSize);
