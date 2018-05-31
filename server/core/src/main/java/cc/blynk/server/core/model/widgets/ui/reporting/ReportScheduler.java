@@ -1,0 +1,38 @@
+package cc.blynk.server.core.model.widgets.ui.reporting;
+
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+/**
+ * The Blynk Project.
+ * Created by Dmitriy Dumanskiy.
+ * Created on 31/05/2018.
+ *
+ */
+public class ReportScheduler extends ScheduledThreadPoolExecutor {
+
+    private final ConcurrentHashMap<Runnable, ScheduledFuture<?>> map;
+
+    public ReportScheduler(int corePoolSize) {
+        super(corePoolSize);
+        setRemoveOnCancelPolicy(true);
+        this.map = new ConcurrentHashMap<>();
+    }
+
+    @Override
+    public ScheduledFuture<?> schedule(Runnable task, long delay, TimeUnit unit) {
+        ScheduledFuture<?> scheduledFuture = super.schedule(task, delay, unit);
+        map.put(task, scheduledFuture);
+        return scheduledFuture;
+    }
+
+    public boolean cancelStoredFuture(Runnable task) {
+        ScheduledFuture<?> scheduledFuture = map.remove(task);
+        if (scheduledFuture == null) {
+            return false;
+        }
+        return scheduledFuture.cancel(true);
+    }
+}

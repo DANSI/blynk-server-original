@@ -13,6 +13,12 @@ import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.utils.StringUtils.split2;
 
+/**
+ * The Blynk Project.
+ * Created by Dmitriy Dumanskiy.
+ * Created on 31/05/2018.
+ *
+ */
 public class ExportReportLogic {
 
     private static final Logger log = LogManager.getLogger(ExportReportLogic.class);

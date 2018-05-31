@@ -11,7 +11,9 @@ import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportDataStream;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportSource;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.TileTemplateReportSource;
+import cc.blynk.server.core.model.widgets.ui.reporting.type.DailyReport;
 import cc.blynk.server.core.model.widgets.ui.reporting.type.OneTimeReport;
+import cc.blynk.server.core.model.widgets.ui.reporting.type.ReportDurationType;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
@@ -30,7 +32,12 @@ import java.time.ZoneId;
 import static cc.blynk.server.core.model.widgets.ui.reporting.ReportOutput.CSV_FILE_PER_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -51,6 +58,7 @@ public class ReportingTest extends IntegrationBase {
         this.appServer = new AppAndHttpsServer(holder).start();
 
         this.clientPair = initAppAndHardPair();
+        reset(mailWrapper);
     }
 
     @After
@@ -233,6 +241,144 @@ public class ReportingTest extends IntegrationBase {
 
         clientPair.appClient.send("getEnergy");
         clientPair.appClient.verifyResult(produce(8, GET_ENERGY, "7500"));
+    }
+
+    @Test
+    public void testDailyReportIsTriggered() throws Exception {
+        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportSource reportSource = new TileTemplateReportSource(
+                new ReportDataStream[] {reportDataStream},
+                1,
+                new int[] {0}
+        );
+
+        ReportingWidget reportingWidget = new ReportingWidget();
+        reportingWidget.height = 1;
+        reportingWidget.width = 1;
+        reportingWidget.reportSources = new ReportSource[] {
+                reportSource
+        };
+
+        clientPair.appClient.createWidget(1, reportingWidget);
+        clientPair.appClient.verifyResult(ok(1));
+
+        clientPair.appClient.send("addEnergy " + "100000" + "\0" + "1370-3990-1414-55681");
+        clientPair.appClient.verifyResult(ok(2));
+
+        //a bit upfront
+        long now = System.currentTimeMillis() + 1000;
+
+        Report report = new Report(1, "DailyReport",
+                new ReportSource[] {reportSource},
+                new DailyReport(now, ReportDurationType.INFINITE, 0, 0), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
+        clientPair.appClient.createReport(1, report);
+
+
+        Report report2 = new Report(2, "DailyReport2",
+                new ReportSource[] {reportSource},
+                new DailyReport(now, ReportDurationType.INFINITE, now, now), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
+        clientPair.appClient.createReport(1, report2);
+
+        //expecting now is ignored as duration is INFINITE
+        Report report3 = new Report(3, "DailyReport3",
+                new ReportSource[] {reportSource},
+                new DailyReport(now, ReportDurationType.INFINITE, now + 86400_000, now + 86400_000), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
+        clientPair.appClient.createReport(1, report3);
+
+        //now date is greater than end date, such reports are not accepted.
+        Report report4 = new Report(4, "DailyReport4",
+                new ReportSource[] {reportSource},
+                new DailyReport(now, ReportDurationType.INFINITE, now + 86400_000, now), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
+        clientPair.appClient.createReport(1, report4);
+
+        //trigger date is tomorrow
+        Report report5 = new Report(5, "DailyReport5",
+                new ReportSource[] {reportSource},
+                new DailyReport(now, ReportDurationType.CUSTOM, now + 86400_000, now + 86400_000), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
+        clientPair.appClient.createReport(1, report5);
+
+        //report wit the same id is not allowed
+        Report report6 = new Report(5, "DailyReport6",
+                new ReportSource[] {reportSource},
+                new DailyReport(now, ReportDurationType.CUSTOM, now + 86400_000, now + 86400_000), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
+        clientPair.appClient.createReport(1, report6);
+
+        clientPair.appClient.verifyResult(ok(3));
+        clientPair.appClient.verifyResult(ok(4));
+        clientPair.appClient.verifyResult(ok(5));
+        clientPair.appClient.verifyResult(illegalCommand(6));
+        clientPair.appClient.verifyResult(ok(7));
+        clientPair.appClient.verifyResult(illegalCommand(8));
+
+        verify(mailWrapper, timeout(1500)).sendText(eq("test@gmail.com"), eq("DailyReport"), eq("Your report is ready."));
+        verify(mailWrapper, timeout(1500)).sendText(eq("test@gmail.com"), eq("DailyReport2"), eq("Your report is ready."));
+        verify(mailWrapper, timeout(1500)).sendText(eq("test@gmail.com"), eq("DailyReport3"), eq("Your report is ready."));
+        assertEquals(3, holder.reportScheduler.getCompletedTaskCount());
+        assertEquals(7, holder.reportScheduler.getTaskCount());
+    }
+
+    @Test
+    public void testReportIdRemovedFromScheduler() throws Exception {
+        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportSource reportSource = new TileTemplateReportSource(
+                new ReportDataStream[] {reportDataStream},
+                1,
+                new int[] {0}
+        );
+
+        ReportingWidget reportingWidget = new ReportingWidget();
+        reportingWidget.height = 1;
+        reportingWidget.width = 1;
+        reportingWidget.reportSources = new ReportSource[] {
+                reportSource
+        };
+
+        clientPair.appClient.createWidget(1, reportingWidget);
+        clientPair.appClient.verifyResult(ok(1));
+
+        clientPair.appClient.send("addEnergy " + "100000" + "\0" + "1370-3990-1414-55681");
+        clientPair.appClient.verifyResult(ok(2));
+
+        //a bit upfront
+        long now = System.currentTimeMillis() + 1000;
+
+        Report report = new Report(1, "DailyReport",
+                new ReportSource[] {reportSource},
+                new DailyReport(now, ReportDurationType.INFINITE, 0, 0), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
+        clientPair.appClient.createReport(1, report);
+
+        Report report2 = new Report(2, "DailyReport2",
+                new ReportSource[] {reportSource},
+                new DailyReport(now, ReportDurationType.INFINITE, now, now), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
+        clientPair.appClient.createReport(1, report2);
+
+
+        clientPair.appClient.verifyResult(ok(3));
+        clientPair.appClient.verifyResult(ok(4));
+
+        verify(mailWrapper, timeout(1500)).sendText(eq("test@gmail.com"), eq("DailyReport"), eq("Your report is ready."));
+        verify(mailWrapper, timeout(1500)).sendText(eq("test@gmail.com"), eq("DailyReport2"), eq("Your report is ready."));
+        assertEquals(2, holder.reportScheduler.getCompletedTaskCount());
+        assertEquals(4, holder.reportScheduler.getTaskCount());
+
+        clientPair.appClient.deleteReport(1, 1);
+        clientPair.appClient.verifyResult(ok(5));
+
+        assertEquals(3, holder.reportScheduler.getTaskCount());
+
+        clientPair.appClient.deleteReport(1, 2);
+        clientPair.appClient.verifyResult(ok(6));
+
+        assertEquals(2, holder.reportScheduler.getCompletedTaskCount());
+        assertEquals(2, holder.reportScheduler.getTaskCount());
     }
 }
 

@@ -4,6 +4,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.ui.reporting.Report;
+import cc.blynk.server.core.model.widgets.ui.reporting.ReportScheduler;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -12,19 +13,23 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.split2;
 
+/**
+ * The Blynk Project.
+ * Created by Dmitriy Dumanskiy.
+ * Created on 31/05/2018.
+ *
+ */
 public class DeleteReportLogic {
 
     private static final Logger log = LogManager.getLogger(DeleteReportLogic.class);
 
-    private final ScheduledThreadPoolExecutor reportsExecutor;
+    private final ReportScheduler reportScheduler;
 
     public DeleteReportLogic(Holder holder) {
-        this.reportsExecutor = holder.reportsExecutor;
+        this.reportScheduler = holder.reportScheduler;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
@@ -49,14 +54,14 @@ public class DeleteReportLogic {
             throw new IllegalCommandException("Cannot find report with provided id.");
         }
 
-        Report reportToRemove = reportingWidget.reports[existingReportIndex];
+        Report reportToDel = reportingWidget.reports[existingReportIndex];
         user.addEnergy(Report.getPrice());
         reportingWidget.reports = ArrayUtil.remove(reportingWidget.reports, existingReportIndex, Report.class);
         dash.updatedAt = System.currentTimeMillis();
 
-        reportsExecutor.remove(new ReportTask(user.email, user.appName, reportToRemove));
-
-        log.info("Deleting report {} in scheduler for {}", reportId, user.email);
+        boolean isRemoved =
+                reportScheduler.cancelStoredFuture(new ReportTask(user.email, user.appName, reportToDel));
+        log.debug("Deleting reportId {} in scheduler for {}. Is removed: {}?.", reportToDel.id, user.email, isRemoved);
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

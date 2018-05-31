@@ -5,27 +5,37 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.ui.reporting.Report;
+import cc.blynk.server.core.model.widgets.ui.reporting.ReportScheduler;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.split2;
 
+/**
+ * The Blynk Project.
+ * Created by Dmitriy Dumanskiy.
+ * Created on 31/05/2018.
+ *
+ */
 public class UpdateReportLogic {
 
     private static final Logger log = LogManager.getLogger(UpdateReportLogic.class);
 
-    private final ScheduledThreadPoolExecutor reportsExecutor;
+    private final ReportScheduler reportScheduler;
+    private final MailWrapper mailWrapper;
 
     public UpdateReportLogic(Holder holder) {
-        this.reportsExecutor = holder.reportsExecutor;
+        this.reportScheduler = holder.reportScheduler;
+        this.mailWrapper = holder.mailWrapper;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
@@ -59,10 +69,33 @@ public class UpdateReportLogic {
         reportingWidget.reports = ArrayUtil.copyAndReplace(reportingWidget.reports, report, existingReportIndex);
         dash.updatedAt = System.currentTimeMillis();
 
-        if (report.isValid()) {
-            log.info("Updating report in scheduler : {} for {}", report, user.email);
+        //always remove prev report before any validations are done
+        boolean isRemoved =
+                reportScheduler.cancelStoredFuture(new ReportTask(user.email, user.appName, report));
+        log.debug("Deleting reportId {} in scheduler for {}. Is removed: {}?.", report.id, user.email, isRemoved);
+
+        if (!report.isValid()) {
+            log.debug("Report is not valid {} for {}.", report, user.email);
+            throw new IllegalCommandException("Report is not valid.");
+        }
+
+        if (report.isPeriodic()) {
+            long initialDelaySeconds = report.calculateDelayInSeconds();
+            log.info("Adding periodic report for user {} with delay {} to scheduler. {}.",
+                    user.email, initialDelaySeconds, report);
+
+            report.nextReportAt = System.currentTimeMillis() + initialDelaySeconds * 1000;
+
+            if (report.isActive) {
+                reportScheduler.schedule(
+                        new ReportTask(user.email, user.appName, report, reportScheduler, mailWrapper),
+                        initialDelaySeconds,
+                        TimeUnit.SECONDS
+                );
+            }
         }
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }
+
 }

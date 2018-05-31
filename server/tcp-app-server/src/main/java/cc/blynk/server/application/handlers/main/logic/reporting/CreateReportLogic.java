@@ -5,6 +5,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.ui.reporting.Report;
+import cc.blynk.server.core.model.widgets.ui.reporting.ReportScheduler;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -14,24 +15,29 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.energyLimit;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.split2;
 
+/**
+ * The Blynk Project.
+ * Created by Dmitriy Dumanskiy.
+ * Created on 31/05/2018.
+ *
+ */
 public class CreateReportLogic {
 
     private static final Logger log = LogManager.getLogger(CreateReportLogic.class);
 
     private final int reportsLimit;
-    private final ScheduledThreadPoolExecutor reportsExecutor;
+    private final ReportScheduler reportScheduler;
     private final MailWrapper mailWrapper;
 
     public CreateReportLogic(Holder holder) {
         this.reportsLimit = holder.limits.reportsLimit;
-        this.reportsExecutor = holder.reportsExecutor;
+        this.reportScheduler = holder.reportScheduler;
         this.mailWrapper = holder.mailWrapper;
     }
 
@@ -61,6 +67,7 @@ public class CreateReportLogic {
         }
 
         Report report = JsonParser.parseReport(reportJson, message.id);
+        reportingWidget.validateId(report.id);
 
         int price = Report.getPrice();
         if (user.notEnoughEnergy(price)) {
@@ -79,37 +86,15 @@ public class CreateReportLogic {
         }
 
         if (report.isPeriodic()) {
-            log.info("Adding periodic report to scheduler : {} for {}.", report, user.email);
-
             long initialDelaySeconds = report.calculateDelayInSeconds();
+            log.info("Adding periodic report for user {} with delay {} to scheduler. {}.",
+                    user.email, initialDelaySeconds, report);
 
             report.nextReportAt = System.currentTimeMillis() + initialDelaySeconds * 1000;
 
             if (report.isActive) {
-                reportsExecutor.schedule(
-                        new ReportTask(user.email, user.appName, report) {
-                            @Override
-                            public void run() {
-                                try {
-                                    long now = System.currentTimeMillis();
-                                    mailWrapper.sendText(report.recipients, report.name, "Your report is ready.");
-                                    log.info("Processed report for  {},time {} ms. Report : {}.",
-                                            this.email, System.currentTimeMillis() - now, this.report);
-                                    this.report.lastReportAt = now;
-                                    long initialDelaySeconds = report.calculateDelayInSeconds();
-
-                                    //rescheduling report
-                                    reportsExecutor.schedule(this, initialDelaySeconds, TimeUnit.SECONDS);
-                                } catch (IllegalCommandException ice) {
-                                    log.debug("Seems like report {} is expired for {}.", report, user.email, ice);
-                                } catch (Exception e) {
-                                    log.debug("Error generating report {} for {}.", report, user.email, e);
-                                } finally {
-
-                                    this.report.lastReportAt = System.currentTimeMillis();
-                                }
-                            }
-                        },
+                reportScheduler.schedule(
+                        new ReportTask(user.email, user.appName, report, reportScheduler, mailWrapper),
                         initialDelaySeconds,
                         TimeUnit.SECONDS
                 );
@@ -118,4 +103,5 @@ public class CreateReportLogic {
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }
+
 }
