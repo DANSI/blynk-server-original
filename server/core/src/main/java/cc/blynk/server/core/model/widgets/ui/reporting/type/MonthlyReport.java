@@ -33,13 +33,15 @@ public class MonthlyReport extends DailyReport {
         switch (dayOfMonth) {
             case LAST:
                 zonedStartAt = zonedStartAt.with(TemporalAdjusters.lastDayOfMonth());
-                return zonedStartAt.isAfter(zonedNow) ? zonedStartAt :
-                        zonedStartAt.plusDays(1).with(TemporalAdjusters.lastDayOfMonth());
+                return zonedStartAt.isAfter(zonedNow)
+                        ? zonedStartAt
+                        : zonedStartAt.plusDays(1).with(TemporalAdjusters.lastDayOfMonth());
             case FIRST:
             default:
                 zonedStartAt = zonedStartAt.with(TemporalAdjusters.firstDayOfMonth());
-                return zonedStartAt.isAfter(zonedNow) ? zonedStartAt :
-                        zonedStartAt.with(TemporalAdjusters.firstDayOfNextMonth());
+                return zonedStartAt.isAfter(zonedNow)
+                        ? zonedStartAt
+                        : zonedStartAt.with(TemporalAdjusters.firstDayOfNextMonth());
 
         }
     }

@@ -34,7 +34,8 @@ public class WeeklyReport extends DailyReport {
 
         DayOfWeek dayOfWeek = DayOfWeek.of(dayOfTheWeek);
         zonedStartAt = zonedStartAt.with(TemporalAdjusters.nextOrSame(dayOfWeek));
-        return zonedStartAt.isAfter(zonedNow) ?
-                zonedStartAt : zonedStartAt.with(TemporalAdjusters.next(dayOfWeek));
+        return zonedStartAt.isAfter(zonedNow)
+                ? zonedStartAt
+                : zonedStartAt.with(TemporalAdjusters.next(dayOfWeek));
     }
 }

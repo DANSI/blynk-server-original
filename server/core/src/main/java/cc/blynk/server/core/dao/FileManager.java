@@ -213,9 +213,6 @@ public class FileManager {
             if (dashBoard.devices != null) {
                 for (Device device : dashBoard.devices) {
                     device.status = Status.OFFLINE;
-                    if (device.firstConnectTime == 0){
-                        device.firstConnectTime = device.connectTime;
-                    }
                 }
             }
 
