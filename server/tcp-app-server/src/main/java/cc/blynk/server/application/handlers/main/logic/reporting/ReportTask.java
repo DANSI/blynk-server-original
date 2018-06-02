@@ -120,7 +120,7 @@ public class ReportTask implements Runnable {
                 default:
                     if (filePerDevicePerPin(userCsvFolder, fetchCount)) {
                         Path gzippedResult = gzipFolder(userCsvFolder);
-                        ReportFileLink fileLink = new ReportFileLink(gzippedResult, report.name);
+                        ReportFileLink fileLink = new ReportFileLink(gzippedResult.getFileName(), report.name);
                         String reportSubj = "Your report " + report.name + " is ready!";
                         String reportBody = fileLink.makeBody(reportScheduler.downloadUrl);
                         mailWrapper.sendHtml(report.recipients, reportSubj, reportBody);
