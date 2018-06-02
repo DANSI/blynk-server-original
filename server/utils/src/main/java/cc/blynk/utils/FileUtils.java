@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +17,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.EnumSet;
 
+import static java.nio.charset.StandardCharsets.US_ASCII;
 import static java.nio.file.StandardOpenOption.APPEND;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.READ;
@@ -136,6 +138,16 @@ public final class FileUtils {
             channel.position(startReadIndex)
                     .read(buf);
             return buf;
+        }
+    }
+
+    public static void writeBufToCsv(ByteArrayOutputStream baos, ByteBuffer onePinData, int deviceId) {
+        while (onePinData.remaining() > 0) {
+            double value = onePinData.getDouble();
+            long ts = onePinData.getLong();
+
+            String data = "" + value + ',' + ts + ',' + deviceId + '\n';
+            baos.write(data.getBytes(US_ASCII), 0, data.length());
         }
     }
 

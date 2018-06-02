@@ -16,7 +16,7 @@ public class DeviceFileLink {
     private final byte pin;
 
     public DeviceFileLink(Path path, String name, PinType pinType, byte pin) {
-        this.path = path;
+        this.path = path.getFileName();
         this.name = name;
         this.pinType = pinType;
         this.pin = pin;

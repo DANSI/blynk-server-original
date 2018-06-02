@@ -14,7 +14,7 @@ import cc.blynk.utils.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
@@ -81,9 +81,6 @@ public class ReportTask implements Runnable {
 
             String date = LocalDate.now(report.tzName).toString();
             Path userCsvFolder = FileUtils.getUserReportDir(user.email, user.appName, reportId, date);
-            if (Files.notExists(userCsvFolder)) {
-                Files.createDirectories(userCsvFolder);
-            }
 
             generateReport(userCsvFolder);
 
@@ -110,17 +107,18 @@ public class ReportTask implements Runnable {
 
     private void generateReport(Path userCsvFolder) {
         int fetchCount = (int) report.reportType.getFetchCount(report.granularityType);
-        //todo for now supporting only 1 type of output format
+        Path output = Paths.get(userCsvFolder.toString() + ".gz");
+
         try {
+            //todo for now supporting only 1 type of output format
             switch (report.reportOutput) {
                 case MERGED_CSV:
                 case EXCEL_TAB_PER_DEVICE:
                 case CSV_FILE_PER_DEVICE:
                 case CSV_FILE_PER_DEVICE_PER_PIN:
                 default:
-                    if (filePerDevicePerPin(userCsvFolder, fetchCount)) {
-                        Path gzippedResult = gzipFolder(userCsvFolder);
-                        ReportFileLink fileLink = new ReportFileLink(gzippedResult.getFileName(), report.name);
+                    if (filePerDevicePerPin(output, fetchCount)) {
+                        ReportFileLink fileLink = new ReportFileLink(output, report.name);
                         String reportSubj = "Your report " + report.name + " is ready!";
                         String reportBody = fileLink.makeBody(reportScheduler.downloadUrl);
                         mailWrapper.sendHtml(report.recipients, reportSubj, reportBody);
@@ -134,66 +132,50 @@ public class ReportTask implements Runnable {
         }
     }
 
-    private boolean filePerDevicePerPin(Path userCsvFolder, int fetchCount) {
-        boolean atLeastOneFile = false;
-        for (ReportSource reportSource : report.reportSources) {
-            if (reportSource.isValid()) {
-                for (int deviceId : reportSource.getDeviceIds()) {
-                    for (ReportDataStream reportDataStream : reportSource.reportDataStreams) {
-                        if (reportDataStream.isValid()) {
-                            //todo gzipping may be done on the fly
-                            atLeastOneFile = processSingleFile(userCsvFolder, deviceId, reportDataStream, fetchCount);
+    private boolean filePerDevicePerPin(Path output, int fetchCount) throws Exception {
+        boolean atLeastOne = false;
+        try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(output))) {
+            for (ReportSource reportSource : report.reportSources) {
+                if (reportSource.isValid()) {
+                    for (int deviceId : reportSource.getDeviceIds()) {
+                        for (ReportDataStream reportDataStream : reportSource.reportDataStreams) {
+                            if (reportDataStream.isValid()) {
+                                byte[] onePinDataCsv = processSingleFile(deviceId, reportDataStream, fetchCount);
+                                if (onePinDataCsv != null) {
+                                    String onePinFileName = deviceAndPinFileName(dashId, deviceId, reportDataStream);
+                                    ZipEntry zipEntry = new ZipEntry(onePinFileName);
+                                    try {
+                                        zs.putNextEntry(zipEntry);
+                                        zs.write(onePinDataCsv, 0, onePinDataCsv.length);
+                                        zs.closeEntry();
+                                        atLeastOne = true;
+                                    } catch (IOException e) {
+                                        log.error("Error compressing report file.", e.getMessage());
+                                        log.debug(e);
+                                        throw new RuntimeException(e);
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
         }
-        return atLeastOneFile;
+        return atLeastOne;
     }
 
-    private Path gzipFolder(Path userCsvFolder) throws IOException {
-        Path output = Paths.get(userCsvFolder.toString() + ".gz");
-        try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(output))) {
-            Files.walk(userCsvFolder)
-                    .filter(path -> !Files.isDirectory(path))
-                    .forEach(path -> {
-                        ZipEntry zipEntry = new ZipEntry(userCsvFolder.relativize(path).toString());
-                        try {
-                            zs.putNextEntry(zipEntry);
-                            Files.copy(path, zs);
-                            zs.closeEntry();
-                        } catch (IOException e) {
-                            log.error("Error compressing report file.", e.getMessage());
-                            log.debug(e);
-                            throw new RuntimeException(e);
-                        }
-                    });
+    private byte[] processSingleFile(int deviceId, ReportDataStream reportDataStream, int fetchCount) {
+        ByteBuffer onePinData =
+                reportingDao.getByteBufferFromDisk(user,
+                        dashId, deviceId, reportDataStream.pinType,
+                        reportDataStream.pin, fetchCount, report.granularityType, 0);
+        if (onePinData != null) {
+            ((Buffer) onePinData).flip();
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(onePinData.capacity());
+            FileUtils.writeBufToCsv(byteArrayOutputStream, onePinData, deviceId);
+            return byteArrayOutputStream.toByteArray();
         }
-
-        return output;
-    }
-
-    private boolean processSingleFile(Path userCsvFolder, int deviceId,
-                                      ReportDataStream reportDataStream, int fetchCount) {
-        boolean atLeastOneFile = false;
-        try {
-            ByteBuffer onePinData =
-                    reportingDao.getByteBufferFromDisk(user,
-                            dashId, deviceId, reportDataStream.pinType,
-                            reportDataStream.pin, fetchCount, report.granularityType, 0);
-            if (onePinData != null) {
-                ((Buffer) onePinData).flip();
-                Path onePinFileName = Paths.get(userCsvFolder.toString(),
-                        deviceAndPinFileName(dashId, deviceId, reportDataStream));
-                try (BufferedWriter bufferedWriter = Files.newBufferedWriter(onePinFileName)) {
-                    FileUtils.writeBufToCsv(bufferedWriter, onePinData, deviceId);
-                }
-                atLeastOneFile = true;
-            }
-        } catch (Exception e) {
-            log.error("Error generating single file for report for {}. Reason : {}", userCsvFolder, e.getMessage());
-        }
-        return atLeastOneFile;
+        return null;
     }
 
     @Override

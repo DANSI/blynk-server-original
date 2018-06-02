@@ -440,7 +440,7 @@ public class ReportingTest extends IntegrationBase {
 
         String date = LocalDate.now(report.tzName).toString();
         String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
-        verify(mailWrapper, timeout(2500)).sendHtml(eq("test@gmail.com"),
+        verify(mailWrapper, timeout(3000)).sendHtml(eq("test@gmail.com"),
                 eq("Your report " + report.name + " is ready!"),
                 eq("<html><body><a href=\"http://127.0.0.1:18080/" + filename + "\">DailyReport</a><br></body></html>"));
         assertEquals(1, holder.reportScheduler.getCompletedTaskCount());

@@ -129,8 +129,7 @@ public class ExportGraphDataLogic {
                             }
                             var path = reportingDao.csvGenerator.createCSV(
                                     user, dash.id, deviceId, dataStream.pinType, dataStream.pin, deviceIds);
-                            pinsCSVFilePath.add(
-                                    new DeviceFileLink(path.getFileName(), dashName, dataStream.pinType, dataStream.pin));
+                            pinsCSVFilePath.add(new DeviceFileLink(path, dashName, dataStream.pinType, dataStream.pin));
                         } catch (Exception e) {
                             //ignore eny exception.
                         }
@@ -200,8 +199,7 @@ public class ExportGraphDataLogic {
 
                             Path path = reportingDao.csvGenerator.createCSV(
                                     user, dash.id, deviceId, dataStream.pinType, dataStream.pin, deviceIds);
-                            pinsCSVFilePath.add(
-                                    new DeviceFileLink(path.getFileName(), dashName, dataStream.pinType, dataStream.pin));
+                            pinsCSVFilePath.add(new DeviceFileLink(path, dashName, dataStream.pinType, dataStream.pin));
                         } catch (Exception e) {
                             log.debug("Error generating csv file.", e);
                             //ignore any exception.
