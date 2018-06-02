@@ -14,11 +14,13 @@ import java.util.concurrent.TimeUnit;
 public class ReportScheduler extends ScheduledThreadPoolExecutor {
 
     public final ConcurrentHashMap<Runnable, ScheduledFuture<?>> map;
+    public final String downloadUrl;
 
-    public ReportScheduler(int corePoolSize) {
+    public ReportScheduler(int corePoolSize, String downloadUrl) {
         super(corePoolSize);
         setRemoveOnCancelPolicy(true);
         this.map = new ConcurrentHashMap<>();
+        this.downloadUrl = downloadUrl;
     }
 
     @Override

@@ -38,8 +38,8 @@ public class CSVGeneratorTest {
 
     @Test
     public void testForcePort80Property() {
-        assertEquals("http://myhost/", FileUtils.csvDownloadUrl("myhost", "8080", true));
-        assertEquals("http://myhost:8080/", FileUtils.csvDownloadUrl("myhost", "8080", false));
+        assertEquals("http://myhost/", FileUtils.downloadUrl("myhost", "8080", true));
+        assertEquals("http://myhost:8080/", FileUtils.downloadUrl("myhost", "8080", false));
     }
 
 }

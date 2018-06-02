@@ -34,9 +34,10 @@ import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -316,9 +317,15 @@ public class ReportingTest extends IntegrationBase {
         clientPair.appClient.verifyResult(ok(7));
         clientPair.appClient.verifyResult(illegalCommand(8));
 
-        verify(mailWrapper, timeout(1500)).sendText(eq("test@gmail.com"), eq("DailyReport"), eq("Your report is ready."));
-        verify(mailWrapper, timeout(1500)).sendText(eq("test@gmail.com"), eq("DailyReport2"), eq("Your report is ready."));
-        verify(mailWrapper, timeout(1500)).sendText(eq("test@gmail.com"), eq("DailyReport3"), eq("Your report is ready."));
+        int tries = 0;
+        while (holder.reportScheduler.getCompletedTaskCount() < 3 && tries < 20) {
+            sleep(100);
+            tries++;
+        }
+
+        verify(mailWrapper, never()).sendHtml(eq("test@gmail.com"), eq("DailyReport"), eq("Your report is ready."));
+        verify(mailWrapper, never()).sendHtml(eq("test@gmail.com"), eq("DailyReport2"), eq("Your report is ready."));
+        verify(mailWrapper, never()).sendHtml(eq("test@gmail.com"), eq("DailyReport3"), eq("Your report is ready."));
         assertEquals(3, holder.reportScheduler.getCompletedTaskCount());
         assertEquals(7, holder.reportScheduler.getTaskCount());
     }
@@ -364,8 +371,14 @@ public class ReportingTest extends IntegrationBase {
         clientPair.appClient.verifyResult(ok(3));
         clientPair.appClient.verifyResult(ok(4));
 
-        verify(mailWrapper, timeout(2500)).sendText(eq("test@gmail.com"), eq("DailyReport"), eq("Your report is ready."));
-        verify(mailWrapper, timeout(2500)).sendText(eq("test@gmail.com"), eq("DailyReport2"), eq("Your report is ready."));
+        int tries = 0;
+        while (holder.reportScheduler.getCompletedTaskCount() < 2 && tries < 20) {
+            sleep(100);
+            tries++;
+        }
+
+        verify(mailWrapper, never()).sendHtml(eq("test@gmail.com"), eq("DailyReport"), any());
+        verify(mailWrapper, never()).sendHtml(eq("test@gmail.com"), eq("DailyReport2"), any());
         assertEquals(2, holder.reportScheduler.getCompletedTaskCount());
         assertEquals(4, holder.reportScheduler.getTaskCount());
 

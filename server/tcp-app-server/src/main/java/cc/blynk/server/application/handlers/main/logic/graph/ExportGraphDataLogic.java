@@ -1,6 +1,7 @@
 package cc.blynk.server.application.handlers.main.logic.graph;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.application.handlers.main.logic.graph.links.DeviceFileLink;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.ReportingStorageDao;
 import cc.blynk.server.core.model.DashBoard;
@@ -48,7 +49,7 @@ public class ExportGraphDataLogic {
         this.reportingDao = holder.reportingDao;
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.mailWrapper = holder.mailWrapper;
-        this.csvDownloadUrl = holder.csvDownloadUrl;
+        this.csvDownloadUrl = holder.downloadUrl;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
@@ -113,7 +114,7 @@ public class ExportGraphDataLogic {
         public void run() {
             try {
                 var dashName = dash.getNameOrEmpty();
-                var pinsCSVFilePath = new ArrayList<FileLink>();
+                var pinsCSVFilePath = new ArrayList<DeviceFileLink>();
                 var deviceId = historyGraph.deviceId;
                 for (var dataStream : historyGraph.dataStreams) {
                     if (dataStream != null) {
@@ -129,7 +130,7 @@ public class ExportGraphDataLogic {
                             var path = reportingDao.csvGenerator.createCSV(
                                     user, dash.id, deviceId, dataStream.pinType, dataStream.pin, deviceIds);
                             pinsCSVFilePath.add(
-                                    new FileLink(path.getFileName(), dashName, dataStream.pinType, dataStream.pin));
+                                    new DeviceFileLink(path.getFileName(), dashName, dataStream.pinType, dataStream.pin));
                         } catch (Exception e) {
                             //ignore eny exception.
                         }
@@ -140,7 +141,7 @@ public class ExportGraphDataLogic {
                     ctx.writeAndFlush(noData(msgId), ctx.voidPromise());
                 } else {
                     var title = "History graph data for project " + dashName;
-                    String bodyWithLinks = FileLink.makeBody(csvDownloadUrl, pinsCSVFilePath);
+                    String bodyWithLinks = DeviceFileLink.makeBody(csvDownloadUrl, pinsCSVFilePath);
                     mailWrapper.sendHtml(user.email, title, bodyWithLinks);
                     ctx.writeAndFlush(ok(msgId), ctx.voidPromise());
                 }
@@ -177,7 +178,7 @@ public class ExportGraphDataLogic {
         public void run() {
             try {
                 String dashName = dash.getNameOrEmpty();
-                ArrayList<FileLink> pinsCSVFilePath = new ArrayList<>();
+                ArrayList<DeviceFileLink> pinsCSVFilePath = new ArrayList<>();
                 for (GraphDataStream graphDataStream : enhancedHistoryGraph.dataStreams) {
                     DataStream dataStream = graphDataStream.dataStream;
                     //special case, for device tiles widget targetID may be overrided
@@ -200,7 +201,7 @@ public class ExportGraphDataLogic {
                             Path path = reportingDao.csvGenerator.createCSV(
                                     user, dash.id, deviceId, dataStream.pinType, dataStream.pin, deviceIds);
                             pinsCSVFilePath.add(
-                                    new FileLink(path.getFileName(), dashName, dataStream.pinType, dataStream.pin));
+                                    new DeviceFileLink(path.getFileName(), dashName, dataStream.pinType, dataStream.pin));
                         } catch (Exception e) {
                             log.debug("Error generating csv file.", e);
                             //ignore any exception.
@@ -212,7 +213,7 @@ public class ExportGraphDataLogic {
                     ctx.writeAndFlush(noData(msgId), ctx.voidPromise());
                 } else {
                     String title = "History graph data for project " + dashName;
-                    String bodyWithLinks = FileLink.makeBody(csvDownloadUrl, pinsCSVFilePath);
+                    String bodyWithLinks = DeviceFileLink.makeBody(csvDownloadUrl, pinsCSVFilePath);
                     mailWrapper.sendHtml(user.email, title, bodyWithLinks);
                     ctx.writeAndFlush(ok(msgId), ctx.voidPromise());
                 }

@@ -78,7 +78,7 @@ public class Holder {
     public final Limits limits;
     public final TextHolder textHolder;
 
-    public final String csvDownloadUrl;
+    public final String downloadUrl;
 
     public final String host;
 
@@ -148,14 +148,14 @@ public class Holder {
                 gcmWrapper, mailWrapper, twitterWrapper, blockingIOProcessor, stats);
         this.timerWorker = new TimerWorker(userDao, sessionDao, gcmWrapper);
         this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao, props.getAllowWithoutActiveApp());
-        this.reportScheduler = new ReportScheduler(1);
         this.limits = new Limits(props);
         this.textHolder = new TextHolder(gcmProperties);
 
-        this.csvDownloadUrl = FileUtils.csvDownloadUrl(host,
+        this.downloadUrl = FileUtils.downloadUrl(host,
                 props.getProperty("http.port"),
                 props.getBoolProperty("force.port.80.for.csv")
         );
+        this.reportScheduler = new ReportScheduler(1, downloadUrl);
 
         String contactEmail = serverProperties.getProperty("contact.email", mailProperties.getSMTPUsername());
         this.sslContextHolder = new SslContextHolder(props, contactEmail);
@@ -210,14 +210,14 @@ public class Holder {
 
         this.timerWorker = new TimerWorker(userDao, sessionDao, gcmWrapper);
         this.readingWidgetsWorker = new ReadingWidgetsWorker(sessionDao, userDao, props.getAllowWithoutActiveApp());
-        this.reportScheduler = new ReportScheduler(1);
         this.limits = new Limits(props);
         this.textHolder = new TextHolder(new GCMProperties(Collections.emptyMap()));
 
-        this.csvDownloadUrl = FileUtils.csvDownloadUrl(host,
+        this.downloadUrl = FileUtils.downloadUrl(host,
                 props.getProperty("http.port"),
                 props.getBoolProperty("force.port.80.for.csv")
         );
+        this.reportScheduler = new ReportScheduler(1, downloadUrl);
 
         this.sslContextHolder = new SslContextHolder(props, "test@blynk.cc");
         this.tokensPool = new TokensPool(60 * 60 * 1000);
