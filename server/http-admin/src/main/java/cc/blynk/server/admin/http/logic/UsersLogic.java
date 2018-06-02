@@ -12,7 +12,7 @@ import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.core.http.model.Filter;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.FileManager;
-import cc.blynk.server.core.dao.ReportingDao;
+import cc.blynk.server.core.dao.ReportingStorageDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.dao.TokenValue;
@@ -50,7 +50,7 @@ public class UsersLogic extends CookiesBaseHttpHandler {
     private final UserDao userDao;
     private final FileManager fileManager;
     private final DBManager dbManager;
-    private final ReportingDao reportingDao;
+    private final ReportingStorageDao reportingDao;
 
     public UsersLogic(Holder holder, String rootPath) {
         super(holder, rootPath);
@@ -62,7 +62,7 @@ public class UsersLogic extends CookiesBaseHttpHandler {
 
     //for tests only
     public UsersLogic(UserDao userDao, SessionDao sessionDao, DBManager dbManager,
-                      FileManager fileManager, TokenManager tokenManager, ReportingDao reportingDao, String rootPath) {
+                      FileManager fileManager, TokenManager tokenManager, ReportingStorageDao reportingDao, String rootPath) {
         super(tokenManager, sessionDao, null, rootPath);
         this.userDao = userDao;
         this.fileManager = fileManager;

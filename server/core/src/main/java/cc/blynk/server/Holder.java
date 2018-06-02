@@ -2,7 +2,7 @@ package cc.blynk.server;
 
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.FileManager;
-import cc.blynk.server.core.dao.ReportingDao;
+import cc.blynk.server.core.dao.ReportingStorageDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.dao.UserDao;
@@ -51,7 +51,7 @@ public class Holder {
 
     public final TokenManager tokenManager;
 
-    public final ReportingDao reportingDao;
+    public final ReportingStorageDao reportingDao;
 
     public final DBManager dbManager;
 
@@ -119,7 +119,7 @@ public class Holder {
         this.tokenManager = new TokenManager(this.userDao.users, dbManager, host);
         this.stats = new GlobalStats();
         final String reportingFolder = getReportingFolder(dataFolder);
-        this.reportingDao = new ReportingDao(reportingFolder,
+        this.reportingDao = new ReportingStorageDao(reportingFolder,
                 serverProperties.isRawDBEnabled() && dbManager.isDBEnabled());
 
         if (serverProperties.renameOldReportingFiles()) {
@@ -186,7 +186,7 @@ public class Holder {
         this.tokenManager = new TokenManager(this.userDao.users, dbManager, host);
         this.stats = new GlobalStats();
         final String reportingFolder = getReportingFolder(dataFolder);
-        this.reportingDao = new ReportingDao(reportingFolder,
+        this.reportingDao = new ReportingStorageDao(reportingFolder,
                 serverProperties.isRawDBEnabled() && dbManager.isDBEnabled());
 
         this.transportTypeHolder = new TransportTypeHolder(serverProperties);

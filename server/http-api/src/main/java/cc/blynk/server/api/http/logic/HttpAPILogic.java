@@ -16,7 +16,7 @@ import cc.blynk.server.api.http.pojo.PinData;
 import cc.blynk.server.api.http.pojo.PushMessagePojo;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.FileManager;
-import cc.blynk.server.core.dao.ReportingDao;
+import cc.blynk.server.core.dao.ReportingStorageDao;
 import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
@@ -79,7 +79,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
     private final BlockingIOProcessor blockingIOProcessor;
     private final MailWrapper mailWrapper;
     private final GCMWrapper gcmWrapper;
-    private final ReportingDao reportingDao;
+    private final ReportingStorageDao reportingDao;
     private final EventorProcessor eventorProcessor;
     private final DBManager dbManager;
     private final FileManager fileManager;

@@ -3,7 +3,7 @@ package cc.blynk.integration.tcp;
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestHardClient;
-import cc.blynk.server.core.dao.ReportingDao;
+import cc.blynk.server.core.dao.ReportingStorageDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
@@ -503,13 +503,13 @@ public class DeviceWorkflowTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
+                ReportingStorageDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
         Path pinReportingDataPath11 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
+                ReportingStorageDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
         Path pinReportingDataPath12 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.DAILY));
+                ReportingStorageDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.DAILY));
         Path pinReportingDataPath13 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 9, GraphGranularityType.DAILY));
+                ReportingStorageDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 9, GraphGranularityType.DAILY));
 
         FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath11, 1.11D, 1111111);

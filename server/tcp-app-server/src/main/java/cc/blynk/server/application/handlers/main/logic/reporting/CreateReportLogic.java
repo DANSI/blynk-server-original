@@ -1,7 +1,7 @@
 package cc.blynk.server.application.handlers.main.logic.reporting;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.dao.ReportingDao;
+import cc.blynk.server.core.dao.ReportingStorageDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -35,7 +35,7 @@ public class CreateReportLogic {
     private final int reportsLimit;
     private final ReportScheduler reportScheduler;
     private final MailWrapper mailWrapper;
-    private final ReportingDao reportingDao;
+    private final ReportingStorageDao reportingDao;
 
     public CreateReportLogic(Holder holder) {
         this.reportsLimit = holder.limits.reportsLimit;

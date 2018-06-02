@@ -1,7 +1,7 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.dao.ReportingDao;
+import cc.blynk.server.core.dao.ReportingStorageDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
@@ -31,7 +31,7 @@ import static cc.blynk.utils.StringUtils.split3;
  */
 public class HardwareLogic extends BaseProcessorHandler {
 
-    private final ReportingDao reportingDao;
+    private final ReportingStorageDao reportingDao;
     private final SessionDao sessionDao;
 
     public HardwareLogic(Holder holder, String email) {

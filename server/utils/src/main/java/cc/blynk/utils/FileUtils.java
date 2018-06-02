@@ -3,6 +3,7 @@ package cc.blynk.utils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -28,10 +29,21 @@ public final class FileUtils {
 
     private final static Logger log = LogManager.getLogger(FileUtils.class);
 
+    private static final String BLYNK_FOLDER = "blynk";
+    public static final String CSV_DIR = Paths.get(
+            System.getProperty("java.io.tmpdir"), BLYNK_FOLDER)
+            .toString();
+
     private FileUtils() {
     }
 
-    public static final String BLYNK_FOLDER = "blynk";
+    static {
+        try {
+            Files.createDirectories(Paths.get(CSV_DIR));
+        } catch (IOException ioe) {
+            log.error("Error creating temp '{}' folder for csv export data.", CSV_DIR);
+        }
+    }
 
     private static final String[] POSSIBLE_LOCAL_PATHS = new String[] {
             "./server/http-dashboard/target/classes",
@@ -127,7 +139,20 @@ public final class FileUtils {
         }
     }
 
-    public static String getUserReportingDir(String email, String appName) {
+    public static void writeBufToCsv(BufferedWriter writer, ByteBuffer onePinData, int deviceId) throws Exception {
+        while (onePinData.remaining() > 0) {
+            double value = onePinData.getDouble();
+            long ts = onePinData.getLong();
+
+            writer.write("" + value + ',' + ts + ',' + deviceId + '\n');
+        }
+    }
+
+    public static Path getUserReportDir(String email, String appName, int reportId, String date) {
+        return Paths.get(FileUtils.CSV_DIR, email + "_" + appName + "_" + reportId + "_" + date);
+    }
+
+    public static String getUserStorageDir(String email, String appName) {
         if (AppNameUtil.BLYNK.equals(appName)) {
             return email;
         }

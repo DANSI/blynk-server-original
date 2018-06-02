@@ -2,7 +2,7 @@ package cc.blynk.server.application.handlers.main.logic.graph;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.ReportingDao;
+import cc.blynk.server.core.dao.ReportingStorageDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.User;
@@ -41,7 +41,7 @@ public class ExportGraphDataLogic {
     private static final Logger log = LogManager.getLogger(ExportGraphDataLogic.class);
 
     private final BlockingIOProcessor blockingIOProcessor;
-    private final ReportingDao reportingDao;
+    private final ReportingStorageDao reportingDao;
     private final MailWrapper mailWrapper;
     private final String csvDownloadUrl;
 
@@ -224,7 +224,7 @@ public class ExportGraphDataLogic {
         }
     }
 
-    private String makeBody(ArrayList<FileLink> fileUrls) {
+    private static String makeBody(ArrayList<FileLink> fileUrls) {
         var sb = new StringBuilder();
         sb.append("<html><body>");
         for (FileLink link : fileUrls) {

@@ -18,7 +18,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class CSVGeneratorTest {
 
-    private CSVGenerator csvGenerator = new CSVGenerator(new ReportingDao("/tmp", true));
+    private CSVGenerator csvGenerator = new CSVGenerator(new ReportingStorageDao("/tmp", true));
 
     @Test
     public void generateCSV() throws Exception {

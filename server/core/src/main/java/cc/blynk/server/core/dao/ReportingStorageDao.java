@@ -41,9 +41,9 @@ import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/18/2015.
  */
-public class ReportingDao implements Closeable {
+public class ReportingStorageDao implements Closeable {
 
-    private static final Logger log = LogManager.getLogger(ReportingDao.class);
+    private static final Logger log = LogManager.getLogger(ReportingStorageDao.class);
 
     public final AverageAggregatorProcessor averageAggregator;
     private final RawDataCacheForGraphProcessor rawDataCacheForGraphProcessor;
@@ -57,8 +57,8 @@ public class ReportingDao implements Closeable {
     private static final Function<Path, Boolean> NO_FILTER = s -> true;
 
     //for test only
-    public ReportingDao(String reportingFolder, AverageAggregatorProcessor averageAggregator,
-                        boolean isEnabled) {
+    public ReportingStorageDao(String reportingFolder, AverageAggregatorProcessor averageAggregator,
+                               boolean isEnabled) {
         this.averageAggregator = averageAggregator;
         this.rawDataCacheForGraphProcessor = new RawDataCacheForGraphProcessor();
         this.dataFolder = reportingFolder;
@@ -67,7 +67,7 @@ public class ReportingDao implements Closeable {
         this.csvGenerator = new CSVGenerator(this);
     }
 
-    public ReportingDao(String reportingFolder, boolean isEnabled) {
+    public ReportingStorageDao(String reportingFolder, boolean isEnabled) {
         this.averageAggregator = new AverageAggregatorProcessor(reportingFolder);
         this.rawDataCacheForGraphProcessor = new RawDataCacheForGraphProcessor();
         this.dataFolder = reportingFolder;
@@ -81,7 +81,7 @@ public class ReportingDao implements Closeable {
                                             GraphGranularityType type, int skipCount) {
         Path userDataFile = Paths.get(
                 dataFolder,
-                FileUtils.getUserReportingDir(user.email, user.appName),
+                FileUtils.getUserStorageDir(user.email, user.appName),
                 generateFilename(dashId, deviceId, pinType, pin, type)
         );
         if (Files.exists(userDataFile)) {
@@ -165,7 +165,7 @@ public class ReportingDao implements Closeable {
     }
 
     private Path getUserReportingFolderPath(User user) {
-        return Paths.get(dataFolder, FileUtils.getUserReportingDir(user.email, user.appName));
+        return Paths.get(dataFolder, FileUtils.getUserStorageDir(user.email, user.appName));
     }
 
     public int delete(User user) {
