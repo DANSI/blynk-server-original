@@ -29,7 +29,6 @@ import cc.blynk.server.application.handlers.main.auth.AppLoginHandler;
 import cc.blynk.server.application.handlers.main.auth.GetServerHandler;
 import cc.blynk.server.application.handlers.main.auth.RegisterHandler;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareLoginHandler;
-import cc.blynk.server.core.dao.CSVGenerator;
 import cc.blynk.server.core.protocol.handlers.decoders.AppMessageDecoder;
 import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
 import cc.blynk.server.core.protocol.handlers.decoders.WebAppMessageDecoder;
@@ -41,6 +40,7 @@ import cc.blynk.server.handlers.common.UserNotLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareChannelStateHandler;
 import cc.blynk.server.hardware.handlers.hardware.auth.HardwareLoginHandler;
 import cc.blynk.server.servers.BaseServer;
+import cc.blynk.utils.FileUtils;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
@@ -248,7 +248,7 @@ public class AppAndHttpsServer extends BaseServer {
                                         new UrlReWriterHandler("/favicon.ico", "/static/favicon.ico"))
                                 .addLast("HttpStaticFile",
                                         new StaticFileHandler(holder.props, new StaticFile("/static"),
-                                                new StaticFileEdsWith(CSVGenerator.CSV_DIR, ".csv.gz")))
+                                                new StaticFileEdsWith(FileUtils.CSV_DIR, ".csv.gz")))
                                 .addLast("HttpsWebSocketUnificator", baseWebSocketUnificator);
                     }
 

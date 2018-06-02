@@ -62,7 +62,8 @@ public class UsersLogic extends CookiesBaseHttpHandler {
 
     //for tests only
     public UsersLogic(UserDao userDao, SessionDao sessionDao, DBManager dbManager,
-                      FileManager fileManager, TokenManager tokenManager, ReportingStorageDao reportingDao, String rootPath) {
+                      FileManager fileManager, TokenManager tokenManager,
+                      ReportingStorageDao reportingDao, String rootPath) {
         super(tokenManager, sessionDao, null, rootPath);
         this.userDao = userDao;
         this.fileManager = fileManager;
