@@ -1,7 +1,11 @@
 package cc.blynk.server.application.handlers.main.logic.reporting;
 
+import cc.blynk.server.core.dao.ReportingDao;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.ui.reporting.Report;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportScheduler;
+import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportDataStream;
+import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportSource;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import org.apache.logging.log4j.LogManager;
@@ -20,9 +24,9 @@ public class ReportTask implements Runnable {
 
     private static final Logger log = LogManager.getLogger(ReportTask.class);
 
-    private final String email;
+    private final User user;
 
-    private final String appName;
+    private final int dashId;
 
     private final int reportId;
 
@@ -32,28 +36,44 @@ public class ReportTask implements Runnable {
 
     private final MailWrapper mailWrapper;
 
-    ReportTask(String email, String appName, Report report,
-                      ReportScheduler reportScheduler, MailWrapper mailWrapper) {
-        this.email = email;
-        this.appName = appName;
+    private final ReportingDao reportingDao;
+
+    ReportTask(User user, int dashId, Report report,
+               ReportScheduler reportScheduler, MailWrapper mailWrapper, ReportingDao reportingDao) {
+        this.user = user;
+        this.dashId = dashId;
         this.reportId = report.id;
         this.report = report;
         this.reportScheduler = reportScheduler;
         this.mailWrapper = mailWrapper;
+        this.reportingDao = reportingDao;
     }
 
-    ReportTask(String email, String appName, Report report) {
-        this(email, appName, report, null, null);
+    ReportTask(User user, int dashId, Report report) {
+        this(user, dashId, report, null, null, null);
     }
 
     @Override
     public void run() {
         try {
             long now = System.currentTimeMillis();
+            int fetchCount = (int) report.reportType.getFetchCount(report.granularityType);
+
+            for (ReportSource reportSource : report.reportSources) {
+                if (reportSource.isValid()) {
+                    for (int deviceId : reportSource.getDeviceIds()) {
+                        for (ReportDataStream reportDataStream : reportSource.reportDataStreams) {
+                            reportingDao.getByteBufferFromDisk(user, dashId, deviceId, reportDataStream.pinType,
+                                    reportDataStream.pin, fetchCount, report.granularityType, 0);
+                        }
+                    }
+                }
+            }
+
             mailWrapper.sendText(report.recipients, report.name, "Your report is ready.");
             long newNow = System.currentTimeMillis();
-            log.info("Processed report for {}, time {} ms.",
-                    this.email, newNow - now);
+
+            log.info("Processed report for {}, time {} ms.", user.email, newNow - now);
             log.debug(report);
 
             report.lastReportAt = newNow;
@@ -62,13 +82,13 @@ public class ReportTask implements Runnable {
 
             //rescheduling report
             log.info("Rescheduling report for {} with delay {}.",
-                    this.email, initialDelaySeconds);
+                    user.email, initialDelaySeconds);
             reportScheduler.schedule(this, initialDelaySeconds, TimeUnit.SECONDS);
         } catch (IllegalCommandException ice) {
-            log.info("Seems like report is expired for {}.", email);
+            log.info("Seems like report is expired for {}.", user.email);
             report.nextReportAt = -1L;
         } catch (Exception e) {
-            log.debug("Error generating report {} for {}.", report, email, e);
+            log.debug("Error generating report {} for {}.", report, user.email, e);
         }
     }
 
@@ -81,13 +101,13 @@ public class ReportTask implements Runnable {
             return false;
         }
         ReportTask that = (ReportTask) o;
-        return reportId == that.reportId
-                && Objects.equals(email, that.email)
-                && Objects.equals(appName, that.appName);
+        return dashId == that.dashId
+                && reportId == that.reportId
+                && Objects.equals(user, that.user);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(email, appName, reportId);
+        return Objects.hash(user, dashId, reportId);
     }
 }

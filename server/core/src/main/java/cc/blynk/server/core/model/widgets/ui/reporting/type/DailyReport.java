@@ -39,6 +39,11 @@ public class DailyReport extends BaseReportType {
         return startTs <= endTs;
     }
 
+    @Override
+    public long getDuration() {
+        return 1;
+    }
+
     ZonedDateTime buildZonedStartAt(ZonedDateTime zonedNow, ZoneId zoneId) {
         ZonedDateTime zonedStartAt = ZonedDateTime.ofInstant(Instant.ofEpochMilli(atTime), zoneId);
         zonedStartAt = zonedNow

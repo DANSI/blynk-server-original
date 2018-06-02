@@ -1,6 +1,7 @@
 package cc.blynk.server.application.handlers.main.logic.reporting;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -34,11 +35,13 @@ public class CreateReportLogic {
     private final int reportsLimit;
     private final ReportScheduler reportScheduler;
     private final MailWrapper mailWrapper;
+    private final ReportingDao reportingDao;
 
     public CreateReportLogic(Holder holder) {
         this.reportsLimit = holder.limits.reportsLimit;
         this.reportScheduler = holder.reportScheduler;
         this.mailWrapper = holder.mailWrapper;
+        this.reportingDao = holder.reportingDao;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
@@ -95,7 +98,7 @@ public class CreateReportLogic {
 
             if (report.isActive) {
                 reportScheduler.schedule(
-                        new ReportTask(user.email, user.appName, report, reportScheduler, mailWrapper),
+                        new ReportTask(user, dashId, report, reportScheduler, mailWrapper, reportingDao),
                         initialDelaySeconds,
                         TimeUnit.SECONDS
                 );

@@ -27,6 +27,11 @@ public class MonthlyReport extends DailyReport {
     }
 
     @Override
+    public long getDuration() {
+        return 30;
+    }
+
+    @Override
     public ZonedDateTime getNextTriggerTime(ZonedDateTime zonedNow, ZoneId zoneId) {
         ZonedDateTime zonedStartAt = buildZonedStartAt(zonedNow, zoneId);
 

@@ -26,6 +26,11 @@ public class OneTimeReport extends BaseReportType {
     }
 
     @Override
+    public long getDuration() {
+        return 0;
+    }
+
+    @Override
     public ZonedDateTime getNextTriggerTime(ZonedDateTime zonedNow, ZoneId zoneId) {
         return zonedNow;
     }
