@@ -244,6 +244,7 @@ public class Holder {
 
         System.out.println("Stopping BlockingIOProcessor...");
         blockingIOProcessor.close();
+        reportScheduler.shutdown();
         System.out.println("Stopping DBManager...");
         dbManager.close();
     }

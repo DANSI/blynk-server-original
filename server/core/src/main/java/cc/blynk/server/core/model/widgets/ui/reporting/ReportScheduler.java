@@ -19,6 +19,7 @@ public class ReportScheduler extends ScheduledThreadPoolExecutor {
     public ReportScheduler(int corePoolSize, String downloadUrl) {
         super(corePoolSize);
         setRemoveOnCancelPolicy(true);
+        setExecuteExistingDelayedTasksAfterShutdownPolicy(false);
         this.map = new ConcurrentHashMap<>();
         this.downloadUrl = downloadUrl;
     }

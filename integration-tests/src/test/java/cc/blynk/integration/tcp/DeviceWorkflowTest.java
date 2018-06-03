@@ -270,7 +270,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         tag.deviceIds = new int[] {1};
 
         clientPair.appClient.createTag(1, tag);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createTag(1, tag)));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(createTag(1, tag)));
 
         clientPair.appClient.createWidget(1, "{\"id\":188, \"width\":1, \"height\":1, \"deviceId\":100000, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":33, \"value\":1}");
         clientPair.appClient.verifyResult(ok(2));

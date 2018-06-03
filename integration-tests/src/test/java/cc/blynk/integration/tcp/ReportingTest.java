@@ -443,6 +443,7 @@ public class ReportingTest extends IntegrationBase {
         verify(mailWrapper, timeout(3000)).sendHtml(eq("test@gmail.com"),
                 eq("Your report " + report.name + " is ready!"),
                 eq("<html><body><a href=\"http://127.0.0.1:18080/" + filename + "\">DailyReport</a><br></body></html>"));
+        sleep(200);
         assertEquals(1, holder.reportScheduler.getCompletedTaskCount());
         assertEquals(2, holder.reportScheduler.getTaskCount());
 
