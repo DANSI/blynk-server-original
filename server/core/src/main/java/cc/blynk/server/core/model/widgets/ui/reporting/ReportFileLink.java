@@ -1,4 +1,4 @@
-package cc.blynk.server.application.handlers.main.logic.graph.links;
+package cc.blynk.server.core.model.widgets.ui.reporting;
 
 import java.nio.file.Path;
 

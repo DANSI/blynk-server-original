@@ -1,5 +1,15 @@
 package cc.blynk.server.core.model.widgets.ui.reporting;
 
+import cc.blynk.server.core.dao.ReportingStorageDao;
+import cc.blynk.server.core.dao.UserKey;
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.notifications.mail.MailWrapper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -13,15 +23,55 @@ import java.util.concurrent.TimeUnit;
  */
 public class ReportScheduler extends ScheduledThreadPoolExecutor {
 
-    public final ConcurrentHashMap<Runnable, ScheduledFuture<?>> map;
-    public final String downloadUrl;
+    private static final Logger log = LogManager.getLogger(ReportScheduler.class);
 
-    public ReportScheduler(int corePoolSize, String downloadUrl) {
+    public final Map<Runnable, ScheduledFuture<?>> map;
+    public final MailWrapper mailWrapper;
+    public final ReportingStorageDao reportingDao;
+    final String downloadUrl;
+
+    public ReportScheduler(int corePoolSize, String downloadUrl,
+                           MailWrapper mailWrapper, ReportingStorageDao reportingDao, Map<UserKey, User> users) {
         super(corePoolSize);
         setRemoveOnCancelPolicy(true);
         setExecuteExistingDelayedTasksAfterShutdownPolicy(false);
         this.map = new ConcurrentHashMap<>();
         this.downloadUrl = downloadUrl;
+        this.mailWrapper = mailWrapper;
+        this.reportingDao = reportingDao;
+        init(users);
+    }
+
+    private void init(Map<UserKey, User> users) {
+        int counter = 0;
+        for (Map.Entry<UserKey, User> entry : users.entrySet()) {
+            User user = entry.getValue();
+            for (DashBoard dashBoard : user.profile.dashBoards) {
+                for (Widget widget : dashBoard.widgets) {
+                    if (widget instanceof ReportingWidget) {
+                        ReportingWidget reportingWidget = (ReportingWidget) widget;
+                        for (Report report : reportingWidget.reports) {
+                            if (report.isValid() && report.isPeriodic() && report.isActive) {
+                                long initialDelaySeconds = report.calculateDelayInSeconds();
+                                log.trace("Adding periodic report for user {} with delay {} to scheduler.",
+                                        user.email, initialDelaySeconds);
+                                report.nextReportAt = System.currentTimeMillis() + initialDelaySeconds * 1000;
+                                schedule(user, dashBoard.id, report, initialDelaySeconds);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        log.info("Reports : {}", counter);
+    }
+
+    public void schedule(User user, int dashId, Report report, long delayInSeconds) {
+        schedule(
+                new ReportTask(user, dashId, report, this),
+                delayInSeconds,
+                TimeUnit.SECONDS
+        );
     }
 
     @Override
@@ -31,7 +81,8 @@ public class ReportScheduler extends ScheduledThreadPoolExecutor {
         return scheduledFuture;
     }
 
-    public boolean cancelStoredFuture(Runnable task) {
+    public boolean cancelStoredFuture(User user, int dashId, Report report) {
+        ReportTask task = new ReportTask(user, dashId, report);
         ScheduledFuture<?> scheduledFuture = map.remove(task);
         if (scheduledFuture == null) {
             return false;

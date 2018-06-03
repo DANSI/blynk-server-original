@@ -1,15 +1,10 @@
-package cc.blynk.server.application.handlers.main.logic.reporting;
+package cc.blynk.server.core.model.widgets.ui.reporting;
 
-import cc.blynk.server.application.handlers.main.logic.graph.links.ReportFileLink;
-import cc.blynk.server.core.dao.ReportingStorageDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.widgets.ui.reporting.Report;
-import cc.blynk.server.core.model.widgets.ui.reporting.ReportScheduler;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportDataStream;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportSource;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
-import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -47,23 +42,17 @@ public class ReportTask implements Runnable {
 
     private final ReportScheduler reportScheduler;
 
-    private final MailWrapper mailWrapper;
-
-    private final ReportingStorageDao reportingDao;
-
     ReportTask(User user, int dashId, Report report,
-               ReportScheduler reportScheduler, MailWrapper mailWrapper, ReportingStorageDao reportingDao) {
+               ReportScheduler reportScheduler) {
         this.user = user;
         this.dashId = dashId;
         this.reportId = report.id;
         this.report = report;
         this.reportScheduler = reportScheduler;
-        this.mailWrapper = mailWrapper;
-        this.reportingDao = reportingDao;
     }
 
     ReportTask(User user, int dashId, Report report) {
-        this(user, dashId, report, null, null, null);
+        this(user, dashId, report, null);
     }
 
     private static String deviceAndPinFileName(int dashId, int deviceId, ReportDataStream reportDataStream) {
@@ -121,7 +110,7 @@ public class ReportTask implements Runnable {
                         ReportFileLink fileLink = new ReportFileLink(output, report.name);
                         String reportSubj = "Your report " + report.name + " is ready!";
                         String reportBody = fileLink.makeBody(reportScheduler.downloadUrl);
-                        mailWrapper.sendHtml(report.recipients, reportSubj, reportBody);
+                        reportScheduler.mailWrapper.sendHtml(report.recipients, reportSubj, reportBody);
                     }
                     break;
             }
@@ -166,7 +155,7 @@ public class ReportTask implements Runnable {
 
     private byte[] processSingleFile(int deviceId, ReportDataStream reportDataStream, int fetchCount) {
         ByteBuffer onePinData =
-                reportingDao.getByteBufferFromDisk(user,
+                reportScheduler.reportingDao.getByteBufferFromDisk(user,
                         dashId, deviceId, reportDataStream.pinType,
                         reportDataStream.pin, fetchCount, report.granularityType, 0);
         if (onePinData != null) {

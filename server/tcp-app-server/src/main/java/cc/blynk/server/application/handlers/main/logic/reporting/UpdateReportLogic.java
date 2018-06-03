@@ -1,7 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic.reporting;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.dao.ReportingStorageDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -10,13 +9,10 @@ import cc.blynk.server.core.model.widgets.ui.reporting.ReportScheduler;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.concurrent.TimeUnit;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.split2;
@@ -32,13 +28,9 @@ public class UpdateReportLogic {
     private static final Logger log = LogManager.getLogger(UpdateReportLogic.class);
 
     private final ReportScheduler reportScheduler;
-    private final MailWrapper mailWrapper;
-    private final ReportingStorageDao reportingDao;
 
     public UpdateReportLogic(Holder holder) {
         this.reportScheduler = holder.reportScheduler;
-        this.mailWrapper = holder.mailWrapper;
-        this.reportingDao = holder.reportingDao;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
@@ -73,7 +65,7 @@ public class UpdateReportLogic {
         dash.updatedAt = System.currentTimeMillis();
 
         //always remove prev report before any validations are done
-        boolean isRemoved = reportScheduler.cancelStoredFuture(new ReportTask(user, dashId, report));
+        boolean isRemoved = reportScheduler.cancelStoredFuture(user, dashId, report);
         log.debug("Deleting reportId {} in scheduler for {}. Is removed: {}?.",
                 report.id, user.email, isRemoved);
 
@@ -91,11 +83,7 @@ public class UpdateReportLogic {
             report.nextReportAt = System.currentTimeMillis() + initialDelaySeconds * 1000;
 
             if (report.isActive) {
-                reportScheduler.schedule(
-                        new ReportTask(user, dashId, report, reportScheduler, mailWrapper, reportingDao),
-                        initialDelaySeconds,
-                        TimeUnit.SECONDS
-                );
+                reportScheduler.schedule(user, dashId, report, initialDelaySeconds);
             }
         }
 

@@ -155,7 +155,7 @@ public class Holder {
                 props.getProperty("http.port"),
                 props.getBoolProperty("force.port.80.for.csv")
         );
-        this.reportScheduler = new ReportScheduler(1, downloadUrl);
+        this.reportScheduler = new ReportScheduler(1, downloadUrl, mailWrapper, reportingDao, userDao.users);
 
         String contactEmail = serverProperties.getProperty("contact.email", mailProperties.getSMTPUsername());
         this.sslContextHolder = new SslContextHolder(props, contactEmail);
@@ -217,7 +217,7 @@ public class Holder {
                 props.getProperty("http.port"),
                 props.getBoolProperty("force.port.80.for.csv")
         );
-        this.reportScheduler = new ReportScheduler(1, downloadUrl);
+        this.reportScheduler = new ReportScheduler(1, downloadUrl, mailWrapper, reportingDao, userDao.users);
 
         this.sslContextHolder = new SslContextHolder(props, "test@blynk.cc");
         this.tokensPool = new TokensPool(60 * 60 * 1000);
