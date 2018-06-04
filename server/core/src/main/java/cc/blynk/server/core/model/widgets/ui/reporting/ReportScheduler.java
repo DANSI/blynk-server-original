@@ -52,11 +52,16 @@ public class ReportScheduler extends ScheduledThreadPoolExecutor {
                         ReportingWidget reportingWidget = (ReportingWidget) widget;
                         for (Report report : reportingWidget.reports) {
                             if (report.isValid() && report.isPeriodic() && report.isActive) {
-                                long initialDelaySeconds = report.calculateDelayInSeconds();
-                                log.trace("Adding periodic report for user {} with delay {} to scheduler.",
-                                        user.email, initialDelaySeconds);
-                                report.nextReportAt = System.currentTimeMillis() + initialDelaySeconds * 1000;
-                                schedule(user, dashBoard.id, report, initialDelaySeconds);
+                                try {
+                                    long initialDelaySeconds = report.calculateDelayInSeconds();
+                                    log.trace("Adding periodic report for user {} with delay {} to scheduler.",
+                                            user.email, initialDelaySeconds);
+                                    report.nextReportAt = System.currentTimeMillis() + initialDelaySeconds * 1000;
+                                    schedule(user, dashBoard.id, report, initialDelaySeconds);
+                                    counter++;
+                                } catch (Exception e) {
+                                    log.trace("Error scheduling report for {}, {}", user.email, report.id);
+                                }
                             }
                         }
                     }
