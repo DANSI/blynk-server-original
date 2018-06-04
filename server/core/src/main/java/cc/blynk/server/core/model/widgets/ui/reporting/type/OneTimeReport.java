@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.concurrent.TimeUnit;
 
 /**
  * The Blynk Project.
@@ -22,12 +23,12 @@ public class OneTimeReport extends BaseReportType {
 
     @Override
     public boolean isValid() {
-        return true;
+        return getDuration() > 0;
     }
 
     @Override
     public long getDuration() {
-        return 0;
+        return rangeMillis / TimeUnit.DAYS.toMillis(1);
     }
 
     @Override

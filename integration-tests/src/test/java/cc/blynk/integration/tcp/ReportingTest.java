@@ -30,6 +30,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.concurrent.TimeUnit;
 
 import static cc.blynk.server.core.model.widgets.ui.reporting.ReportOutput.CSV_FILE_PER_DEVICE;
 import static cc.blynk.server.core.model.widgets.ui.reporting.ReportOutput.CSV_FILE_PER_DEVICE_PER_PIN;
@@ -224,7 +225,7 @@ public class ReportingTest extends IntegrationBase {
 
         Report report = new Report(1, "My One Time Report",
                 new ReportSource[] {reportSource},
-                new OneTimeReport(86400), "test@gmail.com",
+                new OneTimeReport(TimeUnit.DAYS.toMillis(1)), "test@gmail.com",
                 GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
 
         clientPair.appClient.createReport(1, report);
@@ -235,7 +236,7 @@ public class ReportingTest extends IntegrationBase {
 
         report = new Report(1, "Updated",
                 new ReportSource[] {reportSource},
-                new OneTimeReport(86400), "test@gmail.com",
+                new OneTimeReport(TimeUnit.DAYS.toMillis(1)), "test@gmail.com",
                 GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
 
         clientPair.appClient.updateReport(1, report);
@@ -446,6 +447,65 @@ public class ReportingTest extends IntegrationBase {
         sleep(200);
         assertEquals(1, holder.reportScheduler.getCompletedTaskCount());
         assertEquals(2, holder.reportScheduler.getTaskCount());
+
+        Path result = Paths.get(FileUtils.CSV_DIR,
+                DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+        assertTrue(Files.exists(result));
+        assertEquals(146, Files.size(result));
+    }
+
+    @Test
+    public void testOneTimeReportIsTriggered() throws Exception {
+        String tempDir = holder.props.getProperty("data.folder");
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+        FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
+
+        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportSource reportSource = new TileTemplateReportSource(
+                new ReportDataStream[] {reportDataStream},
+                1,
+                new int[] {0}
+        );
+
+        ReportingWidget reportingWidget = new ReportingWidget();
+        reportingWidget.height = 1;
+        reportingWidget.width = 1;
+        reportingWidget.reportSources = new ReportSource[] {
+                reportSource
+        };
+
+        clientPair.appClient.createWidget(1, reportingWidget);
+        clientPair.appClient.verifyResult(ok(1));
+
+        Report report = new Report(1, "DailyReport",
+                new ReportSource[] {reportSource},
+                new OneTimeReport(TimeUnit.DAYS.toMillis(1)), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("UTC"));
+
+        clientPair.appClient.createReport(1, report);
+        clientPair.appClient.verifyResult(ok(2));
+        verify(mailWrapper, never()).sendHtml(eq("test@gmail.com"),
+                any(),
+                any());
+
+        clientPair.appClient.exportReport(1, 1);
+        clientPair.appClient.verifyResult(ok(3));
+
+        String date = LocalDate.now(report.tzName).toString();
+        String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
+        verify(mailWrapper, timeout(3000)).sendHtml(eq("test@gmail.com"),
+                eq("Your report " + report.name + " is ready!"),
+                eq("<html><body><a href=\"http://127.0.0.1:18080/" + filename + "\">DailyReport</a><br></body></html>"));
+        sleep(200);
+        assertEquals(1, holder.reportScheduler.getCompletedTaskCount());
+        assertEquals(1, holder.reportScheduler.getTaskCount());
+        assertEquals(0, holder.reportScheduler.map.size());
+        assertEquals(0, holder.reportScheduler.getActiveCount());
 
         Path result = Paths.get(FileUtils.CSV_DIR,
                 DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");

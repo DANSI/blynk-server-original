@@ -311,6 +311,10 @@ public class TestAppClient extends BaseTestAppClient {
         send("deleteReport " + dashId + BODY_SEPARATOR + reportId);
     }
 
+    public void exportReport(int dashId, int reportId) {
+        send("exportReport " + dashId + BODY_SEPARATOR + reportId);
+    }
+
     public void send(String line) {
         send(produceMessageBaseOnUserInput(line, ++msgId));
     }
