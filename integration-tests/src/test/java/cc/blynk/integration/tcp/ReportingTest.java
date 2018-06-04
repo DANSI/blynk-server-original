@@ -37,6 +37,7 @@ import static cc.blynk.server.core.model.widgets.ui.reporting.ReportOutput.CSV_F
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -229,7 +230,8 @@ public class ReportingTest extends IntegrationBase {
                 GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
 
         clientPair.appClient.createReport(1, report);
-        clientPair.appClient.verifyResult(ok(4));
+        report = clientPair.appClient.parseReportFromResponse(4);
+        assertNotNull(report);
 
         clientPair.appClient.send("getEnergy");
         clientPair.appClient.verifyResult(produce(5, GET_ENERGY, "2600"));
@@ -280,12 +282,19 @@ public class ReportingTest extends IntegrationBase {
                 GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
         clientPair.appClient.createReport(1, report);
 
+        report = clientPair.appClient.parseReportFromResponse(3);
+        assertNotNull(report);
+        assertEquals(System.currentTimeMillis(), report.nextReportAt, 2000);
 
         Report report2 = new Report(2, "DailyReport2",
                 new ReportSource[] {reportSource},
                 new DailyReport(now, ReportDurationType.INFINITE, now, now), "test@gmail.com",
                 GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
         clientPair.appClient.createReport(1, report2);
+
+        report = clientPair.appClient.parseReportFromResponse(4);
+        assertNotNull(report);
+        assertEquals(System.currentTimeMillis(), report.nextReportAt, 2000);
 
         //expecting now is ignored as duration is INFINITE
         Report report3 = new Report(3, "DailyReport3",
@@ -294,12 +303,18 @@ public class ReportingTest extends IntegrationBase {
                 GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
         clientPair.appClient.createReport(1, report3);
 
+        report = clientPair.appClient.parseReportFromResponse(5);
+        assertNotNull(report);
+        assertEquals(System.currentTimeMillis(), report.nextReportAt, 2000);
+
         //now date is greater than end date, such reports are not accepted.
         Report report4 = new Report(4, "DailyReport4",
                 new ReportSource[] {reportSource},
                 new DailyReport(now, ReportDurationType.INFINITE, now + 86400_000, now), "test@gmail.com",
                 GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
         clientPair.appClient.createReport(1, report4);
+
+        clientPair.appClient.verifyResult(illegalCommand(6));
 
         //trigger date is tomorrow
         Report report5 = new Report(5, "DailyReport5",
@@ -308,6 +323,10 @@ public class ReportingTest extends IntegrationBase {
                 GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
         clientPair.appClient.createReport(1, report5);
 
+        report = clientPair.appClient.parseReportFromResponse(7);
+        assertNotNull(report);
+        assertEquals(System.currentTimeMillis() + 86400_000, report.nextReportAt, 2000);
+
         //report wit the same id is not allowed
         Report report6 = new Report(5, "DailyReport6",
                 new ReportSource[] {reportSource},
@@ -315,11 +334,6 @@ public class ReportingTest extends IntegrationBase {
                 GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
         clientPair.appClient.createReport(1, report6);
 
-        clientPair.appClient.verifyResult(ok(3));
-        clientPair.appClient.verifyResult(ok(4));
-        clientPair.appClient.verifyResult(ok(5));
-        clientPair.appClient.verifyResult(illegalCommand(6));
-        clientPair.appClient.verifyResult(ok(7));
         clientPair.appClient.verifyResult(illegalCommand(8));
 
         int tries = 0;
@@ -366,15 +380,19 @@ public class ReportingTest extends IntegrationBase {
                 GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
         clientPair.appClient.createReport(1, report);
 
+        report = clientPair.appClient.parseReportFromResponse(3);
+        assertNotNull(report);
+        assertEquals(System.currentTimeMillis(), report.nextReportAt, 2000);
+
         Report report2 = new Report(2, "DailyReport2",
                 new ReportSource[] {reportSource},
                 new DailyReport(now, ReportDurationType.INFINITE, now, now), "test@gmail.com",
                 GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
         clientPair.appClient.createReport(1, report2);
 
-
-        clientPair.appClient.verifyResult(ok(3));
-        clientPair.appClient.verifyResult(ok(4));
+        report = clientPair.appClient.parseReportFromResponse(4);
+        assertNotNull(report);
+        assertEquals(System.currentTimeMillis(), report.nextReportAt, 2000);
 
         int tries = 0;
         while (holder.reportScheduler.getCompletedTaskCount() < 2 && tries < 20) {
@@ -437,7 +455,9 @@ public class ReportingTest extends IntegrationBase {
                 GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("UTC"));
         clientPair.appClient.createReport(1, report);
 
-        clientPair.appClient.verifyResult(ok(2));
+        report = clientPair.appClient.parseReportFromResponse(2);
+        assertNotNull(report);
+        assertEquals(System.currentTimeMillis(), report.nextReportAt, 2000);
 
         String date = LocalDate.now(report.tzName).toString();
         String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
@@ -488,13 +508,20 @@ public class ReportingTest extends IntegrationBase {
                 GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("UTC"));
 
         clientPair.appClient.createReport(1, report);
-        clientPair.appClient.verifyResult(ok(2));
+        report = clientPair.appClient.parseReportFromResponse(2);
+        assertNotNull(report);
+        assertEquals(0, report.nextReportAt);
+        assertEquals(0, report.lastReportAt);
+
         verify(mailWrapper, never()).sendHtml(eq("test@gmail.com"),
                 any(),
                 any());
 
         clientPair.appClient.exportReport(1, 1);
-        clientPair.appClient.verifyResult(ok(3));
+        report = clientPair.appClient.parseReportFromResponse(3);
+        assertNotNull(report);
+        assertEquals(0, report.nextReportAt);
+        assertEquals(System.currentTimeMillis(), report.lastReportAt, 2000);
 
         String date = LocalDate.now(report.tzName).toString();
         String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";

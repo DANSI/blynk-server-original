@@ -104,6 +104,10 @@ public class TestAppClient extends BaseTestAppClient {
         return JsonParser.parseDashboard(getBody(expectedMessageOrder), 0);
     }
 
+    public Report parseReportFromResponse(int expectedMessageOrder) throws Exception {
+        return JsonParser.parseReport(getBody(expectedMessageOrder), 0);
+    }
+
     public String getBody() throws Exception {
         return getBody(1);
     }

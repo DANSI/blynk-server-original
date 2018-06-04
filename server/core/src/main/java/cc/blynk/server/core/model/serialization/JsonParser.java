@@ -71,6 +71,7 @@ public final class JsonParser {
     private static final ObjectWriter dashboardWriter = MAPPER.writerFor(DashBoard.class);
     private static final ObjectWriter deviceWriter = MAPPER.writerFor(Device.class);
     private static final ObjectWriter appWriter = MAPPER.writerFor(App.class);
+    private static final ObjectWriter reportWriter = MAPPER.writerFor(Report.class);
 
     public static final ObjectWriter restrictiveDashWriter = init()
             .addMixIn(Twitter.class, TwitterIgnoreMixIn.class)
@@ -162,6 +163,10 @@ public final class JsonParser {
 
     public static String toJson(App app) {
         return toJson(appWriter, app);
+    }
+
+    public static String toJson(Report report) {
+        return toJson(reportWriter, report);
     }
 
     public static String toJson(Stat stat) {

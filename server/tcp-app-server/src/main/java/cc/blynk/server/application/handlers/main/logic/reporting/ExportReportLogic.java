@@ -15,8 +15,9 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.concurrent.TimeUnit;
 
+import static cc.blynk.server.core.protocol.enums.Command.EXPORT_REPORT;
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
-import static cc.blynk.server.internal.CommonByteBufUtil.ok;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StringUtils.split2;
 
 /**
@@ -69,7 +70,12 @@ public class ExportReportLogic {
             public void run() {
                 try {
                     report.lastReportAt = generateReport();
-                    ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
+                    if (ctx.channel().isWritable()) {
+                        ctx.writeAndFlush(
+                                makeUTF8StringMessage(EXPORT_REPORT, message.id, report.toString()),
+                                ctx.voidPromise()
+                        );
+                    }
                 } catch (Exception e) {
                     log.debug("Error generating report {} for {}.", report, key.user.email, e);
                     ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
