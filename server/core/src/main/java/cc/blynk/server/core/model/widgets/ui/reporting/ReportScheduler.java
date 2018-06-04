@@ -25,10 +25,10 @@ public class ReportScheduler extends ScheduledThreadPoolExecutor {
 
     private static final Logger log = LogManager.getLogger(ReportScheduler.class);
 
-    public final Map<Runnable, ScheduledFuture<?>> map;
+    public final Map<ReportTaskKey, ScheduledFuture<?>> map;
     public final MailWrapper mailWrapper;
     public final ReportingStorageDao reportingDao;
-    final String downloadUrl;
+    public final String downloadUrl;
 
     public ReportScheduler(int corePoolSize, String downloadUrl,
                            MailWrapper mailWrapper, ReportingStorageDao reportingDao, Map<UserKey, User> users) {
@@ -77,16 +77,20 @@ public class ReportScheduler extends ScheduledThreadPoolExecutor {
     @Override
     public ScheduledFuture<?> schedule(Runnable task, long delay, TimeUnit unit) {
         ScheduledFuture<?> scheduledFuture = super.schedule(task, delay, unit);
-        map.put(task, scheduledFuture);
+        if (task instanceof PeriodicReportTask) {
+            BaseReportTask baseReportTask = (PeriodicReportTask) task;
+            map.put(baseReportTask.key, scheduledFuture);
+        }
         return scheduledFuture;
     }
 
-    public boolean cancelStoredFuture(User user, int dashId, Report report) {
-        PeriodicReportTask task = new PeriodicReportTask(user, dashId, report);
-        ScheduledFuture<?> scheduledFuture = map.remove(task);
+    public boolean cancelStoredFuture(User user, int dashId, int reportId) {
+        ReportTaskKey key = new ReportTaskKey(user, dashId, reportId);
+        ScheduledFuture<?> scheduledFuture = map.remove(key);
         if (scheduledFuture == null) {
             return false;
         }
         return scheduledFuture.cancel(true);
     }
+
 }

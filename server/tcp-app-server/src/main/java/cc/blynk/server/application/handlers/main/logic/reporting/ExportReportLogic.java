@@ -3,6 +3,7 @@ package cc.blynk.server.application.handlers.main.logic.reporting;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.widgets.ui.reporting.BaseReportTask;
 import cc.blynk.server.core.model.widgets.ui.reporting.Report;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportScheduler;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
@@ -12,6 +13,9 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.concurrent.TimeUnit;
+
+import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.split2;
 
@@ -58,9 +62,19 @@ public class ExportReportLogic {
             throw new IllegalCommandException("Report is not valid.");
         }
 
-        //reportScheduler.executeRightNow(user, dashId, report);
-
-
-        ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
+        reportScheduler.schedule(new BaseReportTask(user, dashId, report,
+                reportScheduler.mailWrapper, reportScheduler.reportingDao,
+                reportScheduler.downloadUrl) {
+            @Override
+            public void run() {
+                try {
+                    report.lastReportAt = generateReport();
+                    ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
+                } catch (Exception e) {
+                    log.debug("Error generating report {} for {}.", report, key.user.email, e);
+                    ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
+                }
+            }
+        }, 0, TimeUnit.SECONDS);
     }
 }
