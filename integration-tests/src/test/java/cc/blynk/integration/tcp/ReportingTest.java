@@ -3,10 +3,12 @@ package cc.blynk.integration.tcp;
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.core.dao.ReportingStorageDao;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.ui.reporting.Report;
+import cc.blynk.server.core.model.widgets.ui.reporting.ReportResult;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportDataStream;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportSource;
@@ -227,7 +229,7 @@ public class ReportingTest extends IntegrationBase {
         Report report = new Report(1, "My One Time Report",
                 new ReportSource[] {reportSource},
                 new OneTimeReport(TimeUnit.DAYS.toMillis(1)), "test@gmail.com",
-                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"), 0, 0, null);
 
         clientPair.appClient.createReport(1, report);
         report = clientPair.appClient.parseReportFromResponse(4);
@@ -239,7 +241,7 @@ public class ReportingTest extends IntegrationBase {
         report = new Report(1, "Updated",
                 new ReportSource[] {reportSource},
                 new OneTimeReport(TimeUnit.DAYS.toMillis(1)), "test@gmail.com",
-                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"), 0, 0, null);
 
         clientPair.appClient.updateReport(1, report);
         clientPair.appClient.verifyResult(ok(6));
@@ -279,7 +281,7 @@ public class ReportingTest extends IntegrationBase {
         Report report = new Report(1, "DailyReport",
                 new ReportSource[] {reportSource},
                 new DailyReport(now, ReportDurationType.INFINITE, 0, 0), "test@gmail.com",
-                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"), 0, 0, null);
         clientPair.appClient.createReport(1, report);
 
         report = clientPair.appClient.parseReportFromResponse(3);
@@ -289,7 +291,7 @@ public class ReportingTest extends IntegrationBase {
         Report report2 = new Report(2, "DailyReport2",
                 new ReportSource[] {reportSource},
                 new DailyReport(now, ReportDurationType.INFINITE, now, now), "test@gmail.com",
-                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"), 0, 0, null);
         clientPair.appClient.createReport(1, report2);
 
         report = clientPair.appClient.parseReportFromResponse(4);
@@ -300,7 +302,7 @@ public class ReportingTest extends IntegrationBase {
         Report report3 = new Report(3, "DailyReport3",
                 new ReportSource[] {reportSource},
                 new DailyReport(now, ReportDurationType.INFINITE, now + 86400_000, now + 86400_000), "test@gmail.com",
-                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"), 0, 0, null);
         clientPair.appClient.createReport(1, report3);
 
         report = clientPair.appClient.parseReportFromResponse(5);
@@ -311,7 +313,7 @@ public class ReportingTest extends IntegrationBase {
         Report report4 = new Report(4, "DailyReport4",
                 new ReportSource[] {reportSource},
                 new DailyReport(now, ReportDurationType.INFINITE, now + 86400_000, now), "test@gmail.com",
-                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"), 0, 0, null);
         clientPair.appClient.createReport(1, report4);
 
         clientPair.appClient.verifyResult(illegalCommand(6));
@@ -320,7 +322,7 @@ public class ReportingTest extends IntegrationBase {
         Report report5 = new Report(5, "DailyReport5",
                 new ReportSource[] {reportSource},
                 new DailyReport(now, ReportDurationType.CUSTOM, now + 86400_000, now + 86400_000), "test@gmail.com",
-                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"), 0, 0, null);
         clientPair.appClient.createReport(1, report5);
 
         report = clientPair.appClient.parseReportFromResponse(7);
@@ -331,7 +333,7 @@ public class ReportingTest extends IntegrationBase {
         Report report6 = new Report(5, "DailyReport6",
                 new ReportSource[] {reportSource},
                 new DailyReport(now, ReportDurationType.CUSTOM, now + 86400_000, now + 86400_000), "test@gmail.com",
-                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"), 0, 0, null);
         clientPair.appClient.createReport(1, report6);
 
         clientPair.appClient.verifyResult(illegalCommand(8));
@@ -377,7 +379,7 @@ public class ReportingTest extends IntegrationBase {
         Report report = new Report(1, "DailyReport",
                 new ReportSource[] {reportSource},
                 new DailyReport(now, ReportDurationType.INFINITE, 0, 0), "test@gmail.com",
-                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"), 0, 0, null);
         clientPair.appClient.createReport(1, report);
 
         report = clientPair.appClient.parseReportFromResponse(3);
@@ -387,10 +389,10 @@ public class ReportingTest extends IntegrationBase {
         Report report2 = new Report(2, "DailyReport2",
                 new ReportSource[] {reportSource},
                 new DailyReport(now, ReportDurationType.INFINITE, now, now), "test@gmail.com",
-                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"), 0, 0, null);
         clientPair.appClient.createReport(1, report2);
 
-        report = clientPair.appClient.parseReportFromResponse(4);
+        report2 = clientPair.appClient.parseReportFromResponse(4);
         assertNotNull(report);
         assertEquals(System.currentTimeMillis(), report.nextReportAt, 2000);
 
@@ -405,13 +407,22 @@ public class ReportingTest extends IntegrationBase {
         assertEquals(2, holder.reportScheduler.getCompletedTaskCount());
         assertEquals(4, holder.reportScheduler.getTaskCount());
 
+        clientPair.appClient.send("loadProfileGzipped 1");
+        DashBoard dashBoard = clientPair.appClient.getDash(5);
+        assertNotNull(dashBoard);
+        reportingWidget = dashBoard.getReportingWidget();
+        assertNotNull(reportingWidget);
+
+        assertEquals(ReportResult.NO_DATA, reportingWidget.reports[0].lastRunResult);
+        assertEquals(ReportResult.NO_DATA, reportingWidget.reports[1].lastRunResult);
+
         clientPair.appClient.deleteReport(1, 1);
-        clientPair.appClient.verifyResult(ok(5));
+        clientPair.appClient.verifyResult(ok(6));
 
         assertEquals(3, holder.reportScheduler.getTaskCount());
 
         clientPair.appClient.deleteReport(1, 2);
-        clientPair.appClient.verifyResult(ok(6));
+        clientPair.appClient.verifyResult(ok(7));
 
         assertEquals(2, holder.reportScheduler.getCompletedTaskCount());
         assertEquals(2, holder.reportScheduler.getTaskCount());
@@ -452,7 +463,7 @@ public class ReportingTest extends IntegrationBase {
         Report report = new Report(1, "DailyReport",
                 new ReportSource[] {reportSource},
                 new DailyReport(now, ReportDurationType.INFINITE, 0, 0), "test@gmail.com",
-                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("UTC"));
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("UTC"), 0, 0, null);
         clientPair.appClient.createReport(1, report);
 
         report = clientPair.appClient.parseReportFromResponse(2);
@@ -505,7 +516,7 @@ public class ReportingTest extends IntegrationBase {
         Report report = new Report(1, "DailyReport",
                 new ReportSource[] {reportSource},
                 new OneTimeReport(TimeUnit.DAYS.toMillis(1)), "test@gmail.com",
-                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("UTC"));
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("UTC"), 0, 0, null);
 
         clientPair.appClient.createReport(1, report);
         report = clientPair.appClient.parseReportFromResponse(2);
@@ -522,6 +533,7 @@ public class ReportingTest extends IntegrationBase {
         assertNotNull(report);
         assertEquals(0, report.nextReportAt);
         assertEquals(System.currentTimeMillis(), report.lastReportAt, 2000);
+        assertEquals(ReportResult.OK, report.lastRunResult);
 
         String date = LocalDate.now(report.tzName).toString();
         String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";

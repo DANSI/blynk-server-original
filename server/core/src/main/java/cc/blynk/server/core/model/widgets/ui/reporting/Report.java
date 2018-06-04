@@ -54,6 +54,8 @@ public class Report {
 
     public volatile long lastReportAt;
 
+    public volatile ReportResult lastRunResult;
+
     @JsonCreator
     public Report(@JsonProperty("id") int id,
                   @JsonProperty("name") String name,
@@ -63,7 +65,10 @@ public class Report {
                   @JsonProperty("granularityType") GraphGranularityType granularityType,
                   @JsonProperty("isActive") boolean isActive,
                   @JsonProperty("reportOutput") ReportOutput reportOutput,
-                  @JsonProperty("tzName") ZoneId tzName) {
+                  @JsonProperty("tzName") ZoneId tzName,
+                  @JsonProperty("nextReportAt") long nextReportAt,
+                  @JsonProperty("lastReportAt") long lastReportAt,
+                  @JsonProperty("lastRunResult") ReportResult lastRunResult) {
         this.id = id;
         this.name = name;
         this.reportSources = reportSources;
@@ -73,6 +78,9 @@ public class Report {
         this.isActive = isActive;
         this.reportOutput = reportOutput;
         this.tzName = tzName;
+        this.nextReportAt = nextReportAt;
+        this.lastReportAt = lastReportAt;
+        this.lastRunResult = lastRunResult;
     }
 
     public boolean isValid() {

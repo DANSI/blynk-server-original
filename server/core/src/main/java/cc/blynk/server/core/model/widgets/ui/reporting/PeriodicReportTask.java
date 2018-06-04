@@ -28,6 +28,7 @@ public class PeriodicReportTask extends BaseReportTask {
             long finishedAt = generateReport();
             report.lastReportAt = finishedAt;
             reschedule(finishedAt);
+            log.debug("After rescheduling: {}", report);
         } catch (IllegalCommandException ice) {
             log.info("Seems like report is expired for {}.", key.user.email);
             report.nextReportAt = -1L;

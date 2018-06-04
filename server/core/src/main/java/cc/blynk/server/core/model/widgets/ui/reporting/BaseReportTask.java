@@ -63,6 +63,7 @@ public abstract class BaseReportTask implements Runnable {
     public void run() {
         try {
             report.lastReportAt = generateReport();
+            log.debug(report);
         } catch (Exception e) {
             log.debug("Error generating report {} for {}.", report, key.user.email, e);
         }
@@ -75,40 +76,41 @@ public abstract class BaseReportTask implements Runnable {
         Path userCsvFolder = FileUtils.getUserReportDir(
                 key.user.email, key.user.appName, key.reportId, date);
 
-        generateReport(userCsvFolder);
+        try {
+            report.lastRunResult = generateReport(userCsvFolder);
+        } catch (Exception e) {
+            report.lastRunResult = ReportResult.ERROR;
+            log.error("Error generating report for user {}. ", key.user.email);
+            log.error(e);
+        }
 
         long newNow = System.currentTimeMillis();
 
         log.info("Processed report for {}, time {} ms.", key.user.email, newNow - now);
-        log.debug(report);
-
         return newNow;
     }
 
-    private void generateReport(Path userCsvFolder) {
+    private ReportResult generateReport(Path userCsvFolder) throws Exception {
         int fetchCount = (int) report.reportType.getFetchCount(report.granularityType);
         Path output = Paths.get(userCsvFolder.toString() + ".gz");
 
-        try {
-            //todo for now supporting only 1 type of output format
-            switch (report.reportOutput) {
-                case MERGED_CSV:
-                case EXCEL_TAB_PER_DEVICE:
-                case CSV_FILE_PER_DEVICE:
-                case CSV_FILE_PER_DEVICE_PER_PIN:
-                default:
-                    if (filePerDevicePerPin(output, fetchCount)) {
-                        ReportFileLink fileLink = new ReportFileLink(output, report.name);
-                        String reportSubj = "Your report " + report.name + " is ready!";
-                        String reportBody = fileLink.makeBody(downloadUrl);
-                        mailWrapper.sendHtml(report.recipients, reportSubj, reportBody);
-                    }
-                    break;
-            }
-
-        } catch (Exception e) {
-            log.error("Error generating report for user {}. ", key.user.email);
-            log.error(e);
+        //todo for now supporting only 1 type of output format
+        switch (report.reportOutput) {
+            case MERGED_CSV:
+            case EXCEL_TAB_PER_DEVICE:
+            case CSV_FILE_PER_DEVICE:
+            case CSV_FILE_PER_DEVICE_PER_PIN:
+            default:
+                if (filePerDevicePerPin(output, fetchCount)) {
+                    ReportFileLink fileLink = new ReportFileLink(output, report.name);
+                    String reportSubj = "Your report " + report.name + " is ready!";
+                    String reportBody = fileLink.makeBody(downloadUrl);
+                    mailWrapper.sendHtml(report.recipients, reportSubj, reportBody);
+                    return ReportResult.OK;
+                } else {
+                    log.info("No data for report for user {} and reportId {}.", key.user, report.id);
+                    return ReportResult.NO_DATA;
+                }
         }
     }
 

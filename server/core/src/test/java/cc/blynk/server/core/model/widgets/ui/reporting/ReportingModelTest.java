@@ -41,22 +41,22 @@ public class ReportingModelTest {
         Report report = new Report(1, "My One Time Report",
                 new ReportSource[] {reportSource2},
                 new OneTimeReport(86400), "test@gmail.com",
-                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("UTC"));
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("UTC"), 0, 0, null);
 
         Report report2 = new Report(2, "My Daily Report",
                 new ReportSource[] {reportSource2},
                 new DailyReport(60, ReportDurationType.CUSTOM, 100, 200), "test@gmail.com",
-                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("UTC"));
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("UTC"), 0, 0, null);
 
         Report report3 = new Report(3, "My Daily Report",
                 new ReportSource[] {reportSource2},
                 new WeeklyReport(60, ReportDurationType.CUSTOM, 100, 200, 1), "test@gmail.com",
-                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("UTC"));
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("UTC"), 0, 0, null);
 
         Report report4 = new Report(4, "My Daily Report",
                 new ReportSource[] {reportSource2},
                 new MonthlyReport(60, ReportDurationType.CUSTOM, 100, 200, DayOfMonth.FIRST), "test@gmail.com",
-                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("UTC"));
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("UTC"), 0, 0, null);
 
         ReportingWidget reportingWidget = new ReportingWidget();
         reportingWidget.reportSources = new ReportSource[] {
