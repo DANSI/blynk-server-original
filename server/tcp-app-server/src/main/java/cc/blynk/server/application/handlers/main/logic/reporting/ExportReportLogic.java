@@ -4,6 +4,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.ui.reporting.Report;
+import cc.blynk.server.core.model.widgets.ui.reporting.ReportScheduler;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -11,6 +12,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.split2;
 
 /**
@@ -23,7 +25,10 @@ public class ExportReportLogic {
 
     private static final Logger log = LogManager.getLogger(ExportReportLogic.class);
 
+    private final ReportScheduler reportScheduler;
+
     public ExportReportLogic(Holder holder) {
+        this.reportScheduler = holder.reportScheduler;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
@@ -48,5 +53,14 @@ public class ExportReportLogic {
             throw new IllegalCommandException("Cannot find report with passed id.");
         }
 
+        if (!report.isValid()) {
+            log.debug("Report is not valid {} for {}.", report, user.email);
+            throw new IllegalCommandException("Report is not valid.");
+        }
+
+        //reportScheduler.executeRightNow(user, dashId, report);
+
+
+        ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }
 }

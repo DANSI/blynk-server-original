@@ -28,9 +28,9 @@ import java.util.zip.ZipOutputStream;
  * Created on 31/05/2018.
  *
  */
-public class ReportTask implements Runnable {
+public class PeriodicReportTask implements Runnable {
 
-    private static final Logger log = LogManager.getLogger(ReportTask.class);
+    private static final Logger log = LogManager.getLogger(PeriodicReportTask.class);
 
     private final User user;
 
@@ -42,8 +42,8 @@ public class ReportTask implements Runnable {
 
     private final ReportScheduler reportScheduler;
 
-    ReportTask(User user, int dashId, Report report,
-               ReportScheduler reportScheduler) {
+    PeriodicReportTask(User user, int dashId, Report report,
+                       ReportScheduler reportScheduler) {
         this.user = user;
         this.dashId = dashId;
         this.reportId = report.id;
@@ -51,7 +51,7 @@ public class ReportTask implements Runnable {
         this.reportScheduler = reportScheduler;
     }
 
-    ReportTask(User user, int dashId, Report report) {
+    PeriodicReportTask(User user, int dashId, Report report) {
         this(user, dashId, report, null);
     }
 
@@ -66,32 +66,41 @@ public class ReportTask implements Runnable {
     @Override
     public void run() {
         try {
-            long now = System.currentTimeMillis();
-
-            String date = LocalDate.now(report.tzName).toString();
-            Path userCsvFolder = FileUtils.getUserReportDir(user.email, user.appName, reportId, date);
-
-            generateReport(userCsvFolder);
-
-            long newNow = System.currentTimeMillis();
-
-            log.info("Processed report for {}, time {} ms.", user.email, newNow - now);
-            log.debug(report);
-
-            report.lastReportAt = newNow;
-            long initialDelaySeconds = report.calculateDelayInSeconds();
-            report.nextReportAt = newNow + initialDelaySeconds * 1000;
-
-            //rescheduling report
-            log.info("Rescheduling report for {} with delay {}.",
-                    user.email, initialDelaySeconds);
-            reportScheduler.schedule(this, initialDelaySeconds, TimeUnit.SECONDS);
+            long finishedAt = generateReport();
+            report.lastReportAt = finishedAt;
+            reschedule(finishedAt);
         } catch (IllegalCommandException ice) {
             log.info("Seems like report is expired for {}.", user.email);
             report.nextReportAt = -1L;
         } catch (Exception e) {
             log.debug("Error generating report {} for {}.", report, user.email, e);
         }
+    }
+
+    public long generateReport() {
+        long now = System.currentTimeMillis();
+
+        String date = LocalDate.now(report.tzName).toString();
+        Path userCsvFolder = FileUtils.getUserReportDir(user.email, user.appName, reportId, date);
+
+        generateReport(userCsvFolder);
+
+        long newNow = System.currentTimeMillis();
+
+        log.info("Processed report for {}, time {} ms.", user.email, newNow - now);
+        log.debug(report);
+
+        return newNow;
+    }
+
+    public void reschedule(long reportFinishedAt) {
+        long initialDelaySeconds = report.calculateDelayInSeconds();
+        report.nextReportAt = reportFinishedAt + initialDelaySeconds * 1000;
+
+        //rescheduling report
+        log.info("Rescheduling report for {} with delay {}.",
+                user.email, initialDelaySeconds);
+        reportScheduler.schedule(this, initialDelaySeconds, TimeUnit.SECONDS);
     }
 
     private void generateReport(Path userCsvFolder) {
@@ -175,7 +184,7 @@ public class ReportTask implements Runnable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        ReportTask that = (ReportTask) o;
+        PeriodicReportTask that = (PeriodicReportTask) o;
         return dashId == that.dashId
                 && reportId == that.reportId
                 && Objects.equals(user, that.user);

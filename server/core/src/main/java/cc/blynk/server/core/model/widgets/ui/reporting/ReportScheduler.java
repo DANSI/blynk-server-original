@@ -68,7 +68,7 @@ public class ReportScheduler extends ScheduledThreadPoolExecutor {
 
     public void schedule(User user, int dashId, Report report, long delayInSeconds) {
         schedule(
-                new ReportTask(user, dashId, report, this),
+                new PeriodicReportTask(user, dashId, report, this),
                 delayInSeconds,
                 TimeUnit.SECONDS
         );
@@ -82,7 +82,7 @@ public class ReportScheduler extends ScheduledThreadPoolExecutor {
     }
 
     public boolean cancelStoredFuture(User user, int dashId, Report report) {
-        ReportTask task = new ReportTask(user, dashId, report);
+        PeriodicReportTask task = new PeriodicReportTask(user, dashId, report);
         ScheduledFuture<?> scheduledFuture = map.remove(task);
         if (scheduledFuture == null) {
             return false;

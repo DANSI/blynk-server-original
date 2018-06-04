@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.widgets.ui.reporting.type.BaseReportType;
 import cc.blynk.server.core.model.widgets.ui.reporting.type.DailyReport;
 import cc.blynk.server.core.model.widgets.ui.reporting.type.OneTimeReport;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.utils.validators.BlynkEmailValidator;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -75,7 +76,9 @@ public class Report {
     }
 
     public boolean isValid() {
-        return reportType != null && reportType.isValid() && reportSources != null && reportSources.length > 0;
+        return reportType != null && reportType.isValid()
+                && reportSources != null && reportSources.length > 0
+                && BlynkEmailValidator.isValidEmail(recipients);
     }
 
     public boolean isPeriodic() {

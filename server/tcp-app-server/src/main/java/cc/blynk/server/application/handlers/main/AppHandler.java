@@ -52,6 +52,7 @@ import cc.blynk.server.application.handlers.main.logic.graph.GetEnhancedGraphDat
 import cc.blynk.server.application.handlers.main.logic.graph.GetGraphDataLogic;
 import cc.blynk.server.application.handlers.main.logic.reporting.CreateReportLogic;
 import cc.blynk.server.application.handlers.main.logic.reporting.DeleteReportLogic;
+import cc.blynk.server.application.handlers.main.logic.reporting.ExportReportLogic;
 import cc.blynk.server.application.handlers.main.logic.reporting.UpdateReportLogic;
 import cc.blynk.server.application.handlers.main.logic.sharing.GetShareTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.sharing.RefreshShareTokenLogic;
@@ -89,6 +90,7 @@ import static cc.blynk.server.core.protocol.enums.Command.DELETE_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL_QR;
 import static cc.blynk.server.core.protocol.enums.Command.EXPORT_GRAPH_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.EXPORT_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.GET_CLONE_CODE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICES;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
@@ -170,6 +172,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final CreateReportLogic createReportLogic;
     private final UpdateReportLogic updateReportLogic;
     private final DeleteReportLogic deleteReportLogic;
+    private final ExportReportLogic exportReportLogic;
 
     private final GlobalStats stats;
 
@@ -226,6 +229,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.createReportLogic = new CreateReportLogic(holder);
         this.updateReportLogic = new UpdateReportLogic(holder);
         this.deleteReportLogic = new DeleteReportLogic(holder);
+        this.exportReportLogic = new ExportReportLogic(holder);
 
         this.state = state;
         this.stats = holder.stats;
@@ -409,6 +413,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
             case DELETE_DEVICE_DATA :
                 deleteDeviceDataLogic.messageReceived(ctx, state.user, msg);
                 break;
+
             case CREATE_REPORT :
                 createReportLogic.messageReceived(ctx, state.user, msg);
                 break;
@@ -417,6 +422,9 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 break;
             case DELETE_REPORT :
                 deleteReportLogic.messageReceived(ctx, state.user, msg);
+                break;
+            case EXPORT_REPORT :
+                exportReportLogic.messageReceived(ctx, state.user, msg);
                 break;
         }
     }
