@@ -334,8 +334,11 @@ public class ReportingStorageDao implements Closeable {
     public void renameOldReportingFiles() {
         long now = System.currentTimeMillis();
         log.info("Renaming of old reporting files started...");
+        Path reportingPath = Paths.get(dataFolder);
+        if (Files.notExists(reportingPath)) {
+            return;
+        }
         try {
-            Path reportingPath = Paths.get(dataFolder);
             try (DirectoryStream<Path> reportingFolder = Files.newDirectoryStream(reportingPath, "*")) {
                 for (Path userReportingDirectory : reportingFolder) {
                     if (Files.isDirectory(userReportingDirectory)) {
