@@ -28,6 +28,10 @@ public abstract class BaseReportType {
 
     public abstract long getDuration();
 
+    public abstract String getDurationLabel();
+
+    public abstract void buildDynamicSection(StringBuilder sb, ZoneId zoneId);
+
     public long getFetchCount(GraphGranularityType granularity) {
         switch (granularity) {
             case DAILY:

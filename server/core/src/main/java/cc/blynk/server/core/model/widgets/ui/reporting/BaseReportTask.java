@@ -103,9 +103,11 @@ public abstract class BaseReportTask implements Runnable {
             default:
                 if (filePerDevicePerPin(output, fetchCount)) {
                     ReportFileLink fileLink = new ReportFileLink(output, report.name);
-                    String reportSubj = "Your report " + report.name + " is ready!";
-                    String reportBody = fileLink.makeBody(downloadUrl);
-                    mailWrapper.sendHtml(report.recipients, reportSubj, reportBody);
+                    String durationLabel = report.reportType.getDurationLabel().toLowerCase();
+                    String subj = "Your " + durationLabel + " " + report.name + " is ready";
+                    String gzipDownloadUrl = fileLink.makeBody(downloadUrl);
+                    String dynamicSection = report.buildDynamicSection();
+                    mailWrapper.sendReportEmail(report.recipients, subj, gzipDownloadUrl, dynamicSection);
                     return ReportResult.OK;
                 } else {
                     log.info("No data for report for user {} and reportId {}.", key.user, report.id);

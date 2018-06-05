@@ -344,9 +344,9 @@ public class ReportingTest extends IntegrationBase {
             tries++;
         }
 
-        verify(mailWrapper, never()).sendHtml(eq("test@gmail.com"), eq("DailyReport"), eq("Your report is ready."));
-        verify(mailWrapper, never()).sendHtml(eq("test@gmail.com"), eq("DailyReport2"), eq("Your report is ready."));
-        verify(mailWrapper, never()).sendHtml(eq("test@gmail.com"), eq("DailyReport3"), eq("Your report is ready."));
+        verify(mailWrapper, never()).sendReportEmail(eq("test@gmail.com"), eq("DailyReport"), any(), any());
+        verify(mailWrapper, never()).sendReportEmail(eq("test@gmail.com"), eq("DailyReport2"), any(), any());
+        verify(mailWrapper, never()).sendReportEmail(eq("test@gmail.com"), eq("DailyReport3"), any(), any());
         assertEquals(3, holder.reportScheduler.getCompletedTaskCount());
         assertEquals(7, holder.reportScheduler.getTaskCount());
     }
@@ -402,8 +402,8 @@ public class ReportingTest extends IntegrationBase {
             tries++;
         }
 
-        verify(mailWrapper, never()).sendHtml(eq("test@gmail.com"), eq("DailyReport"), any());
-        verify(mailWrapper, never()).sendHtml(eq("test@gmail.com"), eq("DailyReport2"), any());
+        verify(mailWrapper, never()).sendReportEmail(eq("test@gmail.com"), eq("DailyReport"), any(), any());
+        verify(mailWrapper, never()).sendReportEmail(eq("test@gmail.com"), eq("DailyReport2"), any(), any());
         assertEquals(2, holder.reportScheduler.getCompletedTaskCount());
         assertEquals(4, holder.reportScheduler.getTaskCount());
 
@@ -472,9 +472,10 @@ public class ReportingTest extends IntegrationBase {
 
         String date = LocalDate.now(report.tzName).toString();
         String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
-        verify(mailWrapper, timeout(3000)).sendHtml(eq("test@gmail.com"),
-                eq("Your report " + report.name + " is ready!"),
-                eq("<html><body><a href=\"http://127.0.0.1:18080/" + filename + "\">DailyReport</a><br></body></html>"));
+        verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
+                eq("Your daily DailyReport is ready"),
+                eq("<html><body><a href=\"http://127.0.0.1:18080/" + filename + "\">DailyReport</a><br></body></html>"),
+                eq("Report name: DailyReport<br>Period: Daily, at 00:00"));
         sleep(200);
         assertEquals(1, holder.reportScheduler.getCompletedTaskCount());
         assertEquals(2, holder.reportScheduler.getTaskCount());
@@ -537,9 +538,10 @@ public class ReportingTest extends IntegrationBase {
 
         String date = LocalDate.now(report.tzName).toString();
         String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
-        verify(mailWrapper, timeout(3000)).sendHtml(eq("test@gmail.com"),
-                eq("Your report " + report.name + " is ready!"),
-                eq("<html><body><a href=\"http://127.0.0.1:18080/" + filename + "\">DailyReport</a><br></body></html>"));
+        verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
+                eq("Your one time " + report.name + " is ready"),
+                eq("<html><body><a href=\"http://127.0.0.1:18080/" + filename + "\">DailyReport</a><br></body></html>"),
+                eq("Report name: DailyReport<br>Period: One time"));
         sleep(200);
         assertEquals(1, holder.reportScheduler.getCompletedTaskCount());
         assertEquals(1, holder.reportScheduler.getTaskCount());

@@ -118,6 +118,13 @@ public class Report {
         return initialDelaySeconds;
     }
 
+    String buildDynamicSection() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Report name: ").append(name).append("<br>");
+        reportType.buildDynamicSection(sb, tzName);
+        return sb.toString();
+    }
+
     @Override
     public String toString() {
         return JsonParser.toJson(this);

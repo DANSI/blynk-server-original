@@ -7,6 +7,8 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.TemporalAdjusters;
 
+import static cc.blynk.server.core.model.widgets.ui.reporting.type.DayOfMonth.FIRST;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -14,7 +16,7 @@ import java.time.temporal.TemporalAdjusters;
  */
 public class MonthlyReport extends DailyReport {
 
-    public final DayOfMonth dayOfMonth;
+    private final DayOfMonth dayOfMonth;
 
     @JsonCreator
     public MonthlyReport(@JsonProperty("atTime") long atTime,
@@ -23,12 +25,23 @@ public class MonthlyReport extends DailyReport {
                          @JsonProperty("endTs") long endTs,
                          @JsonProperty("dayOfMonth") DayOfMonth dayOfMonth) {
         super(atTime, durationType, startTs, endTs);
-        this.dayOfMonth = dayOfMonth;
+        this.dayOfMonth = dayOfMonth == null ? FIRST : dayOfMonth;
     }
 
     @Override
     public long getDuration() {
         return 30;
+    }
+
+    @Override
+    public String getDurationLabel() {
+        return "Monthly";
+    }
+
+    @Override
+    public void addReportSpecificAtTime(StringBuilder sb, ZoneId zoneId) {
+        super.addReportSpecificAtTime(sb, zoneId);
+        sb.append(" ").append(dayOfMonth.label);
     }
 
     @Override

@@ -22,8 +22,6 @@ public final class FileLoaderUtil {
 
     private static final String NEW_LINE = System.getProperty("line.separator");
 
-    private static final String RESET_PASS_STATIC_PATH = "static/reset/";
-
     private FileLoaderUtil() {
     }
 
@@ -48,11 +46,11 @@ public final class FileLoaderUtil {
     }
 
     public static String readResetEmailTemplateAsString() {
-        return RESET_PASS_STATIC_PATH + "reset-email.html";
+        return readFileAsString("static/reset/reset-email.html");
     }
 
     public static String readResetPassLandingTemplateAsString() {
-        return RESET_PASS_STATIC_PATH + "enterNewPassword.html";
+        return readFileAsString("static/reset/enterNewPassword.html");
     }
 
     /**

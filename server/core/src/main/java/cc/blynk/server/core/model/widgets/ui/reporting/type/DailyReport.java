@@ -15,13 +15,13 @@ import java.time.ZonedDateTime;
  */
 public class DailyReport extends BaseReportType {
 
-    public final long atTime;
+    private final long atTime;
 
-    public final ReportDurationType durationType;
+    private final ReportDurationType durationType;
 
-    public final long startTs;
+    private final long startTs;
 
-    public final long endTs;
+    private final long endTs;
 
     @JsonCreator
     public DailyReport(@JsonProperty("atTime") long atTime,
@@ -44,8 +44,40 @@ public class DailyReport extends BaseReportType {
         return 1;
     }
 
+    static ZonedDateTime getZonedFromTs(long ts, ZoneId zoneId) {
+        return ZonedDateTime.ofInstant(Instant.ofEpochMilli(ts), zoneId);
+    }
+
+    @Override
+    public String getDurationLabel() {
+        return "Daily";
+    }
+
+    @Override
+    public void buildDynamicSection(StringBuilder sb, ZoneId zoneId) {
+        sb.append("Period: ").append(getDurationLabel());
+        addReportSpecificAtTime(sb, zoneId);
+
+        if (durationType == ReportDurationType.CUSTOM) {
+            sb.append("<br>");
+
+            ZonedDateTime date;
+
+            date = getZonedFromTs(startTs, zoneId);
+            sb.append("Start date: ").append(date.toLocalDate()).append("<br>");
+
+            date = ZonedDateTime.ofInstant(Instant.ofEpochMilli(endTs), zoneId);
+            sb.append("End date: ").append(date.toLocalDate()).append("<br>");
+        }
+    }
+
+    public void addReportSpecificAtTime(StringBuilder sb, ZoneId zoneId) {
+        ZonedDateTime zonedAt = getZonedFromTs(startTs, zoneId);
+        sb.append(", ").append("at ").append(zonedAt.toLocalTime());
+    }
+
     ZonedDateTime buildZonedStartAt(ZonedDateTime zonedNow, ZoneId zoneId) {
-        ZonedDateTime zonedStartAt = ZonedDateTime.ofInstant(Instant.ofEpochMilli(atTime), zoneId);
+        ZonedDateTime zonedStartAt = getZonedFromTs(atTime, zoneId);
         zonedStartAt = zonedNow
                 .withHour(zonedStartAt.getHour())
                 .withMinute(zonedStartAt.getMinute())
@@ -56,8 +88,7 @@ public class DailyReport extends BaseReportType {
 
     private ZonedDateTime adjustToStartDate(ZonedDateTime zonedStartAt, ZonedDateTime zonedNow, ZoneId zoneId) {
         if (durationType == ReportDurationType.CUSTOM) {
-            ZonedDateTime zonedStartDate = ZonedDateTime.ofInstant(Instant.ofEpochMilli(startTs), zoneId)
-                    .with(LocalTime.MIN);
+            ZonedDateTime zonedStartDate = getZonedFromTs(startTs, zoneId).with(LocalTime.MIN);
             if (zonedStartDate.isAfter(zonedNow)) {
                 zonedStartAt = zonedStartAt
                         .withDayOfMonth(zonedStartDate.getDayOfMonth())
@@ -70,8 +101,7 @@ public class DailyReport extends BaseReportType {
 
     public boolean isExpired(ZonedDateTime zonedNow, ZoneId zoneId) {
         if (durationType == ReportDurationType.CUSTOM) {
-            ZonedDateTime zonedEndDate =
-                    ZonedDateTime.ofInstant(Instant.ofEpochMilli(endTs), zoneId).with(LocalTime.MAX);
+            ZonedDateTime zonedEndDate = getZonedFromTs(endTs, zoneId).with(LocalTime.MAX);
             return zonedEndDate.isBefore(zonedNow);
         }
         return false;

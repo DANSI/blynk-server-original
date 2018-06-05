@@ -12,6 +12,7 @@ public class MailWrapper {
 
     private final MailClient client;
     private final String emailBody;
+    private final String reportBody;
 
     public MailWrapper(MailProperties mailProperties, String productName) {
         var host = mailProperties.getProperty("mail.smtp.host");
@@ -21,6 +22,17 @@ public class MailWrapper {
             client = new GMailClient(mailProperties);
         }
         this.emailBody = FileLoaderUtil.readFileAsString("static/register-email.html");
+        this.reportBody = FileLoaderUtil.readFileAsString("static/report_mail.html");
+    }
+
+    public void sendReportEmail(String to,
+                                String subj,
+                                String downloadUrl,
+                                String dynamicSection) throws Exception  {
+        String body = reportBody
+                .replace("{DOWNLOAD_URL}", downloadUrl)
+                .replace("{DYNAMIC_SECTION}", dynamicSection);
+        sendHtml(to, subj, body);
     }
 
     public void sendWelcomeEmailForNewUser(String to) throws Exception {

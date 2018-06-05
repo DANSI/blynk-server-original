@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class OneTimeReport extends BaseReportType {
 
-    public final long rangeMillis;
+    private final long rangeMillis;
 
     @JsonCreator
     public OneTimeReport(@JsonProperty("rangeMillis") long rangeMillis) {
@@ -24,6 +24,16 @@ public class OneTimeReport extends BaseReportType {
     @Override
     public boolean isValid() {
         return getDuration() > 0;
+    }
+
+    @Override
+    public String getDurationLabel() {
+        return "One time";
+    }
+
+    @Override
+    public void buildDynamicSection(StringBuilder sb, ZoneId zoneId) {
+        sb.append("Period: ").append(getDurationLabel());
     }
 
     @Override
