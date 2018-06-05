@@ -311,6 +311,10 @@ public class TestAppClient extends BaseTestAppClient {
         send("updateReport " + dashId + BODY_SEPARATOR + report.toString());
     }
 
+    public void getWidget(int dashId, long widgetId) {
+        send("getWidget " + dashId + BODY_SEPARATOR + widgetId);
+    }
+
     public void deleteReport(int dashId, int reportId) {
         send("deleteReport " + dashId + BODY_SEPARATOR + reportId);
     }

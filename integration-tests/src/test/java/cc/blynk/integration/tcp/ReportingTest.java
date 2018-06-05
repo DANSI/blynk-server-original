@@ -6,6 +6,7 @@ import cc.blynk.server.core.dao.ReportingStorageDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.ui.reporting.Report;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportResult;
@@ -36,6 +37,7 @@ import java.util.concurrent.TimeUnit;
 
 import static cc.blynk.server.core.model.widgets.ui.reporting.ReportOutput.CSV_FILE_PER_DEVICE;
 import static cc.blynk.server.core.model.widgets.ui.reporting.ReportOutput.CSV_FILE_PER_DEVICE_PER_PIN;
+import static cc.blynk.server.core.model.widgets.ui.reporting.ReportResult.EXPIRED;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertEquals;
@@ -484,6 +486,69 @@ public class ReportingTest extends IntegrationBase {
                 DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
         assertTrue(Files.exists(result));
         assertEquals(146, Files.size(result));
+    }
+
+    @Test
+    public void testDailyReportWithSinglePointIsTriggeredAndExpired() throws Exception {
+        String tempDir = holder.props.getProperty("data.folder");
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+        FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
+
+        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportSource reportSource = new TileTemplateReportSource(
+                new ReportDataStream[] {reportDataStream},
+                1,
+                new int[] {0}
+        );
+
+        ReportingWidget reportingWidget = new ReportingWidget();
+        reportingWidget.id = 222222;
+        reportingWidget.height = 1;
+        reportingWidget.width = 1;
+        reportingWidget.reportSources = new ReportSource[] {
+                reportSource
+        };
+
+        clientPair.appClient.createWidget(1, reportingWidget);
+        clientPair.appClient.verifyResult(ok(1));
+
+        //a bit upfront
+        long now = System.currentTimeMillis() + 1500;
+
+        Report report = new Report(1, "DailyReport",
+                new ReportSource[] {reportSource},
+                new DailyReport(now, ReportDurationType.CUSTOM, now, now), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("UTC"), 0, 0, null);
+        clientPair.appClient.createReport(1, report);
+
+        report = clientPair.appClient.parseReportFromResponse(2);
+        assertNotNull(report);
+        assertEquals(System.currentTimeMillis(), report.nextReportAt, 2000);
+
+        String date = LocalDate.now(report.tzName).toString();
+        String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
+        verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
+                eq("Your daily DailyReport is ready"),
+                eq("<html><body><a href=\"http://127.0.0.1:18080/" + filename + "\">DailyReport</a><br></body></html>"),
+                any());
+        sleep(200);
+        assertEquals(1, holder.reportScheduler.getCompletedTaskCount());
+        assertEquals(1, holder.reportScheduler.getTaskCount());
+
+        Path result = Paths.get(FileUtils.CSV_DIR,
+                DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+        assertTrue(Files.exists(result));
+        assertEquals(146, Files.size(result));
+
+        clientPair.appClient.getWidget(1, 222222);
+        ReportingWidget reportingWidget2 = (ReportingWidget) JsonParser.parseWidget(clientPair.appClient.getBody(3), 0);
+        assertNotNull(reportingWidget2);
+        assertEquals(EXPIRED, reportingWidget2.reports[0].lastRunResult);
     }
 
     @Test

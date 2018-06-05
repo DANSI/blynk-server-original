@@ -60,7 +60,8 @@ public class ReportScheduler extends ScheduledThreadPoolExecutor {
                                     schedule(user, dashBoard.id, report, initialDelaySeconds);
                                     counter++;
                                 } catch (Exception e) {
-                                    log.trace("Error scheduling report for {}, {}", user.email, report.id);
+                                    report.lastRunResult = ReportResult.EXPIRED;
+                                    log.debug("Error scheduling report for {}, {}", user.email, report.id);
                                 }
                             }
                         }
