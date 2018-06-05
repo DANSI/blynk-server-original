@@ -110,7 +110,7 @@ public abstract class BaseReportTask implements Runnable {
                     mailWrapper.sendReportEmail(report.recipients, subj, gzipDownloadUrl, dynamicSection);
                     return ReportResult.OK;
                 } else {
-                    log.info("No data for report for user {} and reportId {}.", key.user, report.id);
+                    log.info("No data for report for user {} and reportId {}.", key.user.email, report.id);
                     return ReportResult.NO_DATA;
                 }
         }

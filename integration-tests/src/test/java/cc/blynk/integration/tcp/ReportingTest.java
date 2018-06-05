@@ -514,7 +514,7 @@ public class ReportingTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, reportingWidget);
         clientPair.appClient.verifyResult(ok(1));
 
-        Report report = new Report(1, "DailyReport",
+        Report report = new Report(1, "OneTime Report",
                 new ReportSource[] {reportSource},
                 new OneTimeReport(TimeUnit.DAYS.toMillis(1)), "test@gmail.com",
                 GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("UTC"), 0, 0, null);
@@ -525,7 +525,8 @@ public class ReportingTest extends IntegrationBase {
         assertEquals(0, report.nextReportAt);
         assertEquals(0, report.lastReportAt);
 
-        verify(mailWrapper, never()).sendHtml(eq("test@gmail.com"),
+        verify(mailWrapper, never()).sendReportEmail(eq("test@gmail.com"),
+                any(),
                 any(),
                 any());
 
@@ -539,9 +540,9 @@ public class ReportingTest extends IntegrationBase {
         String date = LocalDate.now(report.tzName).toString();
         String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
         verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
-                eq("Your one time " + report.name + " is ready"),
-                eq("<html><body><a href=\"http://127.0.0.1:18080/" + filename + "\">DailyReport</a><br></body></html>"),
-                eq("Report name: DailyReport<br>Period: One time"));
+                eq("Your one time OneTime Report is ready"),
+                eq("<html><body><a href=\"http://127.0.0.1:18080/" + filename + "\">OneTime Report</a><br></body></html>"),
+                eq("Report name: OneTime Report<br>Period: One time"));
         sleep(200);
         assertEquals(1, holder.reportScheduler.getCompletedTaskCount());
         assertEquals(1, holder.reportScheduler.getTaskCount());
@@ -552,6 +553,54 @@ public class ReportingTest extends IntegrationBase {
                 DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
         assertTrue(Files.exists(result));
         assertEquals(146, Files.size(result));
+    }
+
+    @Test
+    public void testOneTimeReportIsTriggeredAndNoData() throws Exception {
+        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportSource reportSource = new TileTemplateReportSource(
+                new ReportDataStream[] {reportDataStream},
+                1,
+                new int[] {0}
+        );
+
+        ReportingWidget reportingWidget = new ReportingWidget();
+        reportingWidget.height = 1;
+        reportingWidget.width = 1;
+        reportingWidget.reportSources = new ReportSource[] {
+                reportSource
+        };
+
+        clientPair.appClient.createWidget(1, reportingWidget);
+        clientPair.appClient.verifyResult(ok(1));
+
+        Report report = new Report(1, "OneTime Report",
+                new ReportSource[] {reportSource},
+                new OneTimeReport(TimeUnit.DAYS.toMillis(1)), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("UTC"), 0, 0, null);
+
+        clientPair.appClient.createReport(1, report);
+        report = clientPair.appClient.parseReportFromResponse(2);
+        assertNotNull(report);
+        assertEquals(0, report.nextReportAt);
+        assertEquals(0, report.lastReportAt);
+
+        clientPair.appClient.exportReport(1, 1);
+        report = clientPair.appClient.parseReportFromResponse(3);
+        assertNotNull(report);
+        assertEquals(0, report.nextReportAt);
+        assertEquals(System.currentTimeMillis(), report.lastReportAt, 2000);
+        assertEquals(ReportResult.NO_DATA, report.lastRunResult);
+
+        verify(mailWrapper, never()).sendReportEmail(eq("test@gmail.com"),
+                any(),
+                any(),
+                any());
+        sleep(200);
+        assertEquals(1, holder.reportScheduler.getCompletedTaskCount());
+        assertEquals(1, holder.reportScheduler.getTaskCount());
+        assertEquals(0, holder.reportScheduler.map.size());
+        assertEquals(0, holder.reportScheduler.getActiveCount());
     }
 }
 
