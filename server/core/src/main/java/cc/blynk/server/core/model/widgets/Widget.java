@@ -236,7 +236,7 @@ public abstract class Widget implements CopyObject<Widget> {
                 this.isDefaultColor = false;
                 break;
             default:
-                throw new RuntimeException("Error setting widget property.");
+                throw new RuntimeException("Property is not supported for this widget.");
         }
     }
 }
