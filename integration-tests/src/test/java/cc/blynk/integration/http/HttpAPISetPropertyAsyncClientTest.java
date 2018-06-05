@@ -146,7 +146,7 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
         clientPair.appClient.updateWidget(1, "{\"id\":1, \"width\":1, \"height\":1, \"x\":1, \"y\":1, \"label\":\"Some Text\", \"type\":\"BUTTON\",         \"pinType\":\"VIRTUAL\", \"pin\":1, \"value\":\"1\"}");
         clientPair.appClient.verifyResult(ok(1));
 
-        Future<Response> f = httpclient.prepareGet(httpsServerUrl + token + "/update/v1?onColor=newOffButtonLabel").execute();
+        Future<Response> f = httpclient.prepareGet(httpsServerUrl + token + "/update/v1?offLabel=newOffButtonLabel").execute();
         Response response = f.get();
 
         assertEquals(200, response.getStatusCode());
