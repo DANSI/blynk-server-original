@@ -62,7 +62,7 @@ public class ReportScheduler extends ScheduledThreadPoolExecutor {
                                     counter++;
                                 } catch (IllegalCommandBodyException e) {
                                     report.lastRunResult = ReportResult.EXPIRED;
-                                    log.debug("Problem scheduling report for {}, {}", user.email, report.id);
+                                    log.debug("Report is expired for {}, {}", user.email, report.id);
                                 } catch (Exception e) {
                                     report.lastRunResult = ReportResult.ERROR;
                                     log.debug("Error scheduling report for {}, {}", user.email, report.id);
