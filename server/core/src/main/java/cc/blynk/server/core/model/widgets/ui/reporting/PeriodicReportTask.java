@@ -1,7 +1,7 @@
 package cc.blynk.server.core.model.widgets.ui.reporting;
 
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 
 import java.util.concurrent.TimeUnit;
 
@@ -29,7 +29,7 @@ public class PeriodicReportTask extends BaseReportTask {
             report.lastReportAt = finishedAt;
             reschedule(finishedAt);
             log.debug("After rescheduling: {}", report);
-        } catch (IllegalCommandException ice) {
+        } catch (IllegalCommandBodyException ice) {
             log.info("Seems like report is expired for {}.", key.user.email);
             report.lastRunResult = ReportResult.EXPIRED;
         } catch (Exception e) {

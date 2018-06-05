@@ -13,4 +13,7 @@ public class IllegalCommandBodyException extends BaseServerException {
         super(message, msgId, Response.ILLEGAL_COMMAND_BODY);
     }
 
+    public IllegalCommandBodyException(String message) {
+        super(message, Response.ILLEGAL_COMMAND_BODY);
+    }
 }

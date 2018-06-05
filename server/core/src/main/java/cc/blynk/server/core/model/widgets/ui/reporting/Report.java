@@ -8,7 +8,7 @@ import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportSource;
 import cc.blynk.server.core.model.widgets.ui.reporting.type.BaseReportType;
 import cc.blynk.server.core.model.widgets.ui.reporting.type.DailyReport;
 import cc.blynk.server.core.model.widgets.ui.reporting.type.OneTimeReport;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.utils.validators.BlynkEmailValidator;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -97,22 +97,20 @@ public class Report {
         return 4900;
     }
 
-    public long calculateDelayInSeconds() {
+    public long calculateDelayInSeconds() throws IllegalCommandBodyException {
         DailyReport basePeriodicReportType = (DailyReport) reportType;
 
         ZonedDateTime zonedNow = ZonedDateTime.now(tzName);
         ZonedDateTime zonedStartAt = basePeriodicReportType.getNextTriggerTime(zonedNow, tzName);
         if (basePeriodicReportType.isExpired(zonedStartAt, tzName)) {
-            //todo more logging
-            throw new IllegalCommandException("Report is expired.");
+            throw new IllegalCommandBodyException("Report is expired.");
         }
 
         Duration duration = Duration.between(zonedNow, zonedStartAt);
         long initialDelaySeconds = duration.getSeconds();
 
         if (initialDelaySeconds < 0) {
-            log.error("Initial delay in less than zero. {}", this);
-            throw new IllegalCommandException("Initial delay in less than zero.");
+            throw new IllegalCommandBodyException("Initial delay in less than zero.");
         }
 
         return initialDelaySeconds;

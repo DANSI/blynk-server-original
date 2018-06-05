@@ -5,6 +5,7 @@ import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -59,8 +60,11 @@ public class ReportScheduler extends ScheduledThreadPoolExecutor {
                                     report.nextReportAt = System.currentTimeMillis() + initialDelaySeconds * 1000;
                                     schedule(user, dashBoard.id, report, initialDelaySeconds);
                                     counter++;
-                                } catch (Exception e) {
+                                } catch (IllegalCommandBodyException e) {
                                     report.lastRunResult = ReportResult.EXPIRED;
+                                    log.debug("Problem scheduling report for {}, {}", user.email, report.id);
+                                } catch (Exception e) {
+                                    report.lastRunResult = ReportResult.ERROR;
                                     log.debug("Error scheduling report for {}, {}", user.email, report.id);
                                 }
                             }

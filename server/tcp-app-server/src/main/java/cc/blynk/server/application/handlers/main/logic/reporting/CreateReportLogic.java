@@ -7,6 +7,7 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.ui.reporting.Report;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportScheduler;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.ArrayUtil;
@@ -82,7 +83,15 @@ public class CreateReportLogic {
         }
 
         if (report.isPeriodic()) {
-            long initialDelaySeconds = report.calculateDelayInSeconds();
+            long initialDelaySeconds;
+            try {
+                initialDelaySeconds = report.calculateDelayInSeconds();
+            } catch (IllegalCommandBodyException e) {
+                //re throw, quick workaround
+                log.debug("Report has wrong configuration for {}. Report : {}", user.email, report);
+                throw new IllegalCommandBodyException(e.getMessage(), message.id);
+            }
+
             log.info("Adding periodic report for user {} with delay {} to scheduler.",
                     user.email, initialDelaySeconds);
             log.debug(reportJson);
