@@ -21,6 +21,8 @@ import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
+import static cc.blynk.server.core.model.widgets.ui.reporting.ReportOutput.CSV_FILE_PER_DEVICE_PER_PIN;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -76,7 +78,7 @@ public class Report {
         this.recipients = recipients;
         this.granularityType = granularityType;
         this.isActive = isActive;
-        this.reportOutput = reportOutput;
+        this.reportOutput = reportOutput == null ? CSV_FILE_PER_DEVICE_PER_PIN : reportOutput;
         this.tzName = tzName;
         this.nextReportAt = nextReportAt;
         this.lastReportAt = lastReportAt;
