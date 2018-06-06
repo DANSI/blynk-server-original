@@ -16,7 +16,8 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.CommonByteBufUtil.ok;
+import static cc.blynk.server.core.protocol.enums.Command.UPDATE_REPORT;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StringUtils.split2;
 
 /**
@@ -103,7 +104,7 @@ public class UpdateReportLogic {
         reportingWidget.reports = ArrayUtil.copyAndReplace(reportingWidget.reports, report, existingReportIndex);
         dash.updatedAt = System.currentTimeMillis();
 
-        ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
+        ctx.writeAndFlush(makeUTF8StringMessage(UPDATE_REPORT, message.id, report.toString()), ctx.voidPromise());
     }
 
 }

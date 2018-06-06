@@ -253,7 +253,9 @@ public class ReportingTest extends IntegrationBase {
                 GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"), 0, 0, null);
 
         clientPair.appClient.updateReport(1, report);
-        clientPair.appClient.verifyResult(ok(6));
+        report = clientPair.appClient.parseReportFromResponse(6);
+        assertNotNull(report);
+        assertEquals("Updated", report.name);
 
         clientPair.appClient.deleteReport(1, report.id);
         clientPair.appClient.verifyResult(ok(7));
