@@ -1,6 +1,6 @@
 package cc.blynk.server.hardware.handlers.hardware.mqtt.logic;
 
-import cc.blynk.server.core.dao.ReportingDao;
+import cc.blynk.server.core.dao.ReportingStorageDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
@@ -30,10 +30,10 @@ public class MqttHardwareLogic {
 
     private static final Logger log = LogManager.getLogger(MqttHardwareLogic.class);
 
-    private final ReportingDao reportingDao;
+    private final ReportingStorageDao reportingDao;
     private final SessionDao sessionDao;
 
-    public MqttHardwareLogic(SessionDao sessionDao, ReportingDao reportingDao) {
+    public MqttHardwareLogic(SessionDao sessionDao, ReportingStorageDao reportingDao) {
         this.sessionDao = sessionDao;
         this.reportingDao = reportingDao;
     }

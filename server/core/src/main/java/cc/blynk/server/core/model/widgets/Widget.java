@@ -179,6 +179,8 @@ public abstract class Widget implements CopyObject<Widget> {
 
     public abstract void erase();
 
+    public abstract boolean isAssignedToDevice(int deviceId);
+
     protected void append(StringBuilder sb, byte pin, PinType pinType) {
         if (pin != DataStream.NO_PIN && pinType != PinType.VIRTUAL) {
             PinMode pinMode = getModeType();
@@ -234,7 +236,7 @@ public abstract class Widget implements CopyObject<Widget> {
                 this.isDefaultColor = false;
                 break;
             default:
-                throw new RuntimeException("Error setting widget property.");
+                throw new RuntimeException("Property is not supported for this widget.");
         }
     }
 }

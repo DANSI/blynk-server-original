@@ -66,4 +66,8 @@ public enum WidgetProperty {
         }
     }
 
+    @Override
+    public String toString() {
+        return label;
+    }
 }

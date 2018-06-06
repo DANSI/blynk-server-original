@@ -2,11 +2,12 @@ package cc.blynk.server;
 
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.FileManager;
-import cc.blynk.server.core.dao.ReportingDao;
+import cc.blynk.server.core.dao.ReportingStorageDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.dao.ota.OTAManager;
+import cc.blynk.server.core.model.widgets.ui.reporting.ReportScheduler;
 import cc.blynk.server.core.processors.EventorProcessor;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.db.DBManager;
@@ -50,7 +51,7 @@ public class Holder {
 
     public final TokenManager tokenManager;
 
-    public final ReportingDao reportingDao;
+    public final ReportingStorageDao reportingDao;
 
     public final DBManager dbManager;
 
@@ -67,6 +68,7 @@ public class Holder {
     public final String region;
     public final TimerWorker timerWorker;
     public final ReadingWidgetsWorker readingWidgetsWorker;
+    public final ReportScheduler reportScheduler;
 
     public final EventorProcessor eventorProcessor;
     public final DefaultAsyncHttpClient asyncHttpClient;
@@ -76,7 +78,7 @@ public class Holder {
     public final Limits limits;
     public final TextHolder textHolder;
 
-    public final String csvDownloadUrl;
+    public final String downloadUrl;
 
     public final String host;
 
@@ -117,7 +119,7 @@ public class Holder {
         this.tokenManager = new TokenManager(this.userDao.users, dbManager, host);
         this.stats = new GlobalStats();
         final String reportingFolder = getReportingFolder(dataFolder);
-        this.reportingDao = new ReportingDao(reportingFolder,
+        this.reportingDao = new ReportingStorageDao(reportingFolder,
                 serverProperties.isRawDBEnabled() && dbManager.isDBEnabled());
 
         if (serverProperties.renameOldReportingFiles()) {
@@ -149,10 +151,11 @@ public class Holder {
         this.limits = new Limits(props);
         this.textHolder = new TextHolder(gcmProperties);
 
-        this.csvDownloadUrl = FileUtils.csvDownloadUrl(host,
+        this.downloadUrl = FileUtils.downloadUrl(host,
                 props.getProperty("http.port"),
                 props.getBoolProperty("force.port.80.for.csv")
         );
+        this.reportScheduler = new ReportScheduler(1, downloadUrl, mailWrapper, reportingDao, userDao.users);
 
         String contactEmail = serverProperties.getProperty("contact.email", mailProperties.getSMTPUsername());
         this.sslContextHolder = new SslContextHolder(props, contactEmail);
@@ -183,7 +186,7 @@ public class Holder {
         this.tokenManager = new TokenManager(this.userDao.users, dbManager, host);
         this.stats = new GlobalStats();
         final String reportingFolder = getReportingFolder(dataFolder);
-        this.reportingDao = new ReportingDao(reportingFolder,
+        this.reportingDao = new ReportingStorageDao(reportingFolder,
                 serverProperties.isRawDBEnabled() && dbManager.isDBEnabled());
 
         this.transportTypeHolder = new TransportTypeHolder(serverProperties);
@@ -210,10 +213,11 @@ public class Holder {
         this.limits = new Limits(props);
         this.textHolder = new TextHolder(new GCMProperties(Collections.emptyMap()));
 
-        this.csvDownloadUrl = FileUtils.csvDownloadUrl(host,
+        this.downloadUrl = FileUtils.downloadUrl(host,
                 props.getProperty("http.port"),
                 props.getBoolProperty("force.port.80.for.csv")
         );
+        this.reportScheduler = new ReportScheduler(1, downloadUrl, mailWrapper, reportingDao, userDao.users);
 
         this.sslContextHolder = new SslContextHolder(props, "test@blynk.cc");
         this.tokensPool = new TokensPool(60 * 60 * 1000);
@@ -240,6 +244,7 @@ public class Holder {
 
         System.out.println("Stopping BlockingIOProcessor...");
         blockingIOProcessor.close();
+        reportScheduler.shutdown();
         System.out.println("Stopping DBManager...");
         dbManager.close();
     }

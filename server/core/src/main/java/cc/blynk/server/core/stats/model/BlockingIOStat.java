@@ -1,6 +1,7 @@
 package cc.blynk.server.core.stats.model;
 
 import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.model.widgets.ui.reporting.ReportScheduler;
 
 /**
  * The Blynk Project.
@@ -25,7 +26,13 @@ class BlockingIOStat {
 
     private final long getServerExecutedTasks;
 
-    BlockingIOStat(BlockingIOProcessor blockingIOProcessor) {
+    private final int reportsActive;
+
+    private final long reportsExecuted;
+
+    private final int reportsFutureMapSize;
+
+    BlockingIOStat(BlockingIOProcessor blockingIOProcessor, ReportScheduler reportScheduler) {
         this(blockingIOProcessor.messagingExecutor.getQueue().size(),
              blockingIOProcessor.messagingExecutor.getCompletedTaskCount(),
 
@@ -36,14 +43,19 @@ class BlockingIOStat {
              blockingIOProcessor.dbExecutor.getCompletedTaskCount(),
 
              blockingIOProcessor.dbGetServerExecutor.getQueue().size(),
-             blockingIOProcessor.dbGetServerExecutor.getCompletedTaskCount()
+             blockingIOProcessor.dbGetServerExecutor.getCompletedTaskCount(),
+
+             reportScheduler.getQueue().size(),
+             reportScheduler.getCompletedTaskCount(),
+             reportScheduler.map.size()
         );
     }
 
     private BlockingIOStat(int messagingActiveTasks, long messagingExecutedTasks,
                           int historyActiveTasks, long historyExecutedTasks,
                           int dbActiveTasks, long dbExecutedTasks,
-                          int getServerActiveTasks, long getServerExecutedTasks) {
+                          int getServerActiveTasks, long getServerExecutedTasks,
+                          int reportsActive, long reportsExecuted, int reportsFutureMapSize) {
         this.messagingActiveTasks = messagingActiveTasks;
         this.messagingExecutedTasks = messagingExecutedTasks;
         this.historyActiveTasks = historyActiveTasks;
@@ -52,5 +64,8 @@ class BlockingIOStat {
         this.dbExecutedTasks = dbExecutedTasks;
         this.getServerActiveTasks = getServerActiveTasks;
         this.getServerExecutedTasks = getServerExecutedTasks;
+        this.reportsActive = reportsActive;
+        this.reportsExecuted = reportsExecuted;
+        this.reportsFutureMapSize = reportsFutureMapSize;
     }
 }

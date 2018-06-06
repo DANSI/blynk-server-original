@@ -21,6 +21,7 @@ public class Limits {
     public final int widgetSizeLimitBytes;
     public final int profileSizeLimitBytes;
     public final int hourlyRegistrationsLimit;
+    public final int reportsLimit;
 
     //hardware side limits
     public final long notificationPeriodLimitSec;
@@ -52,6 +53,7 @@ public class Limits {
         this.appIdleTimeout = props.getIntProperty("app.socket.idle.timeout", 300);
 
         this.hourlyRegistrationsLimit = props.getIntProperty("hourly.registrations.limit", 1000);
+        this.reportsLimit = 25;
     }
 
     private static int isUnlimited(int val, int max) {

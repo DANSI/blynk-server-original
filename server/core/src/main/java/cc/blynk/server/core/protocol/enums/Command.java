@@ -115,6 +115,11 @@ public final class Command {
     public static final short RESOLVE_EVENT = 75;
     public static final short DELETE_DEVICE_DATA = 76;
 
+    public static final short CREATE_REPORT = 77;
+    public static final short UPDATE_REPORT = 78;
+    public static final short DELETE_REPORT = 79;
+    public static final short EXPORT_REPORT = 80;
+
     //http codes. Used only for stats
     public static final short HTTP_IS_HARDWARE_CONNECTED = 82;
     public static final short HTTP_IS_APP_CONNECTED = 83;
@@ -216,6 +221,11 @@ public final class Command {
             put(DEVICE_OFFLINE, "deviceOffline");
             put(OUTDATED_APP_NOTIFICATION, "outdatedAppNotification");
             put(TRACK_DEVICE, "trackDevice");
+
+            put(CREATE_REPORT, "createReport");
+            put(UPDATE_REPORT, "updateReport");
+            put(DELETE_REPORT, "deleteReport");
+            put(EXPORT_REPORT, "exportReport");
 
             put(HTTP_IS_HARDWARE_CONNECTED, "HttpIsHardwareConnected");
             put(HTTP_IS_APP_CONNECTED, "HttpIsAppConnected");

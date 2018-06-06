@@ -152,4 +152,9 @@ public abstract class OnePinWidget extends Widget implements AppSyncWidget, Hard
     public void erase() {
         this.value = null;
     }
+
+    @Override
+    public boolean isAssignedToDevice(int deviceId) {
+        return this.deviceId == deviceId;
+    }
 }

@@ -91,4 +91,9 @@ public class EnhancedHistoryGraph extends Widget {
     @Override
     public void erase() {
     }
+
+    @Override
+    public boolean isAssignedToDevice(int deviceId) {
+        return false;
+    }
 }

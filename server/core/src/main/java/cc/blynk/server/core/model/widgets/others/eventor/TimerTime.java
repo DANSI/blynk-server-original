@@ -44,19 +44,14 @@ public class TimerTime {
         this.tzName = tzName;
     }
 
+    public TimerTime(int time) {
+        this(0, ALL_DAYS, time, DateTimeUtils.UTC);
+    }
+
     public boolean isTickTime(ZonedDateTime currentDateTime) {
         LocalDate userDate = currentDateTime.withZoneSameInstant(tzName).toLocalDate();
         int dayOfWeek = userDate.getDayOfWeek().getValue();
         return ArrayUtil.contains(days, dayOfWeek);
-    }
-
-    //this is special constructor for Timer back compatibility.
-    //todo remove in future versions.
-    public TimerTime(int time) {
-        this.id = 0;
-        this.time = time;
-        this.days = ALL_DAYS;
-        this.tzName = DateTimeUtils.UTC;
     }
 
     @Override

@@ -6,17 +6,21 @@ import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportDataStream;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportSource;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.TileTemplateReportSource;
-import cc.blynk.server.core.model.widgets.ui.reporting.type.DailyReportType;
-import cc.blynk.server.core.model.widgets.ui.reporting.type.MonthlyReportType;
-import cc.blynk.server.core.model.widgets.ui.reporting.type.OneTimeReportType;
+import cc.blynk.server.core.model.widgets.ui.reporting.type.DailyReport;
+import cc.blynk.server.core.model.widgets.ui.reporting.type.DayOfMonth;
+import cc.blynk.server.core.model.widgets.ui.reporting.type.MonthlyReport;
+import cc.blynk.server.core.model.widgets.ui.reporting.type.OneTimeReport;
 import cc.blynk.server.core.model.widgets.ui.reporting.type.ReportDurationType;
-import cc.blynk.server.core.model.widgets.ui.reporting.type.WeeklyReportType;
+import cc.blynk.server.core.model.widgets.ui.reporting.type.WeeklyReport;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.junit.Test;
 
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 
-import static cc.blynk.server.core.model.widgets.ui.reporting.ReportOutput.CSV_FILE_PER_DEVICE;
+import static cc.blynk.server.core.model.widgets.ui.reporting.ReportOutput.CSV_FILE_PER_DEVICE_PER_PIN;
+import static org.junit.Assert.assertEquals;
 
 public class ReportingModelTest {
 
@@ -28,28 +32,34 @@ public class ReportingModelTest {
         ReportSource reportSource = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},
                 1,
-                new int[] {0}
+                null
                 );
 
-        Report report = new Report("My One Time Report",
-                new ReportSource[] {reportSource},
-                new OneTimeReportType(86400), "test@gmail.com",
-                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
+        ReportSource reportSource2 = new TileTemplateReportSource(
+                new ReportDataStream[] {reportDataStream},
+                1,
+                new int[] {0, 1}
+        );
 
-        Report report2 = new Report("My Daily Report",
-                new ReportSource[] {reportSource},
-                new DailyReportType(60, ReportDurationType.CUSTOM, 100, 200), "test@gmail.com",
-                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
+        Report report = new Report(1, "My One Time Report",
+                new ReportSource[] {reportSource2},
+                new OneTimeReport(86400), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("UTC"), 0, 0, null);
 
-        Report report3 = new Report("My Daily Report",
-                new ReportSource[] {reportSource},
-                new WeeklyReportType(60, ReportDurationType.CUSTOM, 100, 200, 1), "test@gmail.com",
-                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
+        Report report2 = new Report(2, "My Daily Report",
+                new ReportSource[] {reportSource2},
+                new DailyReport(60, ReportDurationType.CUSTOM, 100, 200), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("UTC"), 0, 0, null);
 
-        Report report4 = new Report("My Daily Report",
-                new ReportSource[] {reportSource},
-                new MonthlyReportType(60, ReportDurationType.CUSTOM, 100, 200, 1), "test@gmail.com",
-                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, ZoneId.of("UTC"));
+        Report report3 = new Report(3, "My Daily Report",
+                new ReportSource[] {reportSource2},
+                new WeeklyReport(60, ReportDurationType.CUSTOM, 100, 200, 1), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("UTC"), 0, 0, null);
+
+        Report report4 = new Report(4, "My Daily Report",
+                new ReportSource[] {reportSource2},
+                new MonthlyReport(60, ReportDurationType.CUSTOM, 100, 200, DayOfMonth.FIRST), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("UTC"), 0, 0, null);
 
         ReportingWidget reportingWidget = new ReportingWidget();
         reportingWidget.reportSources = new ReportSource[] {
@@ -64,6 +74,64 @@ public class ReportingModelTest {
 
 
         System.out.println(ow.writeValueAsString(reportingWidget));
+    }
+
+    @Test
+    public void testEmailDynamicPart() {
+        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportSource reportSource = new TileTemplateReportSource(
+                new ReportDataStream[] {reportDataStream},
+                1,
+                null
+        );
+
+        ReportSource reportSource2 = new TileTemplateReportSource(
+                new ReportDataStream[] {reportDataStream},
+                1,
+                new int[] {0, 1}
+        );
+
+        Report report = new Report(1, "My One Time Report",
+                new ReportSource[] {reportSource2},
+                new OneTimeReport(86400), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("UTC"), 0, 0, null);
+
+        LocalDateTime localDateTime = LocalDateTime.of(2018, 2, 20, 10, 10, 10);
+        long millis = localDateTime.toEpochSecond(ZoneOffset.UTC) * 1000;
+
+        Report report2 = new Report(2, "My Daily Report",
+                new ReportSource[] {reportSource2},
+                new DailyReport(millis, ReportDurationType.CUSTOM, millis, millis), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("UTC"), 0, 0, null);
+
+        LocalDateTime start = LocalDateTime.of(2018, 3, 21, 0, 0, 0);
+        LocalDateTime end = LocalDateTime.of(2019, 3, 21, 0, 0, 0);
+        Report report3 = new Report(3, "My Weekly Report",
+                new ReportSource[] {reportSource2},
+                new WeeklyReport(millis, ReportDurationType.CUSTOM, start.toEpochSecond(ZoneOffset.UTC) * 1000, end.toEpochSecond(ZoneOffset.UTC) * 1000, 1), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("UTC"), 0, 0, null);
+
+        Report report4 = new Report(4, "My Monthly Report",
+                new ReportSource[] {reportSource2},
+                new MonthlyReport(millis, ReportDurationType.CUSTOM, start.toEpochSecond(ZoneOffset.UTC) * 1000, end.toEpochSecond(ZoneOffset.UTC) * 1000, DayOfMonth.FIRST), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("UTC"), 0, 0, null);
+
+        Report report5 = new Report(4, "My Monthly Report 2",
+                new ReportSource[] {reportSource2},
+                new MonthlyReport(millis, ReportDurationType.CUSTOM, start.toEpochSecond(ZoneOffset.UTC) * 1000, end.toEpochSecond(ZoneOffset.UTC) * 1000, DayOfMonth.LAST), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("UTC"), 0, 0, null);
+
+        Report report6 = new Report(2, "My Daily Report",
+                new ReportSource[] {reportSource2},
+                new DailyReport(millis, ReportDurationType.INFINITE, millis, millis), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("UTC"), 0, 0, null);
+
+        assertEquals("Report name: My One Time Report<br>Period: One time", report.buildDynamicSection());
+        assertEquals("Report name: My Daily Report<br>Period: Daily, at 10:10:10<br>Start date: 2018-02-20<br>End date: 2018-02-20<br>", report2.buildDynamicSection());
+        assertEquals("Report name: My Weekly Report<br>Period: Weekly, at 00:00 every Monday<br>Start date: 2018-03-21<br>End date: 2019-03-21<br>", report3.buildDynamicSection());
+        assertEquals("Report name: My Monthly Report<br>Period: Monthly, at 00:00 at the first day of every month<br>Start date: 2018-03-21<br>End date: 2019-03-21<br>", report4.buildDynamicSection());
+        assertEquals("Report name: My Monthly Report 2<br>Period: Monthly, at 00:00 at the last day of every month<br>Start date: 2018-03-21<br>End date: 2019-03-21<br>", report5.buildDynamicSection());
+        assertEquals("Report name: My Daily Report<br>Period: Daily, at 10:10:10", report6.buildDynamicSection());
     }
 
 }

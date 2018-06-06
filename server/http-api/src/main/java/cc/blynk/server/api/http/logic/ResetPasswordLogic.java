@@ -61,16 +61,13 @@ public class ResetPasswordLogic extends BaseHttpHandler {
     private final DBManager dbManager;
     private final FileManager fileManager;
 
-    private static final String RESET_PASS_STATIC_PATH = "static/reset/";
-
     public ResetPasswordLogic(Holder holder) {
         super(holder, "");
         this.userDao = holder.userDao;
         this.tokensPool = holder.tokensPool;
         String productName = holder.props.getProductName();
         this.emailSubj = "Password reset request for the " + productName + " app.";
-        this.emailBody = FileLoaderUtil
-                .readFileAsString(RESET_PASS_STATIC_PATH + "reset-email.html")
+        this.emailBody = FileLoaderUtil.readResetEmailTemplateAsString()
                 .replace(ServerProperties.PRODUCT_NAME, productName);
         this.mailWrapper = holder.mailWrapper;
 
@@ -79,7 +76,7 @@ public class ResetPasswordLogic extends BaseHttpHandler {
         //using https for private servers as they have valid certificates.
         String protocol = host.endsWith(".blynk.cc") ? "https://" : "http://";
         this.resetPassUrl = protocol + host + "/landing?token=";
-        this.pageContent = FileLoaderUtil.readFileAsString(RESET_PASS_STATIC_PATH + "enterNewPassword.html");
+        this.pageContent = FileLoaderUtil.readResetPassLandingTemplateAsString();
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.dbManager = holder.dbManager;
         this.fileManager = holder.fileManager;

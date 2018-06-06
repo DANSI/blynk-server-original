@@ -3,12 +3,14 @@ package cc.blynk.integration.tcp;
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestHardClient;
-import cc.blynk.server.core.dao.ReportingDao;
+import cc.blynk.server.core.dao.ReportingStorageDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.controls.Terminal;
+import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
@@ -268,7 +270,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         tag.deviceIds = new int[] {1};
 
         clientPair.appClient.createTag(1, tag);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createTag(1, tag)));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(createTag(1, tag)));
 
         clientPair.appClient.createWidget(1, "{\"id\":188, \"width\":1, \"height\":1, \"deviceId\":100000, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":33, \"value\":1}");
         clientPair.appClient.verifyResult(ok(2));
@@ -492,7 +494,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
 
         hardClient2.login(device.token);
         hardClient2.verifyResult(ok(1));
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(hardwareConnected(1, "1-1")));
+        clientPair.appClient.verifyResult(hardwareConnected(1, "1-1"));
 
         String tempDir = holder.props.getProperty("data.folder");
         Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
@@ -501,13 +503,13 @@ public class DeviceWorkflowTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
+                ReportingStorageDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
         Path pinReportingDataPath11 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
+                ReportingStorageDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
         Path pinReportingDataPath12 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.DAILY));
+                ReportingStorageDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.DAILY));
         Path pinReportingDataPath13 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 9, GraphGranularityType.DAILY));
+                ReportingStorageDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 9, GraphGranularityType.DAILY));
 
         FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath11, 1.11D, 1111111);
@@ -515,7 +517,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
         FileUtils.write(pinReportingDataPath13, 1.11D, 1111111);
 
         clientPair.appClient.send("deleteDevice 1\0" + "1");
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         assertFalse(clientPair.hardwareClient.isClosed());
         assertTrue(hardClient2.isClosed());
@@ -524,6 +526,67 @@ public class DeviceWorkflowTest extends IntegrationBase {
         assertTrue(Files.notExists(pinReportingDataPath11));
         assertTrue(Files.notExists(pinReportingDataPath12));
         assertTrue(Files.notExists(pinReportingDataPath13));
+    }
+
+    @Test
+    public void testHardwareDataRemovedWhenDeviceRemoved() throws Exception {
+        clientPair.appClient.createDevice(1, new Device(1, "My Device", "ESP8266"));
+        Device device = clientPair.appClient.getDevice();
+        assertNotNull(device);
+        assertNotNull(device.token);
+        clientPair.appClient.verifyResult(createDevice(1, device));
+
+        ValueDisplay valueDisplay = new ValueDisplay();
+        valueDisplay.id = 11111;
+        valueDisplay.x = 1;
+        valueDisplay.y = 2;
+        valueDisplay.height = 1;
+        valueDisplay.width = 1;
+        valueDisplay.deviceId = 1;
+        valueDisplay.pin = 1;
+        valueDisplay.pinType = PinType.VIRTUAL;
+        clientPair.appClient.createWidget(1, valueDisplay);
+        clientPair.appClient.verifyResult(ok(2));
+
+        Terminal terminal = new Terminal();
+        terminal.id = 11112;
+        terminal.x = 1;
+        terminal.y = 2;
+        terminal.height = 1;
+        terminal.width = 1;
+        terminal.deviceId = 1;
+        terminal.pin = 3;
+        terminal.pinType = PinType.VIRTUAL;
+        clientPair.appClient.createWidget(1, terminal);
+        clientPair.appClient.verifyResult(ok(3));
+
+        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
+        hardClient2.start();
+
+        hardClient2.login(device.token);
+        hardClient2.verifyResult(ok(1));
+        clientPair.appClient.verifyResult(hardwareConnected(1, "1-1"));
+
+        hardClient2.send("hardware vw 1 123");
+        clientPair.appClient.verifyResult(hardware(2, "1-1 vw 1 123"));
+
+        hardClient2.send("hardware vw 2 124");
+        clientPair.appClient.verifyResult(hardware(3, "1-1 vw 2 124"));
+
+        hardClient2.send("hardware vw 3 125");
+        clientPair.appClient.verifyResult(hardware(4, "1-1 vw 3 125"));
+
+        hardClient2.send("hardware vw 3 126");
+        clientPair.appClient.verifyResult(hardware(5, "1-1 vw 3 126"));
+
+        clientPair.appClient.send("deleteDevice 1\0" + "1");
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(4)));
+
+        clientPair.appClient.sync(1, 1);
+        clientPair.appClient.neverAfter(500, appSync(1111, "1-1 vw 1 123"));
+        clientPair.appClient.never(appSync(1111, "1-1 vw 2 124"));
+        clientPair.appClient.never(appSync(1111, "1-1 vw 3 125"));
+        clientPair.appClient.never(appSync(1111, "1-1 vw 3 126"));
     }
 
     @Test
@@ -546,7 +609,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
 
         hardClient2.login(device1.token);
         hardClient2.verifyResult(ok(1));
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(hardwareConnected(1, "1-1")));
+        clientPair.appClient.verifyResult(hardwareConnected(1, "1-1"));
 
         clientPair.appClient.send("loadProfileGzipped 1");
         dash = clientPair.appClient.getDash(4);
@@ -560,7 +623,7 @@ public class DeviceWorkflowTest extends IntegrationBase {
 
         hardClient2.login(device1.token);
         hardClient2.verifyResult(ok(1));
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(hardwareConnected(1, "1-1")));
+        clientPair.appClient.verifyResult(hardwareConnected(1, "1-1"));
 
         clientPair.appClient.send("loadProfileGzipped 1");
         dash = clientPair.appClient.getDash(2);

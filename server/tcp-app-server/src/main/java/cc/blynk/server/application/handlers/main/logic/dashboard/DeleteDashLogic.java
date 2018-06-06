@@ -3,7 +3,7 @@ package cc.blynk.server.application.handlers.main.logic.dashboard;
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.ReportingDao;
+import cc.blynk.server.core.dao.ReportingStorageDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.DashBoard;
@@ -31,7 +31,7 @@ public class DeleteDashLogic {
     private final TokenManager tokenManager;
     private final TimerWorker timerWorker;
     private final SessionDao sessionDao;
-    private final ReportingDao reportingDao;
+    private final ReportingStorageDao reportingDao;
     private final BlockingIOProcessor blockingIOProcessor;
 
     public DeleteDashLogic(Holder holder) {

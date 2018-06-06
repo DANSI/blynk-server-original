@@ -274,9 +274,15 @@ public class PublishingPreviewFlow extends IntegrationBase {
 
         clientPair.appClient.send("updateFace 1");
         clientPair.appClient.verifyResult(ok(5));
+        assertTrue(appClient2.isClosed());
+
+        appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient2.start();
+        appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
 
         appClient2.send("loadProfileGzipped");
-        profile = appClient2.getProfile(4);
+        profile = appClient2.getProfile(2);
         assertEquals(1, profile.dashBoards.length);
         dashBoard = profile.dashBoards[0];
         assertNotNull(dashBoard);
@@ -388,9 +394,15 @@ public class PublishingPreviewFlow extends IntegrationBase {
 
         clientPair.appClient.send("updateFace 1");
         clientPair.appClient.verifyResult(ok(10));
+        assertTrue(appClient2.isClosed());
+
+        appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient2.start();
+        appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
 
         appClient2.send("loadProfileGzipped");
-        profile = appClient2.getProfile(5);
+        profile = appClient2.getProfile(2);
         assertEquals(1, profile.dashBoards.length);
         dashBoard = profile.dashBoards[0];
         assertNotNull(dashBoard);
@@ -550,8 +562,15 @@ public class PublishingPreviewFlow extends IntegrationBase {
         clientPair.appClient.send("updateFace 1");
         clientPair.appClient.verifyResult(ok(7));
 
+        assertTrue(appClient2.isClosed());
+
+        appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient2.start();
+        appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
+        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
+
         appClient2.send("loadProfileGzipped");
-        profile = appClient2.getProfile(4);
+        profile = appClient2.getProfile(2);
         assertEquals(1, profile.dashBoards.length);
         dashBoard = profile.dashBoards[0];
         assertNotNull(dashBoard);

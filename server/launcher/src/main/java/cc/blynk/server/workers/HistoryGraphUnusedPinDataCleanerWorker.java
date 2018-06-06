@@ -1,6 +1,6 @@
 package cc.blynk.server.workers;
 
-import cc.blynk.server.core.dao.ReportingDao;
+import cc.blynk.server.core.dao.ReportingStorageDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
@@ -33,11 +33,11 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
     private static final Logger log = LogManager.getLogger(HistoryGraphUnusedPinDataCleanerWorker.class);
 
     private final UserDao userDao;
-    private final ReportingDao reportingDao;
+    private final ReportingStorageDao reportingDao;
 
     private long lastStart;
 
-    public HistoryGraphUnusedPinDataCleanerWorker(UserDao userDao, ReportingDao reportingDao) {
+    public HistoryGraphUnusedPinDataCleanerWorker(UserDao userDao, ReportingStorageDao reportingDao) {
         this.userDao = userDao;
         this.reportingDao = reportingDao;
         this.lastStart = System.currentTimeMillis();
@@ -127,7 +127,7 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
 
                 for (int deviceId : resultIds) {
                     for (GraphGranularityType type : GraphGranularityType.values()) {
-                        String filename = ReportingDao.generateFilename(dash.id,
+                        String filename = ReportingStorageDao.generateFilename(dash.id,
                                 deviceId,
                                 dataStream.pinType, dataStream.pin, type);
                         doNotRemovePaths.add(filename);
@@ -142,7 +142,7 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
         for (DataStream dataStream : graph.dataStreams) {
             if (dataStream.isValid()) {
                 for (GraphGranularityType type : GraphGranularityType.values()) {
-                    String filename = ReportingDao.generateFilename(dashId, graph.deviceId,
+                    String filename = ReportingStorageDao.generateFilename(dashId, graph.deviceId,
                             dataStream.pinType, dataStream.pin, type);
                     doNotRemovePaths.add(filename);
                 }

@@ -72,12 +72,9 @@ final class ArgumentsParser {
             properties.put("http.port", hardPort);
         }
 
-        //todo remove
-        //deprecated. should be removed in future versions
-        //just for back compatibility for now
         if (appPort != null) {
             Integer.parseInt(appPort);
-            properties.put("app.ssl.port", appPort);
+            properties.put("https.port", appPort);
         }
 
         if (workerThreadsString != null) {

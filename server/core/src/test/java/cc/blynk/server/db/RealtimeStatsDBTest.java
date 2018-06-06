@@ -3,6 +3,7 @@ package cc.blynk.server.db;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.model.widgets.ui.reporting.ReportScheduler;
 import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.core.stats.model.CommandStat;
@@ -17,6 +18,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -63,7 +65,7 @@ public class RealtimeStatsDBTest {
         UserDao userDao = new UserDao(new ConcurrentHashMap<>(), "test", "127.0.0.1");
         BlockingIOProcessor blockingIOProcessor = new BlockingIOProcessor(6, 1000);
 
-        Stat stat = new Stat(sessionDao, userDao, blockingIOProcessor, new GlobalStats(), false);
+        Stat stat = new Stat(sessionDao, userDao, blockingIOProcessor, new GlobalStats(), new ReportScheduler(1, "http://localhost/", null, null, Collections.emptyMap()), false);
         int i;
 
         final HttpStat hs = stat.http;

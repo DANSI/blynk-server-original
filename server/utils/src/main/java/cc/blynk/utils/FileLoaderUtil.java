@@ -45,6 +45,14 @@ public final class FileLoaderUtil {
         return readFileAsString("template_id_mail.html");
     }
 
+    public static String readResetEmailTemplateAsString() {
+        return readFileAsString("static/reset/reset-email.html");
+    }
+
+    public static String readResetPassLandingTemplateAsString() {
+        return readFileAsString("static/reset/enterNewPassword.html");
+    }
+
     /**
      * First loads file from class path after that from current folder.
      * So file in current folder is always overrides properties in classpath.

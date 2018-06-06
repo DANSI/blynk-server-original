@@ -1,9 +1,11 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.App;
+import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -30,9 +32,11 @@ public class UpdateFaceLogic {
     private static final Logger log = LogManager.getLogger(UpdateFaceLogic.class);
 
     private final UserDao userDao;
+    private final SessionDao sessionDao;
 
     public UpdateFaceLogic(Holder holder) {
         this.userDao = holder.userDao;
+        this.sessionDao = holder.sessionDao;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
@@ -70,6 +74,10 @@ public class UpdateFaceLogic {
                     log.debug("Found face for {}-{}.", existingUser.email, existingUser.appName);
                     try {
                         existingDash.updateFaceFields(dash);
+                        //do not close connection for initiator
+                        if (existingUser != user) {
+                            sessionDao.closeAppChannelsByUser(new UserKey(existingUser));
+                        }
                         count++;
                     } catch (Exception e) {
                         log.error("Error updating face for user {}, dashId {}.",

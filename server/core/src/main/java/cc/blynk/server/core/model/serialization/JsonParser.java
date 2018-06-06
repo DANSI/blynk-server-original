@@ -12,6 +12,7 @@ import cc.blynk.server.core.model.storage.SinglePinStorageValue;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
+import cc.blynk.server.core.model.widgets.ui.reporting.Report;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.stats.model.Stat;
@@ -63,12 +64,14 @@ public final class JsonParser {
     private static final ObjectReader deviceReader = MAPPER.readerFor(Device.class);
     private static final ObjectReader tagReader = MAPPER.readerFor(Tag.class);
     private static final ObjectReader facebookTokenReader = MAPPER.readerFor(FacebookTokenResponse.class);
+    private static final ObjectReader reportReader = MAPPER.readerFor(Report.class);
 
     private static final ObjectWriter userWriter = MAPPER.writerFor(User.class);
     private static final ObjectWriter profileWriter = MAPPER.writerFor(Profile.class);
     private static final ObjectWriter dashboardWriter = MAPPER.writerFor(DashBoard.class);
     private static final ObjectWriter deviceWriter = MAPPER.writerFor(Device.class);
     private static final ObjectWriter appWriter = MAPPER.writerFor(App.class);
+    private static final ObjectWriter reportWriter = MAPPER.writerFor(Report.class);
 
     public static final ObjectWriter restrictiveDashWriter = init()
             .addMixIn(Twitter.class, TwitterIgnoreMixIn.class)
@@ -162,6 +165,10 @@ public final class JsonParser {
         return toJson(appWriter, app);
     }
 
+    public static String toJson(Report report) {
+        return toJson(reportWriter, report);
+    }
+
     public static String toJson(Stat stat) {
         return toJson(statWriter, stat);
     }
@@ -228,70 +235,48 @@ public final class JsonParser {
         return facebookTokenReader.readValue(response);
     }
 
-    public static DashboardSettings parseDashboardSettings(String reader, int msgId) {
-        try {
-            return dashboardSettingsReader.readValue(reader);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            throw new IllegalCommandBodyException("Error parsing dashboard settings.", msgId);
-        }
+    public static DashboardSettings parseDashboardSettings(String json, int msgId) {
+        return parse(dashboardSettingsReader, json, "Error parsing dashboard settings.", msgId);
     }
 
-    public static DashBoard parseDashboard(String reader, int msgId) {
-        try {
-            return dashboardReader.readValue(reader);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            throw new IllegalCommandBodyException("Error parsing dashboard.", msgId);
-        }
+    public static DashBoard parseDashboard(String json, int msgId) {
+        return parse(dashboardReader, json, "Error parsing dashboard.", msgId);
     }
 
-    public static TileTemplate parseTileTemplate(String reader, int msgId) {
-        try {
-            return tileTemplateReader.readValue(reader);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            throw new IllegalCommandBodyException("Error parsing tile template.", msgId);
-        }
+    public static TileTemplate parseTileTemplate(String json, int msgId) {
+        return parse(tileTemplateReader, json, "Error parsing tile template.", msgId);
     }
 
     public static Widget parseWidget(String reader) throws IOException {
         return widgetReader.readValue(reader);
     }
 
-    public static Widget parseWidget(String reader, int msgId) {
-        try {
-            return widgetReader.readValue(reader);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            throw new IllegalCommandBodyException("Error parsing widget.", msgId);
-        }
+    public static Report parseReport(String json, int msgId) {
+        return parse(reportReader, json, "Error parsing report.", msgId);
     }
 
-    public static App parseApp(String reader, int msgId) {
-        try {
-            return appReader.readValue(reader);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            throw new IllegalCommandBodyException("Error parsing app.", msgId);
-        }
+    public static Widget parseWidget(String json, int msgId) {
+        return parse(widgetReader, json, "Error parsing widget.", msgId);
     }
 
-    public static Device parseDevice(String reader, int msgId) {
-        try {
-            return deviceReader.readValue(reader);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            throw new IllegalCommandBodyException("Error parsing device.", msgId);
-        }
+    public static App parseApp(String json, int msgId) {
+        return parse(appReader, json, "Error parsing app.", msgId);
     }
 
-    public static Tag parseTag(String reader, int msgId) {
+    public static Device parseDevice(String json, int msgId) {
+        return parse(deviceReader, json, "Error parsing device.", msgId);
+    }
+
+    public static Tag parseTag(String json, int msgId) {
+        return parse(tagReader, json, "Error parsing tag.", msgId);
+    }
+
+    private static <T> T parse(ObjectReader objectReader, String json, String errorMessage, int msgId) {
         try {
-            return tagReader.readValue(reader);
+            return objectReader.readValue(json);
         } catch (IOException e) {
             log.error(e.getMessage());
-            throw new IllegalCommandBodyException("Error parsing tag.", msgId);
+            throw new IllegalCommandBodyException(errorMessage, msgId);
         }
     }
 

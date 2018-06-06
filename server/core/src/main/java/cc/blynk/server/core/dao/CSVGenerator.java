@@ -5,13 +5,9 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
-import cc.blynk.utils.FileUtils;
 import io.netty.util.CharsetUtil;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedWriter;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.Buffer;
@@ -20,6 +16,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.zip.GZIPOutputStream;
+
+import static cc.blynk.utils.FileUtils.CSV_DIR;
+import static cc.blynk.utils.FileUtils.writeBufToCsv;
 
 /**
  * Simply generates CSV file from reporting data.
@@ -30,25 +29,12 @@ import java.util.zip.GZIPOutputStream;
  */
 public class CSVGenerator {
 
-    private static final Logger log = LogManager.getLogger(CSVGenerator.class);
-
-    public static final String CSV_DIR = Paths.get(
-            System.getProperty("java.io.tmpdir"), FileUtils.BLYNK_FOLDER)
-            .toString();
-
-    static {
-        try {
-            Files.createDirectories(Paths.get(CSV_DIR));
-        } catch (IOException ioe) {
-            log.error("Error creating temp '{}' folder for csv export data.", CSV_DIR);
-        }
-    }
-
-    private final ReportingDao reportingDao;
     //43200 == 30 * 24 * 60 is minutes points for 1 month
+    //todo move to limits
     private final static int FETCH_COUNT = Integer.parseInt(System.getProperty("csv.export.data.points.max", "43200"));
+    private final ReportingStorageDao reportingDao;
 
-    CSVGenerator(ReportingDao reportingDao) {
+    CSVGenerator(ReportingStorageDao reportingDao) {
         this.reportingDao = reportingDao;
     }
 
@@ -73,7 +59,7 @@ public class CSVGenerator {
                     //super strange fix for https://jira.mongodb.org/browse/JAVA-2559
                     //https://community.blynk.cc/t/java-error-on-remote-server-startup/17957/7
                     ((Buffer) onePinData).flip();
-                    writeBuf(writer, onePinData, deviceId);
+                    writeBufToCsv(writer, onePinData, deviceId);
                 } else {
                     emptyDataCounter++;
                 }
@@ -84,15 +70,6 @@ public class CSVGenerator {
         }
 
         return path;
-    }
-
-    private static void writeBuf(BufferedWriter writer, ByteBuffer onePinData, int deviceId) throws Exception {
-        while (onePinData.remaining() > 0) {
-            double value = onePinData.getDouble();
-            long ts = onePinData.getLong();
-
-            writer.write("" + value + ',' + ts + ',' + deviceId + '\n');
-        }
     }
 
     private static Path generateExportCSVPath(String email, int dashId, int deviceId, PinType pinType, byte pin) {

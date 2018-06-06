@@ -229,6 +229,12 @@ public class DeviceTiles extends Widget implements AppSyncWidget, HardwareSyncWi
         }
     }
 
+    public void eraseTiles() {
+        for (Tile tile : tiles) {
+            tile.erase();
+        }
+    }
+
     public int addTimers(TimerWorker timerWorker, UserKey userKey, int dashId) {
         int counter = 0;
         for (TileTemplate template : templates) {
@@ -249,5 +255,15 @@ public class DeviceTiles extends Widget implements AppSyncWidget, HardwareSyncWi
             }
         }
         return null;
+    }
+
+    @Override
+    public boolean isAssignedToDevice(int deviceId) {
+        for (Tile tile : tiles) {
+            if (tile.deviceId == deviceId) {
+                return true;
+            }
+        }
+        return false;
     }
 }

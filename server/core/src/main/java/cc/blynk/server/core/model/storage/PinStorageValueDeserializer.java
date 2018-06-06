@@ -48,7 +48,6 @@ public class PinStorageValueDeserializer extends JsonDeserializer {
                 }
             }
         } catch (Exception e) {
-            //todo this try catch is temporary until we make sure this code is fine
             log.error("Error reading pin storage value.", e);
         }
 

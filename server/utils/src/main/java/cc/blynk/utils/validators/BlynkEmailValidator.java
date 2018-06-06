@@ -16,4 +16,8 @@ public final class BlynkEmailValidator {
                 || !EmailValidator.getInstance().isValid(email);
     }
 
+    public static boolean isValidEmail(String email) {
+        return !isNotValidEmail(email);
+    }
+
 }

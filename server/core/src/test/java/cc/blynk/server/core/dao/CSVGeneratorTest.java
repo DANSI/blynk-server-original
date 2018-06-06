@@ -18,7 +18,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class CSVGeneratorTest {
 
-    private CSVGenerator csvGenerator = new CSVGenerator(new ReportingDao("/tmp", true));
+    private CSVGenerator csvGenerator = new CSVGenerator(new ReportingStorageDao("/tmp", true));
 
     @Test
     public void generateCSV() throws Exception {
@@ -38,8 +38,8 @@ public class CSVGeneratorTest {
 
     @Test
     public void testForcePort80Property() {
-        assertEquals("http://myhost/", FileUtils.csvDownloadUrl("myhost", "8080", true));
-        assertEquals("http://myhost:8080/", FileUtils.csvDownloadUrl("myhost", "8080", false));
+        assertEquals("http://myhost/", FileUtils.downloadUrl("myhost", "8080", true));
+        assertEquals("http://myhost:8080/", FileUtils.downloadUrl("myhost", "8080", false));
     }
 
 }

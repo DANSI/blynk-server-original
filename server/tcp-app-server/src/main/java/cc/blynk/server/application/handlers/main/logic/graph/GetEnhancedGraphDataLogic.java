@@ -1,9 +1,9 @@
-package cc.blynk.server.application.handlers.main.logic.reporting;
+package cc.blynk.server.application.handlers.main.logic.graph;
 
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.ReportingDao;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.dao.ReportingStorageDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -39,9 +39,9 @@ public class GetEnhancedGraphDataLogic {
     private static final Logger log = LogManager.getLogger(GetEnhancedGraphDataLogic.class);
 
     private final BlockingIOProcessor blockingIOProcessor;
-    private final ReportingDao reportingDao;
+    private final ReportingStorageDao reportingDao;
 
-    public GetEnhancedGraphDataLogic(ReportingDao reportingDao, BlockingIOProcessor blockingIOProcessor) {
+    public GetEnhancedGraphDataLogic(ReportingStorageDao reportingDao, BlockingIOProcessor blockingIOProcessor) {
         this.reportingDao = reportingDao;
         this.blockingIOProcessor = blockingIOProcessor;
     }

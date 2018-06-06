@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.widgets.ui.reporting.source;
 
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -28,5 +29,9 @@ public class ReportDataStream {
         this.pinType = pinType;
         this.label = label;
         this.isSelected = isSelected;
+    }
+
+    public boolean isValid() {
+        return DataStream.isValid(pin, pinType);
     }
 }

@@ -1,6 +1,6 @@
 package cc.blynk.server.workers;
 
-import cc.blynk.server.core.dao.ReportingDao;
+import cc.blynk.server.core.dao.ReportingStorageDao;
 import cc.blynk.utils.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,11 +27,11 @@ public class ReportingTruncateWorker implements Runnable {
 
     private static final Logger log = LogManager.getLogger(ReportingTruncateWorker.class);
 
-    private final ReportingDao reportingDao;
+    private final ReportingStorageDao reportingDao;
     //storing minute points only for 30 days
     private final static int MAX_RECORD_COUNT = 30 * 24 * 60;
 
-    public ReportingTruncateWorker(ReportingDao reportingDao) {
+    public ReportingTruncateWorker(ReportingStorageDao reportingDao) {
         this.reportingDao = reportingDao;
     }
 
