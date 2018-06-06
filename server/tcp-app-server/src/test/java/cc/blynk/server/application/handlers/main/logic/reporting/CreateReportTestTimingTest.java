@@ -11,7 +11,7 @@ import cc.blynk.server.core.model.widgets.ui.reporting.type.DayOfMonth;
 import cc.blynk.server.core.model.widgets.ui.reporting.type.MonthlyReport;
 import cc.blynk.server.core.model.widgets.ui.reporting.type.ReportDurationType;
 import cc.blynk.server.core.model.widgets.ui.reporting.type.WeeklyReport;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import org.junit.Test;
 
 import java.time.Instant;
@@ -220,7 +220,7 @@ public class CreateReportTestTimingTest {
         assertEquals(expectedDelayInSeconds, nowInstant.plus(2, ChronoUnit.DAYS).minusMillis(now).getEpochSecond(), 1000);
     }
 
-    @Test(expected = IllegalCommandException.class)
+    @Test(expected = IllegalCommandBodyException.class)
     public void testEndDateInPastDailyReport() {
         ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
 
@@ -243,7 +243,7 @@ public class CreateReportTestTimingTest {
         report.calculateDelayInSeconds();
     }
 
-    @Test(expected = IllegalCommandException.class)
+    @Test(expected = IllegalCommandBodyException.class)
     public void testEndDateInPastMonthlyReport() {
         ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
 
