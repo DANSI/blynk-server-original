@@ -34,6 +34,10 @@ public class DailyReport extends BaseReportType {
         this.endTs = endTs;
     }
 
+    static ZonedDateTime getZonedFromTs(long ts, ZoneId zoneId) {
+        return ZonedDateTime.ofInstant(Instant.ofEpochMilli(ts), zoneId);
+    }
+
     @Override
     public boolean isValid() {
         return startTs <= endTs;
@@ -42,10 +46,6 @@ public class DailyReport extends BaseReportType {
     @Override
     public long getDuration() {
         return 1;
-    }
-
-    static ZonedDateTime getZonedFromTs(long ts, ZoneId zoneId) {
-        return ZonedDateTime.ofInstant(Instant.ofEpochMilli(ts), zoneId);
     }
 
     @Override

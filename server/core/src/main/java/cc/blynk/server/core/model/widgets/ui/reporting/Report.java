@@ -83,6 +83,10 @@ public class Report {
         this.lastRunResult = lastRunResult;
     }
 
+    public static int getPrice() {
+        return 4900;
+    }
+
     public boolean isValid() {
         return reportType != null && reportType.isValid()
                 && reportSources != null && reportSources.length > 0
@@ -91,10 +95,6 @@ public class Report {
 
     public boolean isPeriodic() {
         return !(reportType instanceof OneTimeReport);
-    }
-
-    public static int getPrice() {
-        return 4900;
     }
 
     public long calculateDelayInSeconds() throws IllegalCommandBodyException {
