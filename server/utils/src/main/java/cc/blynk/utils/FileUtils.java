@@ -141,13 +141,15 @@ public final class FileUtils {
         }
     }
 
-    public static void writeBufToCsv(ByteArrayOutputStream baos, ByteBuffer onePinData, int deviceId) {
+    public static void writeBufToCsv(ByteArrayOutputStream baos, ByteBuffer onePinData, int deviceId, long startFrom) {
         while (onePinData.remaining() > 0) {
             double value = onePinData.getDouble();
             long ts = onePinData.getLong();
 
-            String data = "" + value + ',' + ts + ',' + deviceId + '\n';
-            baos.write(data.getBytes(US_ASCII), 0, data.length());
+            if (startFrom < ts) {
+                String data = "" + value + ',' + ts + ',' + deviceId + '\n';
+                baos.write(data.getBytes(US_ASCII), 0, data.length());
+            }
         }
     }
 

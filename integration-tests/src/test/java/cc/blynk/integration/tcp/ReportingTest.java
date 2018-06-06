@@ -28,16 +28,21 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.io.BufferedInputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Enumeration;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import static cc.blynk.server.core.model.widgets.ui.reporting.ReportOutput.CSV_FILE_PER_DEVICE;
 import static cc.blynk.server.core.model.widgets.ui.reporting.ReportOutput.CSV_FILE_PER_DEVICE_PER_PIN;
 import static cc.blynk.server.core.model.widgets.ui.reporting.ReportResult.EXPIRED;
+import static cc.blynk.server.core.model.widgets.ui.reporting.ReportResult.OK;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertEquals;
@@ -395,8 +400,8 @@ public class ReportingTest extends IntegrationBase {
         clientPair.appClient.createReport(1, report2);
 
         report2 = clientPair.appClient.parseReportFromResponse(4);
-        assertNotNull(report);
-        assertEquals(System.currentTimeMillis(), report.nextReportAt, 2000);
+        assertNotNull(report2);
+        assertEquals(System.currentTimeMillis(), report2.nextReportAt, 2000);
 
         int tries = 0;
         while (holder.reportScheduler.getCompletedTaskCount() < 2 && tries < 20) {
@@ -440,7 +445,8 @@ public class ReportingTest extends IntegrationBase {
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
                 ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
-        FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
+        long pointNow = System.currentTimeMillis();
+        FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
 
         ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
         ReportSource reportSource = new TileTemplateReportSource(
@@ -485,7 +491,10 @@ public class ReportingTest extends IntegrationBase {
         Path result = Paths.get(FileUtils.CSV_DIR,
                 DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
         assertTrue(Files.exists(result));
-        assertEquals(146, Files.size(result));
+        String resultCsvString = readStringFromFirstZipEntry(result);
+        String[] split = resultCsvString.split(",");
+        assertEquals(1.11D, Double.parseDouble(split[0]), 0.0001);
+        assertEquals(pointNow, Long.parseLong(split[1]));
     }
 
     @Test
@@ -497,7 +506,8 @@ public class ReportingTest extends IntegrationBase {
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
                 ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
-        FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
+        long pointNow = System.currentTimeMillis();
+        FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
 
         ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
         ReportSource reportSource = new TileTemplateReportSource(
@@ -543,7 +553,10 @@ public class ReportingTest extends IntegrationBase {
         Path result = Paths.get(FileUtils.CSV_DIR,
                 DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
         assertTrue(Files.exists(result));
-        assertEquals(146, Files.size(result));
+        String resultCsvString = readStringFromFirstZipEntry(result);
+        String[] split = resultCsvString.split(",");
+        assertEquals(1.11D, Double.parseDouble(split[0]), 0.0001);
+        assertEquals(pointNow, Long.parseLong(split[1]));
 
         clientPair.appClient.getWidget(1, 222222);
         ReportingWidget reportingWidget2 = (ReportingWidget) JsonParser.parseWidget(clientPair.appClient.getBody(3), 0);
@@ -560,7 +573,8 @@ public class ReportingTest extends IntegrationBase {
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
                 ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
-        FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
+        long now = System.currentTimeMillis();
+        FileUtils.write(pinReportingDataPath10, 1.11D, now);
 
         ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
         ReportSource reportSource = new TileTemplateReportSource(
@@ -600,7 +614,7 @@ public class ReportingTest extends IntegrationBase {
         assertNotNull(report);
         assertEquals(0, report.nextReportAt);
         assertEquals(System.currentTimeMillis(), report.lastReportAt, 2000);
-        assertEquals(ReportResult.OK, report.lastRunResult);
+        assertEquals(OK, report.lastRunResult);
 
         String date = LocalDate.now(report.tzName).toString();
         String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
@@ -617,7 +631,11 @@ public class ReportingTest extends IntegrationBase {
         Path result = Paths.get(FileUtils.CSV_DIR,
                 DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
         assertTrue(Files.exists(result));
-        assertEquals(146, Files.size(result));
+        String resultCsvString = readStringFromFirstZipEntry(result);
+        assertNotNull(resultCsvString);
+        String[] split = resultCsvString.split(",");
+        assertEquals(1.11D, Double.parseDouble(split[0]), 0.0001);
+        assertEquals(now, Long.parseLong(split[1]));
     }
 
     @Test
@@ -666,6 +684,88 @@ public class ReportingTest extends IntegrationBase {
         assertEquals(1, holder.reportScheduler.getTaskCount());
         assertEquals(0, holder.reportScheduler.map.size());
         assertEquals(0, holder.reportScheduler.getActiveCount());
+    }
+
+    @Test
+    public void testDailyReportWithSinglePointIsTriggeredAndOneRecordIsFiltered() throws Exception {
+        String tempDir = holder.props.getProperty("data.folder");
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+        long pointNow = System.currentTimeMillis();
+        FileUtils.write(pinReportingDataPath10, 1.12D, pointNow - TimeUnit.DAYS.toMillis(1));
+        FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
+
+        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportSource reportSource = new TileTemplateReportSource(
+                new ReportDataStream[] {reportDataStream},
+                1,
+                new int[] {0}
+        );
+
+        ReportingWidget reportingWidget = new ReportingWidget();
+        reportingWidget.id = 222222;
+        reportingWidget.height = 1;
+        reportingWidget.width = 1;
+        reportingWidget.reportSources = new ReportSource[] {
+                reportSource
+        };
+
+        clientPair.appClient.createWidget(1, reportingWidget);
+        clientPair.appClient.verifyResult(ok(1));
+
+        //a bit upfront
+        long now = System.currentTimeMillis() + 1500;
+
+        Report report = new Report(1, "DailyReport",
+                new ReportSource[] {reportSource},
+                new DailyReport(now, ReportDurationType.INFINITE, 0, 0), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("UTC"), 0, 0, null);
+        clientPair.appClient.createReport(1, report);
+
+        report = clientPair.appClient.parseReportFromResponse(2);
+        assertNotNull(report);
+        assertEquals(System.currentTimeMillis(), report.nextReportAt, 2000);
+
+        String date = LocalDate.now(report.tzName).toString();
+        String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
+        verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
+                eq("Your daily DailyReport is ready"),
+                eq("<html><body><a href=\"http://127.0.0.1:18080/" + filename + "\">DailyReport</a><br></body></html>"),
+                any());
+        sleep(200);
+        assertEquals(1, holder.reportScheduler.getCompletedTaskCount());
+        assertEquals(2, holder.reportScheduler.getTaskCount());
+
+        Path result = Paths.get(FileUtils.CSV_DIR,
+                DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+        assertTrue(Files.exists(result));
+        String resultCsvString = readStringFromFirstZipEntry(result);
+        String[] split = resultCsvString.split(",");
+        assertEquals(1.11D, Double.parseDouble(split[0]), 0.0001);
+        assertEquals(pointNow, Long.parseLong(split[1]));
+
+        clientPair.appClient.getWidget(1, 222222);
+        ReportingWidget reportingWidget2 = (ReportingWidget) JsonParser.parseWidget(clientPair.appClient.getBody(3), 0);
+        assertNotNull(reportingWidget2);
+        assertEquals(OK, reportingWidget2.reports[0].lastRunResult);
+    }
+
+    private String readStringFromFirstZipEntry(Path path) throws Exception {
+        ZipFile zipFile = new ZipFile(path.toString());
+
+        Enumeration<? extends ZipEntry> entries = zipFile.entries();
+
+        if (entries.hasMoreElements()) {
+            ZipEntry entry = entries.nextElement();
+            try (BufferedInputStream bis = new BufferedInputStream(zipFile.getInputStream(entry))) {
+                return new String(bis.readAllBytes());
+            }
+        }
+        throw new RuntimeException("Error reading result gzip file " + path.toString());
     }
 }
 

@@ -18,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -77,7 +78,7 @@ public abstract class BaseReportTask implements Runnable {
                 key.user.email, key.user.appName, key.reportId, date);
 
         try {
-            report.lastRunResult = generateReport(userCsvFolder);
+            report.lastRunResult = generateReport(userCsvFolder, now);
         } catch (Exception e) {
             report.lastRunResult = ReportResult.ERROR;
             log.error("Error generating report for user {}. ", key.user.email);
@@ -90,8 +91,9 @@ public abstract class BaseReportTask implements Runnable {
         return newNow;
     }
 
-    private ReportResult generateReport(Path userCsvFolder) throws Exception {
+    private ReportResult generateReport(Path userCsvFolder, long now) throws Exception {
         int fetchCount = (int) report.reportType.getFetchCount(report.granularityType);
+        long startFrom = now - TimeUnit.DAYS.toMillis(report.reportType.getDuration());
         Path output = Paths.get(userCsvFolder.toString() + ".gz");
 
         //todo for now supporting only 1 type of output format
@@ -101,7 +103,7 @@ public abstract class BaseReportTask implements Runnable {
             case CSV_FILE_PER_DEVICE:
             case CSV_FILE_PER_DEVICE_PER_PIN:
             default:
-                if (filePerDevicePerPin(output, fetchCount)) {
+                if (filePerDevicePerPin(output, fetchCount, startFrom)) {
                     ReportFileLink fileLink = new ReportFileLink(output, report.name);
                     String durationLabel = report.reportType.getDurationLabel().toLowerCase();
                     String subj = "Your " + durationLabel + " " + report.name + " is ready";
@@ -116,7 +118,7 @@ public abstract class BaseReportTask implements Runnable {
         }
     }
 
-    private boolean filePerDevicePerPin(Path output, int fetchCount) throws Exception {
+    private boolean filePerDevicePerPin(Path output, int fetchCount, long startFrom) throws Exception {
         boolean atLeastOne = false;
         try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(output))) {
             for (ReportSource reportSource : report.reportSources) {
@@ -124,7 +126,8 @@ public abstract class BaseReportTask implements Runnable {
                     for (int deviceId : reportSource.getDeviceIds()) {
                         for (ReportDataStream reportDataStream : reportSource.reportDataStreams) {
                             if (reportDataStream.isValid()) {
-                                byte[] onePinDataCsv = processSingleFile(deviceId, reportDataStream, fetchCount);
+                                byte[] onePinDataCsv = processSingleFile(
+                                        deviceId, reportDataStream, fetchCount, startFrom);
                                 if (onePinDataCsv != null) {
                                     String onePinFileName =
                                             deviceAndPinFileName(key.dashId, deviceId, reportDataStream);
@@ -149,14 +152,14 @@ public abstract class BaseReportTask implements Runnable {
         return atLeastOne;
     }
 
-    private byte[] processSingleFile(int deviceId, ReportDataStream reportDataStream, int fetchCount) {
+    private byte[] processSingleFile(int deviceId, ReportDataStream reportDataStream, int fetchCount, long startFrom) {
         ByteBuffer onePinData = reportingStorageDao.getByteBufferFromDisk(key.user,
                 key.dashId, deviceId, reportDataStream.pinType,
                 reportDataStream.pin, fetchCount, report.granularityType, 0);
         if (onePinData != null) {
             ((Buffer) onePinData).flip();
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(onePinData.capacity());
-            FileUtils.writeBufToCsv(byteArrayOutputStream, onePinData, deviceId);
+            FileUtils.writeBufToCsv(byteArrayOutputStream, onePinData, deviceId, startFrom);
             return byteArrayOutputStream.toByteArray();
         }
         return null;
