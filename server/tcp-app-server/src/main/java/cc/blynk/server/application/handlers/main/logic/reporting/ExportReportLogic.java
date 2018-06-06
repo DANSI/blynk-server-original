@@ -77,7 +77,7 @@ public class ExportReportLogic {
                         );
                     }
                 } catch (Exception e) {
-                    log.debug("Error generating report {} for {}.", report, key.user.email, e);
+                    log.debug("Error generating export report {} for {}.", report, key.user.email, e);
                     ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
                 }
             }

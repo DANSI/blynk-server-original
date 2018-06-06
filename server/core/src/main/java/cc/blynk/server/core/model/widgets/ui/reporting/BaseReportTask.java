@@ -140,7 +140,7 @@ public abstract class BaseReportTask implements Runnable {
                                     } catch (IOException e) {
                                         log.error("Error compressing report file.", e.getMessage());
                                         log.debug(e);
-                                        throw new RuntimeException(e);
+                                        throw e;
                                     }
                                 }
                             }

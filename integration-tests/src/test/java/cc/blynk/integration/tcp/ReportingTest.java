@@ -641,6 +641,37 @@ public class ReportingTest extends IntegrationBase {
     }
 
     @Test
+    public void testOneTimeReportIsTriggeredWithCustomJson() throws Exception {
+        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportSource reportSource = new TileTemplateReportSource(
+                new ReportDataStream[] {reportDataStream},
+                1,
+                new int[] {0}
+        );
+
+        ReportingWidget reportingWidget = new ReportingWidget();
+        reportingWidget.height = 1;
+        reportingWidget.width = 1;
+        reportingWidget.reportSources = new ReportSource[] {
+                reportSource
+        };
+
+        clientPair.appClient.createWidget(1, reportingWidget);
+        clientPair.appClient.verifyResult(ok(1));
+
+        clientPair.appClient.createReport(1, "{\"id\":12838,\"name\":\"Report\",\"reportSources\":[{\"type\":\"TILE_TEMPLATE\",\"templateId\":11844,\"deviceIds\":[0],\"reportDataStreams\":[{\"pin\":1,\"pinType\":\"VIRTUAL\",\"label\":\"Temperature\",\"isSelected\":true},{\"pin\":0,\"pinType\":\"VIRTUAL\",\"label\":\"Humidity\",\"isSelected\":true},{\"pin\":2,\"pinType\":\"VIRTUAL\",\"label\":\"Heat\",\"isSelected\":true}]}],\"reportType\":{\"type\":\"ONE_TIME\",\"rangeMillis\":86400000},\"recipients\":\"alexkipar@gmail.com\",\"granularityType\":\"HOURLY\",\"isActive\":true,\"reportOutput\":\"CSV_FILE_PER_DEVICE_PER_PIN\",\"tzName\":\"Europe/Kiev\",\"nextReportAt\":0,\"lastReportAt\":1528309698795,\"lastRunResult\":\"ERROR\"}");
+        Report report = clientPair.appClient.parseReportFromResponse(2);
+        assertNotNull(report);
+
+        clientPair.appClient.exportReport(1, 12838);
+        report = clientPair.appClient.parseReportFromResponse(3);
+        assertNotNull(report);
+        assertEquals(0, report.nextReportAt);
+        assertEquals(System.currentTimeMillis(), report.lastReportAt, 2000);
+        assertEquals(ReportResult.NO_DATA, report.lastRunResult);
+    }
+
+    @Test
     public void testOneTimeReportIsTriggeredAndNoData() throws Exception {
         ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
         ReportSource reportSource = new TileTemplateReportSource(

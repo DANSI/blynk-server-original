@@ -304,7 +304,11 @@ public class TestAppClient extends BaseTestAppClient {
     }
 
     public void createReport(int dashId, Report report) {
-        send("createReport " + dashId + BODY_SEPARATOR + report.toString());
+        createReport(dashId, report.toString());
+    }
+
+    public void createReport(int dashId, String report) {
+        send("createReport " + dashId + BODY_SEPARATOR + report);
     }
 
     public void updateReport(int dashId, Report report) {
