@@ -1,11 +1,15 @@
 package cc.blynk.server.application.handlers.main.logic.graph;
 
+import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
+import cc.blynk.server.application.handlers.sharing.auth.AppShareStateHolder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.ReportingStorageDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
@@ -43,7 +47,7 @@ public class DeleteDeviceDataLogic {
         return deviceIds;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
+    public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
         String[] messageParts = StringUtils.split2(message.body);
 
         if (messageParts.length < 1) {
@@ -52,7 +56,19 @@ public class DeleteDeviceDataLogic {
 
         String[] dashIdAndDeviceId = split2Device(messageParts[0]);
         int dashId = Integer.parseInt(dashIdAndDeviceId[0]);
+        User user = state.user;
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
+
+        //if app is shared - check if we can remove devices
+        if (state instanceof AppShareStateHolder) {
+            ReportingWidget reportingWidget = dash.getReportingWidget();
+            if (reportingWidget == null) {
+                throw new IllegalCommandException("No reporting widget.");
+            }
+            if (!reportingWidget.allowEndUserToDeleteDataOn) {
+                throw new NotAllowedException("You are not allowed to delete the data.", message.id);
+            }
+        }
 
         if ("*".equals(dashIdAndDeviceId[1])) {
             int[] deviceIds = getDeviceIds(dash.devices);

@@ -411,7 +411,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 getProvisionTokenLogic.messageReceived(ctx, state.user, msg);
                 break;
             case DELETE_DEVICE_DATA :
-                deleteDeviceDataLogic.messageReceived(ctx, state.user, msg);
+                deleteDeviceDataLogic.messageReceived(ctx, state, msg);
                 break;
 
             case CREATE_REPORT :
