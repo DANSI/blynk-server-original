@@ -15,6 +15,8 @@ import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportDataStream;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportSource;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.TileTemplateReportSource;
 import cc.blynk.server.core.model.widgets.ui.reporting.type.DailyReport;
+import cc.blynk.server.core.model.widgets.ui.reporting.type.DayOfMonth;
+import cc.blynk.server.core.model.widgets.ui.reporting.type.MonthlyReport;
 import cc.blynk.server.core.model.widgets.ui.reporting.type.OneTimeReport;
 import cc.blynk.server.core.model.widgets.ui.reporting.type.ReportDurationType;
 import cc.blynk.server.servers.BaseServer;
@@ -684,6 +686,99 @@ public class ReportingTest extends IntegrationBase {
         assertEquals(1, holder.reportScheduler.getTaskCount());
         assertEquals(0, holder.reportScheduler.map.size());
         assertEquals(0, holder.reportScheduler.getActiveCount());
+    }
+
+    @Test
+    public void testExpiredReportIsNotAddedToTheProject() throws Exception {
+        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportSource reportSource = new TileTemplateReportSource(
+                new ReportDataStream[] {reportDataStream},
+                1,
+                new int[] {0}
+        );
+
+        ReportingWidget reportingWidget = new ReportingWidget();
+        reportingWidget.id = 222222;
+        reportingWidget.height = 1;
+        reportingWidget.width = 1;
+        reportingWidget.reportSources = new ReportSource[] {
+                reportSource
+        };
+
+        clientPair.appClient.createWidget(1, reportingWidget);
+        clientPair.appClient.verifyResult(ok(1));
+
+        long now = System.currentTimeMillis() + 1500;
+
+        Report report = new Report(1, "MonthlyReport",
+                new ReportSource[] {reportSource},
+                new MonthlyReport(now, ReportDurationType.CUSTOM, now, now, DayOfMonth.FIRST), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("UTC"), 0, 0, null);
+
+        clientPair.appClient.createReport(1, report);
+        clientPair.appClient.verifyResult(illegalCommandBody(2));
+
+        clientPair.appClient.getWidget(1, 222222);
+        ReportingWidget reportingWidget2 = (ReportingWidget) JsonParser.parseWidget(clientPair.appClient.getBody(3), 0);
+        assertNotNull(reportingWidget2);
+        assertEquals(0, reportingWidget2.reports.length);
+
+
+        verify(mailWrapper, never()).sendReportEmail(eq("test@gmail.com"),
+                any(),
+                any(),
+                any());
+        sleep(200);
+        assertEquals(0, holder.reportScheduler.getCompletedTaskCount());
+        assertEquals(0, holder.reportScheduler.getTaskCount());
+        assertEquals(0, holder.reportScheduler.map.size());
+        assertEquals(0, holder.reportScheduler.getActiveCount());
+    }
+
+    @Test
+    public void testExpiredReportIsNotAddedToTheProject2() throws Exception {
+        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportSource reportSource = new TileTemplateReportSource(
+                new ReportDataStream[] {reportDataStream},
+                1,
+                new int[] {0}
+        );
+
+        ReportingWidget reportingWidget = new ReportingWidget();
+        reportingWidget.id = 222222;
+        reportingWidget.height = 1;
+        reportingWidget.width = 1;
+        reportingWidget.reportSources = new ReportSource[] {
+                reportSource
+        };
+
+        clientPair.appClient.createWidget(1, reportingWidget);
+        clientPair.appClient.verifyResult(ok(1));
+
+        long now = System.currentTimeMillis() + 1500;
+
+        Report report = new Report(1, "MonthlyReport",
+                new ReportSource[] {reportSource},
+                new MonthlyReport(now, ReportDurationType.CUSTOM, now, now + 30L * 86400_000, DayOfMonth.FIRST), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("UTC"), 0, 0, null);
+
+        clientPair.appClient.createReport(1, report);
+        report = clientPair.appClient.parseReportFromResponse(2);
+        assertNotNull(report);
+
+        report = new Report(1, "MonthlyReport2",
+                new ReportSource[] {reportSource},
+                new MonthlyReport(now, ReportDurationType.CUSTOM, now, now, DayOfMonth.FIRST), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("UTC"), 0, 0, null);
+
+        clientPair.appClient.updateReport(1, report);
+        clientPair.appClient.verifyResult(illegalCommandBody(3));
+
+        clientPair.appClient.getWidget(1, 222222);
+        ReportingWidget reportingWidget2 = (ReportingWidget) JsonParser.parseWidget(clientPair.appClient.getBody(4), 0);
+        assertNotNull(reportingWidget2);
+        assertEquals(1, reportingWidget2.reports.length);
+        assertEquals("MonthlyReport", reportingWidget2.reports[0].name);
     }
 
     @Test

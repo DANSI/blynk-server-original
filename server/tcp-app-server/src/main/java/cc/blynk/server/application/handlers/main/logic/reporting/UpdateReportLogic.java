@@ -62,9 +62,6 @@ public class UpdateReportLogic {
             throw new IllegalCommandException("Cannot find report with provided id.");
         }
 
-        reportingWidget.reports = ArrayUtil.copyAndReplace(reportingWidget.reports, report, existingReportIndex);
-        dash.updatedAt = System.currentTimeMillis();
-
         //always remove prev report before any validations are done
         if (report.isPeriodic()) {
             boolean isRemoved = reportScheduler.cancelStoredFuture(user, dashId, report.id);
@@ -97,6 +94,9 @@ public class UpdateReportLogic {
                 reportScheduler.schedule(user, dashId, report, initialDelaySeconds);
             }
         }
+
+        reportingWidget.reports = ArrayUtil.copyAndReplace(reportingWidget.reports, report, existingReportIndex);
+        dash.updatedAt = System.currentTimeMillis();
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

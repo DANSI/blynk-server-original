@@ -74,9 +74,6 @@ public class CreateReportLogic {
         }
         user.subtractEnergy(price);
 
-        reportingWidget.reports = ArrayUtil.add(reportingWidget.reports, report, Report.class);
-        dash.updatedAt = System.currentTimeMillis();
-
         if (!report.isValid()) {
             log.debug("Report is not valid {} for {}.", report, user.email);
             throw new IllegalCommandException("Report is not valid.");
@@ -102,6 +99,9 @@ public class CreateReportLogic {
                 reportScheduler.schedule(user, dashId, report, initialDelaySeconds);
             }
         }
+
+        reportingWidget.reports = ArrayUtil.add(reportingWidget.reports, report, Report.class);
+        dash.updatedAt = System.currentTimeMillis();
 
         ctx.writeAndFlush(makeUTF8StringMessage(CREATE_REPORT, message.id, report.toString()), ctx.voidPromise());
     }
