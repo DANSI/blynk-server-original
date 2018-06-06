@@ -761,8 +761,10 @@ public class ReportingTest extends IntegrationBase {
 
         if (entries.hasMoreElements()) {
             ZipEntry entry = entries.nextElement();
+            byte[] ar = new byte[100];
             try (BufferedInputStream bis = new BufferedInputStream(zipFile.getInputStream(entry))) {
-                return new String(bis.readAllBytes());
+                bis.read(ar, 0, ar.length);
+                return new String(ar);
             }
         }
         throw new RuntimeException("Error reading result gzip file " + path.toString());
