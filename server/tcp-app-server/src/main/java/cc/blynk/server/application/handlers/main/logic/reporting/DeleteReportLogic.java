@@ -59,9 +59,11 @@ public class DeleteReportLogic {
         reportingWidget.reports = ArrayUtil.remove(reportingWidget.reports, existingReportIndex, Report.class);
         dash.updatedAt = System.currentTimeMillis();
 
-        boolean isRemoved = reportScheduler.cancelStoredFuture(user, dashId, reportId);
-        log.debug("Deleting reportId {} in scheduler for {}. Is removed: {}?.",
-                reportToDel.id, user.email, isRemoved);
+        if (reportToDel.isPeriodic()) {
+            boolean isRemoved = reportScheduler.cancelStoredFuture(user, dashId, reportId);
+            log.debug("Deleting reportId {} in scheduler for {}. Is removed: {}?.",
+                    reportToDel.id, user.email, isRemoved);
+        }
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

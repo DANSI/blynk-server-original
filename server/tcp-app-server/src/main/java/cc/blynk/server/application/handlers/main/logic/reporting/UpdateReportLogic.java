@@ -66,9 +66,11 @@ public class UpdateReportLogic {
         dash.updatedAt = System.currentTimeMillis();
 
         //always remove prev report before any validations are done
-        boolean isRemoved = reportScheduler.cancelStoredFuture(user, dashId, report.id);
-        log.debug("Deleting reportId {} in scheduler for {}. Is removed: {}?.",
-                report.id, user.email, isRemoved);
+        if (report.isPeriodic()) {
+            boolean isRemoved = reportScheduler.cancelStoredFuture(user, dashId, report.id);
+            log.debug("Deleting reportId {} in scheduler for {}. Is removed: {}?.",
+                    report.id, user.email, isRemoved);
+        }
 
         if (!report.isValid()) {
             log.debug("Report is not valid {} for {}.", report, user.email);
