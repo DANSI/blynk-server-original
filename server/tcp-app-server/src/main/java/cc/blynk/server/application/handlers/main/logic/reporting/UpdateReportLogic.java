@@ -5,6 +5,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.ui.reporting.Report;
+import cc.blynk.server.core.model.widgets.ui.reporting.ReportResult;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportScheduler;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
@@ -89,6 +90,10 @@ public class UpdateReportLogic {
             log.debug(reportJson);
 
             report.nextReportAt = System.currentTimeMillis() + initialDelaySeconds * 1000;
+            //special case when expired report is extended
+            if (report.lastRunResult == ReportResult.EXPIRED) {
+                report.lastRunResult = null;
+            }
 
             if (report.isActive) {
                 reportScheduler.schedule(user, dashId, report, initialDelaySeconds);
