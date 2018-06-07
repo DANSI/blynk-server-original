@@ -69,7 +69,7 @@ public final class ServerLauncher {
 
         Security.addProvider(new BouncyCastleProvider());
 
-        var restore = Boolean.parseBoolean(cmdProperties.get(ArgumentsParser.RESTORE_OPTION));
+        boolean restore = Boolean.parseBoolean(cmdProperties.get(ArgumentsParser.RESTORE_OPTION));
         start(serverProperties, mailProperties, smsProperties, gcmProperties, twitterProperties, restore);
     }
 
@@ -95,7 +95,7 @@ public final class ServerLauncher {
                 mailProperties, smsProperties, gcmProperties, twitterProperties,
                 restore);
 
-        var servers = new BaseServer[] {
+        BaseServer[] servers = new BaseServer[] {
                 new HardwareSSLServer(holder),
                 new HardwareAndHttpAPIServer(holder),
                 new AppAndHttpsServer(holder),
@@ -108,7 +108,7 @@ public final class ServerLauncher {
 
             System.out.println();
             System.out.println("Blynk Server " + JarUtil.getServerVersion() + " successfully started.");
-            var path = new File(System.getProperty("logs.folder")).getAbsolutePath().replace("/./", "/");
+            String path = new File(System.getProperty("logs.folder")).getAbsolutePath().replace("/./", "/");
             System.out.println("All server output is stored in folder '" + path + "' file.");
 
             holder.sslContextHolder.generateInitialCertificates(holder.props);
@@ -118,10 +118,12 @@ public final class ServerLauncher {
     }
 
     private static void createSuperUser(Holder holder) {
-        var email = holder.props.getProperty("admin.email", "admin@blynk.cc");
-        var pass = holder.props.getProperty("admin.pass", "admin");
+        String url = holder.props.getAdminUrl(holder.host);
+        String email = holder.props.getProperty("admin.email", "admin@blynk.cc");
+        String pass = holder.props.getProperty("admin.pass", "admin");
 
         if (!holder.userDao.isSuperAdminExists()) {
+            System.out.println("Your Admin url is " + url);
             System.out.println("Your Admin login email is " + email);
             System.out.println("Your Admin password is " + pass);
 
