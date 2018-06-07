@@ -44,7 +44,7 @@ public class CreateReportTestTimingTest {
         Report report = new Report(1, "Daily Report",
                 new ReportSource[] {reportSource2},
                 new DailyReport(now, ReportDurationType.INFINITE, 0, 0), "test@gmail.com",
-                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("Europe/Kiev"), 0, 0, null);
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, null, ZoneId.of("Europe/Kiev"), 0, 0, null);
 
         long expectedDelayInSeconds = report.calculateDelayInSeconds();
 
@@ -69,7 +69,7 @@ public class CreateReportTestTimingTest {
         Report report = new Report(1, "Daily Report",
                 new ReportSource[] {reportSource2},
                 new DailyReport(now, ReportDurationType.INFINITE, 0, 0), "test@gmail.com",
-                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("Europe/Kiev"), 0, 0, null);
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, null, ZoneId.of("Europe/Kiev"), 0, 0, null);
 
         long expectedDelayInSeconds = report.calculateDelayInSeconds();
 
@@ -92,7 +92,7 @@ public class CreateReportTestTimingTest {
         Report report = new Report(1, "Daily Report",
                 new ReportSource[] {reportSource2},
                 new DailyReport(now, ReportDurationType.INFINITE, 0, 0), "test@gmail.com",
-                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("UTC"), 0, 0, null);
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, null, ZoneId.of("UTC"), 0, 0, null);
 
         long expectedDelayInSeconds = report.calculateDelayInSeconds();
 
@@ -115,7 +115,7 @@ public class CreateReportTestTimingTest {
         Report report = new Report(1, "Daily Report",
                 new ReportSource[] {reportSource2},
                 new DailyReport(now, ReportDurationType.INFINITE, 0, 0), "test@gmail.com",
-                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("Europe/Kiev"), 0, 0, null);
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, null, ZoneId.of("Europe/Kiev"), 0, 0, null);
 
         long expectedDelayInSeconds = report.calculateDelayInSeconds();
 
@@ -139,7 +139,7 @@ public class CreateReportTestTimingTest {
         Report report = new Report(1, "Report",
                 new ReportSource[] {reportSource2},
                 new WeeklyReport(now, ReportDurationType.INFINITE, 0, 0, 1), "test@gmail.com",
-                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("Europe/Kiev"), 0, 0, null);
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, null, ZoneId.of("Europe/Kiev"), 0, 0, null);
 
         long expectedDelayInSeconds = report.calculateDelayInSeconds();
 
@@ -163,7 +163,7 @@ public class CreateReportTestTimingTest {
         Report report = new Report(1, "Daily Report",
                 new ReportSource[] {reportSource2},
                 new DailyReport(now, ReportDurationType.CUSTOM, now, now), "test@gmail.com",
-                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("Europe/Kiev"), 0, 0, null);
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, null, ZoneId.of("Europe/Kiev"), 0, 0, null);
 
         long expectedDelayInSeconds = report.calculateDelayInSeconds();
 
@@ -188,7 +188,7 @@ public class CreateReportTestTimingTest {
         Report report = new Report(1, "Daily Report",
                 new ReportSource[] {reportSource2},
                 new DailyReport(now, ReportDurationType.CUSTOM, now + 86400_000, now + 86400_000), "test@gmail.com",
-                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("Europe/Kiev"), 0, 0, null);
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, null, ZoneId.of("Europe/Kiev"), 0, 0, null);
 
         long expectedDelayInSeconds = report.calculateDelayInSeconds();
 
@@ -213,7 +213,7 @@ public class CreateReportTestTimingTest {
         Report report = new Report(1, "Daily Report",
                 new ReportSource[] {reportSource2},
                 new DailyReport(now, ReportDurationType.CUSTOM, now + 2 * 86400_000, now + 2 * 86400_000), "test@gmail.com",
-                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("Europe/Kiev"), 0, 0, null);
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, null, ZoneId.of("Europe/Kiev"), 0, 0, null);
 
         long expectedDelayInSeconds = report.calculateDelayInSeconds();
 
@@ -238,7 +238,7 @@ public class CreateReportTestTimingTest {
         Report report = new Report(1, "Daily Report",
                 new ReportSource[] {reportSource2},
                 new DailyReport(now, ReportDurationType.CUSTOM, now, now - 86400_000), "test@gmail.com",
-                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("Europe/Kiev"), 0, 0, null);
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, null, ZoneId.of("Europe/Kiev"), 0, 0, null);
 
         report.calculateDelayInSeconds();
     }
@@ -263,7 +263,7 @@ public class CreateReportTestTimingTest {
         Report report = new Report(1, "Daily Report",
                 new ReportSource[] {reportSource2},
                 new MonthlyReport(now, ReportDurationType.CUSTOM, now, now, DayOfMonth.FIRST), "test@gmail.com",
-                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, ZoneId.of("Europe/Kiev"), 0, 0, null);
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, null, ZoneId.of("Europe/Kiev"), 0, 0, null);
 
         report.calculateDelayInSeconds();
     }

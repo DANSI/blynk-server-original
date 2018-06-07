@@ -18,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -130,7 +131,8 @@ public abstract class BaseReportTask implements Runnable {
                                         reportDataStream.pin, fetchCount, report.granularityType, 0);
 
                                 if (onePinData != null) {
-                                    byte[] onePinDataCsv = toCSV(onePinData, deviceId, startFrom);
+                                    byte[] onePinDataCsv = toCSV(
+                                            onePinData, deviceId, startFrom, report.format, report.tzName);
                                     String onePinFileName =
                                             deviceAndPinFileName(key.dashId, deviceId, reportDataStream);
                                     atLeastOne = zipEntry(zs, onePinFileName, onePinDataCsv);
@@ -144,10 +146,11 @@ public abstract class BaseReportTask implements Runnable {
         return atLeastOne;
     }
 
-    private byte[] toCSV(ByteBuffer onePinData, int deviceId, long startFrom) {
+    private byte[] toCSV(ByteBuffer onePinData, int deviceId, long startFrom, String formatter, ZoneId zoneId) {
         ((Buffer) onePinData).flip();
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(onePinData.capacity());
-        FileUtils.writeBufToCsv(byteArrayOutputStream, onePinData, deviceId, startFrom);
+        FileUtils.writeBufToCsvFilterAndFormat(
+                byteArrayOutputStream, onePinData, deviceId, startFrom, formatter, zoneId);
         return byteArrayOutputStream.toByteArray();
     }
 
