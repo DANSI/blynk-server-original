@@ -486,7 +486,7 @@ public class ReportingTest extends IntegrationBase {
         String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
         verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
-                eq("<html><body><a href=\"http://127.0.0.1:18080/" + filename + "\">DailyReport</a><br></body></html>"),
+                eq("http://127.0.0.1:18080/" + filename),
                 eq("Report name: DailyReport<br>Period: Daily, at 00:00"));
         sleep(200);
         assertEquals(1, holder.reportScheduler.getCompletedTaskCount());
@@ -548,7 +548,7 @@ public class ReportingTest extends IntegrationBase {
         String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
         verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
-                eq("<html><body><a href=\"http://127.0.0.1:18080/" + filename + "\">DailyReport</a><br></body></html>"),
+                eq("http://127.0.0.1:18080/" + filename),
                 any());
         sleep(200);
         assertEquals(1, holder.reportScheduler.getCompletedTaskCount());
@@ -624,7 +624,7 @@ public class ReportingTest extends IntegrationBase {
         String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
         verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your one time OneTime Report is ready"),
-                eq("<html><body><a href=\"http://127.0.0.1:18080/" + filename + "\">OneTime Report</a><br></body></html>"),
+                eq("http://127.0.0.1:18080/" + filename),
                 eq("Report name: OneTime Report<br>Period: One time"));
         sleep(200);
         assertEquals(1, holder.reportScheduler.getCompletedTaskCount());
@@ -862,7 +862,7 @@ public class ReportingTest extends IntegrationBase {
         String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
         verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
-                eq("<html><body><a href=\"http://127.0.0.1:18080/" + filename + "\">DailyReport</a><br></body></html>"),
+                eq("http://127.0.0.1:18080/" + filename),
                 any());
         sleep(200);
         assertEquals(1, holder.reportScheduler.getCompletedTaskCount());

@@ -104,10 +104,9 @@ public abstract class BaseReportTask implements Runnable {
             case CSV_FILE_PER_DEVICE_PER_PIN:
             default:
                 if (filePerDevicePerPin(output, fetchCount, startFrom)) {
-                    ReportFileLink fileLink = new ReportFileLink(output, report.name);
                     String durationLabel = report.reportType.getDurationLabel().toLowerCase();
                     String subj = "Your " + durationLabel + " " + report.name + " is ready";
-                    String gzipDownloadUrl = fileLink.makeBody(downloadUrl);
+                    String gzipDownloadUrl = downloadUrl + output.getFileName();
                     String dynamicSection = report.buildDynamicSection();
                     mailWrapper.sendReportEmail(report.recipients, subj, gzipDownloadUrl, dynamicSection);
                     return ReportResult.OK;
