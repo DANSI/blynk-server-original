@@ -8,6 +8,7 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
+import cc.blynk.server.core.model.widgets.ui.reporting.Format;
 import cc.blynk.server.core.model.widgets.ui.reporting.Report;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportResult;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
@@ -23,7 +24,6 @@ import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.AppNameUtil;
-import cc.blynk.utils.DateTimeUtils;
 import cc.blynk.utils.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -502,7 +502,7 @@ public class ReportingTest extends IntegrationBase {
         String[] split = resultCsvString.split(",");
         assertEquals(1.11D, Double.parseDouble(split[0]), 0.0001);
         String nowFormatted = DateTimeFormatter
-                .ofPattern(DateTimeUtils.DEFAULT_FORMAT)
+                .ofPattern(Format.ISO_SIMPLE.pattern)
                 .withZone(ZoneId.of("UTC"))
                 .format(Instant.ofEpochMilli(pointNow));
         assertEquals(nowFormatted, split[1]);
@@ -568,7 +568,7 @@ public class ReportingTest extends IntegrationBase {
         String[] split = resultCsvString.split(",");
         assertEquals(1.11D, Double.parseDouble(split[0]), 0.0001);
         String nowFormatted = DateTimeFormatter
-                .ofPattern(DateTimeUtils.DEFAULT_FORMAT)
+                .ofPattern(Format.ISO_SIMPLE.pattern)
                 .withZone(ZoneId.of("UTC"))
                 .format(Instant.ofEpochMilli(pointNow));
         assertEquals(nowFormatted, split[1]);
@@ -651,7 +651,7 @@ public class ReportingTest extends IntegrationBase {
         String[] split = resultCsvString.split(",");
         assertEquals(1.11D, Double.parseDouble(split[0]), 0.0001);
         String nowFormatted = DateTimeFormatter
-                .ofPattern(DateTimeUtils.DEFAULT_FORMAT)
+                .ofPattern(Format.ISO_SIMPLE.pattern)
                 .withZone(ZoneId.of("UTC"))
                 .format(Instant.ofEpochMilli(now));
         assertEquals(nowFormatted, split[1]);
@@ -890,7 +890,7 @@ public class ReportingTest extends IntegrationBase {
         String[] split = resultCsvString.split(",");
         assertEquals(1.11D, Double.parseDouble(split[0]), 0.0001);
         String nowFormatted = DateTimeFormatter
-                .ofPattern(DateTimeUtils.DEFAULT_FORMAT)
+                .ofPattern(Format.ISO_SIMPLE.pattern)
                 .withZone(ZoneId.of("UTC"))
                 .format(Instant.ofEpochMilli(pointNow));
         assertEquals(nowFormatted, split[1]);
