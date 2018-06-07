@@ -20,7 +20,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 import static cc.blynk.server.core.model.widgets.ui.reporting.ReportOutput.CSV_FILE_PER_DEVICE_PER_PIN;
-import static cc.blynk.utils.DateTimeUtils.DEFAULT_FORMAT;
 
 /**
  * The Blynk Project.
@@ -45,7 +44,7 @@ public class Report {
 
     public final ReportOutput reportOutput;
 
-    public final String format;
+    public final Format format;
 
     @JsonSerialize(using = ZoneIdToString.class)
     @JsonDeserialize(using = StringToZoneId.class, as = ZoneId.class)
@@ -66,7 +65,7 @@ public class Report {
                   @JsonProperty("granularityType") GraphGranularityType granularityType,
                   @JsonProperty("isActive") boolean isActive,
                   @JsonProperty("reportOutput") ReportOutput reportOutput,
-                  @JsonProperty("format") String format,
+                  @JsonProperty("format") Format format,
                   @JsonProperty("tzName") ZoneId tzName,
                   @JsonProperty("nextReportAt") long nextReportAt,
                   @JsonProperty("lastReportAt") long lastReportAt,
@@ -79,7 +78,7 @@ public class Report {
         this.granularityType = granularityType;
         this.isActive = isActive;
         this.reportOutput = reportOutput == null ? CSV_FILE_PER_DEVICE_PER_PIN : reportOutput;
-        this.format = format == null ? DEFAULT_FORMAT : format;
+        this.format = format == null ? Format.ISO_SIMPLE : format;
         this.tzName = tzName;
         this.nextReportAt = nextReportAt;
         this.lastReportAt = lastReportAt;

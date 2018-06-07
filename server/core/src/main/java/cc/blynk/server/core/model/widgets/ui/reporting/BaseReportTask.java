@@ -132,7 +132,7 @@ public abstract class BaseReportTask implements Runnable {
 
                                 if (onePinData != null) {
                                     byte[] onePinDataCsv = toCSV(
-                                            onePinData, deviceId, startFrom, report.format, report.tzName);
+                                            onePinData, deviceId, startFrom, report.format.pattern, report.tzName);
                                     String onePinFileName =
                                             deviceAndPinFileName(key.dashId, deviceId, reportDataStream);
                                     atLeastOne = zipEntry(zs, onePinFileName, onePinDataCsv);
@@ -146,11 +146,11 @@ public abstract class BaseReportTask implements Runnable {
         return atLeastOne;
     }
 
-    private byte[] toCSV(ByteBuffer onePinData, int deviceId, long startFrom, String formatter, ZoneId zoneId) {
+    private byte[] toCSV(ByteBuffer onePinData, int deviceId, long startFrom, String format, ZoneId zoneId) {
         ((Buffer) onePinData).flip();
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(onePinData.capacity());
         FileUtils.writeBufToCsvFilterAndFormat(
-                byteArrayOutputStream, onePinData, deviceId, startFrom, formatter, zoneId);
+                byteArrayOutputStream, onePinData, deviceId, startFrom, format, zoneId);
         return byteArrayOutputStream.toByteArray();
     }
 

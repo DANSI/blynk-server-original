@@ -14,8 +14,6 @@ public final class DateTimeUtils {
     private DateTimeUtils() {
     }
 
-    public static final String DEFAULT_FORMAT = "yyyy-MM-dd HH:mm:ss";
-
     public static final ZoneId UTC = ZoneId.of("UTC");
     public static final Calendar UTC_CALENDAR = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 
