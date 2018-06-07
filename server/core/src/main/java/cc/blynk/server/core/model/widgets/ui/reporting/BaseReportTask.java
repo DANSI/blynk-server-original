@@ -130,11 +130,7 @@ public abstract class BaseReportTask implements Runnable {
                                         reportDataStream.pin, fetchCount, report.granularityType, 0);
 
                                 if (onePinData != null) {
-                                    ((Buffer) onePinData).flip();
-                                    ByteArrayOutputStream byteArrayOutputStream =
-                                            new ByteArrayOutputStream(onePinData.capacity());
-                                    FileUtils.writeBufToCsv(byteArrayOutputStream, onePinData, deviceId, startFrom);
-                                    byte[] onePinDataCsv = byteArrayOutputStream.toByteArray();
+                                    byte[] onePinDataCsv = toCSV(onePinData, deviceId, startFrom);
                                     String onePinFileName =
                                             deviceAndPinFileName(key.dashId, deviceId, reportDataStream);
                                     atLeastOne = zipEntry(zs, onePinFileName, onePinDataCsv);
@@ -146,6 +142,13 @@ public abstract class BaseReportTask implements Runnable {
             }
         }
         return atLeastOne;
+    }
+
+    private byte[] toCSV(ByteBuffer onePinData, int deviceId, long startFrom) {
+        ((Buffer) onePinData).flip();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(onePinData.capacity());
+        FileUtils.writeBufToCsv(byteArrayOutputStream, onePinData, deviceId, startFrom);
+        return byteArrayOutputStream.toByteArray();
     }
 
     private boolean zipEntry(ZipOutputStream zs, String onePinFileName, byte[] onePinDataCsv) throws IOException {
