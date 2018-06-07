@@ -125,22 +125,19 @@ public abstract class BaseReportTask implements Runnable {
                     for (int deviceId : reportSource.getDeviceIds()) {
                         for (ReportDataStream reportDataStream : reportSource.reportDataStreams) {
                             if (reportDataStream.isValid()) {
-                                byte[] onePinDataCsv = processSingleFile(
-                                        deviceId, reportDataStream, fetchCount, startFrom);
-                                if (onePinDataCsv != null) {
+                                ByteBuffer onePinData = reportingStorageDao.getByteBufferFromDisk(key.user,
+                                        key.dashId, deviceId, reportDataStream.pinType,
+                                        reportDataStream.pin, fetchCount, report.granularityType, 0);
+
+                                if (onePinData != null) {
+                                    ((Buffer) onePinData).flip();
+                                    ByteArrayOutputStream byteArrayOutputStream =
+                                            new ByteArrayOutputStream(onePinData.capacity());
+                                    FileUtils.writeBufToCsv(byteArrayOutputStream, onePinData, deviceId, startFrom);
+                                    byte[] onePinDataCsv = byteArrayOutputStream.toByteArray();
                                     String onePinFileName =
                                             deviceAndPinFileName(key.dashId, deviceId, reportDataStream);
-                                    ZipEntry zipEntry = new ZipEntry(onePinFileName);
-                                    try {
-                                        zs.putNextEntry(zipEntry);
-                                        zs.write(onePinDataCsv, 0, onePinDataCsv.length);
-                                        zs.closeEntry();
-                                        atLeastOne = true;
-                                    } catch (IOException e) {
-                                        log.error("Error compressing report file.", e.getMessage());
-                                        log.debug(e);
-                                        throw e;
-                                    }
+                                    atLeastOne = zipEntry(zs, onePinFileName, onePinDataCsv);
                                 }
                             }
                         }
@@ -151,17 +148,18 @@ public abstract class BaseReportTask implements Runnable {
         return atLeastOne;
     }
 
-    private byte[] processSingleFile(int deviceId, ReportDataStream reportDataStream, int fetchCount, long startFrom) {
-        ByteBuffer onePinData = reportingStorageDao.getByteBufferFromDisk(key.user,
-                key.dashId, deviceId, reportDataStream.pinType,
-                reportDataStream.pin, fetchCount, report.granularityType, 0);
-        if (onePinData != null) {
-            ((Buffer) onePinData).flip();
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(onePinData.capacity());
-            FileUtils.writeBufToCsv(byteArrayOutputStream, onePinData, deviceId, startFrom);
-            return byteArrayOutputStream.toByteArray();
+    private boolean zipEntry(ZipOutputStream zs, String onePinFileName, byte[] onePinDataCsv) throws IOException {
+        ZipEntry zipEntry = new ZipEntry(onePinFileName);
+        try {
+            zs.putNextEntry(zipEntry);
+            zs.write(onePinDataCsv, 0, onePinDataCsv.length);
+            zs.closeEntry();
+            return true;
+        } catch (IOException e) {
+            log.error("Error compressing report file.", e.getMessage());
+            log.debug(e);
+            throw e;
         }
-        return null;
     }
 
 }
