@@ -38,6 +38,23 @@ public class ServerProperties extends BaseProperties {
         return getProperty("product.name", AppNameUtil.BLYNK);
     }
 
+    public String getAdminUrl(String host) {
+        String httpsPort = getHttpsPortOrBlankIfDefaultAsString();
+        return "https://" + host + httpsPort + getAdminRootPath();
+    }
+
+    private String getHttpsPortOrBlankIfDefaultAsString() {
+        if (force80Port()) {
+            //means default port 443 is used, so no need to attach it
+            return "";
+        }
+        String httpsPort = getProperty("https.port");
+        if (httpsPort == null || httpsPort.equals("443")) {
+            return "";
+        }
+        return ":" + httpsPort;
+    }
+
     public String getHttpsPortAsString() {
         return force80Port() ? "443" : getProperty("https.port");
     }

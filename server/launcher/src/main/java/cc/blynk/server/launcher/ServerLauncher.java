@@ -119,10 +119,12 @@ public final class ServerLauncher {
     }
 
     private static void createSuperUser(Holder holder) {
+        String url = holder.props.getAdminUrl(holder.host);
         String email = holder.props.getProperty("admin.email", "admin@blynk.cc");
         String pass = holder.props.getProperty("admin.pass", "admin");
 
         if (!holder.userDao.isSuperAdminExists()) {
+            System.out.println("Your Admin url is " + url);
             System.out.println("Your Admin login email is " + email);
             System.out.println("Your Admin password is " + pass);
 

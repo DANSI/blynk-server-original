@@ -22,7 +22,7 @@ public class MailWrapper {
             client = new GMailClient(mailProperties);
         }
         this.emailBody = FileLoaderUtil.readFileAsString("static/register-email.html");
-        this.reportBody = FileLoaderUtil.readFileAsString("static/report_mail.html");
+        this.reportBody = FileLoaderUtil.readFileAsString("static/report-email.html");
     }
 
     public void sendReportEmail(String to,

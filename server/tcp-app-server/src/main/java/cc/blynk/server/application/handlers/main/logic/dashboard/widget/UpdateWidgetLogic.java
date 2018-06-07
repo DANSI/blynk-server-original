@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.ui.Tabs;
+import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
@@ -117,6 +118,12 @@ public class UpdateWidgetLogic {
             DeviceTiles newDeviceTiles = (DeviceTiles) newWidget;
             newDeviceTiles.tiles = prevDeviceTiles.tiles;
             newDeviceTiles.templates = prevDeviceTiles.templates;
+        }
+
+        if (newWidget instanceof ReportingWidget) {
+            ReportingWidget prevReporting = (ReportingWidget) prevWidget;
+            ReportingWidget newReporting = (ReportingWidget) newWidget;
+            newReporting.reports = prevReporting.reports;
         }
 
         if (deviceTilesId != -1) {

@@ -23,12 +23,17 @@ logs.folder=./logs
 log.level=info
 enable.db=true
 force.port.80.for.csv=true
-admin.rootPath=/admin
-allowed.administrator.ips=
-server.host=xxx.blynk.cc
 contact.email=xxx@blynk.cc
-region=xxx
-product.name=xxx
+user.devices.limit=100000
+user.message.quota.limit=10000
+web.request.max.size=5242880
+region=test
+admin.rootPath=/test
+product.name=test
+server.host=test.blynk.cc
+admin.email=test@blynk.cc
+admin.pass=test
+
         
 db.properties
 

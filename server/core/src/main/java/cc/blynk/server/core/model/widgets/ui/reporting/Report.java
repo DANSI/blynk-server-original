@@ -14,12 +14,12 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+
+import static cc.blynk.server.core.model.widgets.ui.reporting.ReportOutput.CSV_FILE_PER_DEVICE_PER_PIN;
 
 /**
  * The Blynk Project.
@@ -27,8 +27,6 @@ import java.time.ZonedDateTime;
  * Created on 22.05.18.
  */
 public class Report {
-
-    private static final Logger log = LogManager.getLogger(Report.class);
 
     public final int id;
 
@@ -45,6 +43,8 @@ public class Report {
     public final boolean isActive;
 
     public final ReportOutput reportOutput;
+
+    public final Format format;
 
     @JsonSerialize(using = ZoneIdToString.class)
     @JsonDeserialize(using = StringToZoneId.class, as = ZoneId.class)
@@ -65,6 +65,7 @@ public class Report {
                   @JsonProperty("granularityType") GraphGranularityType granularityType,
                   @JsonProperty("isActive") boolean isActive,
                   @JsonProperty("reportOutput") ReportOutput reportOutput,
+                  @JsonProperty("format") Format format,
                   @JsonProperty("tzName") ZoneId tzName,
                   @JsonProperty("nextReportAt") long nextReportAt,
                   @JsonProperty("lastReportAt") long lastReportAt,
@@ -76,7 +77,8 @@ public class Report {
         this.recipients = recipients;
         this.granularityType = granularityType;
         this.isActive = isActive;
-        this.reportOutput = reportOutput;
+        this.reportOutput = reportOutput == null ? CSV_FILE_PER_DEVICE_PER_PIN : reportOutput;
+        this.format = format == null ? Format.ISO_SIMPLE : format;
         this.tzName = tzName;
         this.nextReportAt = nextReportAt;
         this.lastReportAt = lastReportAt;

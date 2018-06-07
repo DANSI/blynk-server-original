@@ -5,6 +5,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.ui.reporting.Report;
+import cc.blynk.server.core.model.widgets.ui.reporting.ReportResult;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportScheduler;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
@@ -15,7 +16,8 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.CommonByteBufUtil.ok;
+import static cc.blynk.server.core.protocol.enums.Command.UPDATE_REPORT;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StringUtils.split2;
 
 /**
@@ -62,13 +64,12 @@ public class UpdateReportLogic {
             throw new IllegalCommandException("Cannot find report with provided id.");
         }
 
-        reportingWidget.reports = ArrayUtil.copyAndReplace(reportingWidget.reports, report, existingReportIndex);
-        dash.updatedAt = System.currentTimeMillis();
-
         //always remove prev report before any validations are done
-        boolean isRemoved = reportScheduler.cancelStoredFuture(user, dashId, report.id);
-        log.debug("Deleting reportId {} in scheduler for {}. Is removed: {}?.",
-                report.id, user.email, isRemoved);
+        if (report.isPeriodic()) {
+            boolean isRemoved = reportScheduler.cancelStoredFuture(user, dashId, report.id);
+            log.debug("Deleting reportId {} in scheduler for {}. Is removed: {}?.",
+                    report.id, user.email, isRemoved);
+        }
 
         if (!report.isValid()) {
             log.debug("Report is not valid {} for {}.", report, user.email);
@@ -90,13 +91,20 @@ public class UpdateReportLogic {
             log.debug(reportJson);
 
             report.nextReportAt = System.currentTimeMillis() + initialDelaySeconds * 1000;
+            //special case when expired report is extended
+            if (report.lastRunResult == ReportResult.EXPIRED) {
+                report.lastRunResult = null;
+            }
 
             if (report.isActive) {
                 reportScheduler.schedule(user, dashId, report, initialDelaySeconds);
             }
         }
 
-        ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
+        reportingWidget.reports = ArrayUtil.copyAndReplace(reportingWidget.reports, report, existingReportIndex);
+        dash.updatedAt = System.currentTimeMillis();
+
+        ctx.writeAndFlush(makeUTF8StringMessage(UPDATE_REPORT, message.id, report.toString()), ctx.voidPromise());
     }
 
 }

@@ -1,6 +1,9 @@
 package cc.blynk.server.core.model.widgets.ui.reporting;
 
 import cc.blynk.server.core.model.widgets.NoPinWidget;
+import cc.blynk.server.core.model.widgets.controls.ButtonStyle;
+import cc.blynk.server.core.model.widgets.controls.Edge;
+import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportSource;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 
@@ -17,6 +20,14 @@ public class ReportingWidget extends NoPinWidget {
     public ReportSource[] reportSources = EMPTY_REPORT_SOURCES;
 
     public boolean allowEndUserToDeleteDataOn;
+
+    public FontSize fontSize = FontSize.MEDIUM;
+
+    public Edge edge = Edge.ROUNDED;
+
+    public ButtonStyle buttonStyle = ButtonStyle.SOLID;
+
+    public int textColor;
 
     public volatile Report[] reports = EMPTY_REPORTS;
 
