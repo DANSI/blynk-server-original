@@ -14,6 +14,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -236,5 +238,11 @@ public final class FileUtils {
             }
         }
         return null;
+    }
+
+    public static long getLastModified(Path filePath) throws IOException {
+        BasicFileAttributes attr = Files.readAttributes(filePath, BasicFileAttributes.class);
+        FileTime modifiedTime = attr.lastModifiedTime();
+        return modifiedTime.toMillis();
     }
 }

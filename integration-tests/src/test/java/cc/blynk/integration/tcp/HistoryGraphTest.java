@@ -1868,6 +1868,24 @@ public class HistoryGraphTest extends IntegrationBase {
     }
 
     @Test
+    public void deleteOldExportFiles() throws Exception {
+        Path csvDir = Paths.get(FileUtils.CSV_DIR);
+        if (Files.notExists(csvDir)) {
+            Files.createDirectories(csvDir);
+        }
+
+        //this file has corresponding history graph
+        Path csvFile = Paths.get(csvDir.toString(), "123.csv.gz");
+
+        FileUtils.write(csvFile, 1.11D, 1);
+        assertTrue(Files.exists(csvFile));
+
+        ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDao, 0, 1);
+        truncateWorker.run();
+        assertTrue(Files.notExists(csvFile));
+    }
+
+    @Test
     public void doNotTruncateFileWithCorrectSize() throws Exception {
         ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDao);
         String tempDir = holder.props.getProperty("data.folder");
