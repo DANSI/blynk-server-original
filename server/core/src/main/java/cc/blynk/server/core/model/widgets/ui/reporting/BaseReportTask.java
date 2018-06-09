@@ -133,9 +133,11 @@ public abstract class BaseReportTask implements Runnable {
                                 if (onePinData != null) {
                                     byte[] onePinDataCsv = toCSV(
                                             onePinData, deviceId, startFrom, report.format.pattern, report.tzName);
-                                    String onePinFileName =
-                                            deviceAndPinFileName(key.dashId, deviceId, reportDataStream);
-                                    atLeastOne = zipEntry(zs, onePinFileName, onePinDataCsv);
+                                    if (onePinDataCsv.length > 0) {
+                                        String onePinFileName =
+                                                deviceAndPinFileName(key.dashId, deviceId, reportDataStream);
+                                        atLeastOne = zipEntry(zs, onePinFileName, onePinDataCsv);
+                                    }
                                 }
                             }
                         }
