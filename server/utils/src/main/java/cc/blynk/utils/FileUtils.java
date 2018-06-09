@@ -17,7 +17,6 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.time.Instant;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -147,18 +146,25 @@ public final class FileUtils {
     }
 
     public static void writeBufToCsvFilterAndFormat(ByteArrayOutputStream baos, ByteBuffer onePinData,
-                                                    int deviceId, long startFrom, String format, ZoneId zoneId) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format).withZone(zoneId);
+                                                    int deviceId, long startFrom, DateTimeFormatter formatter) {
+
         while (onePinData.remaining() > 0) {
             double value = onePinData.getDouble();
             long ts = onePinData.getLong();
 
             if (startFrom < ts) {
-                String formattedTs = formatter.format(Instant.ofEpochMilli(ts));
+                String formattedTs = formatTS(formatter, ts);
                 String data = "" + value + ',' + formattedTs + ',' + deviceId + '\n';
                 baos.write(data.getBytes(US_ASCII), 0, data.length());
             }
         }
+    }
+
+    private static String formatTS(DateTimeFormatter formatter, long ts) {
+        if (formatter == null) {
+            return String.valueOf(ts);
+        }
+        return formatter.format(Instant.ofEpochMilli(ts));
     }
 
     public static void writeBufToCsv(BufferedWriter writer, ByteBuffer onePinData, int deviceId) throws Exception {

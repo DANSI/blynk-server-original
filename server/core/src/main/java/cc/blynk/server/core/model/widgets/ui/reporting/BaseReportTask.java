@@ -19,6 +19,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -118,6 +119,16 @@ public abstract class BaseReportTask implements Runnable {
         }
     }
 
+    private static void writeBufToCsvFilterAndFormat(ByteArrayOutputStream baos, ByteBuffer onePinData,
+                                                     int deviceId, long startFrom, Format format, ZoneId zoneId) {
+        if (format == null || format == Format.TS) {
+            FileUtils.writeBufToCsvFilterAndFormat(baos, onePinData, deviceId, startFrom, null);
+        } else {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format.pattern).withZone(zoneId);
+            FileUtils.writeBufToCsvFilterAndFormat(baos, onePinData, deviceId, startFrom, formatter);
+        }
+    }
+
     private boolean filePerDevicePerPin(Path output, int fetchCount, long startFrom) throws Exception {
         boolean atLeastOne = false;
         try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(output))) {
@@ -132,7 +143,7 @@ public abstract class BaseReportTask implements Runnable {
 
                                 if (onePinData != null) {
                                     byte[] onePinDataCsv = toCSV(
-                                            onePinData, deviceId, startFrom, report.format.pattern, report.tzName);
+                                            onePinData, deviceId, startFrom, report.format, report.tzName);
                                     if (onePinDataCsv.length > 0) {
                                         String onePinFileName =
                                                 deviceAndPinFileName(key.dashId, deviceId, reportDataStream);
@@ -148,13 +159,13 @@ public abstract class BaseReportTask implements Runnable {
         return atLeastOne;
     }
 
-    private byte[] toCSV(ByteBuffer onePinData, int deviceId, long startFrom, String format, ZoneId zoneId) {
+    private byte[] toCSV(ByteBuffer onePinData, int deviceId, long startFrom, Format format, ZoneId zoneId) {
         ((Buffer) onePinData).flip();
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(onePinData.capacity());
-        FileUtils.writeBufToCsvFilterAndFormat(
-                byteArrayOutputStream, onePinData, deviceId, startFrom, format, zoneId);
+        writeBufToCsvFilterAndFormat(byteArrayOutputStream, onePinData, deviceId, startFrom, format, zoneId);
         return byteArrayOutputStream.toByteArray();
     }
+
 
     private boolean zipEntry(ZipOutputStream zs, String onePinFileName, byte[] onePinDataCsv) throws IOException {
         ZipEntry zipEntry = new ZipEntry(onePinFileName);

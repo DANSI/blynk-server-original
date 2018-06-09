@@ -78,7 +78,7 @@ public class Report {
         this.granularityType = granularityType;
         this.isActive = isActive;
         this.reportOutput = reportOutput == null ? CSV_FILE_PER_DEVICE_PER_PIN : reportOutput;
-        this.format = format == null ? Format.ISO_SIMPLE : format;
+        this.format = format;
         this.tzName = tzName;
         this.nextReportAt = nextReportAt;
         this.lastReportAt = lastReportAt;
