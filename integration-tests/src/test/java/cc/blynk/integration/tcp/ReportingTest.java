@@ -20,6 +20,7 @@ import cc.blynk.server.core.model.widgets.ui.reporting.type.DayOfMonth;
 import cc.blynk.server.core.model.widgets.ui.reporting.type.MonthlyReport;
 import cc.blynk.server.core.model.widgets.ui.reporting.type.OneTimeReport;
 import cc.blynk.server.core.model.widgets.ui.reporting.type.ReportDurationType;
+import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
@@ -55,6 +56,7 @@ import static cc.blynk.server.core.model.widgets.ui.reporting.ReportOutput.CSV_F
 import static cc.blynk.server.core.model.widgets.ui.reporting.ReportResult.EXPIRED;
 import static cc.blynk.server.core.model.widgets.ui.reporting.ReportResult.OK;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
+import static cc.blynk.server.core.protocol.enums.Response.QUOTA_LIMIT;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -414,7 +416,7 @@ public class ReportingTest extends IntegrationBase {
 
         report2 = clientPair.appClient.parseReportFromResponse(4);
         assertNotNull(report2);
-        assertEquals(System.currentTimeMillis(), report2.nextReportAt, 2000);
+        assertEquals(System.currentTimeMillis(), report2.nextReportAt, 3000);
 
         int tries = 0;
         while (holder.reportScheduler.getCompletedTaskCount() < 2 && tries < 20) {
@@ -677,6 +679,63 @@ public class ReportingTest extends IntegrationBase {
                 .withZone(ZoneId.of("UTC"))
                 .format(Instant.ofEpochMilli(now));
         assertEquals(nowFormatted, split[1]);
+    }
+
+    @Test
+    public void testExportIsLimited() throws Exception {
+        String tempDir = holder.props.getProperty("data.folder");
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+        long now = System.currentTimeMillis();
+        FileUtils.write(pinReportingDataPath10, 1.11D, now);
+
+        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportSource reportSource = new TileTemplateReportSource(
+                new ReportDataStream[] {reportDataStream},
+                1,
+                new int[] {0}
+        );
+
+        ReportingWidget reportingWidget = new ReportingWidget();
+        reportingWidget.height = 1;
+        reportingWidget.width = 1;
+        reportingWidget.reportSources = new ReportSource[] {
+                reportSource
+        };
+
+        clientPair.appClient.createWidget(1, reportingWidget);
+        clientPair.appClient.verifyResult(ok(1));
+
+        Report report = new Report(1, "OneTime Report",
+                new ReportSource[] {reportSource},
+                new OneTimeReport(TimeUnit.DAYS.toMillis(1)), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN,
+                Format.ISO_SIMPLE, ZoneId.of("UTC"), 0, 0, null);
+
+        clientPair.appClient.createReport(1, report);
+        report = clientPair.appClient.parseReportFromResponse(2);
+        assertNotNull(report);
+        assertEquals(0, report.nextReportAt);
+        assertEquals(0, report.lastReportAt);
+
+        verify(mailWrapper, never()).sendReportEmail(eq("test@gmail.com"),
+                any(),
+                any(),
+                any());
+
+        clientPair.appClient.exportReport(1, 1);
+        report = clientPair.appClient.parseReportFromResponse(3);
+        assertNotNull(report);
+        assertEquals(0, report.nextReportAt);
+        assertEquals(System.currentTimeMillis(), report.lastReportAt, 2000);
+        assertEquals(OK, report.lastRunResult);
+
+        clientPair.appClient.exportReport(1, 1);
+        clientPair.appClient.verifyResult(new ResponseMessage(4, QUOTA_LIMIT));
     }
 
     @Test
