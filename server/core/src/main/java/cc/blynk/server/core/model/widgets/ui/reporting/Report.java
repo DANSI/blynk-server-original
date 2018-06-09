@@ -85,10 +85,6 @@ public class Report {
         this.lastRunResult = lastRunResult;
     }
 
-    public static int getPrice() {
-        return 4900;
-    }
-
     public boolean isValid() {
         return reportType != null && reportType.isValid()
                 && reportSources != null && reportSources.length > 0
