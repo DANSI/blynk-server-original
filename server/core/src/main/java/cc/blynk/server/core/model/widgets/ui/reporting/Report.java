@@ -96,7 +96,7 @@ public class Report {
     }
 
     public static int getPrice() {
-        return 4900;
+        return 2900;
     }
 
     public long calculateDelayInSeconds() throws IllegalCommandBodyException {

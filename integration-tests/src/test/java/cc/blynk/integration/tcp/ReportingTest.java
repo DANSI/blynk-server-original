@@ -256,7 +256,7 @@ public class ReportingTest extends IntegrationBase {
         assertNotNull(report);
 
         clientPair.appClient.send("getEnergy");
-        clientPair.appClient.verifyResult(produce(5, GET_ENERGY, "2600"));
+        clientPair.appClient.verifyResult(produce(5, GET_ENERGY, "4600"));
 
         report = new Report(1, "Updated",
                 new ReportSource[] {reportSource},
