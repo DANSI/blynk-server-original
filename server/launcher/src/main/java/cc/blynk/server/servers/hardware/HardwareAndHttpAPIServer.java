@@ -93,7 +93,7 @@ public class HardwareAndHttpAPIServer extends BaseServer {
                         .addLast("HttpChunkedWrite", new ChunkedWriteHandler())
                         .addLast("HttpUrlMapper", new UrlReWriterHandler("/favicon.ico", "/static/favicon.ico"))
                         .addLast("HttpStaticFile", new StaticFileHandler(holder.props, new StaticFile("/static"),
-                                        new StaticFileEdsWith(FileUtils.CSV_DIR, ".csv.gz")))
+                                        new StaticFileEdsWith(FileUtils.CSV_DIR, ".gz")))
                         .addLast(resetPasswordLogic)
                         .addLast(httpAPILogic)
                         .addLast(noMatchHandler)

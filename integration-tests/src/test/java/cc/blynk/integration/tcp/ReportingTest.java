@@ -25,6 +25,10 @@ import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.FileUtils;
+import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.DefaultAsyncHttpClient;
+import org.asynchttpclient.DefaultAsyncHttpClientConfig;
+import org.asynchttpclient.Response;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,9 +41,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Enumeration;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -474,6 +480,8 @@ public class ReportingTest extends IntegrationBase {
 
         //a bit upfront
         long now = System.currentTimeMillis() + 1000;
+        LocalTime localTime = LocalTime.ofInstant(Instant.ofEpochMilli(now), ZoneId.of("UTC"));
+        localTime = LocalTime.of(localTime.getHour(), localTime.getMinute());
 
         Report report = new Report(1, "DailyReport",
                 new ReportSource[] {reportSource},
@@ -487,10 +495,11 @@ public class ReportingTest extends IntegrationBase {
 
         String date = LocalDate.now(report.tzName).toString();
         String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
+        String downloadUrl = "http://127.0.0.1:18080/" + filename;
         verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
-                eq("http://127.0.0.1:18080/" + filename),
-                eq("Report name: DailyReport<br>Period: Daily, at 00:00"));
+                eq(downloadUrl),
+                eq("Report name: DailyReport<br>Period: Daily, at " + localTime));
         sleep(200);
         assertEquals(1, holder.reportScheduler.getCompletedTaskCount());
         assertEquals(2, holder.reportScheduler.getTaskCount());
@@ -506,6 +515,16 @@ public class ReportingTest extends IntegrationBase {
                 .withZone(ZoneId.of("UTC"))
                 .format(Instant.ofEpochMilli(pointNow));
         assertEquals(nowFormatted, split[1]);
+
+        AsyncHttpClient httpclient = new DefaultAsyncHttpClient(
+                new DefaultAsyncHttpClientConfig.Builder()
+                        .setUserAgent(null)
+                        .setKeepAlive(true)
+                        .build()
+        );
+        Future<Response> f = httpclient.prepareGet(downloadUrl).execute();
+        Response response = f.get();
+        assertEquals(200, response.getStatusCode());
     }
 
     @Test
