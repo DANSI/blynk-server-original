@@ -1,5 +1,6 @@
 package cc.blynk.server.workers;
 
+import cc.blynk.server.core.dao.CSVGenerator;
 import cc.blynk.server.core.dao.ReportingStorageDao;
 import cc.blynk.utils.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -14,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
+import java.util.concurrent.TimeUnit;
 
 import static cc.blynk.server.internal.ReportingUtil.REPORTING_RECORD_SIZE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
@@ -28,24 +30,59 @@ public class ReportingTruncateWorker implements Runnable {
     private static final Logger log = LogManager.getLogger(ReportingTruncateWorker.class);
 
     private final ReportingStorageDao reportingDao;
-    //storing minute points only for 30 days
-    private final static int MAX_RECORD_COUNT = 30 * 24 * 60;
+    private final long exportExpirePeriod;
+    private final int maxRecordsCount;
 
     public ReportingTruncateWorker(ReportingStorageDao reportingDao) {
+        //storing minute points only for 30 days
+        this(reportingDao, (int) TimeUnit.DAYS.toMinutes(30), TimeUnit.DAYS.toMillis(7));
+    }
+
+    public ReportingTruncateWorker(ReportingStorageDao reportingDao, int maxRecordsCount, long exportExpirePeriod) {
         this.reportingDao = reportingDao;
+        this.maxRecordsCount = maxRecordsCount;
+        this.exportExpirePeriod = exportExpirePeriod;
     }
 
     @Override
     public void run() {
-        try {
-            log.info("Start truncate unused reporting data...");
-            long now = System.currentTimeMillis();
+        long now;
 
+        try {
+            now = System.currentTimeMillis();
             int result = truncateOutdatedData();
             log.info("Truncated {} files. Time : {} ms.", result, System.currentTimeMillis() - now);
         } catch (Throwable t) {
             log.error("Error truncating unused reporting data.", t);
         }
+
+        try {
+            now = System.currentTimeMillis();
+            int result = deleteOldExportCsvFiles();
+            log.info("Removed {} old export files. Time : {} ms.", result, System.currentTimeMillis() - now);
+        } catch (Throwable t) {
+            log.error("Error deleting outdated export files.", t);
+        }
+    }
+
+    private int deleteOldExportCsvFiles() throws IOException {
+        long now = System.currentTimeMillis();
+        int counter = 0;
+        try (DirectoryStream<Path> csvFolder = Files.newDirectoryStream(Paths.get(FileUtils.CSV_DIR), "*")) {
+            for (Path csvFile : csvFolder) {
+                if (csvFile.getFileName().toString().endsWith(CSVGenerator.EXPORT_CSV_EXTENSION)
+                        && isOutdated(csvFile, now)) {
+                    counter++;
+                    Files.delete(csvFile);
+                }
+            }
+        }
+        return counter;
+    }
+
+    private boolean isOutdated(Path filePath, long now)  throws IOException {
+        long lastModified = FileUtils.getLastModified(filePath);
+        return lastModified + exportExpirePeriod < now;
     }
 
     private int truncateOutdatedData() throws Exception {
@@ -65,8 +102,8 @@ public class ReportingTruncateWorker implements Runnable {
                             for (Path userReportingFile : userReportingFolder) {
                                 filesCounter++;
                                 long fileSize = Files.size(userReportingFile);
-                                if (fileSize > MAX_RECORD_COUNT * REPORTING_RECORD_SIZE) {
-                                    ByteBuffer userReportingData = FileUtils.read(userReportingFile, MAX_RECORD_COUNT);
+                                if (fileSize > maxRecordsCount * REPORTING_RECORD_SIZE) {
+                                    ByteBuffer userReportingData = FileUtils.read(userReportingFile, maxRecordsCount);
                                     try (OutputStream os =
                                                  Files.newOutputStream(userReportingFile, TRUNCATE_EXISTING)) {
                                         os.write(userReportingData.array());

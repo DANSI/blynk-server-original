@@ -72,8 +72,9 @@ public class DailyReport extends BaseReportType {
     }
 
     public void addReportSpecificAtTime(StringBuilder sb, ZoneId zoneId) {
-        ZonedDateTime zonedAt = getZonedFromTs(startTs, zoneId);
-        sb.append(", ").append("at ").append(zonedAt.toLocalTime());
+        ZonedDateTime zonedAt = getZonedFromTs(atTime, zoneId);
+        LocalTime localTime = zonedAt.toLocalTime();
+        sb.append(", ").append("at ").append(LocalTime.of(localTime.getHour(), localTime.getMinute()));
     }
 
     ZonedDateTime buildZonedStartAt(ZonedDateTime zonedNow, ZoneId zoneId) {

@@ -76,9 +76,12 @@ public class CSVGenerator {
         return Paths.get(CSV_DIR, format(email, dashId, deviceId, pinType, pin));
     }
 
+    public static final String EXPORT_CSV_EXTENSION = ".csv.gz";
+
     //"%s_%s_%c%d.csv.gz"
     private static String format(String email, int dashId, int deviceId, PinType pinType, byte pin) {
         long now = System.currentTimeMillis();
-        return email + "_" + dashId + "_" + deviceId + "_" + pinType.pintTypeChar + pin + "_" + now + ".csv.gz";
+        return email + "_" + dashId + "_" + deviceId + "_"
+                + pinType.pintTypeChar + pin + "_" + now + EXPORT_CSV_EXTENSION;
     }
 }

@@ -78,7 +78,7 @@ public class Report {
         this.granularityType = granularityType;
         this.isActive = isActive;
         this.reportOutput = reportOutput == null ? CSV_FILE_PER_DEVICE_PER_PIN : reportOutput;
-        this.format = format == null ? Format.ISO_SIMPLE : format;
+        this.format = format;
         this.tzName = tzName;
         this.nextReportAt = nextReportAt;
         this.lastReportAt = lastReportAt;
@@ -97,6 +97,10 @@ public class Report {
 
     public boolean isPeriodic() {
         return !(reportType instanceof OneTimeReport);
+    }
+
+    public static int getPrice() {
+        return 2900;
     }
 
     public long calculateDelayInSeconds() throws IllegalCommandBodyException {

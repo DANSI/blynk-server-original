@@ -79,11 +79,6 @@ public class ReportingModelTest {
     @Test
     public void testEmailDynamicPart() {
         ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
-        ReportSource reportSource = new TileTemplateReportSource(
-                new ReportDataStream[] {reportDataStream},
-                1,
-                null
-        );
 
         ReportSource reportSource2 = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},
@@ -96,7 +91,7 @@ public class ReportingModelTest {
                 new OneTimeReport(86400), "test@gmail.com",
                 GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, null, ZoneId.of("UTC"), 0, 0, null);
 
-        LocalDateTime localDateTime = LocalDateTime.of(2018, 2, 20, 10, 10, 10);
+        LocalDateTime localDateTime = LocalDateTime.of(2018, 2, 20, 10, 10);
         long millis = localDateTime.toEpochSecond(ZoneOffset.UTC) * 1000;
 
         Report report2 = new Report(2, "My Daily Report",
@@ -127,11 +122,11 @@ public class ReportingModelTest {
                 GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, null, ZoneId.of("UTC"), 0, 0, null);
 
         assertEquals("Report name: My One Time Report<br>Period: One time", report.buildDynamicSection());
-        assertEquals("Report name: My Daily Report<br>Period: Daily, at 10:10:10<br>Start date: 2018-02-20<br>End date: 2018-02-20<br>", report2.buildDynamicSection());
-        assertEquals("Report name: My Weekly Report<br>Period: Weekly, at 00:00 every Monday<br>Start date: 2018-03-21<br>End date: 2019-03-21<br>", report3.buildDynamicSection());
-        assertEquals("Report name: My Monthly Report<br>Period: Monthly, at 00:00 at the first day of every month<br>Start date: 2018-03-21<br>End date: 2019-03-21<br>", report4.buildDynamicSection());
-        assertEquals("Report name: My Monthly Report 2<br>Period: Monthly, at 00:00 at the last day of every month<br>Start date: 2018-03-21<br>End date: 2019-03-21<br>", report5.buildDynamicSection());
-        assertEquals("Report name: My Daily Report<br>Period: Daily, at 10:10:10", report6.buildDynamicSection());
+        assertEquals("Report name: My Daily Report<br>Period: Daily, at " + localDateTime.toLocalTime() + "<br>Start date: 2018-02-20<br>End date: 2018-02-20<br>", report2.buildDynamicSection());
+        assertEquals("Report name: My Weekly Report<br>Period: Weekly, at " + localDateTime.toLocalTime() + " every Monday<br>Start date: 2018-03-21<br>End date: 2019-03-21<br>", report3.buildDynamicSection());
+        assertEquals("Report name: My Monthly Report<br>Period: Monthly, at " + localDateTime.toLocalTime() + " at the first day of every month<br>Start date: 2018-03-21<br>End date: 2019-03-21<br>", report4.buildDynamicSection());
+        assertEquals("Report name: My Monthly Report 2<br>Period: Monthly, at " + localDateTime.toLocalTime() + " at the last day of every month<br>Start date: 2018-03-21<br>End date: 2019-03-21<br>", report5.buildDynamicSection());
+        assertEquals("Report name: My Daily Report<br>Period: Daily, at " + localDateTime.toLocalTime() + "", report6.buildDynamicSection());
     }
 
 }

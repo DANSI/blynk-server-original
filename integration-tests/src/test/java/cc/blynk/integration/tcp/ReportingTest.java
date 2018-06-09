@@ -20,11 +20,16 @@ import cc.blynk.server.core.model.widgets.ui.reporting.type.DayOfMonth;
 import cc.blynk.server.core.model.widgets.ui.reporting.type.MonthlyReport;
 import cc.blynk.server.core.model.widgets.ui.reporting.type.OneTimeReport;
 import cc.blynk.server.core.model.widgets.ui.reporting.type.ReportDurationType;
+import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.FileUtils;
+import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.DefaultAsyncHttpClient;
+import org.asynchttpclient.DefaultAsyncHttpClientConfig;
+import org.asynchttpclient.Response;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,9 +42,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Enumeration;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -49,6 +56,7 @@ import static cc.blynk.server.core.model.widgets.ui.reporting.ReportOutput.CSV_F
 import static cc.blynk.server.core.model.widgets.ui.reporting.ReportResult.EXPIRED;
 import static cc.blynk.server.core.model.widgets.ui.reporting.ReportResult.OK;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
+import static cc.blynk.server.core.protocol.enums.Response.QUOTA_LIMIT;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -248,7 +256,7 @@ public class ReportingTest extends IntegrationBase {
         assertNotNull(report);
 
         clientPair.appClient.send("getEnergy");
-        clientPair.appClient.verifyResult(produce(5, GET_ENERGY, "2600"));
+        clientPair.appClient.verifyResult(produce(5, GET_ENERGY, "4600"));
 
         report = new Report(1, "Updated",
                 new ReportSource[] {reportSource},
@@ -408,7 +416,7 @@ public class ReportingTest extends IntegrationBase {
 
         report2 = clientPair.appClient.parseReportFromResponse(4);
         assertNotNull(report2);
-        assertEquals(System.currentTimeMillis(), report2.nextReportAt, 2000);
+        assertEquals(System.currentTimeMillis(), report2.nextReportAt, 3000);
 
         int tries = 0;
         while (holder.reportScheduler.getCompletedTaskCount() < 2 && tries < 20) {
@@ -474,11 +482,14 @@ public class ReportingTest extends IntegrationBase {
 
         //a bit upfront
         long now = System.currentTimeMillis() + 1000;
+        LocalTime localTime = LocalTime.ofInstant(Instant.ofEpochMilli(now), ZoneId.of("UTC"));
+        localTime = LocalTime.of(localTime.getHour(), localTime.getMinute());
 
         Report report = new Report(1, "DailyReport",
                 new ReportSource[] {reportSource},
                 new DailyReport(now, ReportDurationType.INFINITE, 0, 0), "test@gmail.com",
-                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, null, ZoneId.of("UTC"), 0, 0, null);
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN,
+                Format.ISO_SIMPLE, ZoneId.of("UTC"), 0, 0, null);
         clientPair.appClient.createReport(1, report);
 
         report = clientPair.appClient.parseReportFromResponse(2);
@@ -487,10 +498,11 @@ public class ReportingTest extends IntegrationBase {
 
         String date = LocalDate.now(report.tzName).toString();
         String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
+        String downloadUrl = "http://127.0.0.1:18080/" + filename;
         verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
-                eq("http://127.0.0.1:18080/" + filename),
-                eq("Report name: DailyReport<br>Period: Daily, at 00:00"));
+                eq(downloadUrl),
+                eq("Report name: DailyReport<br>Period: Daily, at " + localTime));
         sleep(200);
         assertEquals(1, holder.reportScheduler.getCompletedTaskCount());
         assertEquals(2, holder.reportScheduler.getTaskCount());
@@ -506,6 +518,16 @@ public class ReportingTest extends IntegrationBase {
                 .withZone(ZoneId.of("UTC"))
                 .format(Instant.ofEpochMilli(pointNow));
         assertEquals(nowFormatted, split[1]);
+
+        AsyncHttpClient httpclient = new DefaultAsyncHttpClient(
+                new DefaultAsyncHttpClientConfig.Builder()
+                        .setUserAgent(null)
+                        .setKeepAlive(true)
+                        .build()
+        );
+        Future<Response> f = httpclient.prepareGet(downloadUrl).execute();
+        Response response = f.get();
+        assertEquals(200, response.getStatusCode());
     }
 
     @Test
@@ -544,7 +566,8 @@ public class ReportingTest extends IntegrationBase {
         Report report = new Report(1, "DailyReport",
                 new ReportSource[] {reportSource},
                 new DailyReport(now, ReportDurationType.CUSTOM, now, now), "test@gmail.com",
-                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, null, ZoneId.of("UTC"), 0, 0, null);
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN,
+                Format.ISO_SIMPLE, ZoneId.of("UTC"), 0, 0, null);
         clientPair.appClient.createReport(1, report);
 
         report = clientPair.appClient.parseReportFromResponse(2);
@@ -611,7 +634,8 @@ public class ReportingTest extends IntegrationBase {
         Report report = new Report(1, "OneTime Report",
                 new ReportSource[] {reportSource},
                 new OneTimeReport(TimeUnit.DAYS.toMillis(1)), "test@gmail.com",
-                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, null, ZoneId.of("UTC"), 0, 0, null);
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN,
+                Format.ISO_SIMPLE, ZoneId.of("UTC"), 0, 0, null);
 
         clientPair.appClient.createReport(1, report);
         report = clientPair.appClient.parseReportFromResponse(2);
@@ -658,6 +682,138 @@ public class ReportingTest extends IntegrationBase {
     }
 
     @Test
+    public void testExportIsLimited() throws Exception {
+        String tempDir = holder.props.getProperty("data.folder");
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+        long now = System.currentTimeMillis();
+        FileUtils.write(pinReportingDataPath10, 1.11D, now);
+
+        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportSource reportSource = new TileTemplateReportSource(
+                new ReportDataStream[] {reportDataStream},
+                1,
+                new int[] {0}
+        );
+
+        ReportingWidget reportingWidget = new ReportingWidget();
+        reportingWidget.height = 1;
+        reportingWidget.width = 1;
+        reportingWidget.reportSources = new ReportSource[] {
+                reportSource
+        };
+
+        clientPair.appClient.createWidget(1, reportingWidget);
+        clientPair.appClient.verifyResult(ok(1));
+
+        Report report = new Report(1, "OneTime Report",
+                new ReportSource[] {reportSource},
+                new OneTimeReport(TimeUnit.DAYS.toMillis(1)), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN,
+                Format.ISO_SIMPLE, ZoneId.of("UTC"), 0, 0, null);
+
+        clientPair.appClient.createReport(1, report);
+        report = clientPair.appClient.parseReportFromResponse(2);
+        assertNotNull(report);
+        assertEquals(0, report.nextReportAt);
+        assertEquals(0, report.lastReportAt);
+
+        verify(mailWrapper, never()).sendReportEmail(eq("test@gmail.com"),
+                any(),
+                any(),
+                any());
+
+        clientPair.appClient.exportReport(1, 1);
+        report = clientPair.appClient.parseReportFromResponse(3);
+        assertNotNull(report);
+        assertEquals(0, report.nextReportAt);
+        assertEquals(System.currentTimeMillis(), report.lastReportAt, 2000);
+        assertEquals(OK, report.lastRunResult);
+
+        clientPair.appClient.exportReport(1, 1);
+        clientPair.appClient.verifyResult(new ResponseMessage(4, QUOTA_LIMIT));
+    }
+
+    @Test
+    public void testOneTimeReportIsTriggeredWithAnotherFormat() throws Exception {
+        String tempDir = holder.props.getProperty("data.folder");
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+        long now = System.currentTimeMillis();
+        FileUtils.write(pinReportingDataPath10, 1.11D, now);
+
+        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportSource reportSource = new TileTemplateReportSource(
+                new ReportDataStream[] {reportDataStream},
+                1,
+                new int[] {0}
+        );
+
+        ReportingWidget reportingWidget = new ReportingWidget();
+        reportingWidget.height = 1;
+        reportingWidget.width = 1;
+        reportingWidget.reportSources = new ReportSource[] {
+                reportSource
+        };
+
+        clientPair.appClient.createWidget(1, reportingWidget);
+        clientPair.appClient.verifyResult(ok(1));
+
+        Report report = new Report(1, "OneTime Report",
+                new ReportSource[] {reportSource},
+                new OneTimeReport(TimeUnit.DAYS.toMillis(1)), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN,
+                Format.TS, ZoneId.of("UTC"), 0, 0, null);
+
+        clientPair.appClient.createReport(1, report);
+        report = clientPair.appClient.parseReportFromResponse(2);
+        assertNotNull(report);
+        assertEquals(0, report.nextReportAt);
+        assertEquals(0, report.lastReportAt);
+
+        verify(mailWrapper, never()).sendReportEmail(eq("test@gmail.com"),
+                any(),
+                any(),
+                any());
+
+        clientPair.appClient.exportReport(1, 1);
+        report = clientPair.appClient.parseReportFromResponse(3);
+        assertNotNull(report);
+        assertEquals(0, report.nextReportAt);
+        assertEquals(System.currentTimeMillis(), report.lastReportAt, 2000);
+        assertEquals(OK, report.lastRunResult);
+
+        String date = LocalDate.now(report.tzName).toString();
+        String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
+        verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
+                eq("Your one time OneTime Report is ready"),
+                eq("http://127.0.0.1:18080/" + filename),
+                eq("Report name: OneTime Report<br>Period: One time"));
+        sleep(200);
+        assertEquals(1, holder.reportScheduler.getCompletedTaskCount());
+        assertEquals(1, holder.reportScheduler.getTaskCount());
+        assertEquals(0, holder.reportScheduler.map.size());
+        assertEquals(0, holder.reportScheduler.getActiveCount());
+
+        Path result = Paths.get(FileUtils.CSV_DIR,
+                DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+        assertTrue(Files.exists(result));
+        String resultCsvString = readStringFromFirstZipEntry(result);
+        assertNotNull(resultCsvString);
+        String[] split = resultCsvString.split(",");
+        assertEquals(1.11D, Double.parseDouble(split[0]), 0.0001);
+        assertEquals(now, Long.parseLong(split[1]), 2000);
+    }
+
+    @Test
     public void testOneTimeReportIsTriggeredWithCustomJson() throws Exception {
         ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
         ReportSource reportSource = new TileTemplateReportSource(
@@ -690,6 +846,64 @@ public class ReportingTest extends IntegrationBase {
 
     @Test
     public void testOneTimeReportIsTriggeredAndNoData() throws Exception {
+        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportSource reportSource = new TileTemplateReportSource(
+                new ReportDataStream[] {reportDataStream},
+                1,
+                new int[] {0}
+        );
+
+        ReportingWidget reportingWidget = new ReportingWidget();
+        reportingWidget.height = 1;
+        reportingWidget.width = 1;
+        reportingWidget.reportSources = new ReportSource[] {
+                reportSource
+        };
+
+        clientPair.appClient.createWidget(1, reportingWidget);
+        clientPair.appClient.verifyResult(ok(1));
+
+        Report report = new Report(1, "OneTime Report",
+                new ReportSource[] {reportSource},
+                new OneTimeReport(TimeUnit.DAYS.toMillis(1)), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, null, ZoneId.of("UTC"), 0, 0, null);
+
+        clientPair.appClient.createReport(1, report);
+        report = clientPair.appClient.parseReportFromResponse(2);
+        assertNotNull(report);
+        assertEquals(0, report.nextReportAt);
+        assertEquals(0, report.lastReportAt);
+
+        clientPair.appClient.exportReport(1, 1);
+        report = clientPair.appClient.parseReportFromResponse(3);
+        assertNotNull(report);
+        assertEquals(0, report.nextReportAt);
+        assertEquals(System.currentTimeMillis(), report.lastReportAt, 2000);
+        assertEquals(ReportResult.NO_DATA, report.lastRunResult);
+
+        verify(mailWrapper, never()).sendReportEmail(eq("test@gmail.com"),
+                any(),
+                any(),
+                any());
+        sleep(200);
+        assertEquals(1, holder.reportScheduler.getCompletedTaskCount());
+        assertEquals(1, holder.reportScheduler.getTaskCount());
+        assertEquals(0, holder.reportScheduler.map.size());
+        assertEquals(0, holder.reportScheduler.getActiveCount());
+    }
+
+    @Test
+    public void testOneTimeReportIsTriggeredAndNoData2() throws Exception {
+        String tempDir = holder.props.getProperty("data.folder");
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+        FileUtils.write(pinReportingDataPath10, 1.11D, 111111);
+
+
         ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
         ReportSource reportSource = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},
@@ -866,7 +1080,8 @@ public class ReportingTest extends IntegrationBase {
         Report report = new Report(1, "DailyReport",
                 new ReportSource[] {reportSource},
                 new DailyReport(now, ReportDurationType.INFINITE, 0, 0), "test@gmail.com",
-                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, null, ZoneId.of("UTC"), 0, 0, null);
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN,
+                Format.ISO_SIMPLE, ZoneId.of("UTC"), 0, 0, null);
         clientPair.appClient.createReport(1, report);
 
         report = clientPair.appClient.parseReportFromResponse(2);

@@ -8,6 +8,7 @@ import cc.blynk.server.core.model.widgets.ui.reporting.Report;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportScheduler;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
+import cc.blynk.server.core.protocol.exceptions.QuotaLimitException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -31,9 +32,11 @@ public class ExportReportLogic {
     private static final Logger log = LogManager.getLogger(ExportReportLogic.class);
 
     private final ReportScheduler reportScheduler;
+    private final long runDelay;
 
     public ExportReportLogic(Holder holder) {
         this.reportScheduler = holder.reportScheduler;
+        this.runDelay = TimeUnit.MINUTES.toMillis(1);
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
@@ -61,6 +64,12 @@ public class ExportReportLogic {
         if (!report.isValid()) {
             log.debug("Report is not valid {} for {}.", report, user.email);
             throw new IllegalCommandException("Report is not valid.");
+        }
+
+        long now = System.currentTimeMillis();
+        if (report.lastReportAt + runDelay > now) {
+            log.debug("Report {} trigger limit reached for {}.", report.id, user.email);
+            throw new QuotaLimitException("Report trigger limit reached.");
         }
 
         reportScheduler.schedule(new BaseReportTask(user, dashId, report,
