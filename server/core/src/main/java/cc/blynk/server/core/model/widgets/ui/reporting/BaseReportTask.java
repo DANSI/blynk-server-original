@@ -106,17 +106,21 @@ public abstract class BaseReportTask implements Runnable {
             case CSV_FILE_PER_DEVICE_PER_PIN:
             default:
                 if (filePerDevicePerPin(output, fetchCount, startFrom)) {
-                    String durationLabel = report.reportType.getDurationLabel().toLowerCase();
-                    String subj = "Your " + durationLabel + " " + report.name + " is ready";
-                    String gzipDownloadUrl = downloadUrl + output.getFileName();
-                    String dynamicSection = report.buildDynamicSection();
-                    mailWrapper.sendReportEmail(report.recipients, subj, gzipDownloadUrl, dynamicSection);
+                    sendEmail(output);
                     return ReportResult.OK;
                 } else {
                     log.info("No data for report for user {} and reportId {}.", key.user.email, report.id);
                     return ReportResult.NO_DATA;
                 }
         }
+    }
+
+    private void sendEmail(Path output) throws Exception {
+        String durationLabel = report.reportType.getDurationLabel().toLowerCase();
+        String subj = "Your " + durationLabel + " " + report.name + " is ready";
+        String gzipDownloadUrl = downloadUrl + output.getFileName();
+        String dynamicSection = report.buildDynamicSection();
+        mailWrapper.sendReportEmail(report.recipients, subj, gzipDownloadUrl, dynamicSection);
     }
 
     private static void writeBufToCsvFilterAndFormat(ByteArrayOutputStream baos, ByteBuffer onePinData,
