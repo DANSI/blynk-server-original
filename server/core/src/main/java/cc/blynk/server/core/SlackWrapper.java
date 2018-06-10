@@ -33,7 +33,7 @@ public class SlackWrapper {
     }
 
     private static String buildBody(String email, String appVersion, double price) {
-        return "User " + email + " (" + appVersion + ")" + " made " + price + "$ purchase.";
+        return "$" + price + " from " + email + " (" + appVersion + ")";
     }
 
     public void reportPurchase(String email, String appVersion, double price) {
