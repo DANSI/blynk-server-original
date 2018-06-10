@@ -38,7 +38,8 @@ public class CloneWorkFlowTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
-        holder = new Holder(properties, twitterWrapper, mailWrapper, gcmWrapper, smsWrapper, "db-test.properties");
+        holder = new Holder(properties, twitterWrapper, mailWrapper,
+                gcmWrapper, smsWrapper, slackWrapper, "db-test.properties");
 
         assertNotNull(holder.dbManager.getConnection());
 

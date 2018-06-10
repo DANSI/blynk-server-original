@@ -437,7 +437,7 @@ public class DBManagerTest {
 
     @Test
     public void testPurchase() throws Exception {
-        dbManager.insertPurchase(new Purchase("test@gmail.com", 1000, "123456"));
+        dbManager.insertPurchase(new Purchase("test@gmail.com", 1000, 1.00D, "123456"));
 
 
         try (Connection connection = dbManager.getConnection();

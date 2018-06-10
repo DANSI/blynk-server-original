@@ -3,7 +3,6 @@ package cc.blynk.server.application.handlers.main;
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.application.handlers.main.logic.ActivateDashboardLogic;
-import cc.blynk.server.application.handlers.main.logic.AddEnergyLogic;
 import cc.blynk.server.application.handlers.main.logic.AddPushLogic;
 import cc.blynk.server.application.handlers.main.logic.AppMailLogic;
 import cc.blynk.server.application.handlers.main.logic.AppSetWidgetPropertyLogic;
@@ -22,6 +21,7 @@ import cc.blynk.server.application.handlers.main.logic.HardwareAppLogic;
 import cc.blynk.server.application.handlers.main.logic.HardwareResendFromBTLogic;
 import cc.blynk.server.application.handlers.main.logic.LoadProfileGzippedLogic;
 import cc.blynk.server.application.handlers.main.logic.MailQRsLogic;
+import cc.blynk.server.application.handlers.main.logic.PurchaseLogic;
 import cc.blynk.server.application.handlers.main.logic.RedeemLogic;
 import cc.blynk.server.application.handlers.main.logic.RefreshTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.UpdateAppLogic;
@@ -155,7 +155,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final DeleteDashLogic deleteDashLogic;
     private final ShareLogic shareLogic;
     private final RedeemLogic redeemLogic;
-    private final AddEnergyLogic addEnergyLogic;
+    private final PurchaseLogic purchaseLogic;
     private final CreateDeviceLogic createDeviceLogic;
     private final DeleteDeviceLogic deleteDeviceLogic;
     private final LoadProfileGzippedLogic loadProfileGzippedLogic;
@@ -210,7 +210,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
 
         this.shareLogic = new ShareLogic(holder.sessionDao);
         this.redeemLogic = new RedeemLogic(holder.dbManager, holder.blockingIOProcessor);
-        this.addEnergyLogic = new AddEnergyLogic(holder.dbManager, holder.blockingIOProcessor);
+        this.purchaseLogic = new PurchaseLogic(holder);
 
         this.createAppLogic = new CreateAppLogic(holder.limits.widgetSizeLimitBytes);
         this.updateAppLogic = new UpdateAppLogic(holder.limits.widgetSizeLimitBytes);
@@ -339,7 +339,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 GetEnergyLogic.messageReceived(ctx, state.user, msg);
                 break;
             case ADD_ENERGY :
-                addEnergyLogic.messageReceived(ctx, state, msg);
+                purchaseLogic.messageReceived(ctx, state, msg);
                 break;
 
             case UPDATE_PROJECT_SETTINGS :

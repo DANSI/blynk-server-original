@@ -2,11 +2,13 @@ package cc.blynk.integration.http;
 
 import cc.blynk.integration.BaseTest;
 import cc.blynk.server.Holder;
+import cc.blynk.server.db.model.SlackWrapper;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.properties.GCMProperties;
 import cc.blynk.utils.properties.MailProperties;
+import cc.blynk.utils.properties.SlackProperties;
 import cc.blynk.utils.properties.SmsProperties;
 import cc.blynk.utils.properties.TwitterProperties;
 import org.asynchttpclient.AsyncHttpClient;
@@ -63,6 +65,7 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
                 new SmsProperties(Collections.emptyMap()),
                 new GCMProperties(Collections.emptyMap()),
                 new TwitterProperties(Collections.emptyMap()),
+                new SlackProperties(Collections.emptyMap()),
                 false
         );
         httpServer = new HardwareAndHttpAPIServer(localHolder).start();
@@ -269,6 +272,15 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
         assertEquals(200, response.getStatusCode());
         assertEquals("application/x-gzip", response.getHeader(CONTENT_TYPE));
         assertEquals("*", response.getHeader(ACCESS_CONTROL_ALLOW_ORIGIN));
+    }
+
+    @Test
+    //@Ignore
+    public void testSlackPurchase() {
+        SlackProperties slackProperties = new SlackProperties(Collections.emptyMap());
+        SlackWrapper slackWrapper = new SlackWrapper(slackProperties, httpclient, "local");
+        slackWrapper.reportPurchase("test@gmail.com", 4.99D);
+        sleep(10000);
     }
 
 }

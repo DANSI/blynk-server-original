@@ -6,6 +6,7 @@ import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.properties.GCMProperties;
 import cc.blynk.utils.properties.MailProperties;
+import cc.blynk.utils.properties.SlackProperties;
 import cc.blynk.utils.properties.SmsProperties;
 import cc.blynk.utils.properties.TwitterProperties;
 import org.asynchttpclient.AsyncHttpClient;
@@ -53,6 +54,7 @@ public class HttpAPIMetricsTest extends BaseTest {
                 new SmsProperties(Collections.emptyMap()),
                 new GCMProperties(Collections.emptyMap()),
                 new TwitterProperties(Collections.emptyMap()),
+                new SlackProperties(Collections.emptyMap()),
                 false
         );
         httpServer = new HardwareAndHttpAPIServer(localHolder).start();

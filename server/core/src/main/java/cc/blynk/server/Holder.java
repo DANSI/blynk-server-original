@@ -11,6 +11,7 @@ import cc.blynk.server.core.model.widgets.ui.reporting.ReportScheduler;
 import cc.blynk.server.core.processors.EventorProcessor;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.db.DBManager;
+import cc.blynk.server.db.model.SlackWrapper;
 import cc.blynk.server.internal.TokensPool;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
@@ -23,6 +24,7 @@ import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.properties.GCMProperties;
 import cc.blynk.utils.properties.MailProperties;
 import cc.blynk.utils.properties.ServerProperties;
+import cc.blynk.utils.properties.SlackProperties;
 import cc.blynk.utils.properties.SmsProperties;
 import cc.blynk.utils.properties.TwitterProperties;
 import io.netty.channel.epoll.Epoll;
@@ -72,6 +74,7 @@ public class Holder {
 
     public final EventorProcessor eventorProcessor;
     public final DefaultAsyncHttpClient asyncHttpClient;
+    public final SlackWrapper slackWrapper;
 
     public final OTAManager otaManager;
 
@@ -87,7 +90,8 @@ public class Holder {
     public final TokensPool tokensPool;
 
     public Holder(ServerProperties serverProperties, MailProperties mailProperties,
-                  SmsProperties smsProperties, GCMProperties gcmProperties, TwitterProperties twitterProperties,
+                  SmsProperties smsProperties, GCMProperties gcmProperties,
+                  TwitterProperties twitterProperties, SlackProperties slackProperties,
                   boolean restore) {
         disableNettyLeakDetector();
         this.props = serverProperties;
@@ -141,6 +145,7 @@ public class Holder {
         this.mailWrapper = new MailWrapper(mailProperties, productName);
         this.gcmWrapper = new GCMWrapper(gcmProperties, asyncHttpClient, productName);
         this.smsWrapper = new SMSWrapper(smsProperties, asyncHttpClient);
+        this.slackWrapper = new SlackWrapper(slackProperties, asyncHttpClient, region);
 
         this.otaManager = new OTAManager(props);
 
@@ -166,6 +171,7 @@ public class Holder {
     public Holder(ServerProperties serverProperties, TwitterWrapper twitterWrapper,
                   MailWrapper mailWrapper,
                   GCMWrapper gcmWrapper, SMSWrapper smsWrapper,
+                  SlackWrapper slackWrapper,
                   String dbFileName) {
         disableNettyLeakDetector();
         this.props = serverProperties;
@@ -195,6 +201,7 @@ public class Holder {
         this.mailWrapper = mailWrapper;
         this.gcmWrapper = gcmWrapper;
         this.smsWrapper = smsWrapper;
+        this.slackWrapper = slackWrapper;
 
         this.otaManager = new OTAManager(props);
 
