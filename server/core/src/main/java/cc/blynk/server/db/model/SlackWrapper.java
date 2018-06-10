@@ -63,7 +63,7 @@ public class SlackWrapper {
         @JsonProperty("icon_emoji")
         public final String iconEmoji;
 
-        public SlackPurchaseMessage(String channel, String region, String email, double price) {
+        SlackPurchaseMessage(String channel, String region, String email, double price) {
             this.channel = channel;
             this.username = region;
             this.text = buildBody(email, price);
