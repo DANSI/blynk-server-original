@@ -2,8 +2,8 @@ package cc.blynk.integration;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.SlackWrapper;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.db.model.SlackWrapper;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.server.notifications.sms.SMSWrapper;

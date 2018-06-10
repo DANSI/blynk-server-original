@@ -1,4 +1,4 @@
-package cc.blynk.server.db.model;
+package cc.blynk.server.core;
 
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.utils.properties.SlackProperties;

@@ -2,7 +2,7 @@ package cc.blynk.integration.http;
 
 import cc.blynk.integration.BaseTest;
 import cc.blynk.server.Holder;
-import cc.blynk.server.db.model.SlackWrapper;
+import cc.blynk.server.core.SlackWrapper;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.FileUtils;

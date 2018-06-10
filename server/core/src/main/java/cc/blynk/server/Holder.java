@@ -1,6 +1,7 @@
 package cc.blynk.server;
 
 import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.SlackWrapper;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.ReportingStorageDao;
 import cc.blynk.server.core.dao.SessionDao;
@@ -11,7 +12,6 @@ import cc.blynk.server.core.model.widgets.ui.reporting.ReportScheduler;
 import cc.blynk.server.core.processors.EventorProcessor;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.db.DBManager;
-import cc.blynk.server.db.model.SlackWrapper;
 import cc.blynk.server.internal.TokensPool;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
