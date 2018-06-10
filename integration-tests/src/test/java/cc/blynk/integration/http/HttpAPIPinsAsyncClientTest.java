@@ -275,11 +275,11 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
     }
 
     @Test
-    //@Ignore
+    @Ignore
     public void testSlackPurchase() {
         SlackProperties slackProperties = new SlackProperties(Collections.emptyMap());
         SlackWrapper slackWrapper = new SlackWrapper(slackProperties, httpclient, "local");
-        slackWrapper.reportPurchase("test@gmail.com", 4.99D);
+        slackWrapper.reportPurchase("test@gmail.com", "iOS", 4.99D);
         sleep(10000);
     }
 

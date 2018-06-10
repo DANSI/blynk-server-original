@@ -32,14 +32,20 @@ public class SlackWrapper {
         return webHookUrl != null && !webHookUrl.isEmpty() && channel != null && !channel.isEmpty();
     }
 
-    public void reportPurchase(String email, double price) {
+    private static String buildBody(String email, String appVersion, double price) {
+        return "User " + email + " (" + appVersion + ")" + " made " + price + "$ purchase.";
+    }
+
+    public void reportPurchase(String email, String appVersion, double price) {
         //do not track small purchases, there are too many of them.
-        if (price < 3.0D || !isValid()) {
+        if (!isValid()) {
             return;
         }
-        SlackPurchaseMessage slackPurchaseMessage = new SlackPurchaseMessage(channel, region, email, price);
-        asyncHttpClient
-                .preparePost(webHookUrl)
+
+        String message = buildBody(email, appVersion, price);
+        SlackPurchaseMessage slackPurchaseMessage = new SlackPurchaseMessage(channel, region, message);
+
+        asyncHttpClient.preparePost(webHookUrl)
                 .setBody(slackPurchaseMessage.toString())
                 .execute(new AsyncCompletionHandler<Response>() {
                     @Override
@@ -63,15 +69,11 @@ public class SlackWrapper {
         @JsonProperty("icon_emoji")
         public final String iconEmoji;
 
-        SlackPurchaseMessage(String channel, String region, String email, double price) {
+        SlackPurchaseMessage(String channel, String region, String text) {
             this.channel = channel;
             this.username = region;
-            this.text = buildBody(email, price);
+            this.text = text;
             this.iconEmoji = ":moneybag:";
-        }
-
-        private static String buildBody(String email, double price) {
-            return "User " + email + " made " + price + "$ purchase.";
         }
 
         @Override

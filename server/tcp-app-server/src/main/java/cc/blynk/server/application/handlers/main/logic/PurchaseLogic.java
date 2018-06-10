@@ -2,6 +2,7 @@ package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
+import cc.blynk.server.application.handlers.main.auth.Version;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.SlackWrapper;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
@@ -93,7 +94,7 @@ public class PurchaseLogic {
         ResponseMessage response;
         if (splitBody.length == 2 && isValidTransactionId(splitBody[1])) {
             double price = calcPrice(energyAmountToAdd);
-            insertPurchase(user.email, energyAmountToAdd, price, splitBody[1]);
+            insertPurchase(user.email, state.version, energyAmountToAdd, price, splitBody[1]);
             user.addEnergy(energyAmountToAdd);
             response = ok(message.id);
         } else {
@@ -107,14 +108,14 @@ public class PurchaseLogic {
         ctx.writeAndFlush(response, ctx.voidPromise());
     }
 
-    private void insertPurchase(String email, int reward, double price, String transactionId) {
+    private void insertPurchase(String email, Version version, int reward, double price, String transactionId) {
         if (transactionId.equals("AdColonyAward") || transactionId.equals("homeScreen")) {
             return;
         }
         blockingIOProcessor.executeDB(
             () -> dbManager.insertPurchase(new Purchase(email, reward, price, transactionId))
         );
-        slackWrapper.reportPurchase(email, price);
+        slackWrapper.reportPurchase(email, version.toString(), price);
     }
 
 }
