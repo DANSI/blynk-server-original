@@ -88,6 +88,10 @@ public class TestAppClient extends BaseTestAppClient {
         return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), Device[].class);
     }
 
+    public Tag[] getTags(int expectedMessageOrder) throws Exception {
+        return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), Tag[].class);
+    }
+
     public App getApp(int expectedMessageOrder) throws Exception {
         return JsonParser.parseApp(getBody(expectedMessageOrder), 0);
     }
@@ -317,6 +321,10 @@ public class TestAppClient extends BaseTestAppClient {
 
     public void getWidget(int dashId, long widgetId) {
         send("getWidget " + dashId + BODY_SEPARATOR + widgetId);
+    }
+
+    public Widget parseWidget(int expectedMessageOrder) throws Exception {
+        return JsonParser.parseWidget(getBody(expectedMessageOrder));
     }
 
     public void deleteReport(int dashId, int reportId) {

@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.widgets.ui.reporting;
 
+import cc.blynk.server.core.model.widgets.DeviceCleaner;
 import cc.blynk.server.core.model.widgets.NoPinWidget;
 import cc.blynk.server.core.model.widgets.controls.ButtonStyle;
 import cc.blynk.server.core.model.widgets.controls.Edge;
@@ -15,7 +16,7 @@ import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_REPORT_SOURCES;
  * Created by Dmitriy Dumanskiy.
  * Created on 22.05.18.
  */
-public class ReportingWidget extends NoPinWidget {
+public class ReportingWidget extends NoPinWidget implements DeviceCleaner {
 
     public ReportSource[] reportSources = EMPTY_REPORT_SOURCES;
 
@@ -54,6 +55,17 @@ public class ReportingWidget extends NoPinWidget {
             }
         }
         return -1;
+    }
+
+    @Override
+    public void deleteDevice(int deviceId) {
+        for (Report report : reports) {
+            if (report.reportSources != null) {
+                for (ReportSource reportSource : report.reportSources) {
+                    reportSource.deleteDevice(deviceId);
+                }
+            }
+        }
     }
 
     @Override

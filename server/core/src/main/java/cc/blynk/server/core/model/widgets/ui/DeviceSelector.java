@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.widgets.ui;
 
+import cc.blynk.server.core.model.widgets.DeviceCleaner;
 import cc.blynk.server.core.model.widgets.NoPinWidget;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
@@ -12,14 +13,14 @@ import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_INTS;
  * Created by Dmitriy Dumanskiy.
  * Created on 02.02.17.
  */
-public class DeviceSelector extends NoPinWidget implements Target {
+public class DeviceSelector extends NoPinWidget implements Target, DeviceCleaner {
 
     public static final int DEVICE_SELECTOR_STARTING_ID = 200_000;
 
     //this is selected deviceId in widget
     public volatile int value = 0;
 
-    public int[] deviceIds = EMPTY_INTS;
+    public volatile int[] deviceIds = EMPTY_INTS;
 
     public FontSize fontSize;
 
@@ -59,4 +60,8 @@ public class DeviceSelector extends NoPinWidget implements Target {
         return ArrayUtil.contains(this.deviceIds, deviceId);
     }
 
+    @Override
+    public void deleteDevice(int deviceId) {
+        this.deviceIds = deleteDeviceFromArray(this.deviceIds, deviceId);
+    }
 }

@@ -14,6 +14,7 @@ import cc.blynk.server.core.model.storage.PinStorageValue;
 import cc.blynk.server.core.model.storage.PinStorageValueDeserializer;
 import cc.blynk.server.core.model.storage.SinglePinStorageValue;
 import cc.blynk.server.core.model.widgets.AppSyncWidget;
+import cc.blynk.server.core.model.widgets.DeviceCleaner;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Target;
@@ -420,6 +421,17 @@ public class DashBoard {
                     widget.erase();
                 }
             }
+        }
+    }
+
+    public void deleteDeviceFromObjects(int deviceId) {
+        for (Widget widget : widgets) {
+            if (widget instanceof DeviceCleaner) {
+                ((DeviceCleaner) widget).deleteDevice(deviceId);
+            }
+        }
+        for (Tag tag : tags) {
+            tag.deleteDevice(deviceId);
         }
     }
 

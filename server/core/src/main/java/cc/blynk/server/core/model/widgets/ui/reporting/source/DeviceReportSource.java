@@ -12,7 +12,7 @@ import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_INTS;
  */
 public class DeviceReportSource extends ReportSource {
 
-    public final int[] deviceIds;
+    public volatile int[] deviceIds;
 
     @JsonCreator
     public DeviceReportSource(@JsonProperty("dataStreams") ReportDataStream[] reportDataStream,
@@ -29,5 +29,10 @@ public class DeviceReportSource extends ReportSource {
     @Override
     public int[] getDeviceIds() {
         return deviceIds;
+    }
+
+    @Override
+    public void deleteDevice(int deviceId) {
+        this.deviceIds = deleteDeviceFromArray(this.deviceIds, deviceId);
     }
 }
