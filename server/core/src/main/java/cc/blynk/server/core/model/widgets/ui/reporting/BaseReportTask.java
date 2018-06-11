@@ -12,7 +12,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -165,7 +164,6 @@ public abstract class BaseReportTask implements Runnable {
     }
 
     private byte[] toCSV(ByteBuffer onePinData, int deviceId, long startFrom, Format format, ZoneId zoneId) {
-        ((Buffer) onePinData).flip();
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(onePinData.capacity());
         writeBufToCsvFilterAndFormat(byteArrayOutputStream, onePinData, deviceId, startFrom, format, zoneId);
         return byteArrayOutputStream.toByteArray();

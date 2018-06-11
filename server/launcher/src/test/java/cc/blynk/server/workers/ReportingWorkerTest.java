@@ -148,7 +148,6 @@ public class ReportingWorkerTest {
 
         ByteBuffer data = reportingDaoMock.getByteBufferFromDisk(user, 1, 0, PinType.ANALOG, (byte) 1, 2, GraphGranularityType.HOURLY, 0);
         assertNotNull(data);
-        data.flip();
         assertEquals(32, data.capacity());
 
         assertEquals(150.54, data.getDouble(), 0.001);
@@ -162,7 +161,6 @@ public class ReportingWorkerTest {
         user2.appName = AppNameUtil.BLYNK;
         data = reportingDaoMock.getByteBufferFromDisk(user2, 2, 0, PinType.ANALOG, (byte) 2, 1, GraphGranularityType.HOURLY, 0);
         assertNotNull(data);
-        data.flip();
         assertEquals(16, data.capacity());
         assertEquals(200.0, data.getDouble(), 0.001);
         assertEquals(ts * AverageAggregatorProcessor.HOUR, data.getLong());
@@ -208,7 +206,6 @@ public class ReportingWorkerTest {
         //take less
         ByteBuffer data = reportingDaoMock.getByteBufferFromDisk(user, 1, 0, PinType.ANALOG, (byte) 1, 1, GraphGranularityType.HOURLY, 0);
         assertNotNull(data);
-        data.flip();
         assertEquals(16, data.capacity());
 
         assertEquals(100.0, data.getDouble(), 0.001);
@@ -218,7 +215,6 @@ public class ReportingWorkerTest {
         //take more
         data = reportingDaoMock.getByteBufferFromDisk(user, 1, 0, PinType.ANALOG, (byte) 1, 24, GraphGranularityType.HOURLY, 0);
         assertNotNull(data);
-        data.flip();
         assertEquals(48, data.capacity());
 
         assertEquals(200.0, data.getDouble(), 0.001);

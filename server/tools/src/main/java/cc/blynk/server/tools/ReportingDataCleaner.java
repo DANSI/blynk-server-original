@@ -4,7 +4,6 @@ import cc.blynk.utils.FileUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
@@ -69,7 +68,6 @@ public final class ReportingDataCleaner {
                         try {
                             Path path = file.toPath();
                             ByteBuffer userReportingData = FileUtils.read(path, count);
-                            ((Buffer) userReportingData).flip();
                             write(file, userReportingData);
                             System.out.println("Successfully copied. Truncated : "
                                     + (fileSize - userReportingData.position()));

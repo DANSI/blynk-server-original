@@ -1852,7 +1852,6 @@ public class HistoryGraphTest extends IntegrationBase {
 
         //check truncate is correct
         ByteBuffer bb = FileUtils.read(pinReportingDataPath1, 30 * 24 * 60);
-        bb.flip();
 
         for (int i = 1; i < 30 * 24 * 60 + 1; i++) {
             assertEquals(1.11D, bb.getDouble(), 0.001D);
@@ -1860,7 +1859,6 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         bb = FileUtils.read(pinReportingDataPath3, 30 * 24 * 60 + 1);
-        bb.flip();
         for (int i = 0; i < 30 * 24 * 60 + 1; i++) {
             assertEquals(1.11D, bb.getDouble(), 0.001D);
             assertEquals(i, bb.getLong());
@@ -1912,7 +1910,6 @@ public class HistoryGraphTest extends IntegrationBase {
 
         //check no truncate
         ByteBuffer bb = FileUtils.read(pinReportingDataPath1, 7 * 24 * 60);
-        bb.flip();
 
         for (int i = 0; i < 7 * 24 * 60; i++) {
             assertEquals(1.11D, bb.getDouble(), 0.001D);
