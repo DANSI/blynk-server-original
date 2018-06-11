@@ -12,7 +12,8 @@ import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_REPORT_DATA_STREAMS
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = TileTemplateReportSource.class, name = "TILE_TEMPLATE")
+        @JsonSubTypes.Type(value = TileTemplateReportSource.class, name = "TILE_TEMPLATE"),
+        @JsonSubTypes.Type(value = DeviceReportSource.class, name = "DEVICE")
 })
 public abstract class ReportSource {
 
