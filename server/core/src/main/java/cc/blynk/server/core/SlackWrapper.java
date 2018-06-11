@@ -28,12 +28,12 @@ public class SlackWrapper {
         }
     }
 
-    private boolean isValid() {
-        return webHookUrl != null && !webHookUrl.isEmpty() && channel != null && !channel.isEmpty();
-    }
-
     private static String buildBody(String email, String appVersion, double price) {
         return "$" + price + " from " + email + " (" + appVersion + ")";
+    }
+
+    private boolean isValid() {
+        return webHookUrl != null && !webHookUrl.isEmpty() && channel != null && !channel.isEmpty();
     }
 
     public void reportPurchase(String email, String appVersion, double price) {
