@@ -682,6 +682,85 @@ public class ReportingTest extends IntegrationBase {
     }
 
     @Test
+    public void testMultipleReceiversFroOneTimeReport() throws Exception {
+        String tempDir = holder.props.getProperty("data.folder");
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+        long now = System.currentTimeMillis();
+        FileUtils.write(pinReportingDataPath10, 1.11D, now);
+
+        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportSource reportSource = new TileTemplateReportSource(
+                new ReportDataStream[] {reportDataStream},
+                1,
+                new int[] {0}
+        );
+
+        ReportingWidget reportingWidget = new ReportingWidget();
+        reportingWidget.height = 1;
+        reportingWidget.width = 1;
+        reportingWidget.reportSources = new ReportSource[] {
+                reportSource
+        };
+
+        clientPair.appClient.createWidget(1, reportingWidget);
+        clientPair.appClient.verifyResult(ok(1));
+
+        Report report = new Report(1, "OneTime Report",
+                new ReportSource[] {reportSource},
+                new OneTimeReport(TimeUnit.DAYS.toMillis(1)), "test@gmail.com,test2@gmail.com",
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN,
+                Format.ISO_SIMPLE, ZoneId.of("UTC"), 0, 0, null);
+
+        clientPair.appClient.createReport(1, report);
+        report = clientPair.appClient.parseReportFromResponse(2);
+        assertNotNull(report);
+        assertEquals(0, report.nextReportAt);
+        assertEquals(0, report.lastReportAt);
+
+        verify(mailWrapper, never()).sendReportEmail(eq("test@gmail.com,test2@gmail.com"),
+                any(),
+                any(),
+                any());
+
+        clientPair.appClient.exportReport(1, 1);
+        report = clientPair.appClient.parseReportFromResponse(3);
+        assertNotNull(report);
+        assertEquals(0, report.nextReportAt);
+        assertEquals(System.currentTimeMillis(), report.lastReportAt, 2000);
+        assertEquals(OK, report.lastRunResult);
+
+        String date = LocalDate.now(report.tzName).toString();
+        String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
+        verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com,test2@gmail.com"),
+                eq("Your one time OneTime Report is ready"),
+                eq("http://127.0.0.1:18080/" + filename),
+                eq("Report name: OneTime Report<br>Period: One time"));
+        sleep(200);
+        assertEquals(1, holder.reportScheduler.getCompletedTaskCount());
+        assertEquals(1, holder.reportScheduler.getTaskCount());
+        assertEquals(0, holder.reportScheduler.map.size());
+        assertEquals(0, holder.reportScheduler.getActiveCount());
+
+        Path result = Paths.get(FileUtils.CSV_DIR,
+                DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+        assertTrue(Files.exists(result));
+        String resultCsvString = readStringFromFirstZipEntry(result);
+        assertNotNull(resultCsvString);
+        String[] split = resultCsvString.split(",");
+        assertEquals(1.11D, Double.parseDouble(split[0]), 0.0001);
+        String nowFormatted = DateTimeFormatter
+                .ofPattern(Format.ISO_SIMPLE.pattern)
+                .withZone(ZoneId.of("UTC"))
+                .format(Instant.ofEpochMilli(now));
+        assertEquals(nowFormatted, split[1]);
+    }
+
+    @Test
     public void testExportIsLimited() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
         Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
