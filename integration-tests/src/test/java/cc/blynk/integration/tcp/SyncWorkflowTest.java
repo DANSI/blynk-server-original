@@ -19,7 +19,6 @@ import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -28,8 +27,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.List;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
@@ -39,7 +36,6 @@ import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produc
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.after;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
@@ -266,44 +262,6 @@ public class SyncWorkflowTest extends IntegrationBase {
         long ts = Long.valueOf(tsString);
 
         assertEquals(expectedTS, ts, 7200 + 100);
-    }
-
-    @Test
-    @Ignore
-    //todo fix
-    public void testHardSyncReturnRTCWithUTCTimezonePlus11() throws Exception {
-        ZoneId zoneId = ZoneId.of("Australia/Sydney");
-
-        clientPair.appClient.createWidget(1, "{\"type\":\"RTC\",\"id\":99, \"pin\":99, \"pinType\":\"VIRTUAL\", " +
-                "\"x\":0,\"y\":0,\"width\":1,\"height\":2," +
-                "\"tzName\":\"TZ\"}".replace("TZ", zoneId.toString()));
-
-        clientPair.appClient.verifyResult(ok(1));
-
-        clientPair.hardwareClient.sync(PinType.VIRTUAL, 99);
-
-        LocalDateTime dt = LocalDateTime.now();
-        ZonedDateTime zdt = dt.atZone(zoneId);
-        ZoneOffset offset = zdt.getOffset();
-        ZoneOffset offset2 = ZoneOffset.of("+10:00");
-
-        long expectedTS = System.currentTimeMillis() / 1000 + offset.getTotalSeconds();
-        long expectedTS2 = System.currentTimeMillis() / 1000 + offset2.getTotalSeconds();
-
-        ArgumentCaptor<StringMessage> objectArgumentCaptor = ArgumentCaptor.forClass(StringMessage.class);
-        verify(clientPair.hardwareClient.responseMock, timeout(500).times(1)).channelRead(any(), objectArgumentCaptor.capture());
-
-        List<StringMessage> arguments = objectArgumentCaptor.getAllValues();
-        StringMessage hardMessage = arguments.get(0);
-        assertEquals(1, hardMessage.id);
-        assertEquals(HARDWARE, hardMessage.command);
-        assertEquals(16, hardMessage.body.length());
-        assertTrue(hardMessage.body.startsWith(b("vw 99")));
-        String tsString = hardMessage.body.split("\0")[2];
-        long ts = Long.valueOf(tsString);
-
-        assertEquals(expectedTS, ts, 2);
-        assertEquals(expectedTS2, ts, 2);
     }
 
     @Test(expected = DateTimeException.class)

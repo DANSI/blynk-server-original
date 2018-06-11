@@ -40,7 +40,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -101,17 +100,6 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
         clientPair.hardwareClient.reset();
         clientPair.appClient.reset();
-    }
-
-    @Test
-    @Ignore
-    //todo fix? - https://github.com/blynkkk/blynk-server/issues/754
-    public void testWrongPortHttpConnect() throws Exception {
-        HttpGet request = new HttpGet(String.format("http://localhost:%s/", tcpHardPort) + "robots.txt");
-
-        try (CloseableHttpResponse response = httpclient.execute(request)) {
-            assertEquals(200, response.getStatusLine().getStatusCode());
-        }
     }
 
     @Test

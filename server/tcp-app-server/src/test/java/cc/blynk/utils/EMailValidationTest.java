@@ -1,10 +1,7 @@
 package cc.blynk.utils;
 
 import cc.blynk.utils.validators.BlynkEmailValidator;
-import org.junit.Ignore;
 import org.junit.Test;
-
-import java.io.File;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -40,23 +37,6 @@ public class EMailValidationTest {
 
         for (String email : mailList) {
             assertFalse(email, BlynkEmailValidator.isNotValidEmail(email));
-        }
-    }
-
-    @Test
-    @Ignore("to avoid publishing of emails you need to specify your data")
-    public void testExistingUsers() {
-        File dataDir = new File("/home/doom369/prod_data/data");
-        File[] files = dataDir.listFiles();
-        if (files != null) {
-            for (File user : files) {
-                String email = user.getName().substring(2, user.getName().length() - 5);
-                //if (email.endsWith(".con") || email.endsWith(".cpm") || email.endsWith(".comcom") || email.endsWith("fe")
-                //        || email.endsWith(".hshs") || email.endsWith(".aa") || email.endsWith(".cim")) {
-                //    continue;
-                //}
-                assertFalse(email, BlynkEmailValidator.isNotValidEmail(email));
-            }
         }
     }
 

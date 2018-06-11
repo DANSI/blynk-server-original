@@ -2,7 +2,6 @@ package cc.blynk.integration.http;
 
 import cc.blynk.integration.BaseTest;
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.SlackWrapper;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.FileUtils;
@@ -17,7 +16,6 @@ import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.asynchttpclient.Response;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -79,15 +77,6 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
     }
 
     //----------------------------GET METHODS SECTION
-
-    @Test
-    @Ignore
-    //todo fix
-    public void testNoMeaningfulRequest() throws Exception {
-        Future<Response> f = httpclient.prepareGet(httpsServerUrl).execute();
-        Response response = f.get();
-        assertEquals(301, response.getStatusCode());
-    }
 
     @Test
     public void testGetWithFakeToken() throws Exception {
@@ -272,15 +261,6 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
         assertEquals(200, response.getStatusCode());
         assertEquals("application/x-gzip", response.getHeader(CONTENT_TYPE));
         assertEquals("*", response.getHeader(ACCESS_CONTROL_ALLOW_ORIGIN));
-    }
-
-    @Test
-    @Ignore
-    public void testSlackPurchase() {
-        SlackProperties slackProperties = new SlackProperties(Collections.emptyMap());
-        SlackWrapper slackWrapper = new SlackWrapper(slackProperties, httpclient, "local");
-        slackWrapper.reportPurchase("test@gmail.com", "iOS", 4.99D);
-        sleep(10000);
     }
 
 }

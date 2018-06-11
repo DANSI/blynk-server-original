@@ -33,7 +33,6 @@ import cc.blynk.server.workers.ReportingTruncateWorker;
 import cc.blynk.utils.FileUtils;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -985,7 +984,6 @@ public class HistoryGraphTest extends IntegrationBase {
     }
 
     @Test
-    @Ignore("enable when live will have more than 1 page")
     public void testGetLIVEGraphDataForEnhancedGraphWithPaging() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 
@@ -1013,7 +1011,7 @@ public class HistoryGraphTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
 
         clientPair.hardwareClient.send("hardware vw 88 111");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1 vw 88 111"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
         clientPair.appClient.reset();
 
         clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.LIVE);
@@ -1032,7 +1030,7 @@ public class HistoryGraphTest extends IntegrationBase {
             clientPair.hardwareClient.send("hardware vw 88 " + i);
         }
 
-        verify(clientPair.appClient.responseMock, timeout(10000)).channelRead(any(), eq(new HardwareMessage(61, b("1 vw 88 60"))));
+        verify(clientPair.appClient.responseMock, timeout(10000)).channelRead(any(), eq(new HardwareMessage(61, b("1-0 vw 88 60"))));
         clientPair.appClient.reset();
 
         clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.LIVE);
@@ -1045,39 +1043,6 @@ public class HistoryGraphTest extends IntegrationBase {
         assertEquals(1, bb.getInt());
         assertEquals(60, bb.getInt());
         for (int i = 1; i <= 60; i++) {
-            assertEquals(i, bb.getDouble(), 0.1);
-            assertEquals(System.currentTimeMillis(), bb.getLong(), 10000);
-        }
-
-        clientPair.appClient.reset();
-        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.LIVE, 1);
-        graphDataResponse = clientPair.appClient.getBinaryBody();
-
-        assertNotNull(graphDataResponse);
-        decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
-        bb = ByteBuffer.wrap(decompressedGraphData);
-
-        assertEquals(1, bb.getInt());
-        assertEquals(1, bb.getInt());
-        assertEquals(111D, bb.getDouble(), 0.1);
-        assertEquals(System.currentTimeMillis(), bb.getLong(), 5000);
-
-        for (int i = 300; i < 420; i++) {
-            clientPair.hardwareClient.send("hardware vw 88 " + i);
-        }
-
-        verify(clientPair.appClient.responseMock, timeout(5000)).channelRead(any(), eq(new HardwareMessage(181, b("1 vw 88 419"))));
-        clientPair.appClient.reset();
-        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.LIVE, 1);
-        graphDataResponse = clientPair.appClient.getBinaryBody();
-
-        assertNotNull(graphDataResponse);
-        decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
-        bb = ByteBuffer.wrap(decompressedGraphData);
-
-        assertEquals(1, bb.getInt());
-        assertEquals(60, bb.getInt());
-        for (int i = 300; i < 360; i++) {
             assertEquals(i, bb.getDouble(), 0.1);
             assertEquals(System.currentTimeMillis(), bb.getLong(), 10000);
         }

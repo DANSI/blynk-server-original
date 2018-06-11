@@ -39,7 +39,7 @@ public class GCMWrapperTest {
 
     @Test
     @Ignore
-    public void testIOS() throws Exception {
+    public void testIOS() {
         GCMWrapper gcmWrapper = new GCMWrapper(props, client, AppNameUtil.BLYNK);
         gcmWrapper.send(new IOSGCMMessage("to", Priority.normal, "yo!!!", 1), null, null);
     }
