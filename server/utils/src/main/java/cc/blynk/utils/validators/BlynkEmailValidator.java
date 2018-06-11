@@ -16,8 +16,17 @@ public final class BlynkEmailValidator {
                 || !EmailValidator.getInstance().isValid(email);
     }
 
-    public static boolean isValidEmail(String email) {
-        return !isNotValidEmail(email);
+    public static boolean isValidEmails(String emails) {
+        if (emails == null || emails.isEmpty()) {
+            return false;
+        }
+        String[] emailsSplit = emails.split(",");
+        for (String email : emailsSplit) {
+            if (isNotValidEmail(email)) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }

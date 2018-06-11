@@ -29,7 +29,6 @@ import cc.blynk.utils.FileUtils;
 import io.netty.channel.ChannelFuture;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -526,19 +525,6 @@ public class MainWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.send("addEnergy " + "1000" + "\0" + "1370-3990-1414-55681");
         clientPair.appClient.verifyResult(ok(7));
-    }
-
-    @Test
-    @Ignore
-    public void testProfileMetadata() throws Exception {
-        clientPair.appClient.send("saveMetadata {\"lat\":123.123,\"lon\":124.124}");
-        clientPair.appClient.verifyResult(ok(1));
-
-        clientPair.appClient.reset();
-        clientPair.appClient.send("getMetadata");
-        String token = clientPair.appClient.getBody();
-        assertNotNull(token);
-        assertEquals("{\"lat\":123.123,\"lon\":124.124}", token);
     }
 
     @Test

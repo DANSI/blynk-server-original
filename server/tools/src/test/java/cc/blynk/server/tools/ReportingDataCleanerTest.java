@@ -61,7 +61,6 @@ public class ReportingDataCleanerTest {
         assertEquals(16 * 360, Files.size(userFile));
 
         ByteBuffer userReportingData = FileUtils.read(Paths.get(userPath.toString(), "123_minute.bin"), 360);
-        userReportingData.flip();
         for (int i = 0; i < 360; i++) {
             double value = userReportingData.getDouble();
             long ts = userReportingData.getLong();
@@ -81,7 +80,6 @@ public class ReportingDataCleanerTest {
         assertEquals(11520, Files.size(userFile));
 
         ByteBuffer userReportingData = FileUtils.read(Paths.get(userPath.toString(), "123_minute.bin"), 360);
-        userReportingData.flip();
         for (int i = 360; i < 720; i++) {
             double value = userReportingData.getDouble();
             long ts = userReportingData.getLong();

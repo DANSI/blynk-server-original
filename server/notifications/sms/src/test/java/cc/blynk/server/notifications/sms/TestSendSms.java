@@ -12,7 +12,7 @@ import org.junit.Test;
 public class TestSendSms {
 
     @Test
-    public void testSend() throws Exception {
+    public void testSend() {
         SMSWrapper smsWrapper = new SMSWrapper(null, null);
         smsWrapper.send("", "Hello!!!!!!!!");
     }

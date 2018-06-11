@@ -13,6 +13,7 @@ import cc.blynk.utils.SHA256Util;
 import cc.blynk.utils.properties.GCMProperties;
 import cc.blynk.utils.properties.MailProperties;
 import cc.blynk.utils.properties.ServerProperties;
+import cc.blynk.utils.properties.SlackProperties;
 import cc.blynk.utils.properties.SmsProperties;
 import cc.blynk.utils.properties.TwitterProperties;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -67,11 +68,13 @@ public final class ServerLauncher {
         SmsProperties smsProperties = new SmsProperties(cmdProperties);
         GCMProperties gcmProperties = new GCMProperties(cmdProperties);
         TwitterProperties twitterProperties = new TwitterProperties(cmdProperties);
+        SlackProperties slackProperties = new SlackProperties(cmdProperties);
 
         Security.addProvider(new BouncyCastleProvider());
 
         boolean restore = Boolean.parseBoolean(cmdProperties.get(ArgumentsParser.RESTORE_OPTION));
-        start(serverProperties, mailProperties, smsProperties, gcmProperties, twitterProperties, restore);
+        start(serverProperties, mailProperties, smsProperties,
+                gcmProperties, twitterProperties, slackProperties, restore);
     }
 
     private static void setGlobalProperties(ServerProperties serverProperties) {
@@ -90,10 +93,10 @@ public final class ServerLauncher {
 
     private static void start(ServerProperties serverProperties, MailProperties mailProperties,
                               SmsProperties smsProperties, GCMProperties gcmProperties,
-                              TwitterProperties twitterProperties,
+                              TwitterProperties twitterProperties, SlackProperties slackProperties,
                               boolean restore) {
         Holder holder = new Holder(serverProperties,
-                mailProperties, smsProperties, gcmProperties, twitterProperties,
+                mailProperties, smsProperties, gcmProperties, twitterProperties, slackProperties,
                 restore);
 
         BaseServer[] servers = new BaseServer[] {

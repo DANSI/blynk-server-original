@@ -19,29 +19,10 @@ public class Purchase {
 
     public Date date;
 
-    public Purchase(String email, int reward, String transactionId) {
+    public Purchase(String email, int reward, double price, String transactionId) {
         this.email = email;
         this.reward = reward;
         this.transactionId = transactionId;
-        this.price = calcPrice(reward);
-    }
-
-    private static double calcPrice(int reward) {
-        switch (reward) {
-            case 200 :
-                return 0;
-            case 1000 :
-                return 0.99;
-            case 2400 :
-                return 1.99;
-            case 5000 :
-                return 3.99;
-            case 13000 :
-                return 9.99;
-            case 28000 :
-                return 19.99;
-            default:
-                return -1;
-        }
+        this.price = price;
     }
 }

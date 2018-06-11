@@ -44,6 +44,25 @@ public final class ArrayUtil {
         return newArray;
     }
 
+    public static int getIndexByVal(int[] array, int val) {
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] == val) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public static int[] remove(int[] array, int index) {
+        int[] result = new int[array.length - 1];
+        System.arraycopy(array, 0, result, 0, index);
+        if (index < array.length - 1) {
+            System.arraycopy(array, index + 1, result, index, array.length - index - 1);
+        }
+
+        return result;
+    }
+
     public static boolean contains(final int[] ar, final int val) {
         for (int arVal : ar) {
             if (arVal == val) {

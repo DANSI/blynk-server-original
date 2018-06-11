@@ -28,7 +28,8 @@ public class AppOfflineTest extends IntegrationBase {
     @Before
     public void init() throws Exception {
         properties.setProperty("app.socket.idle.timeout", "1");
-        Holder holder = new Holder(properties, twitterWrapper, mailWrapper, gcmWrapper, smsWrapper, "no-db.properties");
+        Holder holder = new Holder(properties, twitterWrapper, mailWrapper,
+                gcmWrapper, smsWrapper, slackWrapper, "no-db.properties");
         this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
         this.appServer = new AppAndHttpsServer(holder).start();
 

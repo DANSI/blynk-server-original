@@ -55,14 +55,16 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
-        holder = new Holder(properties, twitterWrapper, mailWrapper, gcmWrapper, smsWrapper, "db-test.properties");
+        holder = new Holder(properties, twitterWrapper, mailWrapper,
+                gcmWrapper, smsWrapper, slackWrapper, "db-test.properties");
         hardwareServer1 = new HardwareAndHttpAPIServer(holder).start();
         appServer1 = new AppAndHttpsServer(holder).start();
 
         properties2 = new ServerProperties("server2.properties");
         properties2.setProperty("data.folder", getDataFolder());
 
-        this.holder2 = new Holder(properties2, twitterWrapper, mailWrapper, gcmWrapper, smsWrapper, "db-test.properties");
+        this.holder2 = new Holder(properties2, twitterWrapper, mailWrapper,
+                gcmWrapper, smsWrapper, slackWrapper, "db-test.properties");
         hardwareServer2 = new HardwareAndHttpAPIServer(holder2).start();
         appServer2 = new AppAndHttpsServer(holder2).start();
         plainHardPort2 = properties2.getIntProperty("http.port");

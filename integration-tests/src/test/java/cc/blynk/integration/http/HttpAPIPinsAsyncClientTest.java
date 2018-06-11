@@ -7,6 +7,7 @@ import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.properties.GCMProperties;
 import cc.blynk.utils.properties.MailProperties;
+import cc.blynk.utils.properties.SlackProperties;
 import cc.blynk.utils.properties.SmsProperties;
 import cc.blynk.utils.properties.TwitterProperties;
 import org.asynchttpclient.AsyncHttpClient;
@@ -15,7 +16,6 @@ import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.asynchttpclient.Response;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -63,6 +63,7 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
                 new SmsProperties(Collections.emptyMap()),
                 new GCMProperties(Collections.emptyMap()),
                 new TwitterProperties(Collections.emptyMap()),
+                new SlackProperties(Collections.emptyMap()),
                 false
         );
         httpServer = new HardwareAndHttpAPIServer(localHolder).start();
@@ -76,15 +77,6 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
     }
 
     //----------------------------GET METHODS SECTION
-
-    @Test
-    @Ignore
-    //todo fix
-    public void testNoMeaningfulRequest() throws Exception {
-        Future<Response> f = httpclient.prepareGet(httpsServerUrl).execute();
-        Response response = f.get();
-        assertEquals(301, response.getStatusCode());
-    }
 
     @Test
     public void testGetWithFakeToken() throws Exception {

@@ -20,7 +20,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -123,7 +122,6 @@ public class ReportingStorageDao implements Closeable {
                                           AggregationFunctionType functionType,
                                           ByteBuffer localByteBuf) {
         if (localByteBuf != null) {
-            ((Buffer) localByteBuf).flip();
             while (localByteBuf.hasRemaining()) {
                 double newVal = localByteBuf.getDouble();
                 Long ts = localByteBuf.getLong();

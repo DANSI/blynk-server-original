@@ -11,7 +11,10 @@ import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.controls.Terminal;
 import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
+import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
+import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
+import cc.blynk.server.core.model.widgets.ui.tiles.templates.PageTileTemplate;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
@@ -631,6 +634,154 @@ public class DeviceWorkflowTest extends IntegrationBase {
         assertEquals(2, dash.devices.length);
     }
 
+    @Test
+    public void testCorrectRemovalForTags() throws Exception {
+        Device device1 = new Device(1, "My Device", "ESP8266");
+
+        clientPair.appClient.createDevice(1, device1);
+        Device device = clientPair.appClient.getDevice();
+        assertNotNull(device);
+        assertNotNull(device.token);
+        clientPair.appClient.verifyResult(createDevice(1, device));
+
+        Tag tag1 = new Tag(100_001, "tag1");
+        Tag tag2 = new Tag(100_002, "tag2", new int[] {0});
+        Tag tag3 = new Tag(100_003, "tag3", new int[] {1});
+        Tag tag4 = new Tag(100_004, "tag4", new int[] {0, 1});
+
+        clientPair.appClient.createTag(1, tag1);
+        clientPair.appClient.createTag(1, tag2);
+        clientPair.appClient.createTag(1, tag3);
+        clientPair.appClient.createTag(1, tag4);
+        clientPair.appClient.verifyResult(createTag(2, tag1));
+        clientPair.appClient.verifyResult(createTag(3, tag2));
+        clientPair.appClient.verifyResult(createTag(4, tag3));
+        clientPair.appClient.verifyResult(createTag(5, tag4));
+
+        clientPair.appClient.deleteDevice(1, 1);
+        clientPair.appClient.verifyResult(ok(6));
+
+        clientPair.appClient.send("getTags 1");
+        Tag[] tags = clientPair.appClient.getTags(7);
+        assertNotNull(tags);
+
+        assertEquals(100_001, tags[0].id);
+        assertEquals(0, tags[0].deviceIds.length);
+
+        assertEquals(100_002, tags[1].id);
+        assertEquals(1, tags[1].deviceIds.length);
+        assertEquals(0, tags[1].deviceIds[0]);
+
+        assertEquals(100_003, tags[2].id);
+        assertEquals(0, tags[2].deviceIds.length);
+
+        assertEquals(100_004, tags[3].id);
+        assertEquals(1, tags[3].deviceIds.length);
+        assertEquals(0, tags[3].deviceIds[0]);
+    }
+
+    @Test
+    public void testCorrectRemovalForDeviceSelector() throws Exception {
+        Device device1 = new Device(1, "My Device", "ESP8266");
+
+        clientPair.appClient.createDevice(1, device1);
+        Device device = clientPair.appClient.getDevice();
+        assertNotNull(device);
+        assertNotNull(device.token);
+        clientPair.appClient.verifyResult(createDevice(1, device));
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = 21321;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(2));
+        PageTileTemplate tileTemplate = new PageTileTemplate(1,
+                null, null, "name", "name", "iconName", "ESP8266", null,
+                false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
+        clientPair.appClient.createTemplate(1, deviceTiles.id, tileTemplate);
+        clientPair.appClient.verifyResult(ok(3));
+
+        deviceTiles = new DeviceTiles();
+        deviceTiles.id = 21322;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(4));
+        tileTemplate = new PageTileTemplate(1,
+                null, new int[]{0}, "name", "name", "iconName", "ESP8266", null,
+                false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
+        clientPair.appClient.createTemplate(1, deviceTiles.id, tileTemplate);
+        clientPair.appClient.verifyResult(ok(5));
+
+        clientPair.appClient.send("addEnergy " + "100000" + "\0" + "1370-3990-1414-55681");
+        clientPair.appClient.verifyResult(ok(6));
+
+        deviceTiles = new DeviceTiles();
+        deviceTiles.id = 21323;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(7));
+        tileTemplate = new PageTileTemplate(1,
+                null, new int[]{1}, "name", "name", "iconName", "ESP8266", null,
+                false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
+        clientPair.appClient.createTemplate(1, deviceTiles.id, tileTemplate);
+        clientPair.appClient.verifyResult(ok(8));
+
+        deviceTiles = new DeviceTiles();
+        deviceTiles.id = 21324;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(9));
+        tileTemplate = new PageTileTemplate(1,
+                null, new int[]{0, 1}, "name", "name", "iconName", "ESP8266", null,
+                false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
+        clientPair.appClient.createTemplate(1, deviceTiles.id, tileTemplate);
+        clientPair.appClient.verifyResult(ok(10));
+
+        clientPair.appClient.deleteDevice(1, 1);
+        clientPair.appClient.verifyResult(ok(11));
+
+        clientPair.appClient.getWidget(1, 21321);
+        deviceTiles = (DeviceTiles) clientPair.appClient.parseWidget(12);
+        assertNotNull(deviceTiles);
+        assertEquals(21321, deviceTiles.id);
+        assertEquals(0, deviceTiles.tiles.length);
+        assertEquals(0, deviceTiles.templates[0].deviceIds.length);
+
+        clientPair.appClient.getWidget(1, 21322);
+        deviceTiles = (DeviceTiles) clientPair.appClient.parseWidget(13);
+        assertNotNull(deviceTiles);
+        assertEquals(21322, deviceTiles.id);
+        assertEquals(1, deviceTiles.tiles.length);
+        assertEquals(1, deviceTiles.templates[0].deviceIds.length);
+        assertEquals(0, deviceTiles.templates[0].deviceIds[0]);
+
+        clientPair.appClient.getWidget(1, 21323);
+        deviceTiles = (DeviceTiles) clientPair.appClient.parseWidget(14);
+        assertNotNull(deviceTiles);
+        assertEquals(21323, deviceTiles.id);
+        assertEquals(0, deviceTiles.tiles.length);
+        assertEquals(0, deviceTiles.templates[0].deviceIds.length);
+
+        clientPair.appClient.getWidget(1, 21324);
+        deviceTiles = (DeviceTiles) clientPair.appClient.parseWidget(15);
+        assertNotNull(deviceTiles);
+        assertEquals(21324, deviceTiles.id);
+        assertEquals(1, deviceTiles.tiles.length);
+        assertEquals(1, deviceTiles.templates[0].deviceIds.length);
+        assertEquals(0, deviceTiles.templates[0].deviceIds[0]);
+    }
 
     private static void assertEqualDevice(Device expected, Device real) {
         assertEquals(expected.id, real.id);

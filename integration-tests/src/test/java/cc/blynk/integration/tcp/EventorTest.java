@@ -6,7 +6,6 @@ import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.others.eventor.Rule;
@@ -34,7 +33,6 @@ import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -153,46 +151,6 @@ public class EventorTest extends IntegrationBase {
         this.appServer.close();
         this.hardwareServer.close();
         this.clientPair.stop();
-    }
-
-    @Test
-    @Ignore
-    public void printAllInJson() throws Exception {
-        Eventor tempEventor = oneRuleEventor("if v1 != 37 then setpin v2 123");
-        //replace with between
-        //tempEventor.rules[0].condition = new Between(10, 12);
-
-        Eventor tempEventor2 = oneRuleEventor("if v1 != 37 then setpin v2 123");
-        //replace with between
-        //tempEventor2.rules[0].condition = new NotBetween(10, 12);
-
-
-        Eventor[] eventors = new Eventor[]{
-                oneRuleEventor("if v1 > 37 then setpin v2 123"),
-         oneRuleEventor("if v1 >= 37 then setpin v2 123"),
-        oneRuleEventor("if v1 <= 37 then setpin v2 123"),
-        oneRuleEventor("if v1 = 37 then setpin v2 123"),
-        oneRuleEventor("if v1 < 37 then setpin v2 123"),
-         oneRuleEventor("if v1 != 37 then setpin v2 123"),
-                tempEventor,
-                tempEventor2
-        };
-
-        for (Eventor eventor : eventors) {
-            System.out.println(JsonParser.MAPPER.writeValueAsString(eventor));
-        }
-
-        DataStream dataStream = new DataStream((byte) 1, PinType.VIRTUAL);
-
-        BaseAction[] actions = new BaseAction[] {
-                new SetPinAction(dataStream.pin, dataStream.pinType, "pinValuetoSEt"),
-                new NotifyAction("Hello!!!"),
-                new MailAction("Subj", "Hello mail")
-        };
-
-        for (BaseAction action : actions) {
-            System.out.println(JsonParser.MAPPER.writeValueAsString(action));
-        }
     }
 
     @Test

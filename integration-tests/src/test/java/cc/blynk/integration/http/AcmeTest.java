@@ -41,7 +41,8 @@ public class AcmeTest extends BaseTest {
     @Before
     public void init() throws Exception {
         ServerProperties properties2 = new ServerProperties("no_certs.properties");
-        this.holder2 = new Holder(properties2, twitterWrapper, mailWrapper, gcmWrapper, smsWrapper, "no-db.properties");
+        this.holder2 = new Holder(properties2, twitterWrapper, mailWrapper,
+                gcmWrapper, smsWrapper, slackWrapper, "no-db.properties");
         httpServer = new HardwareAndHttpAPIServer(holder2).start();
     }
 

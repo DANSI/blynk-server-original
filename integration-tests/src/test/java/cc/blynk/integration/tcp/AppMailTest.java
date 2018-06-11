@@ -96,8 +96,8 @@ public class AppMailTest extends IntegrationBase {
                 "Documentation -> http://docs.blynk.cc/\n" +
                 "Sketch generator -> https://examples.blynk.cc/\n" +
                 "\n" +
-                "Latest Blynk library -> https://github.com/blynkkk/blynk-library/releases/download/v0.5.2/Blynk_Release_v0.5.2.zip\n" +
-                "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.37.2/server-0.37.2.jar\n" +
+                "Latest Blynk library -> https://github.com/blynkkk/blynk-library/releases/download/v0.5.3/Blynk_Release_v0.5.3.zip\n" +
+                "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.37.3/server-0.37.3.jar\n" +
                 "-\n" +
                 "https://www.blynk.cc\n" +
                 "twitter.com/blynk_app\n" +
@@ -136,8 +136,8 @@ public class AppMailTest extends IntegrationBase {
                 "Documentation -> http://docs.blynk.cc/\n" +
                 "Sketch generator -> https://examples.blynk.cc/\n" +
                 "\n" +
-                "Latest Blynk library -> https://github.com/blynkkk/blynk-library/releases/download/v0.5.2/Blynk_Release_v0.5.2.zip\n" +
-                "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.37.2/server-0.37.2.jar\n" +
+                "Latest Blynk library -> https://github.com/blynkkk/blynk-library/releases/download/v0.5.3/Blynk_Release_v0.5.3.zip\n" +
+                "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.37.3/server-0.37.3.jar\n" +
                 "-\n" +
                 "https://www.blynk.cc\n" +
                 "twitter.com/blynk_app\n" +

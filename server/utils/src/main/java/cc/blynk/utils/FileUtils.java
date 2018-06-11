@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
@@ -141,6 +142,7 @@ public final class FileUtils {
         try (SeekableByteChannel channel = Files.newByteChannel(userDataFile, EnumSet.of(READ))) {
             channel.position(startReadIndex)
                     .read(buf);
+            ((Buffer) buf).flip();
             return buf;
         }
     }

@@ -62,6 +62,11 @@ public class DeleteDeviceLogic {
 
         dash.devices = ArrayUtil.remove(dash.devices, existingDeviceIndex, Device.class);
         dash.eraseValuesForDevice(deviceId);
+        try {
+            dash.deleteDeviceFromObjects(deviceId);
+        } catch (Exception e) {
+            log.warn("Error erasing widget device. Reason : {}", e.getMessage());
+        }
         dash.updatedAt = System.currentTimeMillis();
         state.user.lastModifiedTs = dash.updatedAt;
 

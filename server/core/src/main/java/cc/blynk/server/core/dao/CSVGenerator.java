@@ -10,7 +10,6 @@ import io.netty.util.CharsetUtil;
 import java.io.BufferedWriter;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -55,10 +54,6 @@ public class CSVGenerator {
                 ByteBuffer onePinData = reportingDao.getByteBufferFromDisk(user, dashId, deviceId,
                         pinType, pin, FETCH_COUNT, GraphGranularityType.MINUTE, 0);
                 if (onePinData != null) {
-                    //casting is necessary here
-                    //super strange fix for https://jira.mongodb.org/browse/JAVA-2559
-                    //https://community.blynk.cc/t/java-error-on-remote-server-startup/17957/7
-                    ((Buffer) onePinData).flip();
                     writeBufToCsv(writer, onePinData, deviceId);
                 } else {
                     emptyDataCounter++;

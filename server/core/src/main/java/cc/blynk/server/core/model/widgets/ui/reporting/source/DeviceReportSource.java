@@ -10,18 +10,14 @@ import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_INTS;
  * Created by Dmitriy Dumanskiy.
  * Created on 22.05.18.
  */
-public class TileTemplateReportSource extends ReportSource {
-
-    public final int templateId;
+public class DeviceReportSource extends ReportSource {
 
     public volatile int[] deviceIds;
 
     @JsonCreator
-    public TileTemplateReportSource(@JsonProperty("dataStreams") ReportDataStream[] reportDataStream,
-                                    @JsonProperty("templateId") int templateId,
-                                    @JsonProperty("deviceIds") int[] deviceIds) {
+    public DeviceReportSource(@JsonProperty("dataStreams") ReportDataStream[] reportDataStream,
+                              @JsonProperty("deviceIds") int[] deviceIds) {
         super(reportDataStream);
-        this.templateId = templateId;
         this.deviceIds = deviceIds == null ? EMPTY_INTS : deviceIds;
     }
 

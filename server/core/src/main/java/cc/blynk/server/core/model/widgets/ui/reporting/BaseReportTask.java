@@ -12,7 +12,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,6 +21,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import java.util.zip.ZipOutputStream;
 
 /**
@@ -106,17 +106,21 @@ public abstract class BaseReportTask implements Runnable {
             case CSV_FILE_PER_DEVICE_PER_PIN:
             default:
                 if (filePerDevicePerPin(output, fetchCount, startFrom)) {
-                    String durationLabel = report.reportType.getDurationLabel().toLowerCase();
-                    String subj = "Your " + durationLabel + " " + report.name + " is ready";
-                    String gzipDownloadUrl = downloadUrl + output.getFileName();
-                    String dynamicSection = report.buildDynamicSection();
-                    mailWrapper.sendReportEmail(report.recipients, subj, gzipDownloadUrl, dynamicSection);
+                    sendEmail(output);
                     return ReportResult.OK;
                 } else {
                     log.info("No data for report for user {} and reportId {}.", key.user.email, report.id);
                     return ReportResult.NO_DATA;
                 }
         }
+    }
+
+    private void sendEmail(Path output) throws Exception {
+        String durationLabel = report.reportType.getDurationLabel().toLowerCase();
+        String subj = "Your " + durationLabel + " " + report.name + " is ready";
+        String gzipDownloadUrl = downloadUrl + output.getFileName();
+        String dynamicSection = report.buildDynamicSection();
+        mailWrapper.sendReportEmail(report.recipients, subj, gzipDownloadUrl, dynamicSection);
     }
 
     private static void writeBufToCsvFilterAndFormat(ByteArrayOutputStream baos, ByteBuffer onePinData,
@@ -160,7 +164,6 @@ public abstract class BaseReportTask implements Runnable {
     }
 
     private byte[] toCSV(ByteBuffer onePinData, int deviceId, long startFrom, Format format, ZoneId zoneId) {
-        ((Buffer) onePinData).flip();
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(onePinData.capacity());
         writeBufToCsvFilterAndFormat(byteArrayOutputStream, onePinData, deviceId, startFrom, format, zoneId);
         return byteArrayOutputStream.toByteArray();
@@ -174,9 +177,17 @@ public abstract class BaseReportTask implements Runnable {
             zs.write(onePinDataCsv, 0, onePinDataCsv.length);
             zs.closeEntry();
             return true;
+        } catch (ZipException zipException) {
+            String message = zipException.getMessage();
+            if (message != null && message.contains("duplicate")) {
+                log.warn("Duplicate zip entry {}. Wrong report configuration.", onePinFileName);
+                return true;
+            } else {
+                log.error("Error compressing report file.", message);
+                throw zipException;
+            }
         } catch (IOException e) {
             log.error("Error compressing report file.", e.getMessage());
-            log.debug(e);
             throw e;
         }
     }

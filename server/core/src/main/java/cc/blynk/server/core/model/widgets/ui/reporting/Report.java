@@ -88,7 +88,7 @@ public class Report {
     public boolean isValid() {
         return reportType != null && reportType.isValid()
                 && reportSources != null && reportSources.length > 0
-                && BlynkEmailValidator.isValidEmail(recipients);
+                && BlynkEmailValidator.isValidEmails(recipients);
     }
 
     public boolean isPeriodic() {

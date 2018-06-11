@@ -1,8 +1,11 @@
 package cc.blynk.server.application.handlers.main.logic;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
+import cc.blynk.server.application.handlers.main.auth.Version;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.SlackWrapper;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.DBManager;
@@ -21,17 +24,19 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created by Dmitriy Dumanskiy.
  * Created on 14.03.16.
  */
-public class AddEnergyLogic {
+public class PurchaseLogic {
 
-    private static final Logger log = LogManager.getLogger(AddEnergyLogic.class);
+    private static final Logger log = LogManager.getLogger(PurchaseLogic.class);
 
     private final BlockingIOProcessor blockingIOProcessor;
     private final DBManager dbManager;
+    private final SlackWrapper slackWrapper;
     private boolean wasErrorPrinted;
 
-    public AddEnergyLogic(DBManager dbManager, BlockingIOProcessor blockingIOProcessor) {
-        this.blockingIOProcessor = blockingIOProcessor;
-        this.dbManager = dbManager;
+    public PurchaseLogic(Holder holder) {
+        this.blockingIOProcessor = holder.blockingIOProcessor;
+        this.dbManager = holder.dbManager;
+        this.slackWrapper = holder.slackWrapper;
         this.wasErrorPrinted = false;
     }
 
@@ -63,6 +68,25 @@ public class AddEnergyLogic {
         return true;
     }
 
+    private static double calcPrice(int reward) {
+        switch (reward) {
+            case 200 :
+                return 0D;
+            case 1000 :
+                return 0.99D;
+            case 2400 :
+                return 1.99D;
+            case 5000 :
+                return 3.99D;
+            case 13000 :
+                return 9.99D;
+            case 28000 :
+                return 19.99D;
+            default:
+                return -1D;
+        }
+    }
+
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
         String[] splitBody = split2(message.body);
         User user = state.user;
@@ -70,7 +94,8 @@ public class AddEnergyLogic {
         int energyAmountToAdd = Integer.parseInt(splitBody[0]);
         ResponseMessage response;
         if (splitBody.length == 2 && isValidTransactionId(splitBody[1])) {
-            insertPurchase(user.email, energyAmountToAdd, splitBody[1]);
+            double price = calcPrice(energyAmountToAdd);
+            insertPurchase(user.email, state.version, energyAmountToAdd, price, splitBody[1]);
             user.addEnergy(energyAmountToAdd);
             response = ok(message.id);
         } else {
@@ -84,13 +109,14 @@ public class AddEnergyLogic {
         ctx.writeAndFlush(response, ctx.voidPromise());
     }
 
-    private void insertPurchase(String email, int reward, String transactionId) {
+    private void insertPurchase(String email, Version version, int reward, double price, String transactionId) {
         if (transactionId.equals("AdColonyAward") || transactionId.equals("homeScreen")) {
             return;
         }
         blockingIOProcessor.executeDB(
-            () -> dbManager.insertPurchase(new Purchase(email, reward, transactionId))
+            () -> dbManager.insertPurchase(new Purchase(email, reward, price, transactionId))
         );
+        slackWrapper.reportPurchase(email, version.toString(), price);
     }
 
 }

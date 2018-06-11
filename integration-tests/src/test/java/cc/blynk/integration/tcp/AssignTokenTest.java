@@ -39,7 +39,8 @@ public class AssignTokenTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
-        Holder holder = new Holder(properties, twitterWrapper, mailWrapper, gcmWrapper, smsWrapper, "db-test.properties");
+        Holder holder = new Holder(properties, twitterWrapper, mailWrapper,
+                gcmWrapper, smsWrapper, slackWrapper, "db-test.properties");
         hardwareServer = new HardwareAndHttpAPIServer(holder).start();
         appServer = new AppAndHttpsServer(holder).start();
         dbManager = holder.dbManager;
