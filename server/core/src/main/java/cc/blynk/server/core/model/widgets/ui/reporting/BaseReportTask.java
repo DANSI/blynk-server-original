@@ -22,6 +22,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import java.util.zip.ZipOutputStream;
 
 /**
@@ -178,9 +179,17 @@ public abstract class BaseReportTask implements Runnable {
             zs.write(onePinDataCsv, 0, onePinDataCsv.length);
             zs.closeEntry();
             return true;
+        } catch (ZipException zipException) {
+            String message = zipException.getMessage();
+            if (message != null && message.contains("duplicate")) {
+                log.warn("Duplicate zip entry {}. Wrong report configuration.", onePinFileName);
+                return true;
+            } else {
+                log.error("Error compressing report file.", message);
+                throw zipException;
+            }
         } catch (IOException e) {
             log.error("Error compressing report file.", e.getMessage());
-            log.debug(e);
             throw e;
         }
     }
