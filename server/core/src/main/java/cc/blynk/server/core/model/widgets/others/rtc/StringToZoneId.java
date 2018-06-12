@@ -27,7 +27,7 @@ public class StringToZoneId extends JsonDeserializer<ZoneId> {
                 case "Asia/Hanoi" :
                     return ZoneId.of("Asia/Ho_Chi_Minh");
                 default :
-                    throw e;
+                    return ZoneId.of("UTC");
             }
         }
     }
