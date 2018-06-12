@@ -2,6 +2,7 @@ package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
@@ -175,6 +176,44 @@ public class AppSyncWorkflowTest extends IntegrationBase {
         clientPair.appClient.verifyResult(appSync("1-0 vw 17 3"));
         clientPair.appClient.verifyResult(appSync("1-0 vw 17 4"));
         clientPair.appClient.verifyResult(appSync("1-0 vw 17 dddyyyiii"));
+    }
+
+    @Test
+    public void testTerminalStorageRemembersCommandsInNewFormat() throws Exception {
+        clientPair.appClient.stop();
+
+        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient.start();
+
+        appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.26.0");
+        appClient.verifyResult(ok(1));
+
+        appClient.send("loadProfileGzipped");
+        Profile profile = appClient.getProfile(2);
+        assertEquals(16, profile.dashBoards[0].widgets.length);
+
+        appClient.send("getEnergy");
+        appClient.verifyResult(produce(3, GET_ENERGY, "7500"));
+
+        appClient.createWidget(1, "{\"id\":102, \"width\":1, \"height\":1, \"x\":5, \"y\":0, \"tabId\":0, \"label\":\"Some Text\", \"type\":\"TERMINAL\", \"pinType\":\"VIRTUAL\", \"pin\":56}");
+        appClient.verifyResult(ok(4));
+
+        clientPair.hardwareClient.send("hardware vw 56 1");
+        clientPair.hardwareClient.send("hardware vw 56 2");
+        clientPair.hardwareClient.send("hardware vw 56 3");
+        clientPair.hardwareClient.send("hardware vw 56 4");
+        clientPair.hardwareClient.send("hardware vw 56 dddyyyiii");
+
+        appClient.verifyResult(hardware(1, "1-0 vw 56 1"));
+        appClient.verifyResult(hardware(2, "1-0 vw 56 2"));
+        appClient.verifyResult(hardware(3, "1-0 vw 56 3"));
+        appClient.verifyResult(hardware(4, "1-0 vw 56 4"));
+        appClient.verifyResult(hardware(5, "1-0 vw 56 dddyyyiii"));
+
+        appClient.activate(1);
+        appClient.verifyResult(ok(5));
+
+        appClient.verifyResult(appSync("1-0 vm 56 1 2 3 4 dddyyyiii"));
     }
 
     @Test

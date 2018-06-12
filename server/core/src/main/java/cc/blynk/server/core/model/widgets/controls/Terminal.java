@@ -11,6 +11,8 @@ import cc.blynk.utils.structure.LimitedArrayDeque;
 import cc.blynk.utils.structure.TerminalLimitedQueue;
 import io.netty.channel.Channel;
 
+import java.util.Iterator;
+
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
@@ -46,14 +48,23 @@ public class Terminal extends OnePinWidget {
     }
 
     @Override
-    public void sendAppSync(Channel appChannel, int dashId, int targetId) {
+    public void sendAppSync(Channel appChannel, int dashId, int targetId, boolean useNewSyncFormat) {
         if (isNotValid() || lastCommands.size() == 0) {
             return;
         }
         if (targetId == ANY_TARGET || this.deviceId == targetId) {
-            for (String storedValue : lastCommands) {
-                String body = prependDashIdAndDeviceId(dashId, deviceId, makeHardwareBody(pinType, pin, storedValue));
-                appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body));
+            if (useNewSyncFormat) {
+                Iterator<String> valIterator = lastCommands.iterator();
+                if (valIterator.hasNext()) {
+                    String body = makeMultiValueHardwareBody(dashId, deviceId, pinType, pin, valIterator);
+                    appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body));
+                }
+            } else {
+                for (String storedValue : lastCommands) {
+                    String body =
+                            prependDashIdAndDeviceId(dashId, deviceId, makeHardwareBody(pinType, pin, storedValue));
+                    appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body));
+                }
             }
         }
     }

@@ -507,10 +507,10 @@ public class DashBoard {
         }
     }
 
-    public void sendSyncs(Channel appChannel, int targetId) {
+    public void sendSyncs(Channel appChannel, int targetId, boolean useNewFormat) {
         for (Widget widget : widgets) {
             if (widget instanceof AppSyncWidget && appChannel.isWritable()) {
-                ((AppSyncWidget) widget).sendAppSync(appChannel, id, targetId);
+                ((AppSyncWidget) widget).sendAppSync(appChannel, id, targetId, useNewFormat);
             }
         }
 

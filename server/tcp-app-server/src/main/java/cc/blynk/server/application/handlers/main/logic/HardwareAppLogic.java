@@ -10,6 +10,7 @@ import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.processors.BaseProcessorHandler;
 import cc.blynk.server.core.processors.WebhookProcessor;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,6 +20,7 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.internal.CommonByteBufUtil.deviceNotInNetwork;
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
+import static cc.blynk.utils.AppStateHolderUtil.getAppState;
 import static cc.blynk.utils.StringUtils.split2;
 import static cc.blynk.utils.StringUtils.split2Device;
 import static cc.blynk.utils.StringUtils.split3;
@@ -146,9 +148,11 @@ public class HardwareAppLogic extends BaseProcessorHandler {
             session.sendToSharedApps(ctx.channel(), dash.sharedToken, APP_SYNC, message.id, message.body);
 
             //we need to send syncs not only to main app, but all to all shared apps
-            for (var channel : session.appChannels) {
-                if (Session.needSync(channel, dash.sharedToken)) {
-                    dash.sendSyncs(channel, selectedDeviceId);
+            for (Channel channel : session.appChannels) {
+                AppStateHolder appStateHolder = getAppState(channel);
+                if (appStateHolder != null && appStateHolder.contains(dash.sharedToken)) {
+                    boolean isNewSyncFormat = appStateHolder.isNewSyncFormat();
+                    dash.sendSyncs(channel, selectedDeviceId, isNewSyncFormat);
                 }
                 channel.flush();
             }

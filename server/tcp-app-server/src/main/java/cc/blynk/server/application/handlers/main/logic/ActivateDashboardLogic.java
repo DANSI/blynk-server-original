@@ -84,11 +84,13 @@ public class ActivateDashboardLogic {
 
         for (var appChannel : session.appChannels) {
             //send activate for shared apps
-            if (appChannel != ctx.channel() && getAppState(appChannel) != null && appChannel.isWritable()) {
+            AppStateHolder appStateHolder = getAppState(appChannel);
+            if (appChannel != ctx.channel() && appStateHolder != null && appChannel.isWritable()) {
                 appChannel.write(makeUTF8StringMessage(message.command, message.id, message.body));
             }
 
-            dash.sendSyncs(appChannel, ANY_TARGET);
+            boolean isNewSyncFormat = appStateHolder != null && appStateHolder.isNewSyncFormat();
+            dash.sendSyncs(appChannel, ANY_TARGET, isNewSyncFormat);
             appChannel.flush();
         }
     }
