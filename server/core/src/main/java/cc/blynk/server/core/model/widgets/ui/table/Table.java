@@ -7,8 +7,13 @@ import cc.blynk.server.core.model.storage.MultiPinStorageValueType;
 import cc.blynk.server.core.model.storage.PinStorageValue;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.utils.structure.TableLimitedQueue;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 
+import java.util.Iterator;
+
+import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 
 
@@ -89,6 +94,22 @@ public class Table extends OnePinWidget {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void sendAppSync(Channel appChannel, int dashId, int targetId, boolean useNewSyncFormat) {
+        if (isNotValid() || rows.size() == 0) {
+            return;
+        }
+        if (targetId == ANY_TARGET || this.deviceId == targetId) {
+            if (useNewSyncFormat) {
+                Iterator<Row> valIterator = rows.iterator();
+                if (valIterator.hasNext()) {
+                    String body = makeMultiValueHardwareBody(dashId, deviceId, pinType, pin, valIterator);
+                    appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body));
+                }
+            }
+        }
     }
 
     private void selectRow(String idString, boolean select) {

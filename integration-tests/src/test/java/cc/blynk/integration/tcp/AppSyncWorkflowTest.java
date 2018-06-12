@@ -6,6 +6,8 @@ import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
+import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.ui.table.Table;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
@@ -214,6 +216,51 @@ public class AppSyncWorkflowTest extends IntegrationBase {
         appClient.verifyResult(ok(5));
 
         appClient.verifyResult(appSync("1-0 vm 56 1 2 3 4 dddyyyiii"));
+    }
+
+    @Test
+    public void testTableSyncWorkForNewCommandFormat() throws Exception {
+        clientPair.appClient.stop();
+
+        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient.start();
+
+        appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.26.0");
+        appClient.verifyResult(ok(1));
+
+        appClient.send("loadProfileGzipped");
+        Profile profile = appClient.getProfile(2);
+        assertEquals(16, profile.dashBoards[0].widgets.length);
+
+        appClient.send("getEnergy");
+        appClient.verifyResult(produce(3, GET_ENERGY, "7500"));
+
+        Table table = new Table();
+        table.pin = 56;
+        table.pinType = PinType.VIRTUAL;
+        table.isClickableRows = true;
+        table.isReoderingAllowed = true;
+        table.height = 2;
+        table.width = 2;
+
+        appClient.createWidget(1, table);
+        appClient.verifyResult(ok(4));
+
+        clientPair.hardwareClient.send("hardware vw 56 add 0 Row1 1");
+        clientPair.hardwareClient.send("hardware vw 56 add 1 Row2 2");
+        clientPair.hardwareClient.send("hardware vw 56 add 2 Row3 3");
+        clientPair.hardwareClient.send("hardware vw 56 add 3 Row4 4");
+        clientPair.hardwareClient.send("hardware vw 56 add 4 Row5 dddyyyiii");
+        appClient.verifyResult(produce(1, HARDWARE, b("1-0 vw 56 add 0 Row1 1")));
+        appClient.verifyResult(produce(2, HARDWARE, b("1-0 vw 56 add 1 Row2 2")));
+        appClient.verifyResult(produce(3, HARDWARE, b("1-0 vw 56 add 2 Row3 3")));
+        appClient.verifyResult(produce(4, HARDWARE, b("1-0 vw 56 add 3 Row4 4")));
+        appClient.verifyResult(produce(5, HARDWARE, b("1-0 vw 56 add 4 Row5 dddyyyiii")));
+
+        appClient.activate(1);
+        appClient.verifyResult(ok(5));
+
+        appClient.verifyResult(appSync("1-0 vm 56 add 0 Row1 1 true add 1 Row2 2 true add 2 Row3 3 true add 3 Row4 4 true add 4 Row5 dddyyyiii true"));
     }
 
     @Test

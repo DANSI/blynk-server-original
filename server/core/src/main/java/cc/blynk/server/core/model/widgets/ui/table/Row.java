@@ -3,6 +3,8 @@ package cc.blynk.server.core.model.widgets.ui.table;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -32,5 +34,14 @@ public class Row {
     public void update(String name, String value) {
         this.name = name;
         this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return "add" + BODY_SEPARATOR
+                + id + BODY_SEPARATOR
+                + name + BODY_SEPARATOR
+                + value + BODY_SEPARATOR
+                + isSelected;
     }
 }

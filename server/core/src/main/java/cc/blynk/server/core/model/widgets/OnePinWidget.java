@@ -42,12 +42,12 @@ public abstract class OnePinWidget extends Widget implements AppSyncWidget, Hard
     public volatile String value;
 
     protected static String makeMultiValueHardwareBody(int dashId, int deviceId,
-                                                       PinType pinType, byte pin, Iterator<String> values) {
+                                                       PinType pinType, byte pin, Iterator<?> values) {
         StringBuilder sb = new StringBuilder();
         sb.append(dashId).append(DEVICE_SEPARATOR).append(deviceId).append(BODY_SEPARATOR)
           .append(pinType.pintTypeChar).append('m').append(BODY_SEPARATOR).append(pin);
         while (values.hasNext()) {
-            String value = values.next();
+            String value = values.next().toString();
             sb.append(BODY_SEPARATOR).append(value);
         }
         return sb.toString();
