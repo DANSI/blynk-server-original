@@ -33,6 +33,7 @@ import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 
 import java.util.Collections;
+import java.util.concurrent.TimeUnit;
 
 import static cc.blynk.server.internal.ReportingUtil.getReportingFolder;
 
@@ -164,7 +165,7 @@ public class Holder {
 
         String contactEmail = serverProperties.getProperty("contact.email", mailProperties.getSMTPUsername());
         this.sslContextHolder = new SslContextHolder(props, contactEmail);
-        this.tokensPool = new TokensPool(60 * 60 * 1000);
+        this.tokensPool = new TokensPool(TimeUnit.MINUTES.toMillis(60));
     }
 
     //for tests only
@@ -227,7 +228,7 @@ public class Holder {
         this.reportScheduler = new ReportScheduler(1, downloadUrl, mailWrapper, reportingDao, userDao.users);
 
         this.sslContextHolder = new SslContextHolder(props, "test@blynk.cc");
-        this.tokensPool = new TokensPool(60 * 60 * 1000);
+        this.tokensPool = new TokensPool(TimeUnit.MINUTES.toMillis(60));
     }
 
     private static void disableNettyLeakDetector() {

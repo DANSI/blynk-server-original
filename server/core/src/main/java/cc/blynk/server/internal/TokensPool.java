@@ -15,10 +15,10 @@ public final class TokensPool {
 
     private static final Logger log = LogManager.getLogger(TokensPool.class);
 
-    private final int tokenExpirationPeriodMillis;
+    private final long tokenExpirationPeriodMillis;
     private final ConcurrentMap<String, TokenUser> holder;
 
-    public TokensPool(int expirationPeriodMillis) {
+    public TokensPool(long expirationPeriodMillis) {
         this.holder = new ConcurrentHashMap<>();
         this.tokenExpirationPeriodMillis = expirationPeriodMillis;
     }
