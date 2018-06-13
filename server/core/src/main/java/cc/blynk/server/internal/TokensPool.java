@@ -47,4 +47,8 @@ public final class TokensPool {
         holder.entrySet().removeIf(entry -> entry.getValue().createdAt + tokenExpirationPeriodMillis < now);
     }
 
+    //just for tests
+    public ConcurrentMap<String, TokenUser> getHolder() {
+        return holder;
+    }
 }

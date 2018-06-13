@@ -25,7 +25,9 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
+import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.FileUtils;
+import cc.blynk.utils.SHA256Util;
 import io.netty.channel.ChannelFuture;
 import org.junit.After;
 import org.junit.Before;
@@ -49,6 +51,7 @@ import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_NOT_AUTH
 import static cc.blynk.server.core.protocol.enums.Response.NO_ACTIVE_DASHBOARD;
 import static cc.blynk.server.core.protocol.enums.Response.QUOTA_LIMIT;
 import static cc.blynk.server.core.protocol.enums.Response.USER_ALREADY_REGISTERED;
+import static cc.blynk.server.core.protocol.enums.Response.USER_NOT_AUTHENTICATED;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -57,6 +60,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.after;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
@@ -92,6 +96,34 @@ public class MainWorkflowTest extends IntegrationBase {
         this.appServer.close();
         this.hardwareServer.close();
         this.clientPair.stop();
+    }
+
+    @Test
+    public void testResetEmail() throws Exception {
+        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient.start();
+
+        appClient.send("resetPass start dima@mail.ua" + " " + AppNameUtil.BLYNK);
+        appClient.verifyResult(ok(1));
+
+        verify(mailWrapper).sendHtml(eq("dima@mail.ua"), eq("Password reset request for the Blynk app."), contains(" To complete the process, copy this code to the app: <b>"));
+
+        String token = holder.tokensPool.getHolder().entrySet().iterator().next().getKey();
+
+        appClient.send("resetPass verify 123");
+        appClient.verifyResult(notAllowed(2));
+
+        appClient.send("resetPass verify " + token);
+        appClient.verifyResult(ok(3));
+
+        appClient.send("resetPass reset " + token + " " + SHA256Util.makeHash("2", "dima@mail.ua"));
+        appClient.verifyResult(ok(4));
+
+        appClient.login("dima@mail.ua", "1");
+        appClient.verifyResult(new ResponseMessage(5, USER_NOT_AUTHENTICATED));
+
+        appClient.login("dima@mail.ua", "2");
+        appClient.verifyResult(ok(6));
     }
 
     @Test

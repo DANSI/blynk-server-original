@@ -17,4 +17,11 @@ public final class TokenUser {
         this.createdAt = System.currentTimeMillis();
     }
 
+    @Override
+    public String toString() {
+        return "TokenUser{" +
+                "email='" + email + '\'' +
+                ", appName='" + appName + '\'' +
+                '}';
+    }
 }

@@ -4,6 +4,7 @@ import cc.blynk.server.core.protocol.exceptions.UnsupportedCommandException;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetServerMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.RegisterMessage;
+import cc.blynk.server.core.protocol.model.messages.appllication.ResetPasswordMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.ShareLoginMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.core.protocol.model.messages.hardware.HardwareLoginMessage;
@@ -67,6 +68,7 @@ import static cc.blynk.server.core.protocol.enums.Command.REDEEM;
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_SHARE_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.REGISTER;
+import static cc.blynk.server.core.protocol.enums.Command.RESET_PASSWORD;
 import static cc.blynk.server.core.protocol.enums.Command.RESOLVE_EVENT;
 import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
 import static cc.blynk.server.core.protocol.enums.Command.SHARE_LOGIN;
@@ -107,6 +109,8 @@ public final class MessageFactory {
                 return new HardwareMessage(messageId, body);
             case GET_SERVER :
                 return new GetServerMessage(messageId, body);
+            case RESET_PASSWORD :
+                return new ResetPasswordMessage(messageId, body);
             case APP_CONNECTED :
             case PING :
             case LOGOUT :

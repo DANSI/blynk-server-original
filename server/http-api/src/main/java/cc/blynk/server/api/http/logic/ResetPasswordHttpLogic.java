@@ -46,9 +46,9 @@ import static cc.blynk.utils.http.MediaType.TEXT_PLAIN;
  */
 @Path("/")
 @ChannelHandler.Sharable
-public class ResetPasswordLogic extends BaseHttpHandler {
+public class ResetPasswordHttpLogic extends BaseHttpHandler {
 
-    private static final Logger log = LogManager.getLogger(ResetPasswordLogic.class);
+    private static final Logger log = LogManager.getLogger(ResetPasswordHttpLogic.class);
 
     private final UserDao userDao;
     private final TokensPool tokensPool;
@@ -61,7 +61,7 @@ public class ResetPasswordLogic extends BaseHttpHandler {
     private final DBManager dbManager;
     private final FileManager fileManager;
 
-    public ResetPasswordLogic(Holder holder) {
+    public ResetPasswordHttpLogic(Holder holder) {
         super(holder, "");
         this.userDao = holder.userDao;
         this.tokensPool = holder.tokensPool;
@@ -148,7 +148,7 @@ public class ResetPasswordLogic extends BaseHttpHandler {
     @POST
     @Consumes(value = MediaType.APPLICATION_FORM_URLENCODED)
     @Path("updatePassword")
-    public Response updatePassword(@FormParam("password") String password,
+    public Response updatePassword(@FormParam("password") String passHash,
                                    @FormParam("token") String token) {
         TokenUser tokenUser = tokensPool.getUser(token);
         if (tokenUser == null) {
@@ -163,8 +163,7 @@ public class ResetPasswordLogic extends BaseHttpHandler {
             return notFound();
         }
 
-        user.pass = password;
-        user.lastModifiedTs = System.currentTimeMillis();
+        user.resetPass(passHash);
 
         log.info("{} password was reset.", user.email);
         tokensPool.removeToken(token);

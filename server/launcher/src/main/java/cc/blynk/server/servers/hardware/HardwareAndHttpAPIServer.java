@@ -10,7 +10,7 @@ import cc.blynk.server.api.http.handlers.BaseHttpAndBlynkUnificationHandler;
 import cc.blynk.server.api.http.handlers.BaseWebSocketUnificator;
 import cc.blynk.server.api.http.handlers.LetsEncryptHandler;
 import cc.blynk.server.api.http.logic.HttpAPILogic;
-import cc.blynk.server.api.http.logic.ResetPasswordLogic;
+import cc.blynk.server.api.http.logic.ResetPasswordHttpLogic;
 import cc.blynk.server.api.websockets.handlers.WebSocketHandler;
 import cc.blynk.server.api.websockets.handlers.WebSocketWrapperEncoder;
 import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
@@ -60,7 +60,7 @@ public class HardwareAndHttpAPIServer extends BaseServer {
         var stats = holder.stats;
 
         //http API handlers
-        var resetPasswordLogic = new ResetPasswordLogic(holder);
+        var resetPasswordLogic = new ResetPasswordHttpLogic(holder);
         var httpAPILogic = new HttpAPILogic(holder);
         var noMatchHandler = new NoMatchHandler();
         var baseWebSocketUnificator = new BaseWebSocketUnificator() {

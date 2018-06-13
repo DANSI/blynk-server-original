@@ -118,6 +118,8 @@ public final class Command {
     public static final short DELETE_REPORT = 79;
     public static final short EXPORT_REPORT = 80;
 
+    public static final short RESET_PASSWORD = 81;
+
     //http codes. Used only for stats
     public static final short HTTP_IS_HARDWARE_CONNECTED = 82;
     public static final short HTTP_IS_APP_CONNECTED = 83;
@@ -209,6 +211,7 @@ public final class Command {
             Map.entry(UPDATE_REPORT, "updateReport"),
             Map.entry(DELETE_REPORT, "deleteReport"),
             Map.entry(EXPORT_REPORT, "exportReport"),
+            Map.entry(RESET_PASSWORD, "resetPass"),
             Map.entry(HTTP_IS_HARDWARE_CONNECTED, "HttpIsHardwareConnected"),
             Map.entry(HTTP_IS_APP_CONNECTED, "HttpIsAppConnected"),
             Map.entry(HTTP_GET_PIN_DATA, "HttpGetPinData"),
