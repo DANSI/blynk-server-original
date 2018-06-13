@@ -1,9 +1,15 @@
 package cc.blynk.server.core.model.storage;
 
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import com.fasterxml.jackson.annotation.JsonValue;
+import io.netty.channel.Channel;
 
 import java.util.Collection;
 import java.util.Collections;
+
+import static cc.blynk.server.core.model.widgets.AppSyncWidget.SYNC_DEFAULT_MESSAGE_ID;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
 
 /**
  * The Blynk Project.
@@ -33,6 +39,18 @@ public class SinglePinStorageValue extends PinStorageValue {
             return Collections.emptyList();
         }
         return Collections.singletonList(value);
+    }
+
+    @Override
+    public void sendAppSync(Channel appChannel, int dashId, PinStorageKey key) {
+        if (value != null) {
+            String body = key.makeHardwareBody(value);
+            String finalBody = prependDashIdAndDeviceId(dashId, key.deviceId, body);
+            //special case for setProperty
+            short cmdType = key.getCmdType();
+            StringMessage message = makeUTF8StringMessage(cmdType, SYNC_DEFAULT_MESSAGE_ID, finalBody);
+            appChannel.write(message, appChannel.voidPromise());
+        }
     }
 
     @Override

@@ -152,7 +152,7 @@ public class HardwareAppLogic extends BaseProcessorHandler {
                 AppStateHolder appStateHolder = getAppState(channel);
                 if (appStateHolder != null && appStateHolder.contains(dash.sharedToken)) {
                     boolean isNewSyncFormat = appStateHolder.isNewSyncFormat();
-                    dash.sendSyncs(channel, selectedDeviceId, isNewSyncFormat);
+                    dash.sendAppSyncs(channel, selectedDeviceId, isNewSyncFormat);
                 }
                 channel.flush();
             }

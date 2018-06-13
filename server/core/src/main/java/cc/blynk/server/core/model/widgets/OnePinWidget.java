@@ -53,8 +53,12 @@ public abstract class OnePinWidget extends Widget implements AppSyncWidget, Hard
         return sb.toString();
     }
 
-    protected static String makeHardwareBody(PinType pinType, byte pin, String value) {
-        return "" + pinType.pintTypeChar + 'w' + BODY_SEPARATOR + pin + BODY_SEPARATOR + value;
+    public static String makeHardwareBody(PinType pinType, byte pin, String value) {
+        return makeHardwareBody(pinType.pintTypeChar, pin, value);
+    }
+
+    public static String makeHardwareBody(char pintTypeChar, byte pin, String value) {
+        return "" + pintTypeChar + 'w' + BODY_SEPARATOR + pin + BODY_SEPARATOR + value;
     }
 
     @Override

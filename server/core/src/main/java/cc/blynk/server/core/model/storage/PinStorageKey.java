@@ -4,13 +4,10 @@ import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
-import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.utils.StringUtils;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-import static cc.blynk.server.core.model.widgets.AppSyncWidget.SYNC_DEFAULT_MESSAGE_ID;
-import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
-import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
+import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
+import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
 
 /**
  * The Blynk Project.
@@ -51,9 +48,8 @@ public class PinStorageKey {
         return DataStream.makeHardwareBody(pinTypeChar, pin, value);
     }
 
-    public StringMessage toStringMessage(int dashId, String value, short cmdType) {
-        String body = prependDashIdAndDeviceId(dashId, deviceId, makeHardwareBody(value));
-        return makeUTF8StringMessage(cmdType, SYNC_DEFAULT_MESSAGE_ID, body);
+    public short getCmdType() {
+        return APP_SYNC;
     }
 
     @Override
@@ -87,6 +83,6 @@ public class PinStorageKey {
     @Override
     @JsonValue
     public String toString() {
-        return "" + deviceId + StringUtils.DEVICE_SEPARATOR + pinTypeChar + pin;
+        return "" + deviceId + DEVICE_SEPARATOR + pinTypeChar + pin;
     }
 }

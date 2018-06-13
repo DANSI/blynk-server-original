@@ -90,7 +90,7 @@ public class ActivateDashboardLogic {
             }
 
             boolean isNewSyncFormat = appStateHolder != null && appStateHolder.isNewSyncFormat();
-            dash.sendSyncs(appChannel, ANY_TARGET, isNewSyncFormat);
+            dash.sendAppSyncs(appChannel, ANY_TARGET, isNewSyncFormat);
             appChannel.flush();
         }
     }

@@ -39,7 +39,7 @@ public final class AppSyncLogic {
         Channel appChannel = ctx.channel();
         AppStateHolder appStateHolder = getAppState(appChannel);
         boolean isNewSyncFormat = appStateHolder != null && appStateHolder.isNewSyncFormat();
-        dash.sendSyncs(appChannel, targetId, isNewSyncFormat);
+        dash.sendAppSyncs(appChannel, targetId, isNewSyncFormat);
         ctx.flush();
     }
 
