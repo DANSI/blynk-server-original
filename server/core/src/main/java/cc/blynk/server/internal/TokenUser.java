@@ -19,9 +19,9 @@ public final class TokenUser {
 
     @Override
     public String toString() {
-        return "TokenUser{" +
-                "email='" + email + '\'' +
-                ", appName='" + appName + '\'' +
-                '}';
+        return "TokenUser{"
+                + "email='" + email + '\''
+                + ", appName='" + appName + '\''
+                + '}';
     }
 }
