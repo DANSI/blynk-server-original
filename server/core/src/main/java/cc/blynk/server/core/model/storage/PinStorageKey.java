@@ -9,7 +9,6 @@ import cc.blynk.utils.StringUtils;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import static cc.blynk.server.core.model.widgets.AppSyncWidget.SYNC_DEFAULT_MESSAGE_ID;
-import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
 
@@ -52,11 +51,7 @@ public class PinStorageKey {
         return DataStream.makeHardwareBody(pinTypeChar, pin, value);
     }
 
-    public StringMessage toStringMessage(int dashId, String value) {
-        return toStringMessage(dashId, value, APP_SYNC);
-    }
-
-    StringMessage toStringMessage(int dashId, String value, short cmdType) {
+    public StringMessage toStringMessage(int dashId, String value, short cmdType) {
         String body = prependDashIdAndDeviceId(dashId, deviceId, makeHardwareBody(value));
         return makeUTF8StringMessage(cmdType, SYNC_DEFAULT_MESSAGE_ID, body);
     }

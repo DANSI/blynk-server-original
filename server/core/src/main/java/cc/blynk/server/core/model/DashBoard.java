@@ -46,6 +46,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static cc.blynk.server.core.model.widgets.AppSyncWidget.ANY_TARGET;
+import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DEVICES;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_TAGS;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_WIDGETS;
@@ -518,8 +519,8 @@ public class DashBoard {
             PinStorageKey key = entry.getKey();
             if ((targetId == ANY_TARGET || targetId == key.deviceId) && appChannel.isWritable()) {
                 for (String value : entry.getValue().values()) {
-                    StringMessage byteBuf = key.toStringMessage(id, value);
-                    appChannel.write(byteBuf, appChannel.voidPromise());
+                    StringMessage message = key.toStringMessage(id, value, APP_SYNC);
+                    appChannel.write(message, appChannel.voidPromise());
                 }
             }
         }
