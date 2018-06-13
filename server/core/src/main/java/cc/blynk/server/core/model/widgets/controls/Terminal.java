@@ -56,7 +56,7 @@ public class Terminal extends OnePinWidget {
             if (useNewSyncFormat) {
                 Iterator<String> valIterator = lastCommands.iterator();
                 if (valIterator.hasNext()) {
-                    String body = makeMultiValueHardwareBody(dashId, deviceId, pinType, pin, valIterator);
+                    String body = makeMultiValueHardwareBody(dashId, deviceId, pinType.pintTypeChar, pin, valIterator);
                     appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body));
                 }
             } else {

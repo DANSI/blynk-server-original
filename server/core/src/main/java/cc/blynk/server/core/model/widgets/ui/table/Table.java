@@ -105,7 +105,7 @@ public class Table extends OnePinWidget {
             if (useNewSyncFormat) {
                 Iterator<Row> valIterator = rows.iterator();
                 if (valIterator.hasNext()) {
-                    String body = makeMultiValueHardwareBody(dashId, deviceId, pinType, pin, valIterator);
+                    String body = makeMultiValueHardwareBody(dashId, deviceId, pinType.pintTypeChar, pin, valIterator);
                     appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body));
                 }
             }

@@ -42,7 +42,7 @@ public class SinglePinStorageValue extends PinStorageValue {
     }
 
     @Override
-    public void sendAppSync(Channel appChannel, int dashId, PinStorageKey key) {
+    public void sendAppSync(Channel appChannel, int dashId, PinStorageKey key, boolean useNewFormat) {
         if (value != null) {
             String body = key.makeHardwareBody(value);
             String finalBody = prependDashIdAndDeviceId(dashId, key.deviceId, body);

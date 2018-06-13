@@ -16,6 +16,6 @@ public abstract class PinStorageValue {
 
     public abstract Collection<String> values();
 
-    public abstract void sendAppSync(Channel appChannel, int dashId, PinStorageKey key);
+    public abstract void sendAppSync(Channel appChannel, int dashId, PinStorageKey key, boolean useNewFormat);
 
 }
