@@ -151,6 +151,10 @@ public class DashBoard {
     }
 
     private Widget getWidgetForStorageKey(PinStorageKey key) {
+        //property is always single value
+        if (key instanceof PinPropertyStorageKey) {
+            return null;
+        }
         for (var widget : widgets) {
             if (widget instanceof OnePinWidget) {
                 var onePinWidget = (OnePinWidget) widget;
@@ -517,7 +521,7 @@ public class DashBoard {
             PinStorageKey key = entry.getKey();
             if ((targetId == ANY_TARGET || targetId == key.deviceId) && appChannel.isWritable()) {
                 PinStorageValue pinStorageValue = entry.getValue();
-                pinStorageValue.sendAppSync(appChannel, id, key);
+                pinStorageValue.sendAppSync(appChannel, id, key, useNewFormat);
             }
         }
     }
