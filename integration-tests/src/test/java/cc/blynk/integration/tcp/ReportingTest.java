@@ -298,7 +298,7 @@ public class ReportingTest extends IntegrationBase {
         clientPair.appClient.verifyResult(ok(2));
 
         //a bit upfront
-        long now = System.currentTimeMillis() + 1000;
+        long now = System.currentTimeMillis() + 1500;
 
         Report report = new Report(1, "DailyReport",
                 new ReportSource[] {reportSource},
