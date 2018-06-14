@@ -16,6 +16,8 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import static cc.blynk.server.core.model.widgets.ui.reporting.ReportResult.EXPIRED;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -54,14 +56,25 @@ public class ReportScheduler extends ScheduledThreadPoolExecutor {
                         for (Report report : reportingWidget.reports) {
                             if (report.isValid() && report.isPeriodic() && report.isActive) {
                                 try {
-                                    long initialDelaySeconds = report.calculateDelayInSeconds();
-                                    log.trace("Adding periodic report for user {} with delay {} to scheduler.",
-                                            user.email, initialDelaySeconds);
-                                    report.nextReportAt = System.currentTimeMillis() + initialDelaySeconds * 1000;
+                                    long now = System.currentTimeMillis();
+                                    long initialDelaySeconds;
+
+                                    if (report.nextReportAt < now && report.lastRunResult != EXPIRED) {
+                                        //this is special case, when we restart server we may miss some reports
+                                        //while the server is down, so we perform checks and run those reports,
+                                        //so we are sure we didn't miss any report.
+                                        log.warn("Rescheduling missed report {} for {}.", report, user.email);
+                                        initialDelaySeconds = 0;
+                                    } else {
+                                        initialDelaySeconds = report.calculateDelayInSeconds();
+                                        log.trace("Adding periodic report for user {} with delay {} to scheduler.",
+                                                user.email, initialDelaySeconds);
+                                        report.nextReportAt = now + initialDelaySeconds * 1000;
+                                    }
                                     schedule(user, dashBoard.id, report, initialDelaySeconds);
                                     counter++;
                                 } catch (IllegalCommandBodyException e) {
-                                    report.lastRunResult = ReportResult.EXPIRED;
+                                    report.lastRunResult = EXPIRED;
                                     log.debug("Report is expired for {}, {}", user.email, report.id);
                                 } catch (Exception e) {
                                     report.lastRunResult = ReportResult.ERROR;
