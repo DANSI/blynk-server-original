@@ -21,6 +21,9 @@ public final class BlynkEmailValidator {
             return false;
         }
         String[] emailsSplit = emails.split(",");
+        if (emailsSplit.length > 5) {
+            return false;
+        }
         for (String email : emailsSplit) {
             if (isNotValidEmail(email)) {
                 return false;
