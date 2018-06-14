@@ -7,6 +7,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.notifications.mail.MailWrapper;
+import cc.blynk.utils.BlynkTPFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -35,7 +36,7 @@ public class ReportScheduler extends ScheduledThreadPoolExecutor {
 
     public ReportScheduler(int corePoolSize, String downloadUrl,
                            MailWrapper mailWrapper, ReportingStorageDao reportingDao, Map<UserKey, User> users) {
-        super(corePoolSize);
+        super(corePoolSize,  BlynkTPFactory.build("report"));
         setRemoveOnCancelPolicy(true);
         setExecuteExistingDelayedTasksAfterShutdownPolicy(false);
         this.map = new ConcurrentHashMap<>();
