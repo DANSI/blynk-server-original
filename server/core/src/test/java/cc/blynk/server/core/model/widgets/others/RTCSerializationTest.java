@@ -3,7 +3,6 @@ package cc.blynk.server.core.model.widgets.others;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.utils.DateTimeUtils;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -58,10 +57,12 @@ public class RTCSerializationTest {
         assertEquals(ZoneId.of("Asia/Ho_Chi_Minh"), rtc.tzName);
     }
 
-    @Test(expected = IllegalCommandBodyException.class)
+    @Test
     public void unsupportedTimeZoneTest() {
         String widgetString = "{\"id\":1, \"x\":1, \"y\":1, \"type\":\"RTC\", \"tzName\":\"Canada/East-xxx\"}";
-        JsonParser.parseWidget(widgetString, 0);
+        RTC rtc = (RTC) JsonParser.parseWidget(widgetString, 0);
+        assertNotNull(rtc);
+        assertEquals(ZoneId.of("UTC"), rtc.tzName);
     }
 
     @Test

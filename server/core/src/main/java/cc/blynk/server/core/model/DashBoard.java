@@ -32,7 +32,6 @@ import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.Tile;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
-import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.ArrayUtil;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -153,6 +152,10 @@ public class DashBoard {
     }
 
     private Widget getWidgetForStorageKey(PinStorageKey key) {
+        //property is always single value
+        if (key instanceof PinPropertyStorageKey) {
+            return null;
+        }
         for (Widget widget : widgets) {
             if (widget instanceof OnePinWidget) {
                 OnePinWidget onePinWidget = (OnePinWidget) widget;
@@ -508,20 +511,18 @@ public class DashBoard {
         }
     }
 
-    public void sendSyncs(Channel appChannel, int targetId) {
+    public void sendAppSyncs(Channel appChannel, int targetId, boolean useNewFormat) {
         for (Widget widget : widgets) {
             if (widget instanceof AppSyncWidget && appChannel.isWritable()) {
-                ((AppSyncWidget) widget).sendAppSync(appChannel, id, targetId);
+                ((AppSyncWidget) widget).sendAppSync(appChannel, id, targetId, useNewFormat);
             }
         }
 
         for (Map.Entry<PinStorageKey, PinStorageValue> entry : pinsStorage.entrySet()) {
             PinStorageKey key = entry.getKey();
             if ((targetId == ANY_TARGET || targetId == key.deviceId) && appChannel.isWritable()) {
-                for (String value : entry.getValue().values()) {
-                    StringMessage byteBuf = key.toStringMessage(id, value);
-                    appChannel.write(byteBuf, appChannel.voidPromise());
-                }
+                PinStorageValue pinStorageValue = entry.getValue();
+                pinStorageValue.sendAppSync(appChannel, id, key, useNewFormat);
             }
         }
     }

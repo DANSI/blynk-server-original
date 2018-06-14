@@ -2,7 +2,6 @@ package cc.blynk.server.core.model.storage;
 
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
-import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.StringUtils;
 
 import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
@@ -27,9 +26,8 @@ public final class PinPropertyStorageKey extends PinStorageKey {
         return "" + pin + BODY_SEPARATOR + property.label + BODY_SEPARATOR + value;
     }
 
-    @Override
-    public StringMessage toStringMessage(int dashId, String value) {
-        return toStringMessage(dashId, value, SET_WIDGET_PROPERTY);
+    public short getCmdType() {
+        return SET_WIDGET_PROPERTY;
     }
 
     @Override

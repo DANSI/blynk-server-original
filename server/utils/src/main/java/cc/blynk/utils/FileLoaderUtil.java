@@ -49,6 +49,10 @@ public final class FileLoaderUtil {
         return readFileAsString("static/reset/reset-email.html");
     }
 
+    public static String readAppResetEmailTemplateAsString() {
+        return readFileAsString("static/reset/reset-email-app.html");
+    }
+
     public static String readResetPassLandingTemplateAsString() {
         return readFileAsString("static/reset/enterNewPassword.html");
     }

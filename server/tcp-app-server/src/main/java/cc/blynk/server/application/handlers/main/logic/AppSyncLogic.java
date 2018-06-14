@@ -4,9 +4,11 @@ import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.widgets.AppSyncWidget;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
+import static cc.blynk.utils.AppStateHolderUtil.getAppState;
 import static cc.blynk.utils.StringUtils.split2Device;
 
 /**
@@ -35,7 +37,10 @@ public final class AppSyncLogic {
         }
 
         ctx.write(ok(message.id), ctx.voidPromise());
-        dash.sendSyncs(ctx.channel(), targetId);
+        Channel appChannel = ctx.channel();
+        AppStateHolder appStateHolder = getAppState(appChannel);
+        boolean isNewSyncFormat = appStateHolder != null && appStateHolder.isNewSyncFormat();
+        dash.sendAppSyncs(appChannel, targetId, isNewSyncFormat);
         ctx.flush();
     }
 

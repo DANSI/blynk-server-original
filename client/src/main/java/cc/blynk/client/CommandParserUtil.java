@@ -53,6 +53,7 @@ import static cc.blynk.server.core.protocol.enums.Command.PUSH_NOTIFICATION;
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_SHARE_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.REGISTER;
+import static cc.blynk.server.core.protocol.enums.Command.RESET_PASSWORD;
 import static cc.blynk.server.core.protocol.enums.Command.RESOLVE_EVENT;
 import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
 import static cc.blynk.server.core.protocol.enums.Command.SHARE_LOGIN;
@@ -233,6 +234,8 @@ public final class CommandParserUtil {
                 return UPDATE_REPORT;
             case "exportreport" :
                 return EXPORT_REPORT;
+            case "resetpass" :
+                return RESET_PASSWORD;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");

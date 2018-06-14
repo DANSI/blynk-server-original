@@ -22,6 +22,7 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.internal.CommonByteBufUtil.deviceNotInNetwork;
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
+import static cc.blynk.utils.AppStateHolderUtil.getAppState;
 import static cc.blynk.utils.StringUtils.split2;
 import static cc.blynk.utils.StringUtils.split2Device;
 import static cc.blynk.utils.StringUtils.split3;
@@ -49,30 +50,6 @@ public class HardwareAppLogic extends BaseProcessorHandler {
                 holder.stats,
                 email));
         this.sessionDao = holder.sessionDao;
-    }
-
-    public static void processDeviceSelectorCommand(ChannelHandlerContext ctx,
-                                                    Session session, DashBoard dash,
-                                                    StringMessage message, String[] splitBody) {
-        //in format "vu 200000 1"
-        long widgetId = Long.parseLong(splitBody[1]);
-        Widget deviceSelector = dash.getWidgetByIdOrThrow(widgetId);
-        if (deviceSelector instanceof DeviceSelector) {
-            int selectedDeviceId = Integer.parseInt(splitBody[2]);
-            ((DeviceSelector) deviceSelector).value = selectedDeviceId;
-            ctx.write(ok(message.id), ctx.voidPromise());
-
-            //sending to shared dashes and master-master apps
-            session.sendToSharedApps(ctx.channel(), dash.sharedToken, APP_SYNC, message.id, message.body);
-
-            //we need to send syncs not only to main app, but all to all shared apps
-            for (Channel channel : session.appChannels) {
-                if (Session.needSync(channel, dash.sharedToken)) {
-                    dash.sendSyncs(channel, selectedDeviceId);
-                }
-                channel.flush();
-            }
-        }
     }
 
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
@@ -155,6 +132,32 @@ public class HardwareAppLogic extends BaseProcessorHandler {
 
                 processEventorAndWebhook(state.user, dash, targetId, session, pin, pinType, value, now);
                 break;
+        }
+    }
+
+    public static void processDeviceSelectorCommand(ChannelHandlerContext ctx,
+                                                    Session session, DashBoard dash,
+                                                    StringMessage message, String[] splitBody) {
+        //in format "vu 200000 1"
+        long widgetId = Long.parseLong(splitBody[1]);
+        Widget deviceSelector = dash.getWidgetByIdOrThrow(widgetId);
+        if (deviceSelector instanceof DeviceSelector) {
+            int selectedDeviceId = Integer.parseInt(splitBody[2]);
+            ((DeviceSelector) deviceSelector).value = selectedDeviceId;
+            ctx.write(ok(message.id), ctx.voidPromise());
+
+            //sending to shared dashes and master-master apps
+            session.sendToSharedApps(ctx.channel(), dash.sharedToken, APP_SYNC, message.id, message.body);
+
+            //we need to send syncs not only to main app, but all to all shared apps
+            for (Channel channel : session.appChannels) {
+                AppStateHolder appStateHolder = getAppState(channel);
+                if (appStateHolder != null && appStateHolder.contains(dash.sharedToken)) {
+                    boolean isNewSyncFormat = appStateHolder.isNewSyncFormat();
+                    dash.sendAppSyncs(channel, selectedDeviceId, isNewSyncFormat);
+                }
+                channel.flush();
+            }
         }
     }
 

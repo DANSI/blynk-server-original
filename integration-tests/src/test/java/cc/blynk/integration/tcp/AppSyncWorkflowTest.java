@@ -2,14 +2,19 @@ package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
+import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
+import cc.blynk.server.core.model.widgets.ui.table.Table;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -178,6 +183,307 @@ public class AppSyncWorkflowTest extends IntegrationBase {
     }
 
     @Test
+    public void testTerminalStorageRemembersCommandsInNewFormat() throws Exception {
+        clientPair.appClient.stop();
+
+        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient.start();
+
+        appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.26.0");
+        appClient.verifyResult(ok(1));
+
+        appClient.send("loadProfileGzipped");
+        Profile profile = appClient.getProfile(2);
+        assertEquals(16, profile.dashBoards[0].widgets.length);
+
+        appClient.send("getEnergy");
+        appClient.verifyResult(produce(3, GET_ENERGY, "7500"));
+
+        appClient.createWidget(1, "{\"id\":102, \"width\":1, \"height\":1, \"x\":5, \"y\":0, \"tabId\":0, \"label\":\"Some Text\", \"type\":\"TERMINAL\", \"pinType\":\"VIRTUAL\", \"pin\":56}");
+        appClient.verifyResult(ok(4));
+
+        clientPair.hardwareClient.send("hardware vw 56 1");
+        clientPair.hardwareClient.send("hardware vw 56 2");
+        clientPair.hardwareClient.send("hardware vw 56 3");
+        clientPair.hardwareClient.send("hardware vw 56 4");
+        clientPair.hardwareClient.send("hardware vw 56 dddyyyiii");
+
+        appClient.verifyResult(hardware(1, "1-0 vw 56 1"));
+        appClient.verifyResult(hardware(2, "1-0 vw 56 2"));
+        appClient.verifyResult(hardware(3, "1-0 vw 56 3"));
+        appClient.verifyResult(hardware(4, "1-0 vw 56 4"));
+        appClient.verifyResult(hardware(5, "1-0 vw 56 dddyyyiii"));
+
+        appClient.activate(1);
+        appClient.verifyResult(ok(5));
+
+        appClient.verifyResult(appSync("1-0 vm 56 1 2 3 4 dddyyyiii"));
+    }
+
+    @Test
+    public void testTerminalAndAnotherWidgetOnTheSamePin() throws Exception {
+        clientPair.appClient.stop();
+
+        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient.start();
+
+        appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.26.0");
+        appClient.verifyResult(ok(1));
+
+        appClient.send("loadProfileGzipped");
+        Profile profile = appClient.getProfile(2);
+        assertEquals(16, profile.dashBoards[0].widgets.length);
+
+        appClient.send("getEnergy");
+        appClient.verifyResult(produce(3, GET_ENERGY, "7500"));
+
+        appClient.createWidget(1, "{\"id\":102, \"width\":1, \"height\":1, \"x\":5, \"y\":0, \"tabId\":0, \"label\":\"Some Text\", \"type\":\"TERMINAL\", \"pinType\":\"VIRTUAL\", \"pin\":56}");
+        appClient.createWidget(1, "{\"id\":103, \"width\":1, \"height\":1, \"x\":5, \"y\":0, \"tabId\":0, \"label\":\"Some Text\", \"type\":\"DIGIT4_DISPLAY\", \"pinType\":\"VIRTUAL\", \"pin\":56}");
+        appClient.verifyResult(ok(4));
+        appClient.verifyResult(ok(5));
+
+        clientPair.hardwareClient.send("hardware vw 56 1");
+        clientPair.hardwareClient.send("hardware vw 56 2");
+        clientPair.hardwareClient.send("hardware vw 56 3");
+        clientPair.hardwareClient.send("hardware vw 56 4");
+        clientPair.hardwareClient.send("hardware vw 56 dddyyyiii");
+
+        appClient.verifyResult(hardware(1, "1-0 vw 56 1"));
+        appClient.verifyResult(hardware(2, "1-0 vw 56 2"));
+        appClient.verifyResult(hardware(3, "1-0 vw 56 3"));
+        appClient.verifyResult(hardware(4, "1-0 vw 56 4"));
+        appClient.verifyResult(hardware(5, "1-0 vw 56 dddyyyiii"));
+
+        appClient.activate(1);
+        appClient.verifyResult(ok(6));
+
+        appClient.verifyResult(appSync("1-0 vm 56 1 2 3 4 dddyyyiii"));
+        appClient.verifyResult(appSync("1-0 vw 56 dddyyyiii"));
+    }
+
+    @Test
+    //todo fix when have time. test is correct, but this is not implemented yet
+    @Ignore()
+    public void testTerminalAndAnotherWidgetOnTheSamePinAndDeviceSelector() throws Exception {
+        Device device1 = new Device(1, "My Device", "ESP8266");
+        device1.status = Status.OFFLINE;
+
+        clientPair.appClient.createDevice(1, device1);
+        Device device = clientPair.appClient.getDevice();
+        assertNotNull(device);
+        assertNotNull(device.token);
+        clientPair.appClient.verifyResult(createDevice(1, device));
+
+        clientPair.appClient.stop();
+
+        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient.start();
+
+        appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.26.0");
+        appClient.verifyResult(ok(1));
+
+        appClient.send("loadProfileGzipped");
+        Profile profile = appClient.getProfile(2);
+        assertEquals(16, profile.dashBoards[0].widgets.length);
+
+        appClient.send("getEnergy");
+        appClient.verifyResult(produce(3, GET_ENERGY, "7500"));
+
+        DeviceSelector deviceSelector = new DeviceSelector();
+        deviceSelector.id = 200_000;
+        deviceSelector.height = 4;
+        deviceSelector.width = 1;
+        deviceSelector.deviceIds = new int [] {0, 1};
+
+        appClient.createWidget(1, deviceSelector);
+        appClient.verifyResult(ok(4));
+
+        appClient.createWidget(1, "{\"id\":103, \"deviceId\":200000, \"width\":1, \"height\":1, \"x\":5, \"y\":0, \"tabId\":0, \"label\":\"Some Text\", \"type\":\"DIGIT4_DISPLAY\", \"pinType\":\"VIRTUAL\", \"pin\":56}");
+        appClient.verifyResult(ok(5));
+        appClient.createWidget(1, "{\"id\":102, \"deviceId\":200000, \"width\":1, \"height\":1, \"x\":5, \"y\":0, \"tabId\":0, \"label\":\"Some Text\", \"type\":\"TERMINAL\", \"pinType\":\"VIRTUAL\", \"pin\":56}");
+        appClient.verifyResult(ok(6));
+
+        clientPair.hardwareClient.send("hardware vw 56 1");
+        clientPair.hardwareClient.send("hardware vw 56 2");
+        clientPair.hardwareClient.send("hardware vw 56 3");
+        clientPair.hardwareClient.send("hardware vw 56 4");
+        clientPair.hardwareClient.send("hardware vw 56 dddyyyiii");
+
+        appClient.verifyResult(hardware(1, "1-0 vw 56 1"));
+        appClient.verifyResult(hardware(2, "1-0 vw 56 2"));
+        appClient.verifyResult(hardware(3, "1-0 vw 56 3"));
+        appClient.verifyResult(hardware(4, "1-0 vw 56 4"));
+        appClient.verifyResult(hardware(5, "1-0 vw 56 dddyyyiii"));
+
+        appClient.sync(1, 0);
+        appClient.verifyResult(ok(7));
+
+        appClient.verifyResult(appSync("1-0 vw 56 dddyyyiii"));
+        appClient.verifyResult(appSync("1-0 vm 56 1 2 3 4 dddyyyiii"));
+    }
+
+    @Test
+    public void testTerminalStorageRemembersCommandsInOldFormatAndDeviceSelector() throws Exception {
+        Device device1 = new Device(1, "My Device", "ESP8266");
+        device1.status = Status.OFFLINE;
+
+        clientPair.appClient.createDevice(1, device1);
+        Device device = clientPair.appClient.getDevice();
+        assertNotNull(device);
+        assertNotNull(device.token);
+        clientPair.appClient.verifyResult(createDevice(1, device));
+
+        clientPair.appClient.stop();
+
+        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient.start();
+
+        appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.25.0");
+        appClient.verifyResult(ok(1));
+
+        appClient.send("loadProfileGzipped");
+        Profile profile = appClient.getProfile(2);
+        assertEquals(16, profile.dashBoards[0].widgets.length);
+
+        appClient.send("getEnergy");
+        appClient.verifyResult(produce(3, GET_ENERGY, "7500"));
+
+        DeviceSelector deviceSelector = new DeviceSelector();
+        deviceSelector.id = 200_000;
+        deviceSelector.height = 4;
+        deviceSelector.width = 1;
+        deviceSelector.deviceIds = new int [] {0, 1};
+
+        appClient.createWidget(1, deviceSelector);
+        appClient.verifyResult(ok(4));
+
+        appClient.createWidget(1, "{\"id\":102, \"deviceId\":200000, \"width\":1, \"height\":1, \"x\":5, \"y\":0, \"tabId\":0, \"label\":\"Some Text\", \"type\":\"TERMINAL\", \"pinType\":\"VIRTUAL\", \"pin\":56}");
+        appClient.verifyResult(ok(5));
+
+        clientPair.hardwareClient.send("hardware vw 56 1");
+        clientPair.hardwareClient.send("hardware vw 56 2");
+        clientPair.hardwareClient.send("hardware vw 56 3");
+        clientPair.hardwareClient.send("hardware vw 56 4");
+        clientPair.hardwareClient.send("hardware vw 56 dddyyyiii");
+
+        appClient.verifyResult(hardware(1, "1-0 vw 56 1"));
+        appClient.verifyResult(hardware(2, "1-0 vw 56 2"));
+        appClient.verifyResult(hardware(3, "1-0 vw 56 3"));
+        appClient.verifyResult(hardware(4, "1-0 vw 56 4"));
+        appClient.verifyResult(hardware(5, "1-0 vw 56 dddyyyiii"));
+
+        appClient.sync(1, 0);
+        appClient.verifyResult(ok(6));
+
+        appClient.verifyResult(appSync("1-0 vw 56 1"));
+        appClient.verifyResult(appSync("1-0 vw 56 2"));
+        appClient.verifyResult(appSync("1-0 vw 56 3"));
+        appClient.verifyResult(appSync("1-0 vw 56 4"));
+        appClient.verifyResult(appSync("1-0 vw 56 dddyyyiii"));
+    }
+
+    @Test
+    public void testTerminalStorageRemembersCommandsInNewFormatAndDeviceSelector() throws Exception {
+        Device device1 = new Device(1, "My Device", "ESP8266");
+        device1.status = Status.OFFLINE;
+
+        clientPair.appClient.createDevice(1, device1);
+        Device device = clientPair.appClient.getDevice();
+        assertNotNull(device);
+        assertNotNull(device.token);
+        clientPair.appClient.verifyResult(createDevice(1, device));
+
+        clientPair.appClient.stop();
+
+        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient.start();
+
+        appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.26.0");
+        appClient.verifyResult(ok(1));
+
+        appClient.send("loadProfileGzipped");
+        Profile profile = appClient.getProfile(2);
+        assertEquals(16, profile.dashBoards[0].widgets.length);
+
+        appClient.send("getEnergy");
+        appClient.verifyResult(produce(3, GET_ENERGY, "7500"));
+
+        DeviceSelector deviceSelector = new DeviceSelector();
+        deviceSelector.id = 200_000;
+        deviceSelector.height = 4;
+        deviceSelector.width = 1;
+        deviceSelector.deviceIds = new int [] {0, 1};
+
+        appClient.createWidget(1, deviceSelector);
+        appClient.verifyResult(ok(4));
+
+        appClient.createWidget(1, "{\"id\":102, \"deviceId\":200000, \"width\":1, \"height\":1, \"x\":5, \"y\":0, \"tabId\":0, \"label\":\"Some Text\", \"type\":\"TERMINAL\", \"pinType\":\"VIRTUAL\", \"pin\":56}");
+        appClient.verifyResult(ok(5));
+
+        clientPair.hardwareClient.send("hardware vw 56 1");
+        clientPair.hardwareClient.send("hardware vw 56 2");
+        clientPair.hardwareClient.send("hardware vw 56 3");
+        clientPair.hardwareClient.send("hardware vw 56 4");
+        clientPair.hardwareClient.send("hardware vw 56 dddyyyiii");
+
+        appClient.verifyResult(hardware(1, "1-0 vw 56 1"));
+        appClient.verifyResult(hardware(2, "1-0 vw 56 2"));
+        appClient.verifyResult(hardware(3, "1-0 vw 56 3"));
+        appClient.verifyResult(hardware(4, "1-0 vw 56 4"));
+        appClient.verifyResult(hardware(5, "1-0 vw 56 dddyyyiii"));
+
+        appClient.sync(1, 0);
+        appClient.verifyResult(ok(6));
+
+        appClient.verifyResult(appSync("1-0 vm 56 1 2 3 4 dddyyyiii"));
+    }
+
+    @Test
+    public void testTableSyncWorkForNewCommandFormat() throws Exception {
+        clientPair.appClient.stop();
+
+        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient.start();
+
+        appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.26.0");
+        appClient.verifyResult(ok(1));
+
+        appClient.send("loadProfileGzipped");
+        Profile profile = appClient.getProfile(2);
+        assertEquals(16, profile.dashBoards[0].widgets.length);
+
+        appClient.send("getEnergy");
+        appClient.verifyResult(produce(3, GET_ENERGY, "7500"));
+
+        Table table = new Table();
+        table.pin = 56;
+        table.pinType = PinType.VIRTUAL;
+        table.isClickableRows = true;
+        table.isReoderingAllowed = true;
+        table.height = 2;
+        table.width = 2;
+
+        appClient.createWidget(1, table);
+        appClient.verifyResult(ok(4));
+
+        clientPair.hardwareClient.send("hardware vw 56 add 0 Row1 1");
+        clientPair.hardwareClient.send("hardware vw 56 add 1 Row2 2");
+        clientPair.hardwareClient.send("hardware vw 56 add 2 Row3 3");
+        clientPair.hardwareClient.send("hardware vw 56 add 3 Row4 4");
+        clientPair.hardwareClient.send("hardware vw 56 add 4 Row5 dddyyyiii");
+        appClient.verifyResult(produce(1, HARDWARE, b("1-0 vw 56 add 0 Row1 1")));
+        appClient.verifyResult(produce(2, HARDWARE, b("1-0 vw 56 add 1 Row2 2")));
+        appClient.verifyResult(produce(3, HARDWARE, b("1-0 vw 56 add 2 Row3 3")));
+        appClient.verifyResult(produce(4, HARDWARE, b("1-0 vw 56 add 3 Row4 4")));
+        appClient.verifyResult(produce(5, HARDWARE, b("1-0 vw 56 add 4 Row5 dddyyyiii")));
+
+        appClient.activate(1);
+        appClient.verifyResult(ok(5));
+
+        appClient.verifyResult(appSync("1-0 vm 56 add 0 Row1 1 true add 1 Row2 2 true add 2 Row3 3 true add 3 Row4 4 true add 4 Row5 dddyyyiii true"));
+    }
+
+    @Test
     public void testLCDSendsSyncOnActivate() throws Exception {
         clientPair.hardwareClient.send("hardware vw 20 p 0 0 Hello");
         clientPair.hardwareClient.send("hardware vw 20 p 0 1 World");
@@ -327,13 +633,15 @@ public class AppSyncWorkflowTest extends IntegrationBase {
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
 
-        clientPair.appClient.createWidget(1, "{\"id\":200000, \"width\":1, \"height\":1, \"value\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
+        clientPair.appClient.createWidget(1, "{\"id\":200000, \"deviceIds\":[0], \"width\":1, \"height\":1, \"value\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         clientPair.appClient.createWidget(1, "{\"id\":88, \"width\":1, \"height\":1, \"deviceId\":200000, \"x\":0, \"y\":0, \"label\":\"Button\", \"type\":\"BUTTON\", \"pinType\":\"VIRTUAL\", \"pin\":88}");
         clientPair.appClient.verifyResult(ok(2));
         clientPair.appClient.verifyResult(ok(3));
 
         clientPair.hardwareClient.setProperty(88, "label", "newLabel");
+        clientPair.hardwareClient.setProperty(88, "label", "newLabel2");
         clientPair.appClient.verifyResult(setProperty(1, "1-0 88 label newLabel"));
+        clientPair.appClient.verifyResult(setProperty(2, "1-0 88 label newLabel2"));
 
         clientPair.appClient.reset();
 
@@ -353,7 +661,53 @@ public class AppSyncWorkflowTest extends IntegrationBase {
         clientPair.appClient.verifyResult(appSync("1-0 vw 0 89.888037459418"));
         clientPair.appClient.verifyResult(appSync("1-0 vw 11 -58.74774244674501"));
         clientPair.appClient.verifyResult(appSync("1-0 vw 13 60 143 158"));
-        clientPair.appClient.verifyResult(setProperty(1111, "1-0 88 label newLabel"));
+        clientPair.appClient.verifyResult(setProperty(1111, "1-0 88 label newLabel2"));
+        clientPair.appClient.never(setProperty(1111, "1-0 88 label newLabel"));
+    }
+
+    @Test
+    public void testSyncForDeviceSelectorAndSetPropertyAndMultiValueWidget() throws Exception {
+        Device device0 = new Device(0, "My Dashboard", "UNO");
+        device0.status = Status.ONLINE;
+        Device device1 = new Device(1, "My Device", "ESP8266");
+        device1.status = Status.OFFLINE;
+
+        clientPair.appClient.createDevice(1, device1);
+        Device device = clientPair.appClient.getDevice();
+        assertNotNull(device);
+        assertNotNull(device.token);
+        clientPair.appClient.verifyResult(createDevice(1, device));
+
+        clientPair.appClient.createWidget(1, "{\"id\":200000, \"deviceIds\":[0], \"width\":1, \"height\":1, \"value\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
+        clientPair.appClient.createWidget(1, "{\"id\":88, \"width\":1, \"deviceId\":200000, \"height\":1, \"x\":5, \"y\":0, \"tabId\":0, \"label\":\"Some Text\", \"type\":\"TERMINAL\", \"pinType\":\"VIRTUAL\", \"pin\":88}");
+        clientPair.appClient.verifyResult(ok(2));
+        clientPair.appClient.verifyResult(ok(3));
+
+        clientPair.hardwareClient.setProperty(88, "label", "newLabel");
+        clientPair.hardwareClient.setProperty(88, "label", "newLabel2");
+        clientPair.appClient.verifyResult(setProperty(1, "1-0 88 label newLabel"));
+        clientPair.appClient.verifyResult(setProperty(2, "1-0 88 label newLabel2"));
+
+        clientPair.appClient.reset();
+
+        clientPair.appClient.sync(1);
+
+        verify(clientPair.appClient.responseMock, timeout(500).times(12)).channelRead(any(), any());
+
+        clientPair.appClient.verifyResult(ok(1));
+
+        clientPair.appClient.verifyResult(appSync("1-0 dw 1 1"));
+        clientPair.appClient.verifyResult(appSync("1-0 dw 2 1"));
+        clientPair.appClient.verifyResult(appSync("1-0 aw 3 0"));
+        clientPair.appClient.verifyResult(appSync("1-0 dw 5 1"));
+        clientPair.appClient.verifyResult(appSync("1-0 vw 4 244"));
+        clientPair.appClient.verifyResult(appSync("1-0 aw 7 3"));
+        clientPair.appClient.verifyResult(appSync("1-0 aw 30 3"));
+        clientPair.appClient.verifyResult(appSync("1-0 vw 0 89.888037459418"));
+        clientPair.appClient.verifyResult(appSync("1-0 vw 11 -58.74774244674501"));
+        clientPair.appClient.verifyResult(appSync("1-0 vw 13 60 143 158"));
+        clientPair.appClient.verifyResult(setProperty(1111, "1-0 88 label newLabel2"));
+        clientPair.appClient.never(setProperty(1111, "1-0 88 label newLabel"));
     }
 
     @Test

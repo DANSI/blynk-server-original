@@ -56,7 +56,7 @@ public class Map extends OnePinWidget {
     }
 
     @Override
-    public void sendAppSync(Channel appChannel, int dashId, int targetId) {
+    public void sendAppSync(Channel appChannel, int dashId, int targetId, boolean useNewSyncFormat) {
         if (isNotValid() || lastCommands.size() == 0) {
             return;
         }

@@ -11,6 +11,7 @@ import cc.blynk.server.workers.ReportingTruncateWorker;
 import cc.blynk.server.workers.ReportingWorker;
 import cc.blynk.server.workers.ShutdownHookWorker;
 import cc.blynk.server.workers.StatsWorker;
+import cc.blynk.utils.BlynkTPFactory;
 import cc.blynk.utils.structure.LRUCache;
 
 import java.util.concurrent.Executors;
@@ -33,7 +34,7 @@ final class JobLauncher {
     }
 
     public static void start(Holder holder, BaseServer[] servers) {
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1, BlynkTPFactory.build("DataSaver"));
 
         long startDelay;
 
@@ -81,7 +82,7 @@ final class JobLauncher {
         startDelay = 1000 - (System.currentTimeMillis() % 1000);
 
         //separate thread for timer and reading widgets
-        ScheduledExecutorService ses = Executors.newScheduledThreadPool(1);
+        ScheduledExecutorService ses = Executors.newScheduledThreadPool(1, BlynkTPFactory.build("TimerAndReading"));
         ses.scheduleAtFixedRate(holder.timerWorker, startDelay, 1000, MILLISECONDS);
         ses.scheduleAtFixedRate(holder.readingWidgetsWorker, startDelay + 400, 1000, MILLISECONDS);
 

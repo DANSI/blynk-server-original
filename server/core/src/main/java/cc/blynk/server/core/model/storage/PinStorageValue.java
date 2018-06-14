@@ -1,5 +1,7 @@
 package cc.blynk.server.core.model.storage;
 
+import io.netty.channel.Channel;
+
 import java.util.Collection;
 
 /**
@@ -13,5 +15,7 @@ public abstract class PinStorageValue {
     public abstract void update(String value);
 
     public abstract Collection<String> values();
+
+    public abstract void sendAppSync(Channel appChannel, int dashId, PinStorageKey key, boolean useNewFormat);
 
 }

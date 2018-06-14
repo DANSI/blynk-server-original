@@ -99,8 +99,10 @@ public class SessionDao {
 
     public void closeAppChannelsByUser(UserKey userKey) {
         Session session = userSession.get(userKey);
-        for (Channel appChannel : session.appChannels) {
-            appChannel.close();
+        if (session != null) {
+            for (Channel appChannel : session.appChannels) {
+                appChannel.close();
+            }
         }
     }
 }

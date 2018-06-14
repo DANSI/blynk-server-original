@@ -36,4 +36,8 @@ public class AppStateHolder extends StateHolderBase {
     public boolean isSameDashAndDeviceId(int inDashId, int deviceId) {
         return true;
     }
+
+    public boolean isNewSyncFormat() {
+        return version.versionSingleNumber >= 22600;
+    }
 }

@@ -30,6 +30,7 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_RESEND_FROM_BLUETOOTH;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
+import static cc.blynk.server.core.protocol.enums.Command.RESET_PASSWORD;
 import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
 import static cc.blynk.server.core.protocol.enums.Command.SHARE_LOGIN;
 import static cc.blynk.server.core.protocol.enums.Command.SHARING;
@@ -96,6 +97,7 @@ public abstract class BaseClient {
                 || command == EXPORT_GRAPH_DATA
                 || command == SET_WIDGET_PROPERTY
                 || command == HARDWARE_SYNC
+                || command == RESET_PASSWORD
                 || command == DELETE_WIDGET) {
             body = body.replace(" ", "\0");
         }

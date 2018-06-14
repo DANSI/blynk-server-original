@@ -8,10 +8,13 @@ import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 
+import java.util.Iterator;
+
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
+import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
 import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
 
 /**
@@ -38,12 +41,28 @@ public abstract class OnePinWidget extends Widget implements AppSyncWidget, Hard
 
     public volatile String value;
 
-    protected static String makeHardwareBody(PinType pinType, byte pin, String value) {
-        return "" + pinType.pintTypeChar + 'w' + BODY_SEPARATOR + pin + BODY_SEPARATOR + value;
+    public static String makeMultiValueHardwareBody(int dashId, int deviceId,
+                                                       char pintTypeChar, byte pin, Iterator<?> values) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(dashId).append(DEVICE_SEPARATOR).append(deviceId).append(BODY_SEPARATOR)
+          .append(pintTypeChar).append('m').append(BODY_SEPARATOR).append(pin);
+        while (values.hasNext()) {
+            String value = values.next().toString();
+            sb.append(BODY_SEPARATOR).append(value);
+        }
+        return sb.toString();
+    }
+
+    public static String makeHardwareBody(PinType pinType, byte pin, String value) {
+        return makeHardwareBody(pinType.pintTypeChar, pin, value);
+    }
+
+    public static String makeHardwareBody(char pintTypeChar, byte pin, String value) {
+        return "" + pintTypeChar + 'w' + BODY_SEPARATOR + pin + BODY_SEPARATOR + value;
     }
 
     @Override
-    public void sendAppSync(Channel appChannel, int dashId, int targetId) {
+    public void sendAppSync(Channel appChannel, int dashId, int targetId, boolean useNewSyncFormat) {
         //do not send SYNC message for widgets assigned to device selector
         //as it will be duplicated later.
         if (isAssignedToDeviceSelector()) {

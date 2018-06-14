@@ -127,6 +127,11 @@ public class User {
         return (lastStart <= lastModifiedTs) || isDashUpdated(lastStart);
     }
 
+    public void resetPass(String hash) {
+        this.pass = hash;
+        this.lastModifiedTs = System.currentTimeMillis();
+    }
+
     private boolean isDashUpdated(long lastStart) {
         for (DashBoard dashBoard : profile.dashBoards) {
             if (lastStart <= dashBoard.updatedAt) {

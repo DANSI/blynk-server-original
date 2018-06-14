@@ -120,6 +120,8 @@ public final class Command {
     public static final short DELETE_REPORT = 79;
     public static final short EXPORT_REPORT = 80;
 
+    public static final short RESET_PASSWORD = 81;
+
     //http codes. Used only for stats
     public static final short HTTP_IS_HARDWARE_CONNECTED = 82;
     public static final short HTTP_IS_APP_CONNECTED = 83;
@@ -226,6 +228,7 @@ public final class Command {
             put(UPDATE_REPORT, "updateReport");
             put(DELETE_REPORT, "deleteReport");
             put(EXPORT_REPORT, "exportReport");
+            put(RESET_PASSWORD, "resetPass");
 
             put(HTTP_IS_HARDWARE_CONNECTED, "HttpIsHardwareConnected");
             put(HTTP_IS_APP_CONNECTED, "HttpIsAppConnected");

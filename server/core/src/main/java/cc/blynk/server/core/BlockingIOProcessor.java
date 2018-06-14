@@ -1,5 +1,7 @@
 package cc.blynk.server.core;
 
+import cc.blynk.utils.BlynkTPFactory;
+
 import java.io.Closeable;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -36,19 +38,26 @@ public class BlockingIOProcessor implements Closeable {
         this.messagingExecutor = new ThreadPoolExecutor(
                 poolSize / 4, poolSize / 3,
                 2L, TimeUnit.MINUTES,
-                new ArrayBlockingQueue<>(maxQueueSize)
+                new ArrayBlockingQueue<>(maxQueueSize),
+                BlynkTPFactory.build("Messaging")
         );
 
-        this.dbExecutor = new ThreadPoolExecutor(poolSize / 3, poolSize / 2, 2L,
-                TimeUnit.MINUTES, new ArrayBlockingQueue<>(250));
+        this.dbExecutor = new ThreadPoolExecutor(
+                poolSize / 3,
+                poolSize / 2, 2L,
+                TimeUnit.MINUTES,
+                new ArrayBlockingQueue<>(250),
+                BlynkTPFactory.build("db"));
         //local server doesn't use DB usually, so this thread may be not necessary
         this.dbExecutor.allowCoreThreadTimeOut(true);
 
         this.dbGetServerExecutor = new ThreadPoolExecutor(poolSize / 3, poolSize / 3, 2L,
-                TimeUnit.MINUTES, new ArrayBlockingQueue<>(250));
+                TimeUnit.MINUTES, new ArrayBlockingQueue<>(250),
+                BlynkTPFactory.build("getServer"));
 
         this.historyExecutor = new ThreadPoolExecutor(poolSize / 4, poolSize / 2, 2L,
-                TimeUnit.MINUTES, new ArrayBlockingQueue<>(250));
+                TimeUnit.MINUTES, new ArrayBlockingQueue<>(250),
+                BlynkTPFactory.build("history"));
     }
 
     public void execute(Runnable task) {

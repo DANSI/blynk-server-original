@@ -125,10 +125,17 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
 
         workflowForUser(appClient2, username2, pass, appName);
         profileSaverWorker2.run();
-        //waiting for DB update
-        sleep(500);
 
-        assertEquals("localhost2", holder2.dbManager.getUserServerIp(username2, AppNameUtil.BLYNK));
+        long tries = 0;
+        String host;
+        //waiting for channel to be closed.
+        //but only limited amount if time
+        while ((host = holder2.dbManager.getUserServerIp(username2, AppNameUtil.BLYNK)) == null && tries < 100) {
+            sleep(10);
+            tries++;
+        }
+
+        assertEquals("localhost2", host);
     }
 
     @Test

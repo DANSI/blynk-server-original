@@ -17,4 +17,15 @@ public final class TokenUser {
         this.createdAt = System.currentTimeMillis();
     }
 
+    @Override
+    public String toString() {
+        return "TokenUser{"
+                + "email='" + email + '\''
+                + ", appName='" + appName + '\''
+                + '}';
+    }
+
+    public boolean isSame(String email, String appName) {
+        return this.email.equals(email) && this.appName.equals(appName);
+    }
 }

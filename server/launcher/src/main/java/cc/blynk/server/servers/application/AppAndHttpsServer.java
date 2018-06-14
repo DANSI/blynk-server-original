@@ -19,7 +19,7 @@ import cc.blynk.server.admin.http.logic.UsersLogic;
 import cc.blynk.server.api.http.handlers.BaseHttpAndBlynkUnificationHandler;
 import cc.blynk.server.api.http.handlers.BaseWebSocketUnificator;
 import cc.blynk.server.api.http.logic.HttpAPILogic;
-import cc.blynk.server.api.http.logic.ResetPasswordLogic;
+import cc.blynk.server.api.http.logic.ResetPasswordHttpLogic;
 import cc.blynk.server.api.http.logic.business.AdminAuthHandler;
 import cc.blynk.server.api.http.logic.business.AuthCookieHandler;
 import cc.blynk.server.api.websockets.handlers.WebSocketHandler;
@@ -28,6 +28,7 @@ import cc.blynk.server.application.handlers.main.AppChannelStateHandler;
 import cc.blynk.server.application.handlers.main.auth.AppLoginHandler;
 import cc.blynk.server.application.handlers.main.auth.GetServerHandler;
 import cc.blynk.server.application.handlers.main.auth.RegisterHandler;
+import cc.blynk.server.application.handlers.main.logic.ResetPasswordHandler;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareLoginHandler;
 import cc.blynk.server.core.protocol.handlers.decoders.AppMessageDecoder;
 import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
@@ -79,6 +80,7 @@ public class AppAndHttpsServer extends BaseServer {
         AppShareLoginHandler appShareLoginHandler = new AppShareLoginHandler(holder);
         UserNotLoggedHandler userNotLoggedHandler = new UserNotLoggedHandler();
         GetServerHandler getServerHandler = new GetServerHandler(holder);
+        ResetPasswordHandler resetPasswordHandler = new ResetPasswordHandler(holder);
 
         int hardwareIdleTimeout = holder.limits.hardwareIdleTimeout;
         int appIdleTimeout = holder.limits.appIdleTimeout;
@@ -94,7 +96,7 @@ public class AppAndHttpsServer extends BaseServer {
         GlobalStats stats = holder.stats;
 
         //http API handlers
-        ResetPasswordLogic resetPasswordLogic = new ResetPasswordLogic(holder);
+        ResetPasswordHttpLogic resetPasswordLogic = new ResetPasswordHttpLogic(holder);
         HttpAPILogic httpAPILogic = new HttpAPILogic(holder);
         NoMatchHandler noMatchHandler = new NoMatchHandler();
         WebSocketHandler webSocketHandler = new WebSocketHandler(stats);
@@ -264,6 +266,7 @@ public class AppAndHttpsServer extends BaseServer {
                                 .addLast("AGetServer", getServerHandler)
                                 .addLast("ARegister", registerHandler)
                                 .addLast("ALogin", appLoginHandler)
+                                .addLast("AResetPass", resetPasswordHandler)
                                 .addLast("AShareLogin", appShareLoginHandler)
                                 .addLast("ANotLogged", userNotLoggedHandler);
                     }
