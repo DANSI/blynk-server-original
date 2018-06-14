@@ -19,7 +19,7 @@ public class ServerProperties extends BaseProperties {
     public static final String SERVER_PROPERTIES_FILENAME = "server.properties";
     public static final String PRODUCT_NAME = "{PRODUCT_NAME}";
     public static final String DEVICE_NAME = "{DEVICE_NAME}";
-    public static final String AUTH_TOKEN = "{AUTH_TOKEN}";
+    public static final String RESET_URL = "{RESET_URL}";
 
     private static final String STATIC_FILES_FOLDER = "static";
 

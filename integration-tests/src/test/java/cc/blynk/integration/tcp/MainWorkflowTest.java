@@ -109,9 +109,8 @@ public class MainWorkflowTest extends IntegrationBase {
         appClient.send("resetPass start dima@mail.ua" + " " + AppNameUtil.BLYNK);
         appClient.verifyResult(notAllowed(2));
 
-        verify(mailWrapper).sendHtml(eq("dima@mail.ua"), eq("Password reset request for the Blynk app."), contains(" To complete the process, copy this code to the app: <b>"));
-
         String token = holder.tokensPool.getHolder().entrySet().iterator().next().getKey();
+        verify(mailWrapper).sendHtml(eq("dima@mail.ua"), eq("Password reset request for the Blynk app."), contains("blynk://restore?token=" + token));
 
         appClient.send("resetPass verify 123");
         appClient.verifyResult(notAllowed(3));

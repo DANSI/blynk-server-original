@@ -109,6 +109,10 @@ public class ResetPasswordHandler extends SimpleChannelInboundHandler<ResetPassw
         }
     }
 
+    private static String makeResetUrl(String appName, String token) {
+        return appName.toLowerCase() + "://restore?token=" + token;
+    }
+
     private void sendResetEMail(ChannelHandlerContext ctx, String inEMail, String appName, int msgId) {
         String trimmedEmail = inEMail.trim().toLowerCase();
 
@@ -138,7 +142,9 @@ public class ResetPasswordHandler extends SimpleChannelInboundHandler<ResetPassw
 
         TokenUser userToken = new TokenUser(trimmedEmail, appName);
         tokensPool.addToken(token, userToken);
-        String body = emailBody.replace(ServerProperties.AUTH_TOKEN, token);
+
+        String resetUrl = makeResetUrl(appName, token);
+        String body = emailBody.replace(ServerProperties.RESET_URL, resetUrl);
 
         blockingIOProcessor.execute(() -> {
             try {

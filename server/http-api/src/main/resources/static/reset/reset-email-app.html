@@ -131,10 +131,18 @@
                         <td>
                             <p>Hi there,</p>
 
-                            <p>You recently made a request to reset your password for the {PRODUCT_NAME} app.
-                            To complete the process, copy this code to the app: <b>{AUTH_TOKEN}</b></p>
+                            <p>We got a request to reset your {PRODUCT_NAME} password.
+                            If you didn't request password change simply ignore it, otherwise click on the button below from your mobile device:
 
-                            <p>If you did not request a password reset from {PRODUCT_NAME}, please ignore this message.</p>
+                            <table>
+                                <tr>
+                                    <td class="padding">
+                                        <p><a href="{RESET_URL}" class="btn-primary">Reset Now</a></p>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <p>Yours, {PRODUCT_NAME} team.</p>
                         </td>
                     </tr>
                 </table>
