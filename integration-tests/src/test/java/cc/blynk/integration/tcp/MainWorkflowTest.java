@@ -106,24 +106,27 @@ public class MainWorkflowTest extends IntegrationBase {
         appClient.send("resetPass start dima@mail.ua" + " " + AppNameUtil.BLYNK);
         appClient.verifyResult(ok(1));
 
+        appClient.send("resetPass start dima@mail.ua" + " " + AppNameUtil.BLYNK);
+        appClient.verifyResult(notAllowed(2));
+
         verify(mailWrapper).sendHtml(eq("dima@mail.ua"), eq("Password reset request for the Blynk app."), contains(" To complete the process, copy this code to the app: <b>"));
 
         String token = holder.tokensPool.getHolder().entrySet().iterator().next().getKey();
 
         appClient.send("resetPass verify 123");
-        appClient.verifyResult(notAllowed(2));
+        appClient.verifyResult(notAllowed(3));
 
         appClient.send("resetPass verify " + token);
-        appClient.verifyResult(ok(3));
-
-        appClient.send("resetPass reset " + token + " " + SHA256Util.makeHash("2", "dima@mail.ua"));
         appClient.verifyResult(ok(4));
 
+        appClient.send("resetPass reset " + token + " " + SHA256Util.makeHash("2", "dima@mail.ua"));
+        appClient.verifyResult(ok(5));
+
         appClient.login("dima@mail.ua", "1");
-        appClient.verifyResult(new ResponseMessage(5, USER_NOT_AUTHENTICATED));
+        appClient.verifyResult(new ResponseMessage(6, USER_NOT_AUTHENTICATED));
 
         appClient.login("dima@mail.ua", "2");
-        appClient.verifyResult(ok(6));
+        appClient.verifyResult(ok(7));
     }
 
     @Test

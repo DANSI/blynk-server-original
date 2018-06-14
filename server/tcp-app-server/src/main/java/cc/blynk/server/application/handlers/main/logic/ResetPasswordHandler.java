@@ -126,6 +126,13 @@ public class ResetPasswordHandler extends SimpleChannelInboundHandler<ResetPassw
             return;
         }
 
+        if (tokensPool.hasToken(trimmedEmail, appName)) {
+            tokensPool.cleanupOldTokens();
+            log.warn("Reset code was already generated.");
+            ctx.writeAndFlush(notAllowed(msgId), ctx.voidPromise());
+            return;
+        }
+
         String token = TokenGeneratorUtil.generateNewToken();
         log.info("{} trying to reset pass.", trimmedEmail);
 

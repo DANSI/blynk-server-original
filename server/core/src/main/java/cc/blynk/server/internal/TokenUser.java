@@ -24,4 +24,8 @@ public final class TokenUser {
                 + ", appName='" + appName + '\''
                 + '}';
     }
+
+    public boolean isSame(String email, String appName) {
+        return this.email.equals(email) && this.appName.equals(appName);
+    }
 }

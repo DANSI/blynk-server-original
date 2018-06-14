@@ -3,6 +3,7 @@ package cc.blynk.server.internal;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -34,6 +35,16 @@ public final class TokensPool {
         return holder.get(token);
     }
 
+    public boolean hasToken(String email, String appName) {
+        for (Map.Entry<String, TokenUser> entry : holder.entrySet()) {
+            TokenUser tokenUser = entry.getValue();
+            if (tokenUser.isSame(email, appName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void removeToken(String token) {
         holder.remove(token);
     }
@@ -42,7 +53,7 @@ public final class TokensPool {
         return holder.size();
     }
 
-    private void cleanupOldTokens() {
+    public void cleanupOldTokens() {
         long now = System.currentTimeMillis();
         holder.entrySet().removeIf(entry -> entry.getValue().createdAt + tokenExpirationPeriodMillis < now);
     }
