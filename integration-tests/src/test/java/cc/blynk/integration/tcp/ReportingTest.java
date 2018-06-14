@@ -308,7 +308,7 @@ public class ReportingTest extends IntegrationBase {
 
         report = clientPair.appClient.parseReportFromResponse(3);
         assertNotNull(report);
-        assertEquals(System.currentTimeMillis(), report.nextReportAt, 2000);
+        assertEquals(System.currentTimeMillis(), report.nextReportAt, 3000);
 
         Report report2 = new Report(2, "DailyReport2",
                 new ReportSource[] {reportSource},
@@ -318,7 +318,7 @@ public class ReportingTest extends IntegrationBase {
 
         report = clientPair.appClient.parseReportFromResponse(4);
         assertNotNull(report);
-        assertEquals(System.currentTimeMillis(), report.nextReportAt, 2000);
+        assertEquals(System.currentTimeMillis(), report.nextReportAt, 3000);
 
         //expecting now is ignored as duration is INFINITE
         Report report3 = new Report(3, "DailyReport3",
@@ -329,7 +329,7 @@ public class ReportingTest extends IntegrationBase {
 
         report = clientPair.appClient.parseReportFromResponse(5);
         assertNotNull(report);
-        assertEquals(System.currentTimeMillis(), report.nextReportAt, 2000);
+        assertEquals(System.currentTimeMillis(), report.nextReportAt, 3000);
 
         //now date is greater than end date, such reports are not accepted.
         Report report4 = new Report(4, "DailyReport4",
