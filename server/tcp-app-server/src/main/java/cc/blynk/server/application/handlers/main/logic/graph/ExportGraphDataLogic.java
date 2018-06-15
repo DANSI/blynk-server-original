@@ -7,6 +7,7 @@ import cc.blynk.server.core.dao.ReportingStorageDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.HistoryGraph;
 import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
@@ -129,7 +130,9 @@ public class ExportGraphDataLogic {
                             }
                             var path = reportingDao.csvGenerator.createCSV(
                                     user, dash.id, deviceId, dataStream.pinType, dataStream.pin, deviceIds);
-                            pinsCSVFilePath.add(new DeviceFileLink(path, dashName, dataStream.pinType, dataStream.pin));
+                            Device device = dash.getDeviceById(deviceId);
+                            String name = (device == null || device.name == null) ? dashName : device.name;
+                            pinsCSVFilePath.add(new DeviceFileLink(path, name, dataStream.pinType, dataStream.pin));
                         } catch (Exception e) {
                             //ignore eny exception.
                         }
@@ -199,7 +202,9 @@ public class ExportGraphDataLogic {
 
                             Path path = reportingDao.csvGenerator.createCSV(
                                     user, dash.id, deviceId, dataStream.pinType, dataStream.pin, deviceIds);
-                            pinsCSVFilePath.add(new DeviceFileLink(path, dashName, dataStream.pinType, dataStream.pin));
+                            Device device = dash.getDeviceById(deviceId);
+                            String name = (device == null || device.name == null) ? dashName : device.name;
+                            pinsCSVFilePath.add(new DeviceFileLink(path, name, dataStream.pinType, dataStream.pin));
                         } catch (Exception e) {
                             log.debug("Error generating csv file.", e);
                             //ignore any exception.
