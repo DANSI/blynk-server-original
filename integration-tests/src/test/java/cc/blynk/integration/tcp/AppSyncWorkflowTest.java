@@ -3,12 +3,17 @@ package cc.blynk.integration.tcp;
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.model.widgets.ui.table.Table;
+import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
+import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
+import cc.blynk.server.core.model.widgets.ui.tiles.templates.PageTileTemplate;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
@@ -380,6 +385,70 @@ public class AppSyncWorkflowTest extends IntegrationBase {
         appClient.verifyResult(appSync("1-0 vw 56 3"));
         appClient.verifyResult(appSync("1-0 vw 56 4"));
         appClient.verifyResult(appSync("1-0 vw 56 dddyyyiii"));
+    }
+
+    @Test
+    public void testTerminalStorageRemembersCommandsInNewFormatAndDeviceTiles() throws Exception {
+        Device device1 = new Device(1, "My Device", "ESP8266");
+        device1.status = Status.OFFLINE;
+
+        clientPair.appClient.createDevice(1, device1);
+        Device device = clientPair.appClient.getDevice();
+        assertNotNull(device);
+        assertNotNull(device.token);
+        clientPair.appClient.verifyResult(createDevice(1, device));
+
+        clientPair.appClient.stop();
+
+        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient.start();
+
+        appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.26.0");
+        appClient.verifyResult(ok(1));
+
+        appClient.send("loadProfileGzipped");
+        Profile profile = appClient.getProfile(2);
+        assertEquals(16, profile.dashBoards[0].widgets.length);
+
+        appClient.send("getEnergy");
+        appClient.verifyResult(produce(3, GET_ENERGY, "7500"));
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = 21321;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        appClient.createWidget(1, deviceTiles);
+        appClient.verifyResult(ok(4));
+
+        TileTemplate tileTemplate = new PageTileTemplate(1,
+                null, new int[] {0}, "name", "name", "iconName", "ESP8266", new DataStream((byte) 1, PinType.VIRTUAL),
+                false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
+
+        appClient.createTemplate(1, deviceTiles.id, tileTemplate);
+        appClient.verifyResult(ok(5));
+
+        appClient.createWidget(1, deviceTiles.id, tileTemplate.id, "{\"id\":102, \"deviceId\":-1, \"width\":1, \"height\":1, \"x\":5, \"y\":0, \"tabId\":0, \"label\":\"Some Text\", \"type\":\"TERMINAL\", \"pinType\":\"VIRTUAL\", \"pin\":56}");
+        appClient.verifyResult(ok(6));
+
+        clientPair.hardwareClient.send("hardware vw 56 1");
+        clientPair.hardwareClient.send("hardware vw 56 2");
+        clientPair.hardwareClient.send("hardware vw 56 3");
+        clientPair.hardwareClient.send("hardware vw 56 4");
+        clientPair.hardwareClient.send("hardware vw 56 dddyyyiii");
+
+        appClient.verifyResult(hardware(1, "1-0 vw 56 1"));
+        appClient.verifyResult(hardware(2, "1-0 vw 56 2"));
+        appClient.verifyResult(hardware(3, "1-0 vw 56 3"));
+        appClient.verifyResult(hardware(4, "1-0 vw 56 4"));
+        appClient.verifyResult(hardware(5, "1-0 vw 56 dddyyyiii"));
+
+        appClient.sync(1, 0);
+        appClient.verifyResult(ok(7));
+
+        appClient.verifyResult(appSync("1-0 vm 56 1 2 3 4 dddyyyiii"));
     }
 
     @Test
