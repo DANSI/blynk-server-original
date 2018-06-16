@@ -55,7 +55,7 @@ public class HardwareLogic extends BaseProcessorHandler {
 
     public void messageReceived(ChannelHandlerContext ctx, StringMessage message,
                                 UserKey userKey, User user, DashBoard dash, Device device) {
-        var body = message.body;
+        String body = message.body;
 
         //minimum command - "ar 1"
         if (body.length() < 4) {
@@ -65,7 +65,7 @@ public class HardwareLogic extends BaseProcessorHandler {
         }
 
         if (isWriteOperation(body)) {
-            var splitBody = split3(body);
+            String[] splitBody = split3(body);
 
             if (splitBody.length < 3 || splitBody[0].length() == 0 || splitBody[2].length() == 0) {
                 log.debug("Write command is wrong {} for {} and deviceId {}.", body, user.email, device.id);
@@ -73,14 +73,15 @@ public class HardwareLogic extends BaseProcessorHandler {
                 return;
             }
 
-            var pinType = PinType.getPinType(splitBody[0].charAt(0));
-            var pin = Byte.parseByte(splitBody[1]);
-            var value = splitBody[2];
-            var now = System.currentTimeMillis();
-            var deviceId = device.id;
+            PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
+            byte pin = Byte.parseByte(splitBody[1]);
+            String value = splitBody[2];
+            long now = System.currentTimeMillis();
+            int deviceId = device.id;
 
             reportingDao.process(user, dash, deviceId, pin, pinType, value, now);
             dash.update(deviceId, pin, pinType, value, now);
+            device.dataReceivedAt = now;
 
             Session session = sessionDao.userSession.get(userKey);
             processEventorAndWebhook(user, dash, deviceId, session, pin, pinType, value, now);

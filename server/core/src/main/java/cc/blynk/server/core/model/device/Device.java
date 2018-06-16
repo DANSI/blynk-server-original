@@ -33,6 +33,8 @@ public class Device implements Target {
 
     public volatile long firstConnectTime;
 
+    public volatile long dataReceivedAt;
+
     public volatile String lastLoggedIP;
 
     public volatile HardwareInfo hardwareInfo;
@@ -104,6 +106,7 @@ public class Device implements Target {
         this.disconnectTime = 0;
         this.connectTime = 0;
         this.firstConnectTime = 0;
+        this.dataReceivedAt = 0;
         this.lastLoggedIP = null;
         this.status = Status.OFFLINE;
         this.hardwareInfo = null;
