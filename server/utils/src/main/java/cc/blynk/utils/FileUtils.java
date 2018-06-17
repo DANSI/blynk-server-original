@@ -148,7 +148,7 @@ public final class FileUtils {
     }
 
     public static void writeBufToCsvFilterAndFormat(ByteArrayOutputStream baos, ByteBuffer onePinData,
-                                                    int deviceId, long startFrom, DateTimeFormatter formatter) {
+                                                    long startFrom, DateTimeFormatter formatter) {
 
         while (onePinData.remaining() > 0) {
             double value = onePinData.getDouble();
@@ -156,7 +156,7 @@ public final class FileUtils {
 
             if (startFrom < ts) {
                 String formattedTs = formatTS(formatter, ts);
-                String data = "" + value + ',' + formattedTs + ',' + deviceId + '\n';
+                String data = "" + value + ',' + formattedTs + '\n';
                 baos.write(data.getBytes(US_ASCII), 0, data.length());
             }
         }
