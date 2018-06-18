@@ -494,7 +494,7 @@ public class ReportingTest extends IntegrationBase {
 
         report = clientPair.appClient.parseReportFromResponse(2);
         assertNotNull(report);
-        assertEquals(System.currentTimeMillis(), report.nextReportAt, 2000);
+        assertEquals(System.currentTimeMillis(), report.nextReportAt, 3000);
 
         String date = LocalDate.now(report.tzName).toString();
         String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
