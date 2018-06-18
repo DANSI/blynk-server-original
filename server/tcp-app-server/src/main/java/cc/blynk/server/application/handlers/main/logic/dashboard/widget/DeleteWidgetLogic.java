@@ -102,7 +102,7 @@ public class DeleteWidgetLogic {
             dash.widgets = ArrayUtil.remove(dash.widgets, index, Widget.class);
         }
 
-        dash.updatedAt = System.currentTimeMillis();
+        dash.cleanPinStorage(widgetToDelete, true);
 
         if (widgetToDelete instanceof Timer) {
             timerWorker.delete(state.userKey, (Timer) widgetToDelete, dashId, deviceTilesId, templateId);

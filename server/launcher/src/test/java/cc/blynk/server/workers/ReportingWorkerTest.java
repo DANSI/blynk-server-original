@@ -8,7 +8,7 @@ import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
-import cc.blynk.server.db.DBManager;
+import cc.blynk.server.db.ReportingDBManager;
 import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.properties.ServerProperties;
 import org.apache.commons.io.FileUtils;
@@ -86,17 +86,19 @@ public class ReportingWorkerTest {
     }
 
     @Test
-    public void testFailure() throws IOException {
+    public void testFailure() {
         User user = new User();
         user.email = "test";
         user.appName = AppNameUtil.BLYNK;
-        ReportingWorker reportingWorker = new ReportingWorker(reportingDaoMock, reportingFolder, new DBManager(blockingIOProcessor, true));
+        ReportingWorker reportingWorker = new ReportingWorker(reportingDaoMock,
+                reportingFolder, new ReportingDBManager(blockingIOProcessor, true));
 
         ConcurrentHashMap<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
 
         long ts = getTS() / AverageAggregatorProcessor.HOUR;
 
-        AggregationKey aggregationKey = new AggregationKey("ddd\0+123@gmail.com", AppNameUtil.BLYNK, 1, 0, PinType.ANALOG, (byte) 1, ts);
+        AggregationKey aggregationKey = new AggregationKey("ddd\0+123@gmail.com",
+                AppNameUtil.BLYNK, 1, 0, PinType.ANALOG, (byte) 1, ts);
         AggregationValue aggregationValue = new AggregationValue();
         aggregationValue.update(100);
 
@@ -109,11 +111,12 @@ public class ReportingWorkerTest {
     }
 
     @Test
-    public void testStore() throws IOException {
+    public void testStore() {
         User user = new User();
         user.email = "test";
         user.appName = AppNameUtil.BLYNK;
-        ReportingWorker reportingWorker = new ReportingWorker(reportingDaoMock, reportingFolder, new DBManager(blockingIOProcessor, true));
+        ReportingWorker reportingWorker = new ReportingWorker(reportingDaoMock,
+                reportingFolder, new ReportingDBManager(blockingIOProcessor, true));
 
         ConcurrentHashMap<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
 
@@ -167,8 +170,9 @@ public class ReportingWorkerTest {
     }
 
     @Test
-    public void testStore2() throws IOException {
-        ReportingWorker reportingWorker = new ReportingWorker(reportingDaoMock, reportingFolder, new DBManager(blockingIOProcessor, true));
+    public void testStore2() {
+        ReportingWorker reportingWorker = new ReportingWorker(reportingDaoMock,
+                reportingFolder, new ReportingDBManager(blockingIOProcessor, true));
 
         ConcurrentHashMap<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
 
@@ -229,8 +233,9 @@ public class ReportingWorkerTest {
 
 
     @Test
-    public void testDeleteCommand() throws IOException {
-        ReportingWorker reportingWorker = new ReportingWorker(reportingDaoMock, reportingFolder, new DBManager(blockingIOProcessor, true));
+    public void testDeleteCommand() {
+        ReportingWorker reportingWorker = new ReportingWorker(reportingDaoMock,
+                reportingFolder, new ReportingDBManager(blockingIOProcessor, true));
 
         ConcurrentHashMap<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
 

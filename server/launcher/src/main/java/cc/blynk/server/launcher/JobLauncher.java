@@ -41,7 +41,7 @@ final class JobLauncher {
         ReportingWorker reportingWorker = new ReportingWorker(
                 holder.reportingDao,
                 ReportingUtil.getReportingFolder(holder.props.getProperty("data.folder")),
-                holder.dbManager
+                holder.reportingDBManager
         );
 
         //to start at the beggining of an minute

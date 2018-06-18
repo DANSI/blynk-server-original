@@ -1,1 +1,7 @@
-alter table users add column ip text;
+drop table reporting_raw_data;
+drop table reporting_average_minute;
+drop table reporting_average_hourly;
+drop table reporting_average_daily;
+drop table reporting_app_stat_minute;
+drop table reporting_app_command_stat_minute;
+drop table reporting_http_command_stat_minute;

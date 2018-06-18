@@ -19,7 +19,7 @@ public class ServerProperties extends BaseProperties {
     public static final String SERVER_PROPERTIES_FILENAME = "server.properties";
     public static final String PRODUCT_NAME = "{PRODUCT_NAME}";
     public static final String DEVICE_NAME = "{DEVICE_NAME}";
-    public static final String AUTH_TOKEN = "{AUTH_TOKEN}";
+    public static final String RESET_URL = "{RESET_URL}";
 
     private static final String STATIC_FILES_FOLDER = "static";
 
@@ -42,6 +42,14 @@ public class ServerProperties extends BaseProperties {
     public String getAdminUrl(String host) {
         String httpsPort = getHttpsPortOrBlankIfDefaultAsString();
         return "https://" + host + httpsPort + getAdminRootPath();
+    }
+
+    public String getCustomerEmail() {
+        return getProperty("customer.email");
+    }
+
+    public boolean isDBEnabled() {
+        return getBoolProperty("enable.db");
     }
 
     private String getHttpsPortOrBlankIfDefaultAsString() {
@@ -70,5 +78,9 @@ public class ServerProperties extends BaseProperties {
 
     public boolean renameOldReportingFiles() {
         return getBoolProperty("rename.old.reporting.files");
+    }
+
+    public boolean isRawDBEnabled() {
+        return getBoolProperty("enable.raw.db.data.store");
     }
 }

@@ -84,6 +84,11 @@ public class Terminal extends OnePinWidget {
     }
 
     @Override
+    public boolean isMultiValueWidget() {
+        return true;
+    }
+
+    @Override
     public String getJsonValue() {
         return JsonParser.toJson(lastCommands);
     }

@@ -454,6 +454,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
         reportingDao.process(user, dash, deviceId, pin, pinType, pinValue, now);
 
         dash.update(deviceId, pin, pinType, pinValue, now);
+        tokenValue.device.dataReceivedAt = now;
 
         String body = makeBody(dash, deviceId, pin, pinType, pinValue);
 

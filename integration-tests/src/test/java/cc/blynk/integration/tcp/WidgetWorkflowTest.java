@@ -2,6 +2,9 @@ package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
+import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.servers.BaseServer;
@@ -111,6 +114,44 @@ public class WidgetWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.deleteWidget(1, 82561);
         clientPair.appClient.verifyResult(ok(2));
+    }
+
+    @Test
+    public void testPinStorageIsCleanedOnWidgetRemoval() throws Exception {
+        ValueDisplay valueDisplay = new ValueDisplay();
+        valueDisplay.id = 82561;
+        valueDisplay.width = 2;
+        valueDisplay.height = 2;
+        valueDisplay.pin = 111;
+        valueDisplay.pinType = PinType.VIRTUAL;
+        valueDisplay.deviceId = 200_000;
+
+        clientPair.appClient.createWidget(1, valueDisplay);
+        clientPair.appClient.verifyResult(ok(1));
+
+        DeviceSelector deviceSelector = new DeviceSelector();
+        deviceSelector.id = 200000;
+        deviceSelector.x = 0;
+        deviceSelector.y = 0;
+        deviceSelector.width = 1;
+        deviceSelector.height = 1;
+        deviceSelector.deviceIds = new int[] {0};
+
+        clientPair.appClient.createWidget(1, deviceSelector);
+        clientPair.appClient.verifyResult(ok(2));
+
+        clientPair.hardwareClient.send("hardware vw 111 test");
+        clientPair.appClient.verifyResult(hardware(1, "1-0 vw 111 test"));
+
+        clientPair.appClient.sync(1, 0);
+        clientPair.appClient.verifyResult(appSync("1-0 vw 111 test"));
+        clientPair.appClient.reset();
+
+        clientPair.appClient.deleteWidget(1, 82561);
+        clientPair.appClient.verifyResult(ok(1));
+
+        clientPair.appClient.sync(1, 0);
+        clientPair.appClient.neverAfter(500, appSync("1-0 vw 111 test"));
     }
 
     @Test

@@ -13,7 +13,7 @@
         sudo apt-get update
         sudo apt-get install oracle-java10-installer
         
-        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.37.4/server-0.37.4.jar"
+        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.38.0/server-0.38.0.jar"
         
 
 server.properties
@@ -32,7 +32,8 @@ admin.rootPath=/test
 product.name=test
 server.host=test.blynk.cc
 admin.email=test@blynk.cc
-admin.pass=test
+admin.pass=
+customer.email=
 
         
 db.properties

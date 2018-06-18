@@ -1,6 +1,5 @@
 package cc.blynk.server.core.model.storage;
 
-import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.structure.BaseLimitedQueue;
 import io.netty.channel.Channel;
@@ -11,6 +10,8 @@ import java.util.Iterator;
 import static cc.blynk.server.core.model.widgets.AppSyncWidget.SYNC_DEFAULT_MESSAGE_ID;
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
+import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
 import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
 
 /**
@@ -36,17 +37,26 @@ public class MultiPinStorageValue extends PinStorageValue {
             if (useNewFormat) {
                 Iterator<String> valIterator = values.iterator();
                 if (valIterator.hasNext()) {
-                    String body = OnePinWidget.makeMultiValueHardwareBody(dashId,
-                            key.deviceId, key.pinTypeChar, key.pin, valIterator);
-                    appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body));
+                    String last = null;
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(dashId).append(DEVICE_SEPARATOR).append(key.deviceId).append(BODY_SEPARATOR)
+                            .append(key.pinTypeChar).append('m').append(BODY_SEPARATOR).append(key.pin);
+                    while (valIterator.hasNext()) {
+                        last = valIterator.next();
+                        sb.append(BODY_SEPARATOR).append(last);
+                    }
+
+                    appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, sb.toString()));
+
+                    //special case, when few widgets are on the same pin
+                    String body = prependDashIdAndDeviceId(dashId, key.deviceId, key.makeHardwareBody(last));
+                    StringMessage message = makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body);
+                    appChannel.write(message, appChannel.voidPromise());
                 }
             } else {
                 for (String value : values) {
-                    String body = key.makeHardwareBody(value);
-                    String finalBody = prependDashIdAndDeviceId(dashId, key.deviceId, body);
-                    //special case for setProperty
-                    short cmdType = key.getCmdType();
-                    StringMessage message = makeUTF8StringMessage(cmdType, SYNC_DEFAULT_MESSAGE_ID, finalBody);
+                    String body = prependDashIdAndDeviceId(dashId, key.deviceId, key.makeHardwareBody(value));
+                    StringMessage message = makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body);
                     appChannel.write(message, appChannel.voidPromise());
                 }
             }

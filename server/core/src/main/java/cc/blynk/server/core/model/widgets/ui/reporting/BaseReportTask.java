@@ -1,7 +1,9 @@
 package cc.blynk.server.core.model.widgets.ui.reporting;
 
 import cc.blynk.server.core.dao.ReportingStorageDao;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportDataStream;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportSource;
@@ -54,12 +56,12 @@ public abstract class BaseReportTask implements Runnable {
         this.downloadUrl = downloadUrl;
     }
 
-    private static String deviceAndPinFileName(int dashId, int deviceId, ReportDataStream reportDataStream) {
-        return deviceAndPinFileName(dashId, deviceId, reportDataStream.pinType, reportDataStream.pin);
+    private static String deviceAndPinFileName(String deviceName, int deviceId, ReportDataStream reportDataStream) {
+        return deviceAndPinFileName(deviceName, deviceId, reportDataStream.pinType, reportDataStream.pin);
     }
 
-    private static String deviceAndPinFileName(int dashId, int deviceId, PinType pinType, byte pin) {
-        return dashId + "_" + deviceId + "_" + pinType.pintTypeChar + pin + ".csv";
+    private static String deviceAndPinFileName(String deviceName, int deviceId, PinType pinType, byte pin) {
+        return deviceName + "_" + deviceId + "_" + pinType.pintTypeChar + pin + ".csv";
     }
 
     @Override
@@ -72,6 +74,36 @@ public abstract class BaseReportTask implements Runnable {
         }
     }
 
+    private static void writeBufToCsvFilterAndFormat(ByteArrayOutputStream baos, ByteBuffer onePinData,
+                                                     long startFrom, Format format, ZoneId zoneId) {
+        if (format == null || format == Format.TS) {
+            FileUtils.writeBufToCsvFilterAndFormat(baos, onePinData, startFrom, null);
+        } else {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format.pattern).withZone(zoneId);
+            FileUtils.writeBufToCsvFilterAndFormat(baos, onePinData, startFrom, formatter);
+        }
+    }
+
+    private static String getDeviceName(DashBoard dash, int deviceId) {
+        Device device = dash.getDeviceById(deviceId);
+        if (device != null) {
+            String name = device.name;
+            if (name != null) {
+                name = name.replaceAll("[\\\\/:*?\"<>| ]", "");
+                return name.length() < 16 ? name : name.substring(0, 16);
+            }
+        }
+        return "";
+    }
+
+    private void sendEmail(Path output) throws Exception {
+        String durationLabel = report.reportType.getDurationLabel().toLowerCase();
+        String subj = "Your " + durationLabel + " " + report.name + " is ready";
+        String gzipDownloadUrl = downloadUrl + output.getFileName();
+        String dynamicSection = report.buildDynamicSection();
+        mailWrapper.sendReportEmail(report.recipients, subj, gzipDownloadUrl, dynamicSection);
+    }
+
     protected long generateReport() {
         long now = System.currentTimeMillis();
 
@@ -80,7 +112,8 @@ public abstract class BaseReportTask implements Runnable {
                 key.user.email, key.user.appName, key.reportId, date);
 
         try {
-            report.lastRunResult = generateReport(userCsvFolder, now);
+            DashBoard dash = key.user.profile.getDashByIdOrThrow(key.dashId);
+            report.lastRunResult = generateReport(userCsvFolder, dash, now);
         } catch (Exception e) {
             report.lastRunResult = ReportResult.ERROR;
             log.error("Error generating report {} for user {}. ", report.id, key.user.email);
@@ -93,7 +126,7 @@ public abstract class BaseReportTask implements Runnable {
         return newNow;
     }
 
-    private ReportResult generateReport(Path userCsvFolder, long now) throws Exception {
+    private ReportResult generateReport(Path userCsvFolder, DashBoard dash, long now) throws Exception {
         int fetchCount = (int) report.reportType.getFetchCount(report.granularityType);
         long startFrom = now - TimeUnit.DAYS.toMillis(report.reportType.getDuration());
         Path output = Paths.get(userCsvFolder.toString() + ".gz");
@@ -105,7 +138,7 @@ public abstract class BaseReportTask implements Runnable {
             case CSV_FILE_PER_DEVICE:
             case CSV_FILE_PER_DEVICE_PER_PIN:
             default:
-                if (filePerDevicePerPin(output, fetchCount, startFrom)) {
+                if (filePerDevicePerPin(output, dash, fetchCount, startFrom)) {
                     sendEmail(output);
                     return ReportResult.OK;
                 } else {
@@ -115,25 +148,7 @@ public abstract class BaseReportTask implements Runnable {
         }
     }
 
-    private void sendEmail(Path output) throws Exception {
-        String durationLabel = report.reportType.getDurationLabel().toLowerCase();
-        String subj = "Your " + durationLabel + " " + report.name + " is ready";
-        String gzipDownloadUrl = downloadUrl + output.getFileName();
-        String dynamicSection = report.buildDynamicSection();
-        mailWrapper.sendReportEmail(report.recipients, subj, gzipDownloadUrl, dynamicSection);
-    }
-
-    private static void writeBufToCsvFilterAndFormat(ByteArrayOutputStream baos, ByteBuffer onePinData,
-                                                     int deviceId, long startFrom, Format format, ZoneId zoneId) {
-        if (format == null || format == Format.TS) {
-            FileUtils.writeBufToCsvFilterAndFormat(baos, onePinData, deviceId, startFrom, null);
-        } else {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format.pattern).withZone(zoneId);
-            FileUtils.writeBufToCsvFilterAndFormat(baos, onePinData, deviceId, startFrom, formatter);
-        }
-    }
-
-    private boolean filePerDevicePerPin(Path output, int fetchCount, long startFrom) throws Exception {
+    private boolean filePerDevicePerPin(Path output, DashBoard dash, int fetchCount, long startFrom) throws Exception {
         boolean atLeastOne = false;
         try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(output))) {
             for (ReportSource reportSource : report.reportSources) {
@@ -146,11 +161,11 @@ public abstract class BaseReportTask implements Runnable {
                                         reportDataStream.pin, fetchCount, report.granularityType, 0);
 
                                 if (onePinData != null) {
-                                    byte[] onePinDataCsv = toCSV(
-                                            onePinData, deviceId, startFrom, report.format, report.tzName);
+                                    byte[] onePinDataCsv = toCSV(onePinData, startFrom, report.format, report.tzName);
                                     if (onePinDataCsv.length > 0) {
+                                        String deviceName = getDeviceName(dash, deviceId);
                                         String onePinFileName =
-                                                deviceAndPinFileName(key.dashId, deviceId, reportDataStream);
+                                                deviceAndPinFileName(deviceName, deviceId, reportDataStream);
                                         atLeastOne = zipEntry(zs, onePinFileName, onePinDataCsv);
                                     }
                                 }
@@ -163,12 +178,11 @@ public abstract class BaseReportTask implements Runnable {
         return atLeastOne;
     }
 
-    private byte[] toCSV(ByteBuffer onePinData, int deviceId, long startFrom, Format format, ZoneId zoneId) {
+    private byte[] toCSV(ByteBuffer onePinData, long startFrom, Format format, ZoneId zoneId) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(onePinData.capacity());
-        writeBufToCsvFilterAndFormat(byteArrayOutputStream, onePinData, deviceId, startFrom, format, zoneId);
+        writeBufToCsvFilterAndFormat(byteArrayOutputStream, onePinData, startFrom, format, zoneId);
         return byteArrayOutputStream.toByteArray();
     }
-
 
     private boolean zipEntry(ZipOutputStream zs, String onePinFileName, byte[] onePinDataCsv) throws IOException {
         ZipEntry zipEntry = new ZipEntry(onePinFileName);

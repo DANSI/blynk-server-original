@@ -42,7 +42,7 @@ public final class StringUtils {
      */
     private static final int START_INDEX = 3;
 
-    private static final String IN_DATA = "abcdefghijklmnopqrstuvwxyz";
+    private static final String IN_DATA = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     /**
@@ -130,11 +130,21 @@ public final class StringUtils {
         return "" + dashId + DEVICE_SEPARATOR + deviceId + BODY_SEPARATOR + body;
     }
 
+    public static String randomPassword(int len) {
+        return randomString(IN_DATA, len);
+    }
+
     public static String randomString(int len) {
+        //using only lowercase chars for app id.
+        String dataForId = IN_DATA.substring(0, 26);
+        return randomString(dataForId, len);
+    }
+
+    private static String randomString(String inData, int len) {
         StringBuilder sb = new StringBuilder(len);
-        int inDataLen = IN_DATA.length();
+        int inDataLength = inData.length();
         for (int i = 0; i < len; i++) {
-            sb.append(IN_DATA.charAt(SECURE_RANDOM.nextInt(inDataLen)));
+            sb.append(inData.charAt(SECURE_RANDOM.nextInt(inDataLength)));
         }
         return sb.toString();
     }
