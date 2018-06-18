@@ -3,16 +3,11 @@ package cc.blynk.server.db;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
-import cc.blynk.server.core.reporting.average.AggregationKey;
-import cc.blynk.server.core.reporting.average.AggregationValue;
-import cc.blynk.server.core.stats.model.Stat;
 import cc.blynk.server.db.dao.CloneProjectDBDao;
 import cc.blynk.server.db.dao.FlashedTokensDBDao;
 import cc.blynk.server.db.dao.ForwardingTokenDBDao;
 import cc.blynk.server.db.dao.PurchaseDBDao;
 import cc.blynk.server.db.dao.RedeemDBDao;
-import cc.blynk.server.db.dao.ReportingDBDao;
 import cc.blynk.server.db.dao.UserDBDao;
 import cc.blynk.server.db.model.FlashedToken;
 import cc.blynk.server.db.model.Purchase;
@@ -27,10 +22,8 @@ import org.apache.logging.log4j.Logger;
 import java.io.Closeable;
 import java.sql.Connection;
 import java.sql.Statement;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static cc.blynk.utils.properties.DBProperties.DB_PROPERTIES_FILENAME;
 
@@ -45,10 +38,8 @@ public class DBManager implements Closeable {
     private final HikariDataSource ds;
 
     private final BlockingIOProcessor blockingIOProcessor;
-    private final boolean cleanOldReporting;
 
     public UserDBDao userDBDao;
-    ReportingDBDao reportingDBDao;
     RedeemDBDao redeemDBDao;
     PurchaseDBDao purchaseDBDao;
     FlashedTokensDBDao flashedTokensDBDao;
@@ -66,7 +57,6 @@ public class DBManager implements Closeable {
         if (!isEnabled || dbProperties.size() == 0) {
             log.info("Separate DB storage disabled.");
             this.ds = null;
-            this.cleanOldReporting = false;
             return;
         }
 
@@ -82,19 +72,16 @@ public class DBManager implements Closeable {
         } catch (Exception e) {
             log.error("Not able connect to DB. Skipping. Reason : {}", e.getMessage());
             this.ds = null;
-            this.cleanOldReporting = false;
             return;
         }
 
         this.ds = hikariDataSource;
-        this.reportingDBDao = new ReportingDBDao(hikariDataSource);
         this.userDBDao = new UserDBDao(hikariDataSource);
         this.redeemDBDao = new RedeemDBDao(hikariDataSource);
         this.purchaseDBDao = new PurchaseDBDao(hikariDataSource);
         this.flashedTokensDBDao = new FlashedTokensDBDao(hikariDataSource);
         this.cloneProjectDBDao = new CloneProjectDBDao(hikariDataSource);
         this.forwardingTokenDBDao = new ForwardingTokenDBDao(hikariDataSource);
-        this.cleanOldReporting = dbProperties.cleanReporting();
 
         checkDBVersion();
 
@@ -136,30 +123,6 @@ public class DBManager implements Closeable {
     public void saveUsers(ArrayList<User> users) {
         if (isDBEnabled() && users.size() > 0) {
             blockingIOProcessor.executeDB(() -> userDBDao.save(users));
-        }
-    }
-
-    public void insertStat(String region, Stat stat) {
-        if (isDBEnabled()) {
-            reportingDBDao.insertStat(region, stat);
-        }
-    }
-
-    public void insertReporting(Map<AggregationKey, AggregationValue> map, GraphGranularityType graphGranularityType) {
-        if (isDBEnabled() && map.size() > 0) {
-            blockingIOProcessor.executeDB(() -> reportingDBDao.insert(map, graphGranularityType));
-        }
-    }
-
-    public void insertReportingRaw(Map<AggregationKey, Object> rawData) {
-        if (isDBEnabled() && rawData.size() > 0) {
-            blockingIOProcessor.executeDB(() -> reportingDBDao.insertRawData(rawData));
-        }
-    }
-
-    public void cleanOldReportingRecords(Instant now) {
-        if (isDBEnabled() && cleanOldReporting) {
-            blockingIOProcessor.executeDB(() -> reportingDBDao.cleanOldReportingRecords(now));
         }
     }
 

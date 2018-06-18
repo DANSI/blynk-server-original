@@ -4,7 +4,7 @@ import cc.blynk.server.core.dao.ReportingStorageDao;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
-import cc.blynk.server.db.DBManager;
+import cc.blynk.server.db.ReportingDBManager;
 import cc.blynk.utils.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,12 +35,13 @@ public class ReportingWorker implements Runnable {
 
     private final ReportingStorageDao reportingDao;
     private final String reportingPath;
-    private final DBManager dbManager;
+    private final ReportingDBManager reportingDBManager;
 
-    public ReportingWorker(ReportingStorageDao reportingDao, String reportingPath, DBManager dbManager) {
+    public ReportingWorker(ReportingStorageDao reportingDao,
+                           String reportingPath, ReportingDBManager reportingDBManager) {
         this.reportingDao = reportingDao;
         this.reportingPath = reportingPath;
-        this.dbManager = dbManager;
+        this.reportingDBManager = reportingDBManager;
     }
 
     @Override
@@ -53,13 +54,13 @@ public class ReportingWorker implements Runnable {
             Map<AggregationKey, AggregationValue> removedKeysDay =
                     process(reportingDao.averageAggregator.getDaily(), GraphGranularityType.DAILY);
 
-            dbManager.insertReporting(removedKeysMinute, GraphGranularityType.MINUTE);
-            dbManager.insertReporting(removedKeysHour, GraphGranularityType.HOURLY);
-            dbManager.insertReporting(removedKeysDay, GraphGranularityType.DAILY);
+            reportingDBManager.insertReporting(removedKeysMinute, GraphGranularityType.MINUTE);
+            reportingDBManager.insertReporting(removedKeysHour, GraphGranularityType.HOURLY);
+            reportingDBManager.insertReporting(removedKeysDay, GraphGranularityType.DAILY);
 
-            dbManager.insertReportingRaw(reportingDao.rawDataProcessor.rawStorage);
+            reportingDBManager.insertReportingRaw(reportingDao.rawDataProcessor.rawStorage);
 
-            dbManager.cleanOldReportingRecords(Instant.now());
+            reportingDBManager.cleanOldReportingRecords(Instant.now());
         } catch (Exception e) {
             log.error("Error during reporting job.", e);
         }

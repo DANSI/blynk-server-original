@@ -48,6 +48,10 @@ public class ServerProperties extends BaseProperties {
         return getProperty("customer.email");
     }
 
+    public boolean isDBEnabled() {
+        return getBoolProperty("enable.db");
+    }
+
     private String getHttpsPortOrBlankIfDefaultAsString() {
         if (force80Port()) {
             //means default port 443 is used, so no need to attach it

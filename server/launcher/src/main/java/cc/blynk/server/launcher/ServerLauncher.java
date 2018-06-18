@@ -158,9 +158,9 @@ public final class ServerLauncher {
     }
 
     private static String buildServerUpEmailBody(String url, String email, String pass) {
-        String sb = "Your Admin url is " + url + "<br>" +
-                "Your Admin login email is <b>" + email + "</b><br>" +
-                "Your Admin password is <b>" + pass + "</b>";
+        String sb = "Your Admin url is " + url + "<br>"
+                + "Your Admin login email is <b>" + email + "</b><br>"
+                + "Your Admin password is <b>" + pass + "</b>";
         return FileLoaderUtil.readNewServerUpTemplateAsString().replace("{BODY}", sb);
     }
 

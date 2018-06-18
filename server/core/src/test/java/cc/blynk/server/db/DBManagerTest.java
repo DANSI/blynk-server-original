@@ -6,9 +6,6 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
-import cc.blynk.server.core.reporting.average.AggregationKey;
-import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
 import cc.blynk.server.db.dao.ReportingDBDao;
 import cc.blynk.server.db.model.Purchase;
@@ -31,13 +28,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.zip.GZIPOutputStream;
 
@@ -74,9 +69,6 @@ public class DBManagerTest {
     public void cleanAll() throws Exception {
         //clean everything just in case
         dbManager.executeSQL("DELETE FROM users");
-        dbManager.executeSQL("DELETE FROM reporting_average_minute");
-        dbManager.executeSQL("DELETE FROM reporting_average_hourly");
-        dbManager.executeSQL("DELETE FROM reporting_average_daily");
         dbManager.executeSQL("DELETE FROM purchase");
         dbManager.executeSQL("DELETE FROM redeem");
     }
@@ -90,53 +82,6 @@ public class DBManagerTest {
     public void testDbVersion() throws Exception {
         int dbVersion = dbManager.userDBDao.getDBVersion();
         assertTrue(dbVersion >= 90500);
-    }
-
-    @Test
-    public void testInsert1000RecordsAndSelect() throws Exception {
-        int a = 0;
-
-        String userName = "test@gmail.com";
-
-        long start = System.currentTimeMillis();
-        long minute = (start / AverageAggregatorProcessor.MINUTE) * AverageAggregatorProcessor.MINUTE;
-        long startMinute = minute;
-
-        try (Connection connection = dbManager.getConnection();
-             PreparedStatement ps = connection.prepareStatement(ReportingDBDao.insertMinute)) {
-
-            for (int i = 0; i < 1000; i++) {
-                ReportingDBDao.prepareReportingInsert(ps, userName, 1, 2, (byte) 0, PinType.VIRTUAL, minute, (double) i);
-                ps.addBatch();
-                minute += AverageAggregatorProcessor.MINUTE;
-                a++;
-            }
-
-            ps.executeBatch();
-            connection.commit();
-        }
-
-        System.out.println("Finished : " + (System.currentTimeMillis() - start)  + " millis. Executed : " + a);
-
-
-        try (Connection connection = dbManager.getConnection();
-             Statement statement = connection.createStatement();
-             ResultSet rs = statement.executeQuery("select * from reporting_average_minute order by ts ASC")) {
-
-            int i = 0;
-            while (rs.next()) {
-                assertEquals(userName, rs.getString("email"));
-                assertEquals(1, rs.getInt("project_id"));
-                assertEquals(2, rs.getInt("device_id"));
-                assertEquals(0, rs.getByte("pin"));
-                assertEquals(PinType.VIRTUAL, PinType.values()[rs.getInt("pin_type")]);
-                assertEquals(startMinute, rs.getTimestamp("ts", UTC).getTime());
-                assertEquals((double) i, rs.getDouble("value"), 0.0001);
-                startMinute += AverageAggregatorProcessor.MINUTE;
-                i++;
-            }
-            connection.commit();
-        }
     }
 
     @Test
@@ -178,55 +123,6 @@ public class DBManagerTest {
             System.out.println(res);
         }
 
-
-    }
-
-    @Test
-    public void testDeleteWorksAsExpected() throws Exception {
-        long minute;
-        try (Connection connection = dbManager.getConnection();
-             PreparedStatement ps = connection.prepareStatement(ReportingDBDao.insertMinute)) {
-
-            minute = (System.currentTimeMillis() / AverageAggregatorProcessor.MINUTE) * AverageAggregatorProcessor.MINUTE;
-
-            for (int i = 0; i < 370; i++) {
-                ReportingDBDao.prepareReportingInsert(ps, "test1111@gmail.com", 1, 0, (byte) 0, PinType.VIRTUAL, minute, (double) i);
-                ps.addBatch();
-                minute += AverageAggregatorProcessor.MINUTE;
-            }
-
-            ps.executeBatch();
-            connection.commit();
-        }
-        //todo finish.
-        //todo this breaks testInsert1000RecordsAndSelect() test
-        //Instant now = Instant.ofEpochMilli(minute);
-        //dbManager.cleanOldReportingRecords(now);
-
-    }
-
-
-    @Test
-    public void testManyConnections() throws Exception {
-        User user = new User();
-        user.email = "test@test.com";
-        user.appName = AppNameUtil.BLYNK;
-        Map<AggregationKey, AggregationValue> map = new ConcurrentHashMap<>();
-        AggregationValue value = new AggregationValue();
-        value.update(1);
-        long ts = System.currentTimeMillis();
-        for (int i = 0; i < 60; i++) {
-            map.put(new AggregationKey(user.email, user.appName, i, 0, PinType.ANALOG, (byte) i, ts), value);
-            dbManager.insertReporting(map, GraphGranularityType.MINUTE);
-            dbManager.insertReporting(map, GraphGranularityType.HOURLY);
-            dbManager.insertReporting(map, GraphGranularityType.DAILY);
-
-            map.clear();
-        }
-
-        while (blockingIOProcessor.messagingExecutor.getActiveCount() > 0) {
-            Thread.sleep(100);
-        }
 
     }
 
@@ -481,36 +377,13 @@ public class DBManagerTest {
     }
 
     @Test
-    public void testSelect() throws Exception {
-        long ts = 1455924480000L;
-        try (Connection connection = dbManager.getConnection();
-             PreparedStatement ps = connection.prepareStatement(ReportingDBDao.selectMinute)) {
-
-            ReportingDBDao.prepareReportingSelect(ps, ts, 2);
-             ResultSet rs = ps.executeQuery();
-
-
-            while(rs.next()) {
-                System.out.println(rs.getLong("ts") + " " + rs.getDouble("value"));
-            }
-
-            rs.close();
-        }
-    }
-
-    @Test
-    public void cleanOutdatedRecords() throws Exception{
-        dbManager.reportingDBDao.cleanOldReportingRecords(Instant.now());
-    }
-
-    @Test
-    public void getUserIpNotExists() throws Exception {
+    public void getUserIpNotExists() {
         String userIp = dbManager.userDBDao.getUserServerIp("test@gmail.com", AppNameUtil.BLYNK);
         assertNull(userIp);
     }
 
     @Test
-    public void getUserIp() throws Exception {
+    public void getUserIp() {
         ArrayList<User> users = new ArrayList<>();
         User user = new User("test@gmail.com", "pass", AppNameUtil.BLYNK, "local", "127.0.0.1", false, false);
         user.lastModifiedTs = 0;

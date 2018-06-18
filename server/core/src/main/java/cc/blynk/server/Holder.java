@@ -12,6 +12,7 @@ import cc.blynk.server.core.model.widgets.ui.reporting.ReportScheduler;
 import cc.blynk.server.core.processors.EventorProcessor;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.db.DBManager;
+import cc.blynk.server.db.ReportingDBManager;
 import cc.blynk.server.internal.TokensPool;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
@@ -57,6 +58,7 @@ public class Holder {
     public final ReportingStorageDao reportingDao;
 
     public final DBManager dbManager;
+    public final ReportingDBManager reportingDBManager;
 
     public final GlobalStats stats;
 
@@ -107,7 +109,10 @@ public class Holder {
                 serverProperties.getIntProperty("blocking.processor.thread.pool.limit", 6),
                 serverProperties.getIntProperty("notifications.queue.limit", 2000)
         );
-        this.dbManager = new DBManager(blockingIOProcessor, serverProperties.getBoolProperty("enable.db"));
+
+        boolean enableDB = serverProperties.isDBEnabled();
+        this.dbManager = new DBManager(blockingIOProcessor, enableDB);
+        this.reportingDBManager = new ReportingDBManager(blockingIOProcessor, enableDB);
 
         if (restore) {
             try {
@@ -125,7 +130,7 @@ public class Holder {
         this.stats = new GlobalStats();
         final String reportingFolder = getReportingFolder(dataFolder);
         this.reportingDao = new ReportingStorageDao(reportingFolder,
-                serverProperties.isRawDBEnabled() && dbManager.isDBEnabled());
+                serverProperties.isRawDBEnabled() && reportingDBManager.isDBEnabled());
 
         if (serverProperties.renameOldReportingFiles()) {
             reportingDao.renameOldReportingFiles();
@@ -189,12 +194,15 @@ public class Holder {
                 serverProperties.getIntProperty("notifications.queue.limit", 2000)
         );
 
-        this.dbManager = new DBManager(dbFileName, blockingIOProcessor, serverProperties.getBoolProperty("enable.db"));
+        boolean enableDB = serverProperties.isDBEnabled();
+        this.dbManager = new DBManager(dbFileName, blockingIOProcessor, enableDB);
+        this.reportingDBManager = new ReportingDBManager(dbFileName, blockingIOProcessor, enableDB);
+
         this.tokenManager = new TokenManager(this.userDao.users, dbManager, host);
         this.stats = new GlobalStats();
         final String reportingFolder = getReportingFolder(dataFolder);
         this.reportingDao = new ReportingStorageDao(reportingFolder,
-                serverProperties.isRawDBEnabled() && dbManager.isDBEnabled());
+                serverProperties.isRawDBEnabled() && reportingDBManager.isDBEnabled());
 
         this.transportTypeHolder = new TransportTypeHolder(serverProperties);
 
@@ -255,5 +263,6 @@ public class Holder {
         reportScheduler.shutdown();
         System.out.println("Stopping DBManager...");
         dbManager.close();
+        reportingDBManager.close();
     }
 }

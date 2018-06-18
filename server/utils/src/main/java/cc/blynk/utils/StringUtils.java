@@ -136,8 +136,8 @@ public final class StringUtils {
 
     public static String randomString(int len) {
         //using only lowercase chars for app id.
-        String DATA_FOR_ID = IN_DATA.substring(0, 26);
-        return randomString(DATA_FOR_ID, len);
+        String dataForId = IN_DATA.substring(0, 26);
+        return randomString(dataForId, len);
     }
 
     private static String randomString(String inData, int len) {
