@@ -82,11 +82,11 @@ public abstract class OnePinWidget extends Widget implements AppSyncWidget, Hard
     }
 
     public boolean isValid() {
-        return !isNotValid();
+        return DataStream.isValid(pin, pinType);
     }
 
     public boolean isNotValid() {
-        return pin == DataStream.NO_PIN || pinType == null;
+        return !DataStream.isValid(pin, pinType);
     }
 
     public String makeHardwareBody() {
