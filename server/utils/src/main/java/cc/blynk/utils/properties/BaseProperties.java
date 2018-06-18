@@ -112,10 +112,6 @@ public abstract class BaseProperties extends Properties {
         return Integer.parseInt(prop);
     }
 
-    public boolean isRawDBEnabled() {
-        return getBoolProperty("enable.raw.db.data.store");
-    }
-
     public boolean getBoolProperty(String propertyName) {
         return Boolean.parseBoolean(getProperty(propertyName));
     }

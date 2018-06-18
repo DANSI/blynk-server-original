@@ -17,7 +17,8 @@ import cc.blynk.server.db.dao.UserDBDao;
 import cc.blynk.server.db.model.FlashedToken;
 import cc.blynk.server.db.model.Purchase;
 import cc.blynk.server.db.model.Redeem;
-import cc.blynk.utils.properties.ServerProperties;
+import cc.blynk.utils.properties.BaseProperties;
+import cc.blynk.utils.properties.DBProperties;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.logging.log4j.LogManager;
@@ -31,6 +32,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static cc.blynk.utils.properties.DBProperties.DB_PROPERTIES_FILENAME;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -38,7 +41,6 @@ import java.util.Map;
  */
 public class DBManager implements Closeable {
 
-    public static final String DB_PROPERTIES_FILENAME = "db.properties";
     private static final Logger log = LogManager.getLogger(DBManager.class);
     private final HikariDataSource ds;
 
@@ -60,27 +62,15 @@ public class DBManager implements Closeable {
     public DBManager(String propsFilename, BlockingIOProcessor blockingIOProcessor, boolean isEnabled) {
         this.blockingIOProcessor = blockingIOProcessor;
 
-        if (!isEnabled) {
+        DBProperties dbProperties = new DBProperties(propsFilename);
+        if (!isEnabled || dbProperties.size() == 0) {
             log.info("Separate DB storage disabled.");
             this.ds = null;
             this.cleanOldReporting = false;
             return;
         }
 
-        ServerProperties serverProperties;
-        try {
-            serverProperties = new ServerProperties(propsFilename);
-            if (serverProperties.size() == 0) {
-                throw new RuntimeException();
-            }
-        } catch (RuntimeException e) {
-            log.warn("No {} file found. Separate DB storage disabled.", propsFilename);
-            this.ds = null;
-            this.cleanOldReporting = false;
-            return;
-        }
-
-        HikariConfig config = initConfig(serverProperties);
+        HikariConfig config = initConfig(dbProperties);
 
         log.info("DB url : {}", config.getJdbcUrl());
         log.info("DB user : {}", config.getUsername());
@@ -104,7 +94,7 @@ public class DBManager implements Closeable {
         this.flashedTokensDBDao = new FlashedTokensDBDao(hikariDataSource);
         this.cloneProjectDBDao = new CloneProjectDBDao(hikariDataSource);
         this.forwardingTokenDBDao = new ForwardingTokenDBDao(hikariDataSource);
-        this.cleanOldReporting = serverProperties.getBoolProperty("clean.reporting");
+        this.cleanOldReporting = dbProperties.cleanReporting();
 
         checkDBVersion();
 
@@ -123,7 +113,7 @@ public class DBManager implements Closeable {
         }
     }
 
-    private HikariConfig initConfig(ServerProperties serverProperties) {
+    private HikariConfig initConfig(BaseProperties serverProperties) {
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(serverProperties.getProperty("jdbc.url"));
         config.setUsername(serverProperties.getProperty("user"));
