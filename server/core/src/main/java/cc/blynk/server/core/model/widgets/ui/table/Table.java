@@ -135,6 +135,11 @@ public class Table extends OnePinWidget {
     }
 
     @Override
+    public boolean isMultiValueWidget() {
+        return true;
+    }
+
+    @Override
     public PinMode getModeType() {
         return PinMode.out;
     }

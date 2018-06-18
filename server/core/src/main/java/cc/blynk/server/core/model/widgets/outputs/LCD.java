@@ -124,6 +124,11 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
     }
 
     @Override
+    public boolean isMultiValueWidget() {
+        return true;
+    }
+
+    @Override
     public int getDeviceId() {
         return deviceId;
     }

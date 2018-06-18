@@ -226,6 +226,10 @@ public abstract class Widget implements CopyObject<Widget> {
         return new SinglePinStorageValue();
     }
 
+    public boolean isMultiValueWidget() {
+        return false;
+    }
+
     public void setProperty(WidgetProperty property, String propertyValue) {
         switch (property) {
             case LABEL :

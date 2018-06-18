@@ -143,49 +143,50 @@ public class DashBoard {
         pinStorageValue.update(value);
     }
 
+    //multi value widgets has always priority over single value widgets.
+    //for example, we have 2 widgets on the same pin, one it terminal, another is value display.
+    //so for that pin we have to return multivalue storage
     private PinStorageValue initStorageValueForStorageKey(PinStorageKey key) {
-        var widget = getWidgetForStorageKey(key);
-        if (widget == null) {
-            return new SinglePinStorageValue();
-        }
-        return widget.getPinStorageValue();
-    }
-
-    private Widget getWidgetForStorageKey(PinStorageKey key) {
-        //property is always single value
-        if (key instanceof PinPropertyStorageKey) {
-            return null;
-        }
-        for (Widget widget : widgets) {
-            if (widget instanceof OnePinWidget) {
-                OnePinWidget onePinWidget = (OnePinWidget) widget;
-                //pim matches and widget assigned to device selector
-                if (onePinWidget.isAssignedToDeviceSelector() && key.isSamePin(onePinWidget)) {
-                    DeviceSelector deviceSelector = getDeviceSelector(onePinWidget.deviceId);
-                    if (deviceSelector != null && ArrayUtil.contains(deviceSelector.deviceIds, key.deviceId)) {
-                        return widget;
+        if (!(key instanceof PinPropertyStorageKey)) {
+            for (Widget widget : widgets) {
+                if (widget instanceof OnePinWidget) {
+                    OnePinWidget onePinWidget = (OnePinWidget) widget;
+                    //pim matches and widget assigned to device selector
+                    if (onePinWidget.isAssignedToDeviceSelector() && key.isSamePin(onePinWidget)) {
+                        DeviceSelector deviceSelector = getDeviceSelector(onePinWidget.deviceId);
+                        if (deviceSelector != null && ArrayUtil.contains(deviceSelector.deviceIds, key.deviceId)) {
+                            if (widget.isMultiValueWidget()) {
+                                return widget.getPinStorageValue();
+                            }
+                        }
                     }
-                }
-            } else if (widget instanceof MultiPinWidget) {
-                MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
-                if (multiPinWidget.isAssignedToDeviceSelector() && key.isSamePin(multiPinWidget)) {
-                    DeviceSelector deviceSelector = getDeviceSelector(multiPinWidget.deviceId);
-                    if (deviceSelector != null && ArrayUtil.contains(deviceSelector.deviceIds, key.deviceId)) {
-                        return widget;
+                } else if (widget instanceof MultiPinWidget) {
+                    MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
+                    if (multiPinWidget.isAssignedToDeviceSelector() && key.isSamePin(multiPinWidget)) {
+                        DeviceSelector deviceSelector = getDeviceSelector(multiPinWidget.deviceId);
+                        if (deviceSelector != null && ArrayUtil.contains(deviceSelector.deviceIds, key.deviceId)) {
+                            if (widget.isMultiValueWidget()) {
+                                return widget.getPinStorageValue();
+                            }
+                        }
                     }
-                }
-            } else if (widget instanceof DeviceTiles) {
-                DeviceTiles deviceTiles = (DeviceTiles) widget;
-                for (TileTemplate template : deviceTiles.templates) {
-                    if (ArrayUtil.contains(template.deviceIds, key.deviceId)) {
-                        for (Widget tileWidget : template.widgets) {
-                            if (tileWidget instanceof OnePinWidget) {
-                                if (key.isSamePin((OnePinWidget) tileWidget)) {
-                                    return tileWidget;
-                                }
-                            } else if (tileWidget instanceof MultiPinWidget) {
-                                if (key.isSamePin((MultiPinWidget) tileWidget)) {
-                                    return tileWidget;
+                } else if (widget instanceof DeviceTiles) {
+                    DeviceTiles deviceTiles = (DeviceTiles) widget;
+                    for (TileTemplate template : deviceTiles.templates) {
+                        if (ArrayUtil.contains(template.deviceIds, key.deviceId)) {
+                            for (Widget tileWidget : template.widgets) {
+                                if (tileWidget instanceof OnePinWidget) {
+                                    if (key.isSamePin((OnePinWidget) tileWidget)) {
+                                        if (tileWidget.isMultiValueWidget()) {
+                                            return tileWidget.getPinStorageValue();
+                                        }
+                                    }
+                                } else if (tileWidget instanceof MultiPinWidget) {
+                                    if (key.isSamePin((MultiPinWidget) tileWidget)) {
+                                        if (tileWidget.isMultiValueWidget()) {
+                                            return tileWidget.getPinStorageValue();
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -193,7 +194,8 @@ public class DashBoard {
                 }
             }
         }
-        return null;
+
+        return new SinglePinStorageValue();
     }
 
     public void activate() {
