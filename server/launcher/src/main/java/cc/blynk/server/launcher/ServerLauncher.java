@@ -7,6 +7,7 @@ import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.server.servers.hardware.HardwareSSLServer;
 import cc.blynk.server.servers.hardware.MQTTHardwareServer;
 import cc.blynk.utils.AppNameUtil;
+import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.JarUtil;
 import cc.blynk.utils.LoggerUtil;
 import cc.blynk.utils.SHA256Util;
@@ -122,9 +123,10 @@ public final class ServerLauncher {
     }
 
     private static void createSuperUser(Holder holder) {
-        String url = holder.props.getAdminUrl(holder.host);
-        String email = holder.props.getProperty("admin.email", "admin@blynk.cc");
-        String pass = holder.props.getProperty("admin.pass");
+        ServerProperties props = holder.props;
+        String url = props.getAdminUrl(holder.host);
+        String email = props.getProperty("admin.email", "admin@blynk.cc");
+        String pass = props.getProperty("admin.pass");
 
         if (pass == null || pass.isEmpty()) {
             System.out.println("Admin password not specified. Random password generated.");
@@ -136,9 +138,30 @@ public final class ServerLauncher {
             System.out.println("Your Admin login email is " + email);
             System.out.println("Your Admin password is " + pass);
 
-            var hash = SHA256Util.makeHash(pass, email);
+            String hash = SHA256Util.makeHash(pass, email);
             holder.userDao.add(email, hash, AppNameUtil.BLYNK, true);
+
+            String customerEmail = props.getCustomerEmail();
+            if (customerEmail != null) {
+                String productName = props.getProductName();
+                String subj = "Your private Blynk server for " + productName + " is up!";
+                String body = buildServerUpEmailBody(url, email, pass);
+                holder.blockingIOProcessor.messagingExecutor.execute(() -> {
+                    try {
+                        holder.mailWrapper.sendHtml(customerEmail, subj, body);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+            }
         }
+    }
+
+    private static String buildServerUpEmailBody(String url, String email, String pass) {
+        String sb = "Your Admin url is " + url + "<br>" +
+                "Your Admin login email is <b>" + email + "</b><br>" +
+                "Your Admin password is <b>" + pass + "</b>";
+        return FileLoaderUtil.readNewServerUpTemplateAsString().replace("{BODY}", sb);
     }
 
     private static boolean startServers(BaseServer[] servers) {

@@ -44,6 +44,10 @@ public class ServerProperties extends BaseProperties {
         return "https://" + host + httpsPort + getAdminRootPath();
     }
 
+    public String getCustomerEmail() {
+        return getProperty("customer.email");
+    }
+
     private String getHttpsPortOrBlankIfDefaultAsString() {
         if (force80Port()) {
             //means default port 443 is used, so no need to attach it

@@ -32,7 +32,8 @@ admin.rootPath=/test
 product.name=test
 server.host=test.blynk.cc
 admin.email=test@blynk.cc
-admin.pass=test
+admin.pass=
+customer.email=
 
         
 db.properties
