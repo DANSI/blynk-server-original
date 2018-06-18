@@ -10,6 +10,7 @@ import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.JarUtil;
 import cc.blynk.utils.LoggerUtil;
 import cc.blynk.utils.SHA256Util;
+import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.properties.GCMProperties;
 import cc.blynk.utils.properties.MailProperties;
 import cc.blynk.utils.properties.ServerProperties;
@@ -123,7 +124,12 @@ public final class ServerLauncher {
     private static void createSuperUser(Holder holder) {
         String url = holder.props.getAdminUrl(holder.host);
         String email = holder.props.getProperty("admin.email", "admin@blynk.cc");
-        String pass = holder.props.getProperty("admin.pass", "admin");
+        String pass = holder.props.getProperty("admin.pass");
+
+        if (pass == null || pass.isEmpty()) {
+            System.out.println("Admin password not specified. Random password generated.");
+            pass = StringUtils.randomPassword(24);
+        }
 
         if (!holder.userDao.isSuperAdminExists()) {
             System.out.println("Your Admin url is " + url);
