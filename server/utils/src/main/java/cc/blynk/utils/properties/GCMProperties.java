@@ -16,11 +16,11 @@ public class GCMProperties extends BaseProperties {
     }
 
     public String getNotificationTitle() {
-        return getProperty("notification.title", "{PRODUCT_NAME} Notification");
+        return getProperty("notification.title", Placeholders.PRODUCT_NAME + " Notification");
     }
 
     public String getNotificationBody() {
-        return getProperty("notification.body", "Your {DEVICE_NAME} went offline.");
+        return getProperty("notification.body", "Your " + Placeholders.DEVICE_NAME + " went offline.");
     }
 
     public String getGCMApiKey() {
