@@ -640,7 +640,7 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
     }
 
     @Test
-    public void loadGzippedProfileForSharedBoard() throws Exception{
+    public void loadGzippedProfileForSharedBoard() throws Exception {
         clientPair.appClient.send("getShareToken 1");
 
         String token = clientPair.appClient.getBody();
@@ -672,15 +672,23 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
             device.deviceOtaInfo = null;
             device.lastLoggedIP = null;
             device.disconnectTime = 0;
+            device.firstConnectTime = 0;
+            device.dataReceivedAt = 0;
+            device.connectTime = 0;
             device.status = null;
         }
         parentProfile.dashBoards[0].sharedToken = null;
 
-        assertEquals(parentProfile.toString().replace("\"disconnectTime\":0,", ""), body2);
+        assertEquals(parentProfile.toString()
+                        .replace("\"disconnectTime\":0,", "")
+                        .replace("\"firstConnectTime\":0,", "")
+                        .replace("\"dataReceivedAt\":0,", "")
+                        .replace("\"connectTime\":0,", ""),
+                body2);
     }
 
     @Test
-    public void loadGzippedDashForSharedBoard() throws Exception{
+    public void loadGzippedDashForSharedBoard() throws Exception {
         clientPair.appClient.send("getShareToken 1");
 
         String token = clientPair.appClient.getBody();
@@ -712,12 +720,21 @@ public class ShareProfileWorkflowTest extends IntegrationBase {
             device.deviceOtaInfo = null;
             device.lastLoggedIP = null;
             device.disconnectTime = 0;
+            device.firstConnectTime = 0;
+            device.dataReceivedAt = 0;
+            device.connectTime = 0;
             device.status = null;
         }
         parentProfile.dashBoards[0].sharedToken = null;
 
-        assertEquals(parentProfile.dashBoards[0].toString().replace("\"disconnectTime\":0,", ""), body2);
+        assertEquals(parentProfile.dashBoards[0].toString()
+                        .replace("\"disconnectTime\":0,", "")
+                        .replace("\"firstConnectTime\":0,", "")
+                        .replace("\"dataReceivedAt\":0,", "")
+                        .replace("\"connectTime\":0,", ""),
+                body2);
     }
+
 
     public static byte[] compress(String value) throws IOException {
         byte[] stringData = value.getBytes(StandardCharsets.UTF_8);
