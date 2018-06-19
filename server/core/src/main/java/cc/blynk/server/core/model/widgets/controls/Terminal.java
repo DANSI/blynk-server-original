@@ -34,6 +34,8 @@ public class Terminal extends OnePinWidget {
 
     public boolean textLightOn;
 
+    public boolean attachNewLine;
+
     @Override
     public boolean updateIfSame(int deviceId, byte pin, PinType type, String value) {
         if (isSame(deviceId, pin, type)) {
