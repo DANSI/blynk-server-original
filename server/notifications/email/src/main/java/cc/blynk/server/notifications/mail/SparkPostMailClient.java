@@ -1,7 +1,7 @@
 package cc.blynk.server.notifications.mail;
 
 import cc.blynk.utils.properties.MailProperties;
-import cc.blynk.utils.properties.ServerProperties;
+import cc.blynk.utils.properties.Placeholders;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -44,7 +44,7 @@ public class SparkPostMailClient implements MailClient {
         try {
             String mailFrom = mailProperties.getProperty("mail.from");
             if (mailFrom != null) {
-                mailFrom = mailFrom.replace(ServerProperties.PRODUCT_NAME, productName);
+                mailFrom = mailFrom.replace(Placeholders.PRODUCT_NAME, productName);
             }
             this.from = new InternetAddress(mailFrom);
         } catch (AddressException e) {

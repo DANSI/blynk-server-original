@@ -14,6 +14,7 @@ import cc.blynk.utils.SHA256Util;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.properties.GCMProperties;
 import cc.blynk.utils.properties.MailProperties;
+import cc.blynk.utils.properties.Placeholders;
 import cc.blynk.utils.properties.ServerProperties;
 import cc.blynk.utils.properties.SlackProperties;
 import cc.blynk.utils.properties.SmsProperties;
@@ -161,7 +162,7 @@ public final class ServerLauncher {
         String sb = "Your Admin url is " + url + "<br>"
                 + "Your Admin login email is <b>" + email + "</b><br>"
                 + "Your Admin password is <b>" + pass + "</b>";
-        return FileLoaderUtil.readNewServerUpTemplateAsString().replace("{BODY}", sb);
+        return FileLoaderUtil.readNewServerUpTemplateAsString().replace(Placeholders.DYNAMIC_SECTION, sb);
     }
 
     private static boolean startServers(BaseServer[] servers) {

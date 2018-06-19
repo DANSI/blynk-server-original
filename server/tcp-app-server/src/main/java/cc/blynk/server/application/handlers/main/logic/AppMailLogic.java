@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.StringUtils;
+import cc.blynk.utils.properties.Placeholders;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -90,8 +91,8 @@ public class AppMailLogic {
 
         var subj = "Template ID for " + template.name;
         var body = templateIdMailBody
-                .replace("{template_name}", template.name)
-                .replace("{template_id}", template.templateId);
+                .replace(Placeholders.TEMPLATE_NAME, template.name)
+                .replace(Placeholders.TEMPLATE_ID, template.templateId);
 
         log.trace("Sending template id mail for user {}, with id : '{}'.", user.email, templateId);
         mail(ctx.channel(), user.email, subj, body, msgId, true);

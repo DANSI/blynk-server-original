@@ -12,7 +12,7 @@ import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.TokenGeneratorUtil;
-import cc.blynk.utils.properties.ServerProperties;
+import cc.blynk.utils.properties.Placeholders;
 import cc.blynk.utils.validators.BlynkEmailValidator;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -43,7 +43,7 @@ public class ResetPasswordHandler extends SimpleChannelInboundHandler<ResetPassw
         String productName = holder.props.getProductName();
         this.emailSubj = "Password reset request for the " + productName + " app.";
         this.emailBody = FileLoaderUtil.readAppResetEmailTemplateAsString()
-                .replace(ServerProperties.PRODUCT_NAME, productName);
+                .replace(Placeholders.PRODUCT_NAME, productName);
         this.mailWrapper = holder.mailWrapper;
         this.userDao = holder.userDao;
         this.blockingIOProcessor = holder.blockingIOProcessor;
@@ -144,7 +144,7 @@ public class ResetPasswordHandler extends SimpleChannelInboundHandler<ResetPassw
         tokensPool.addToken(token, userToken);
 
         String resetUrl = makeResetUrl(appName, token);
-        String body = emailBody.replace(ServerProperties.RESET_URL, resetUrl);
+        String body = emailBody.replace(Placeholders.RESET_URL, resetUrl);
 
         blockingIOProcessor.execute(() -> {
             try {

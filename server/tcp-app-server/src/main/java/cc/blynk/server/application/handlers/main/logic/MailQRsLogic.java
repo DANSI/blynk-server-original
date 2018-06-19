@@ -13,6 +13,7 @@ import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.mail.QrHolder;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.TokenGeneratorUtil;
+import cc.blynk.utils.properties.Placeholders;
 import io.netty.channel.ChannelHandlerContext;
 import net.glxn.qrgen.core.image.ImageType;
 import net.glxn.qrgen.javase.QRCode;
@@ -89,8 +90,8 @@ public class MailQRsLogic {
                         throw new Exception("App Publishing Preview requires enabled DB.");
                     }
 
-                    var finalBody = textHolder.dynamicMailBody
-                            .replace("{project_name}", dash.name);
+                    String finalBody = textHolder.dynamicMailBody
+                            .replace(Placeholders.PROJECT_NAME, dash.name);
 
                     mailWrapper.sendWithAttachment(to, subj, finalBody, qrHolder);
                     channel.writeAndFlush(ok(msgId), channel.voidPromise());
@@ -108,9 +109,9 @@ public class MailQRsLogic {
                         qrHolder.attach(sb);
                     }
 
-                    var finalBody = textHolder.staticMailBody
-                            .replace("{project_name}", dash.name)
-                            .replace("{device_section}", sb.toString());
+                    String finalBody = textHolder.staticMailBody
+                            .replace(Placeholders.PROJECT_NAME, dash.name)
+                            .replace(Placeholders.DYNAMIC_SECTION, sb.toString());
 
                     mailWrapper.sendWithAttachment(to, subj, finalBody, qrHolders);
                     channel.writeAndFlush(ok(msgId), channel.voidPromise());
