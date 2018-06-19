@@ -8,6 +8,8 @@ package cc.blynk.utils.properties;
  */
 public final class Placeholders {
 
+    public static final String VENDOR_EMAIL = "{VENDOR_EMAIL}";
+    public static final String DEVICE_OWNER_EMAIL = "{DEVICE_OWNER_EMAIL}";
     public static final String PRODUCT_NAME = "{PRODUCT_NAME}";
     public static final String DEVICE_NAME = "{DEVICE_NAME}";
     public static final String RESET_URL = "{RESET_URL}";

@@ -6,6 +6,7 @@ import cc.blynk.server.core.processors.NotificationBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.notifications.push.GCMWrapper;
+import cc.blynk.utils.properties.Placeholders;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -61,7 +62,8 @@ public class PushLogic extends NotificationBase {
         long now = System.currentTimeMillis();
         checkIfNotificationQuotaLimitIsNotReached(now);
 
-        String updatedBody = state.device.updateWithPlaceholder(message.body);
+        String deviceName = state.device.name == null ? "" : state.device.name;
+        String updatedBody = message.body.replace(Placeholders.DEVICE_NAME, deviceName);
 
         if (Notification.isWrongBody(updatedBody)) {
             log.debug("Notification message is larger than limit.");

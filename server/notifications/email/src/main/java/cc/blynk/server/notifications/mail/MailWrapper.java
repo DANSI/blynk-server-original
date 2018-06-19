@@ -14,9 +14,8 @@ public class MailWrapper {
     private final MailClient client;
     private final String emailBody;
     private final String reportBody;
-    private final String customerEmail;
 
-    public MailWrapper(MailProperties mailProperties, String productName, String customerEmail) {
+    public MailWrapper(MailProperties mailProperties, String productName) {
         String host = mailProperties.getProperty("mail.smtp.host");
         if (host != null && host.contains("sparkpostmail")) {
             client = new SparkPostMailClient(mailProperties, productName);
@@ -25,7 +24,6 @@ public class MailWrapper {
         }
         this.emailBody = FileLoaderUtil.readFileAsString("static/register-email.html");
         this.reportBody = FileLoaderUtil.readFileAsString("static/report-email.html");
-        this.customerEmail = customerEmail;
     }
 
     public void sendReportEmail(String to,

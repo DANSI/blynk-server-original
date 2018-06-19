@@ -193,7 +193,7 @@ public class AppMailTest extends IntegrationBase {
     }
 
     @Test
-    public void testPlaceholderForDeivceNameWorks() throws Exception {
+    public void testPlaceholderForDeviceNameWorks() throws Exception {
         reset(blockingIOProcessor);
 
         //adding email widget
@@ -202,6 +202,32 @@ public class AppMailTest extends IntegrationBase {
 
         clientPair.hardwareClient.send("email to@to.com SUBJ_{DEVICE_NAME} BODY_{DEVICE_NAME}");
         verify(mailWrapper, timeout(500)).sendText(eq("to@to.com"), eq("SUBJ_My Device"), eq("BODY_My Device"));
+        clientPair.hardwareClient.verifyResult(ok(1));
+    }
+
+    @Test
+    public void testPlaceholderForVendorWorks() throws Exception {
+        reset(blockingIOProcessor);
+
+        //adding email widget
+        clientPair.appClient.createWidget(1, "{\"id\":432, \"contentType\":\"TEXT_PLAIN\", \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"type\":\"EMAIL\"}");
+        clientPair.appClient.verifyResult(ok(1));
+
+        clientPair.hardwareClient.send("email {VENDOR_EMAIL} SUBJ_{VENDOR_EMAIL} BODY_{VENDOR_EMAIL}");
+        verify(mailWrapper, timeout(500)).sendText(eq("vendor@blynk.cc"), eq("SUBJ_vendor@blynk.cc"), eq("BODY_vendor@blynk.cc"));
+        clientPair.hardwareClient.verifyResult(ok(1));
+    }
+
+    @Test
+    public void testPlaceholderForDeviceOwnerWorks() throws Exception {
+        reset(blockingIOProcessor);
+
+        //adding email widget
+        clientPair.appClient.createWidget(1, "{\"id\":432, \"contentType\":\"TEXT_PLAIN\", \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"type\":\"EMAIL\"}");
+        clientPair.appClient.verifyResult(ok(1));
+
+        clientPair.hardwareClient.send("email {DEVICE_OWNER_EMAIL} SUBJ_{DEVICE_OWNER_EMAIL} BODY_{DEVICE_OWNER_EMAIL}");
+        verify(mailWrapper, timeout(500)).sendText(eq("dima@mail.ua"), eq("SUBJ_dima@mail.ua"), eq("BODY_dima@mail.ua"));
         clientPair.hardwareClient.verifyResult(ok(1));
     }
 

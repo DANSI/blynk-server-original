@@ -41,8 +41,8 @@ public class ServerProperties extends BaseProperties {
         return "https://" + host + httpsPort + getAdminRootPath();
     }
 
-    public String getCustomerEmail() {
-        return getProperty("customer.email");
+    public String getVendorEmail() {
+        return getProperty("vendor.email");
     }
 
     public boolean isDBEnabled() {

@@ -1,5 +1,6 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
@@ -10,6 +11,7 @@ import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.notifications.mail.MailWrapper;
+import cc.blynk.utils.properties.Placeholders;
 import cc.blynk.utils.validators.BlynkEmailValidator;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -33,11 +35,14 @@ public class MailLogic extends NotificationBase {
 
     private final BlockingIOProcessor blockingIOProcessor;
     private final MailWrapper mailWrapper;
+    private final String vendorEmail;
 
-    public MailLogic(BlockingIOProcessor blockingIOProcessor, MailWrapper mailWrapper, long notificationQuotaLimit) {
-        super(notificationQuotaLimit);
-        this.blockingIOProcessor = blockingIOProcessor;
-        this.mailWrapper = mailWrapper;
+    public MailLogic(Holder holder) {
+        super(holder.limits.notificationPeriodLimitSec);
+        this.blockingIOProcessor = holder.blockingIOProcessor;
+        this.mailWrapper = holder.mailWrapper;
+        String tmp = holder.props.getVendorEmail();
+        this.vendorEmail = tmp == null ? "" : tmp;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
@@ -67,7 +72,9 @@ public class MailLogic extends NotificationBase {
         String body;
 
         if (bodyParts.length == 3) {
-            to = bodyParts[0];
+            to = bodyParts[0]
+                    .replace(Placeholders.VENDOR_EMAIL, vendorEmail)
+                    .replace(Placeholders.DEVICE_OWNER_EMAIL, user.email);
             subj = bodyParts[1];
             body = bodyParts[2];
         } else {
@@ -83,8 +90,15 @@ public class MailLogic extends NotificationBase {
             throw new IllegalCommandException("Invalid mail receiver.");
         }
 
-        String updatedSubj = state.device.updateWithPlaceholder(subj);
-        String updatedBody = state.device.updateWithPlaceholder(body);
+        String deviceName = state.device.name == null ? "" : state.device.name;
+
+        String updatedSubj = subj.replace(Placeholders.DEVICE_NAME, deviceName)
+                                 .replace(Placeholders.VENDOR_EMAIL, vendorEmail)
+                                 .replace(Placeholders.DEVICE_OWNER_EMAIL, user.email);
+
+        String updatedBody = body.replace(Placeholders.DEVICE_NAME, deviceName)
+                                 .replace(Placeholders.VENDOR_EMAIL, vendorEmail)
+                                 .replace(Placeholders.DEVICE_OWNER_EMAIL, user.email);
 
         log.trace("Sending Mail for user {}, with message : '{}'.", user.email, updatedBody);
         mail(ctx.channel(), user.email, to, updatedSubj, updatedBody, message.id, mail.isText());

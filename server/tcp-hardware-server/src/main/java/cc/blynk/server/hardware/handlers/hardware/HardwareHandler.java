@@ -56,8 +56,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
         this.hardware = new HardwareLogic(holder, stateHolder.user.email);
         this.bridge = new BridgeLogic(holder.sessionDao, holder.tokenManager);
 
-        this.email = new MailLogic(holder.blockingIOProcessor,
-                holder.mailWrapper, holder.limits.notificationPeriodLimitSec);
+        this.email = new MailLogic(holder);
         this.push = new PushLogic(holder.gcmWrapper, holder.limits.notificationPeriodLimitSec);
         this.tweet = new TwitLogic(holder.twitterWrapper, holder.limits.notificationPeriodLimitSec);
         this.smsLogic = new SmsLogic(holder.smsWrapper, holder.limits.notificationPeriodLimitSec);

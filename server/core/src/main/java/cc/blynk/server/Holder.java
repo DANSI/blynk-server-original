@@ -147,9 +147,8 @@ public class Holder {
         );
 
         String productName = serverProperties.getProductName();
-        String customerEmail = serverProperties.getCustomerEmail();
         this.twitterWrapper = new TwitterWrapper(twitterProperties, asyncHttpClient);
-        this.mailWrapper = new MailWrapper(mailProperties, productName, customerEmail);
+        this.mailWrapper = new MailWrapper(mailProperties, productName);
         this.gcmWrapper = new GCMWrapper(gcmProperties, asyncHttpClient, productName);
         this.smsWrapper = new SMSWrapper(smsProperties, asyncHttpClient);
         this.slackWrapper = new SlackWrapper(slackProperties, asyncHttpClient, region);

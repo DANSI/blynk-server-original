@@ -142,14 +142,14 @@ public final class ServerLauncher {
             String hash = SHA256Util.makeHash(pass, email);
             holder.userDao.add(email, hash, AppNameUtil.BLYNK, true);
 
-            String customerEmail = props.getCustomerEmail();
-            if (customerEmail != null) {
+            String vendorEmail = props.getVendorEmail();
+            if (vendorEmail != null) {
                 String productName = props.getProductName();
                 String subj = "Your private Blynk server for " + productName + " is up!";
                 String body = buildServerUpEmailBody(url, email, pass);
                 holder.blockingIOProcessor.messagingExecutor.execute(() -> {
                     try {
-                        holder.mailWrapper.sendHtml(customerEmail, subj, body);
+                        holder.mailWrapper.sendHtml(vendorEmail, subj, body);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
