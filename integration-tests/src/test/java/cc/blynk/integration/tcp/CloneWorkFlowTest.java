@@ -4,10 +4,13 @@ import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
+import cc.blynk.utils.StringUtils;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
@@ -22,6 +25,7 @@ import java.util.concurrent.Future;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * The Blynk Project.
@@ -95,6 +99,34 @@ public class CloneWorkFlowTest extends IntegrationBase {
         clientPair.appClient.send("getProjectByCloneCode " + token);
         DashBoard dashBoard = clientPair.appClient.getDash(2);
         assertEquals("My Dashboard", dashBoard.name);
+        Device device = dashBoard.devices[0];
+        assertEquals(0, device.connectTime);
+        assertEquals(0, device.dataReceivedAt);
+        assertEquals(0, device.disconnectTime);
+        assertEquals(0, device.firstConnectTime);
+        assertNull(device.deviceOtaInfo);
+        assertNull(device.hardwareInfo);
+
+        clientPair.appClient.send("loadProfileGzipped");
+        Profile profile = clientPair.appClient.getProfile(3);
+        assertEquals(1, profile.dashBoards.length);
+    }
+
+    @Test
+    public void getProjectByCloneCodeNewFormat() throws Exception {
+        clientPair.appClient.send("getCloneCode 1");
+        String token = clientPair.appClient.getBody();
+        assertNotNull(token);
+        assertEquals(32, token.length());
+
+        clientPair.appClient.send("getProjectByCloneCode " + token + StringUtils.BODY_SEPARATOR_STRING + "new");
+        DashBoard dashBoard = clientPair.appClient.getDash(2);
+        assertEquals("My Dashboard", dashBoard.name);
+
+        clientPair.appClient.send("loadProfileGzipped");
+        Profile profile = clientPair.appClient.getProfile(3);
+        assertEquals(2, profile.dashBoards.length);
+        assertEquals(2, profile.dashBoards[1].id);
     }
 
     @Test

@@ -20,6 +20,7 @@ import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
 import static cc.blynk.server.core.protocol.enums.Response.NO_ACTIVE_DASHBOARD;
 import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
 import static cc.blynk.server.core.protocol.enums.Response.OK;
+import static cc.blynk.server.core.protocol.enums.Response.QUOTA_LIMIT;
 import static cc.blynk.server.core.protocol.enums.Response.SERVER_ERROR;
 import static cc.blynk.server.core.protocol.enums.Response.USER_ALREADY_REGISTERED;
 import static cc.blynk.server.core.protocol.enums.Response.USER_NOT_AUTHENTICATED;
@@ -81,6 +82,10 @@ public final class CommonByteBufUtil {
 
     public static ResponseMessage serverError(int msgId) {
         return makeResponse(msgId, SERVER_ERROR);
+    }
+
+    public static ResponseMessage quotaLimit(int msgId) {
+        return makeResponse(msgId, QUOTA_LIMIT);
     }
 
     public static ResponseMessage noData(int msgId) {
