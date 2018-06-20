@@ -1,5 +1,6 @@
 package cc.blynk.server.workers;
 
+import cc.blynk.server.SslContextHolder;
 import cc.blynk.server.acme.AcmeClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,11 +21,11 @@ public class CertificateRenewalWorker implements Runnable {
 
     private static final Logger log = LogManager.getLogger(CertificateRenewalWorker.class);
 
-    private final AcmeClient acmeClient;
+    private final SslContextHolder sslContextHolder;
     private final int renewBeforeDays;
 
-    public CertificateRenewalWorker(AcmeClient acmeClient, int renewBeforeDays) {
-        this.acmeClient = acmeClient;
+    public CertificateRenewalWorker(SslContextHolder sslContextHolder, int renewBeforeDays) {
+        this.sslContextHolder = sslContextHolder;
         this.renewBeforeDays = renewBeforeDays;
     }
 
@@ -44,11 +45,11 @@ public class CertificateRenewalWorker implements Runnable {
                 Date oneWeekAheadDate = getNowDatePlusDays(renewBeforeDays);
                 if (expirationDate.before(oneWeekAheadDate)) {
                     log.warn("Trying to renew...");
-                    acmeClient.requestCertificate();
+                    sslContextHolder.regenerate();
                     log.info("Success! The certificate for your domain has been renewed!");
                 }
             } else {
-                acmeClient.requestCertificate();
+                sslContextHolder.regenerate();
                 log.info("Success! The certificate for your domain has been renewed!");
             }
         } catch (Exception e) {

@@ -62,7 +62,7 @@ final class JobLauncher {
 
         if (holder.sslContextHolder.runRenewalWorker()) {
             scheduler.scheduleAtFixedRate(
-                    new CertificateRenewalWorker(holder.sslContextHolder.acmeClient, 21), 1, 1, TimeUnit.DAYS
+                    new CertificateRenewalWorker(holder.sslContextHolder, 21), 1, 1, TimeUnit.DAYS
             );
         }
         scheduler.scheduleAtFixedRate(LRUCache.LOGIN_TOKENS_CACHE::clear, 1, 1, HOURS);
