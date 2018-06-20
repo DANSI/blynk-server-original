@@ -133,20 +133,26 @@ public abstract class BaseReportTask implements Runnable {
         long startFrom = now - TimeUnit.DAYS.toMillis(report.reportType.getDuration());
         Path output = Paths.get(userCsvFolder.toString() + ".gz");
 
-        //todo for now supporting only 1 type of output format
+        ReportResult result = generateReport(output, dash, fetchCount, startFrom);
+        if (result == ReportResult.OK) {
+            sendEmail(output);
+        } else {
+            log.info("No data for report for user {} and reportId {}.", key.user.email, report.id);
+        }
+        return result;
+    }
+
+    private ReportResult generateReport(Path output, DashBoard dash, int fetchCount, long startFrom) throws Exception {
+        //todo for now supporting only some types of output format
         switch (report.reportOutput) {
             case MERGED_CSV:
             case EXCEL_TAB_PER_DEVICE:
             case CSV_FILE_PER_DEVICE:
             case CSV_FILE_PER_DEVICE_PER_PIN:
             default:
-                if (filePerDevicePerPin(output, dash, fetchCount, startFrom)) {
-                    sendEmail(output);
-                    return ReportResult.OK;
-                } else {
-                    log.info("No data for report for user {} and reportId {}.", key.user.email, report.id);
-                    return ReportResult.NO_DATA;
-                }
+                return filePerDevicePerPin(output, dash, fetchCount, startFrom)
+                        ? ReportResult.OK
+                        : ReportResult.NO_DATA;
         }
     }
 
