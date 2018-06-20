@@ -2,7 +2,9 @@ package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.TokenManager;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
@@ -28,29 +30,29 @@ public class GetProvisionTokenLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        var split = split2(message.body);
+        String[] split = split2(message.body);
 
-        var dashId = Integer.parseInt(split[0]);
-        var dash = user.profile.getDashByIdOrThrow(dashId);
+        int dashId = Integer.parseInt(split[0]);
+        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
-        var deviceString = split[1];
+        String deviceString = split[1];
         if (deviceString == null || deviceString.isEmpty()) {
             throw new IllegalCommandException("Income device message is empty.");
         }
 
-        var temporaryDevice = JsonParser.parseDevice(deviceString, message.id);
+        Device temporaryDevice = JsonParser.parseDevice(deviceString, message.id);
 
         if (temporaryDevice.isNotValid()) {
             throw new IllegalCommandException("Income device message is not valid.");
         }
 
-        for (var device : dash.devices) {
+        for (Device device : dash.devices) {
             if (device.id == temporaryDevice.id) {
                 throw new NotAllowedException("Device with same id already exists.", message.id);
             }
         }
 
-        var tempToken = TokenGeneratorUtil.generateNewToken();
+        String tempToken = TokenGeneratorUtil.generateNewToken();
         tokenManager.assignToken(user, dash, temporaryDevice, tempToken, true);
 
         if (ctx.channel().isWritable()) {

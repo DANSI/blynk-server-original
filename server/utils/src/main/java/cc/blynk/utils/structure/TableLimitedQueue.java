@@ -10,10 +10,10 @@ package cc.blynk.utils.structure;
  */
 public class TableLimitedQueue<T> extends BaseLimitedQueue<T> {
 
-    private static final int TABLE_POOL_SIZE = Integer.parseInt(System.getProperty("table.rows.pool.size", "100"));
+    private static final int POOL_SIZE = Integer.parseInt(System.getProperty("table.rows.pool.size", "100"));
 
     public TableLimitedQueue() {
-        super(TABLE_POOL_SIZE);
+        super(POOL_SIZE);
     }
 
 }
