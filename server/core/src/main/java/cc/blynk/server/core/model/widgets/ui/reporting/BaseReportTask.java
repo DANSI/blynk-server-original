@@ -26,6 +26,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipOutputStream;
 
+import static cc.blynk.utils.StringUtils.NOT_SUPPORTED_CHARS;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -89,7 +91,7 @@ public abstract class BaseReportTask implements Runnable {
         if (device != null) {
             String name = device.name;
             if (name != null) {
-                name = name.replaceAll("[\\\\/:*?\"<>| ]", "");
+                name = NOT_SUPPORTED_CHARS.matcher(name).replaceAll("");
                 return name.length() < 16 ? name : name.substring(0, 16);
             }
         }
