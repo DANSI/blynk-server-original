@@ -3,6 +3,7 @@ package cc.blynk.server.core.model.widgets.controls;
 import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
+import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 
 /**
  * The Blynk Project.
@@ -16,6 +17,8 @@ public class Button extends OnePinWidget {
     public volatile String onLabel;
 
     public volatile String offLabel;
+
+    public FontSize fontSize;
 
     @Override
     public String makeHardwareBody() {

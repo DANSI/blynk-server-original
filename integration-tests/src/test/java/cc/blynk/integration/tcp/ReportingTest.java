@@ -406,7 +406,7 @@ public class ReportingTest extends IntegrationBase {
 
         report = clientPair.appClient.parseReportFromResponse(3);
         assertNotNull(report);
-        assertEquals(System.currentTimeMillis(), report.nextReportAt, 2000);
+        assertEquals(System.currentTimeMillis(), report.nextReportAt, 3000);
 
         Report report2 = new Report(2, "DailyReport2",
                 new ReportSource[] {reportSource},
@@ -661,7 +661,7 @@ public class ReportingTest extends IntegrationBase {
 
         report = clientPair.appClient.parseReportFromResponse(3);
         assertNotNull(report);
-        assertEquals(System.currentTimeMillis(), report.nextReportAt, 2000);
+        assertEquals(System.currentTimeMillis(), report.nextReportAt, 3000);
 
         String date = LocalDate.now(report.tzName).toString();
         String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";

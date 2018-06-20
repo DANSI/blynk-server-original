@@ -2,6 +2,7 @@ package cc.blynk.server.core.model.widgets.controls;
 
 import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
+import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 
 /**
  * The Blynk Project.
@@ -17,6 +18,8 @@ public class Timer extends OnePinWidget {
     public int stopTime = -1;
 
     public String stopValue;
+
+    public FontSize fontSize;
 
     public boolean isValidStart() {
         return isValidTime(startTime) && isValidValue(startValue);

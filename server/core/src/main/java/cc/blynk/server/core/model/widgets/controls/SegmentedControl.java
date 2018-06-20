@@ -3,6 +3,7 @@ package cc.blynk.server.core.model.widgets.controls;
 import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
+import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 import cc.blynk.utils.StringUtils;
 
 /**
@@ -13,6 +14,8 @@ import cc.blynk.utils.StringUtils;
 public class SegmentedControl extends OnePinWidget {
 
     public volatile String[] labels;
+
+    public FontSize fontSize;
 
     @Override
     public PinMode getModeType() {
