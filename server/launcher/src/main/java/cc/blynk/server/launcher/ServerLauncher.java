@@ -129,12 +129,12 @@ public final class ServerLauncher {
         String email = props.getProperty("admin.email", "admin@blynk.cc");
         String pass = props.getProperty("admin.pass");
 
-        if (pass == null || pass.isEmpty()) {
-            System.out.println("Admin password not specified. Random password generated.");
-            pass = StringUtils.randomPassword(24);
-        }
-
         if (!holder.userDao.isSuperAdminExists()) {
+            if (pass == null || pass.isEmpty()) {
+                System.out.println("Admin password not specified. Random password generated.");
+                pass = StringUtils.randomPassword(24);
+            }
+
             System.out.println("Your Admin url is " + url);
             System.out.println("Your Admin login email is " + email);
             System.out.println("Your Admin password is " + pass);
