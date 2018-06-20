@@ -92,7 +92,7 @@ public abstract class BaseReportTask implements Runnable {
             String name = device.name;
             if (name != null) {
                 name = NOT_SUPPORTED_CHARS.matcher(name).replaceAll("");
-                return name.length() < 16 ? name : name.substring(0, 16);
+                return name.length() <= 16 ? name : name.substring(0, 16);
             }
         }
         return "";
