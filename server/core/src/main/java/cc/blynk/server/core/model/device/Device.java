@@ -2,7 +2,6 @@ package cc.blynk.server.core.model.device;
 
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.Target;
-import cc.blynk.utils.properties.ServerProperties;
 
 import static cc.blynk.server.core.model.device.HardwareInfo.DEFAULT_HARDWARE_BUFFER_SIZE;
 
@@ -124,13 +123,6 @@ public class Device implements Target {
             return bodySize <= DEFAULT_HARDWARE_BUFFER_SIZE;
         }
         return bodySize + 5 <= hardwareInfo.buffIn;
-    }
-
-    public String updateWithPlaceholder(String body) {
-        if (name != null && !name.isEmpty()) {
-            return body.replace(ServerProperties.DEVICE_NAME, name);
-        }
-        return body;
     }
 
     @Override

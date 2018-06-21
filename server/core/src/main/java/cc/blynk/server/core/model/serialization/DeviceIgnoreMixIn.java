@@ -24,6 +24,15 @@ public abstract class DeviceIgnoreMixIn {
     public long disconnectTime;
 
     @JsonIgnore
+    public long connectTime;
+
+    @JsonIgnore
+    public long firstConnectTime;
+
+    @JsonIgnore
+    public long dataReceivedAt;
+
+    @JsonIgnore
     public String lastLoggedIP;
 
     @JsonIgnore

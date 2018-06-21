@@ -34,4 +34,8 @@ public class ReportDataStream {
     public boolean isValid() {
         return DataStream.isValid(pin, pinType);
     }
+
+    public String formatPin() {
+        return pinType.pinTypeString + pin;
+    }
 }

@@ -65,7 +65,7 @@ public abstract class DefaultExceptionHandler {
                         ctx.handler().getClass(), ctx.name(), message, ctx.channel());
                 //additional logging for rare NPE.
                 if (message == null) {
-                    log.error(cause);
+                    log.error("Error.", cause);
                 } else {
                     log.debug(cause);
                 }

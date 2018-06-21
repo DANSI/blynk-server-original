@@ -14,6 +14,7 @@ import cc.blynk.utils.SHA256Util;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.properties.GCMProperties;
 import cc.blynk.utils.properties.MailProperties;
+import cc.blynk.utils.properties.Placeholders;
 import cc.blynk.utils.properties.ServerProperties;
 import cc.blynk.utils.properties.SlackProperties;
 import cc.blynk.utils.properties.SmsProperties;
@@ -129,12 +130,12 @@ public final class ServerLauncher {
         String email = props.getProperty("admin.email", "admin@blynk.cc");
         String pass = props.getProperty("admin.pass");
 
-        if (pass == null || pass.isEmpty()) {
-            System.out.println("Admin password not specified. Random password generated.");
-            pass = StringUtils.randomPassword(24);
-        }
-
         if (!holder.userDao.isSuperAdminExists()) {
+            if (pass == null || pass.isEmpty()) {
+                System.out.println("Admin password not specified. Random password generated.");
+                pass = StringUtils.randomPassword(24);
+            }
+
             System.out.println("Your Admin url is " + url);
             System.out.println("Your Admin login email is " + email);
             System.out.println("Your Admin password is " + pass);
@@ -142,14 +143,14 @@ public final class ServerLauncher {
             String hash = SHA256Util.makeHash(pass, email);
             holder.userDao.add(email, hash, AppNameUtil.BLYNK, true);
 
-            String customerEmail = props.getCustomerEmail();
-            if (customerEmail != null) {
+            String vendorEmail = props.getVendorEmail();
+            if (vendorEmail != null) {
                 String productName = props.getProductName();
                 String subj = "Your private Blynk server for " + productName + " is up!";
                 String body = buildServerUpEmailBody(url, email, pass);
                 holder.blockingIOProcessor.messagingExecutor.execute(() -> {
                     try {
-                        holder.mailWrapper.sendHtml(customerEmail, subj, body);
+                        holder.mailWrapper.sendHtml(vendorEmail, subj, body);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -162,7 +163,7 @@ public final class ServerLauncher {
         String sb = "Your Admin url is " + url + "<br>"
                 + "Your Admin login email is <b>" + email + "</b><br>"
                 + "Your Admin password is <b>" + pass + "</b>";
-        return FileLoaderUtil.readNewServerUpTemplateAsString().replace("{BODY}", sb);
+        return FileLoaderUtil.readNewServerUpTemplateAsString().replace(Placeholders.DYNAMIC_SECTION, sb);
     }
 
     private static boolean startServers(BaseServer[] servers) {

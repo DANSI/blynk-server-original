@@ -399,7 +399,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 getCloneCodeLogic.messageReceived(ctx, state.user, msg);
                 break;
             case GET_PROJECT_BY_CLONE_CODE :
-                getProjectByCloneCodeLogic.messageReceived(ctx, msg);
+                getProjectByCloneCodeLogic.messageReceived(ctx, state.user, msg);
                 break;
             case LOGOUT :
                 LogoutLogic.messageReceived(ctx, state.user, msg);

@@ -9,7 +9,7 @@ import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.notifications.push.GCMWrapper;
-import cc.blynk.utils.properties.ServerProperties;
+import cc.blynk.utils.properties.Placeholders;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -97,7 +97,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
     private void sendPushNotification(ChannelHandlerContext ctx,
                                       Notification notification, int dashId, Device device) {
         String deviceName = ((device == null || device.name == null) ? "device" : device.name);
-        String message = pushNotificationBody.replace(ServerProperties.DEVICE_NAME, deviceName);
+        String message = pushNotificationBody.replace(Placeholders.DEVICE_NAME, deviceName);
         if (notification.notifyWhenOfflineIgnorePeriod == 0 || device == null) {
             notification.push(gcmWrapper,
                     message,

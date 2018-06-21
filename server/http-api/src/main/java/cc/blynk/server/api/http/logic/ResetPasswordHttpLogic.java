@@ -24,7 +24,7 @@ import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.TokenGeneratorUtil;
 import cc.blynk.utils.http.MediaType;
-import cc.blynk.utils.properties.ServerProperties;
+import cc.blynk.utils.properties.Placeholders;
 import cc.blynk.utils.validators.BlynkEmailValidator;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -68,7 +68,7 @@ public class ResetPasswordHttpLogic extends BaseHttpHandler {
         String productName = holder.props.getProductName();
         this.emailSubj = "Password reset request for the " + productName + " app.";
         this.emailBody = FileLoaderUtil.readResetEmailTemplateAsString()
-                .replace(ServerProperties.PRODUCT_NAME, productName);
+                .replace(Placeholders.PRODUCT_NAME, productName);
         this.mailWrapper = holder.mailWrapper;
 
         String host = holder.props.getServerHost();
@@ -111,7 +111,7 @@ public class ResetPasswordHttpLogic extends BaseHttpHandler {
 
         TokenUser userToken = new TokenUser(trimmedEmail, appName);
         tokensPool.addToken(token, userToken);
-        String message = emailBody.replace("{RESET_URL}", resetPassUrl + token);
+        String message = emailBody.replace(Placeholders.RESET_URL, resetPassUrl + token);
         log.info("Sending token to {} address", trimmedEmail);
 
         blockingIOProcessor.execute(() -> {
@@ -141,7 +141,7 @@ public class ResetPasswordHttpLogic extends BaseHttpHandler {
         }
 
         log.info("{} landed.", user.email);
-        String page = pageContent.replace("{EMAIL}", user.email).replace("{TOKEN}", token);
+        String page = pageContent.replace(Placeholders.EMAIL, user.email).replace(Placeholders.TOKEN, token);
         return ok(page, MediaType.TEXT_HTML);
     }
 

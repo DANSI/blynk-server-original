@@ -33,7 +33,7 @@ product.name=test
 server.host=test.blynk.cc
 admin.email=test@blynk.cc
 admin.pass=
-customer.email=
+vendor.email=
 
         
 db.properties

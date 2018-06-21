@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 import static cc.blynk.server.core.model.widgets.ui.reporting.ReportOutput.CSV_FILE_PER_DEVICE_PER_PIN;
 
@@ -123,6 +124,12 @@ public class Report {
         sb.append("Report name: ").append(name).append("<br>");
         reportType.buildDynamicSection(sb, tzName);
         return sb.toString();
+    }
+
+    public DateTimeFormatter makeFormatter() {
+        return (format == null || format == Format.TS)
+                ? null
+                : DateTimeFormatter.ofPattern(format.pattern).withZone(tzName);
     }
 
     @Override

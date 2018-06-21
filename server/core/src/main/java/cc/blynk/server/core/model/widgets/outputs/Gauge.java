@@ -2,6 +2,7 @@ package cc.blynk.server.core.model.widgets.outputs;
 
 import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.widgets.OnePinReadingWidget;
+import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 
 /**
  * The Blynk Project.
@@ -11,6 +12,8 @@ import cc.blynk.server.core.model.widgets.OnePinReadingWidget;
 public class Gauge extends OnePinReadingWidget {
 
     private String valueFormatting;
+
+    public FontSize fontSize;
 
     @Override
     public PinMode getModeType() {

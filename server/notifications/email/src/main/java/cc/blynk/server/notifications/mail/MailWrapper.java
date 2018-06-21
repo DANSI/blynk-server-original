@@ -2,6 +2,7 @@ package cc.blynk.server.notifications.mail;
 
 import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.properties.MailProperties;
+import cc.blynk.utils.properties.Placeholders;
 
 /**
  * The Blynk Project.
@@ -30,8 +31,8 @@ public class MailWrapper {
                                 String downloadUrl,
                                 String dynamicSection) throws Exception  {
         String body = reportBody
-                .replace("{DOWNLOAD_URL}", downloadUrl)
-                .replace("{DYNAMIC_SECTION}", dynamicSection);
+                .replace(Placeholders.DOWNLOAD_URL, downloadUrl)
+                .replace(Placeholders.DYNAMIC_SECTION, dynamicSection);
         sendHtml(to, subj, body);
     }
 

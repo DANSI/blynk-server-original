@@ -17,9 +17,6 @@ import java.util.Map;
 public class ServerProperties extends BaseProperties {
 
     public static final String SERVER_PROPERTIES_FILENAME = "server.properties";
-    public static final String PRODUCT_NAME = "{PRODUCT_NAME}";
-    public static final String DEVICE_NAME = "{DEVICE_NAME}";
-    public static final String RESET_URL = "{RESET_URL}";
 
     private static final String STATIC_FILES_FOLDER = "static";
 
@@ -44,8 +41,8 @@ public class ServerProperties extends BaseProperties {
         return "https://" + host + httpsPort + getAdminRootPath();
     }
 
-    public String getCustomerEmail() {
-        return getProperty("customer.email");
+    public String getVendorEmail() {
+        return getProperty("vendor.email");
     }
 
     public boolean isDBEnabled() {
