@@ -156,7 +156,7 @@ public final class FileUtils {
 
             if (startFrom < ts) {
                 String formattedTs = formatTS(formatter, ts);
-                String data = "" + value + ',' + formattedTs + ',' + pin + '\n';
+                String data = formattedTs + ',' + pin + ',' + value + '\n';
                 baos.write(data.getBytes(US_ASCII), 0, data.length());
             }
         }
@@ -171,7 +171,7 @@ public final class FileUtils {
 
             if (startFrom < ts) {
                 String formattedTs = formatTS(formatter, ts);
-                String data = "" + value + ',' + formattedTs + '\n';
+                String data = formattedTs + ',' + value + '\n';
                 baos.write(data.getBytes(US_ASCII), 0, data.length());
             }
         }

@@ -512,12 +512,12 @@ public class ReportingTest extends IntegrationBase {
         assertTrue(Files.exists(result));
         String resultCsvString = readStringFromFirstZipEntry(result);
         String[] split = resultCsvString.split("[,\n]");
-        assertEquals(1.11D, Double.parseDouble(split[0]), 0.0001);
         String nowFormatted = DateTimeFormatter
                 .ofPattern(Format.ISO_SIMPLE.pattern)
                 .withZone(ZoneId.of("UTC"))
                 .format(Instant.ofEpochMilli(pointNow));
-        assertEquals(nowFormatted, split[1]);
+        assertEquals(nowFormatted, split[0]);
+        assertEquals(1.11D, Double.parseDouble(split[1]), 0.0001);
 
         AsyncHttpClient httpclient = new DefaultAsyncHttpClient(
                 new DefaultAsyncHttpClientConfig.Builder()
@@ -697,7 +697,7 @@ public class ReportingTest extends IntegrationBase {
                 .ofPattern(Format.ISO_SIMPLE.pattern)
                 .withZone(ZoneId.of("UTC"))
                 .format(Instant.ofEpochMilli(pointNow));
-        assertEquals(resultCsvString, "1.11," + nowFormatted + ",v1\n");
+        assertEquals(resultCsvString, nowFormatted + ",v1,1.11\n");
     }
 
     @Test
@@ -793,11 +793,11 @@ public class ReportingTest extends IntegrationBase {
 
         String resultCsvString = readStringFromZipEntry(zipFile, entry);
         assertNotNull(resultCsvString);
-        assertEquals(resultCsvString, "1.11," + nowFormatted + ",v1\n" + "1.12," + nowFormatted + ",v2\n");
+        assertEquals(resultCsvString, nowFormatted + ",v1,1.11\n" + nowFormatted + ",v2,1.12\n");
 
         String resultCsvString2 = readStringFromZipEntry(zipFile, entry2);
         assertNotNull(resultCsvString2);
-        assertEquals(resultCsvString2, "1.13," + nowFormatted + ",v1\n" + "1.14," + nowFormatted + ",v2\n");
+        assertEquals(resultCsvString2, nowFormatted + ",v1,1.13\n" + nowFormatted + ",v2,1.14\n");
     }
 
     @Test
@@ -859,12 +859,12 @@ public class ReportingTest extends IntegrationBase {
         assertTrue(Files.exists(result));
         String resultCsvString = readStringFromFirstZipEntry(result);
         String[] split = resultCsvString.split("[,\n]");
-        assertEquals(1.11D, Double.parseDouble(split[0]), 0.0001);
         String nowFormatted = DateTimeFormatter
                 .ofPattern(Format.ISO_SIMPLE.pattern)
                 .withZone(ZoneId.of("UTC"))
                 .format(Instant.ofEpochMilli(pointNow));
-        assertEquals(nowFormatted, split[1]);
+        assertEquals(nowFormatted, split[0]);
+        assertEquals(1.11D, Double.parseDouble(split[1]), 0.0001);
 
         clientPair.appClient.getWidget(1, 222222);
         ReportingWidget reportingWidget2 = (ReportingWidget) JsonParser.parseWidget(clientPair.appClient.getBody(3), 0);
@@ -943,12 +943,12 @@ public class ReportingTest extends IntegrationBase {
         String resultCsvString = readStringFromFirstZipEntry(result);
         assertNotNull(resultCsvString);
         String[] split = resultCsvString.split("[,\n]");
-        assertEquals(1.11D, Double.parseDouble(split[0]), 0.0001);
         String nowFormatted = DateTimeFormatter
                 .ofPattern(Format.ISO_SIMPLE.pattern)
                 .withZone(ZoneId.of("UTC"))
                 .format(Instant.ofEpochMilli(now));
-        assertEquals(nowFormatted, split[1]);
+        assertEquals(nowFormatted, split[0]);
+        assertEquals(1.11D, Double.parseDouble(split[1]), 0.0001);
     }
 
     @Test
@@ -1027,12 +1027,12 @@ public class ReportingTest extends IntegrationBase {
         String resultCsvString = readStringFromFirstZipEntry(result);
         assertNotNull(resultCsvString);
         String[] split = resultCsvString.split("[,\n]");
-        assertEquals(1.11D, Double.parseDouble(split[0]), 0.0001);
         String nowFormatted = DateTimeFormatter
                 .ofPattern(Format.ISO_SIMPLE.pattern)
                 .withZone(ZoneId.of("UTC"))
                 .format(Instant.ofEpochMilli(now));
-        assertEquals(nowFormatted, split[1]);
+        assertEquals(nowFormatted, split[0]);
+        assertEquals(1.11D, Double.parseDouble(split[1]), 0.0001);
     }
 
     @Test
@@ -1106,12 +1106,12 @@ public class ReportingTest extends IntegrationBase {
         String resultCsvString = readStringFromFirstZipEntry(result);
         assertNotNull(resultCsvString);
         String[] split = resultCsvString.split("[,\n]");
-        assertEquals(1.11D, Double.parseDouble(split[0]), 0.0001);
         String nowFormatted = DateTimeFormatter
                 .ofPattern(Format.ISO_SIMPLE.pattern)
                 .withZone(ZoneId.of("UTC"))
                 .format(Instant.ofEpochMilli(now));
-        assertEquals(nowFormatted, split[1]);
+        assertEquals(nowFormatted, split[0]);
+        assertEquals(1.11D, Double.parseDouble(split[1]), 0.0001);
     }
 
     @Test
@@ -1242,8 +1242,8 @@ public class ReportingTest extends IntegrationBase {
         String resultCsvString = readStringFromFirstZipEntry(result);
         assertNotNull(resultCsvString);
         String[] split = resultCsvString.split("[,\n]");
-        assertEquals(1.11D, Double.parseDouble(split[0]), 0.0001);
-        assertEquals(now, Long.parseLong(split[1]), 2000);
+        assertEquals(now, Long.parseLong(split[0]), 2000);
+        assertEquals(1.11D, Double.parseDouble(split[1]), 0.0001);
     }
 
     @Test
@@ -1536,12 +1536,12 @@ public class ReportingTest extends IntegrationBase {
         assertTrue(Files.exists(result));
         String resultCsvString = readStringFromFirstZipEntry(result);
         String[] split = resultCsvString.split("[,\n]");
-        assertEquals(1.11D, Double.parseDouble(split[0]), 0.0001);
         String nowFormatted = DateTimeFormatter
                 .ofPattern(Format.ISO_SIMPLE.pattern)
                 .withZone(ZoneId.of("UTC"))
                 .format(Instant.ofEpochMilli(pointNow));
-        assertEquals(nowFormatted, split[1]);
+        assertEquals(nowFormatted, split[0]);
+        assertEquals(1.11D, Double.parseDouble(split[1]), 0.0001);
 
         clientPair.appClient.getWidget(1, 222222);
         ReportingWidget reportingWidget2 = (ReportingWidget) JsonParser.parseWidget(clientPair.appClient.getBody(3), 0);
