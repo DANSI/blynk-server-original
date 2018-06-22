@@ -148,6 +148,22 @@ public final class FileUtils {
     }
 
     public static void writeBufToCsvFilterAndFormat(ByteArrayOutputStream baos, ByteBuffer onePinData,
+                                                    String pin, String deviceName,
+                                                    long startFrom, DateTimeFormatter formatter) {
+
+        while (onePinData.remaining() > 0) {
+            double value = onePinData.getDouble();
+            long ts = onePinData.getLong();
+
+            if (startFrom < ts) {
+                String formattedTs = formatTS(formatter, ts);
+                String data = formattedTs + ',' + pin + ',' + deviceName + "," + value + '\n';
+                baos.write(data.getBytes(US_ASCII), 0, data.length());
+            }
+        }
+    }
+
+    public static void writeBufToCsvFilterAndFormat(ByteArrayOutputStream baos, ByteBuffer onePinData,
                                                     String pin, long startFrom, DateTimeFormatter formatter) {
 
         while (onePinData.remaining() > 0) {
