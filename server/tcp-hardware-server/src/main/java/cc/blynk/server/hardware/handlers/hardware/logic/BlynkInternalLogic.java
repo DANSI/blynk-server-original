@@ -52,10 +52,16 @@ public class BlynkInternalLogic {
         var cmd = messageParts[0];
 
         switch (cmd.charAt(0)) {
-            case 'v' :
+            case 'v' : //ver
+            case 'f' : //fw
+            case 'h' : //h-beat
+            case 'b' : //buff-in
+            case 'd' : //dev
+            case 'c' : //cpu
+            case 't' : //tmpl
                 parseHardwareInfo(ctx, messageParts, state, message.id);
                 break;
-            case 'r' :
+            case 'r' : //rtc
                 sendRTC(ctx, state, message.id);
                 break;
             case 'a' :
