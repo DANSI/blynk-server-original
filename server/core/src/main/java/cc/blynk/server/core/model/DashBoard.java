@@ -469,10 +469,10 @@ public class DashBoard {
     public void cleanPinStorageInternalWithoutUpdatedAt(Widget widget, boolean removeProperties) {
         if (widget instanceof OnePinWidget) {
             OnePinWidget onePinWidget = (OnePinWidget) widget;
-            cleanPinStorage(onePinWidget, removeProperties);
+            cleanPinStorage(onePinWidget, -1, removeProperties);
         } else if (widget instanceof MultiPinWidget) {
             MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
-            cleanPinStorage(multiPinWidget, removeProperties);
+            cleanPinStorage(multiPinWidget, -1, removeProperties);
         } else if (widget instanceof DeviceTiles) {
             DeviceTiles deviceTiles = (DeviceTiles) widget;
             cleanPinStorage(deviceTiles, removeProperties);
@@ -492,22 +492,39 @@ public class DashBoard {
                 }
             }
         }
+        for (TileTemplate tileTemplate : deviceTiles.templates) {
+            cleanPinStorageForTileTemplate(tileTemplate, removeProperties);
+        }
     }
 
-    private void cleanPinStorage(MultiPinWidget multiPinWidget, boolean removeProperties) {
+    public void cleanPinStorageForTileTemplate(TileTemplate tileTemplate, boolean removeProperties) {
+        for (int deviceId : tileTemplate.deviceIds) {
+            for (Widget widget : tileTemplate.widgets) {
+                if (widget instanceof OnePinWidget) {
+                    OnePinWidget onePinWidget = (OnePinWidget) widget;
+                    cleanPinStorage(onePinWidget, deviceId, removeProperties);
+                } else if (widget instanceof MultiPinWidget) {
+                    MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
+                    cleanPinStorage(multiPinWidget, deviceId, removeProperties);
+                }
+            }
+        }
+    }
+
+    private void cleanPinStorage(MultiPinWidget multiPinWidget, int targetId, boolean removeProperties) {
         if (multiPinWidget.dataStreams != null) {
             for (DataStream dataStream : multiPinWidget.dataStreams) {
                 if (dataStream != null && dataStream.isValid()) {
-                    removePinStorageValue(multiPinWidget.deviceId,
+                    removePinStorageValue(targetId == -1 ? multiPinWidget.deviceId : targetId,
                             dataStream.pinType, dataStream.pin, removeProperties);
                 }
             }
         }
     }
 
-    private void cleanPinStorage(OnePinWidget onePinWidget, boolean removeProperties) {
+    private void cleanPinStorage(OnePinWidget onePinWidget, int targetId, boolean removeProperties) {
         if (onePinWidget.isValid()) {
-            removePinStorageValue(onePinWidget.deviceId,
+            removePinStorageValue(targetId == -1 ? onePinWidget.deviceId : targetId,
                     onePinWidget.pinType, onePinWidget.pin, removeProperties);
         }
     }
