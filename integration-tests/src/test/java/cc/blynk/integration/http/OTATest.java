@@ -323,7 +323,7 @@ public class OTATest extends BaseTest {
 
     @Test
     public void testImprovedUploadMethodAndCheckOTAStatusForDeviceThatWasOnline() throws Exception {
-        clientPair.hardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
+        clientPair.hardwareClient.send("internal " + b("ver 0.3.1 fm 0.3.3 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
         clientPair.hardwareClient.verifyResult(ok(1));
 
         clientPair.appClient.getToken(1);
@@ -364,14 +364,14 @@ public class OTATest extends BaseTest {
         assertEquals(1, devices.length);
 
         Device device = devices[0];
-        assertEquals("0.3.1", device.hardwareInfo.version);
+        assertEquals("0.3.1", device.hardwareInfo.blynkVersion);
         assertEquals(10, device.hardwareInfo.heartbeatInterval);
         assertEquals("111", device.hardwareInfo.build);
         assertEquals("admin@blynk.cc", device.deviceOtaInfo.otaInitiatedBy);
         assertEquals(System.currentTimeMillis(), device.deviceOtaInfo.otaInitiatedAt, 5000);
         assertEquals(System.currentTimeMillis(), device.deviceOtaInfo.otaUpdateAt, 5000);
 
-        clientPair.hardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 112"));
+        clientPair.hardwareClient.send("internal " + b("ver 0.3.1 fm 0.3.3 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 112"));
         clientPair.hardwareClient.verifyResult(ok(2));
 
         clientPair.appClient.send("getDevices 1");
@@ -381,7 +381,7 @@ public class OTATest extends BaseTest {
         assertEquals(1, devices.length);
 
         device = devices[0];
-        assertEquals("0.3.1", device.hardwareInfo.version);
+        assertEquals("0.3.1", device.hardwareInfo.blynkVersion);
         assertEquals(10, device.hardwareInfo.heartbeatInterval);
         assertEquals("112", device.hardwareInfo.build);
         assertEquals("admin@blynk.cc", device.deviceOtaInfo.otaInitiatedBy);
