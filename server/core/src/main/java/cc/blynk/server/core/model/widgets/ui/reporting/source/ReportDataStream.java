@@ -36,6 +36,12 @@ public class ReportDataStream {
     }
 
     public String formatPin() {
-        return pinType.pinTypeString + pin;
+        if (label == null || label.isEmpty()) {
+            return pinType.pinTypeString + pin;
+        }
+        if (label.contains(",")) {
+            return "\"" + label + "\"";
+        }
+        return label;
     }
 }
