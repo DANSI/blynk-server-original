@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportDataStream;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportSource;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.FileUtils;
+import cc.blynk.utils.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -90,10 +91,7 @@ public abstract class BaseReportTask implements Runnable {
             return String.valueOf(deviceId);
         }
 
-        if (deviceName.contains(",")) {
-            return "\"" + deviceName + "\"";
-        }
-        return deviceName;
+        return StringUtils.escapeCSV(deviceName);
     }
 
     private static String getDeviceName(DashBoard dash, int deviceId) {
