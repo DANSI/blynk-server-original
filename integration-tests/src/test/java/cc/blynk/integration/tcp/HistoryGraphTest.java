@@ -1843,7 +1843,7 @@ public class HistoryGraphTest extends IntegrationBase {
         FileUtils.write(csvFile, 1.11D, 1);
         assertTrue(Files.exists(csvFile));
 
-        ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDao, 0, 1);
+        ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDao, 0, 0);
         truncateWorker.run();
         assertTrue(Files.notExists(csvFile));
     }
