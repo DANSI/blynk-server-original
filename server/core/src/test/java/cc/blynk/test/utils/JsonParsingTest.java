@@ -95,6 +95,22 @@ public class JsonParsingTest {
     }
 
     @Test
+    public void testJoystickAndFieldAreParsed() {
+        InputStream is = this.getClass().getResourceAsStream("/json_test/user_profile_json_with_outdated_widget.txt");
+
+        Profile profile = parseProfile(is);
+
+        assertNotNull(profile);
+        assertNotNull(profile.dashBoards);
+        assertEquals(1, profile.dashBoards.length);
+        assertNotNull(profile.dashBoards[0].widgets);
+        assertNotNull(profile.dashBoards[0].widgets[0]);
+        assertNotNull(profile.dashBoards[0].widgets[1]);
+        assertTrue(profile.dashBoards[0].widgets[0] instanceof Button);
+        assertTrue(profile.dashBoards[0].widgets[1] instanceof Button);
+    }
+
+    @Test
     public void testJSONToRGB() {
         InputStream is = this.getClass().getResourceAsStream("/json_test/user_profile_json_RGB.txt");
 
