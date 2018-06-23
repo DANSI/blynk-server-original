@@ -126,7 +126,7 @@ public class AppAndHttpsServer extends BaseServer {
                 if (uri.equals("/")) {
                     //for local server do redirect to admin page
                     try {
-                        ctx.writeAndFlush(redirect(holder.isLocalRegion() ? rootPath : BLYNK_LANDING));
+                        ctx.writeAndFlush(redirect(holder.props.isLocalRegion() ? rootPath : BLYNK_LANDING));
                     } finally {
                         req.release();
                     }

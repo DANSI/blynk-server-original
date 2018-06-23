@@ -1,6 +1,7 @@
 package cc.blynk.utils.properties;
 
 import cc.blynk.utils.AppNameUtil;
+import cc.blynk.utils.IPUtils;
 import cc.blynk.utils.JarUtil;
 
 import java.util.Map;
@@ -20,29 +21,55 @@ public class ServerProperties extends BaseProperties {
 
     private static final String STATIC_FILES_FOLDER = "static";
 
+    //this is reusable properties so we want to fetch them only once
     public final boolean isUnpacked;
+    public final String vendorEmail;
+    public final String productName;
+    public final String region;
+    public final String host;
+
+    public ServerProperties(Map<String, String> cmdProperties, String serverConfig) {
+        super(cmdProperties, serverConfig);
+        this.isUnpacked = JarUtil.unpackStaticFiles(jarPath, STATIC_FILES_FOLDER);
+        this.vendorEmail = getVendorEmail();
+        this.productName = getProductName();
+        this.region = getRegion();
+        this.host = getServerHost();
+    }
 
     public ServerProperties(Map<String, String> cmdProperties) {
-        super(cmdProperties, SERVER_PROPERTIES_FILENAME);
-        this.isUnpacked = JarUtil.unpackStaticFiles(jarPath, STATIC_FILES_FOLDER);
+        this(cmdProperties, SERVER_PROPERTIES_FILENAME);
     }
 
-    public ServerProperties(String propertiesFileName) {
-        super(propertiesFileName);
-        this.isUnpacked = JarUtil.unpackStaticFiles(jarPath, STATIC_FILES_FOLDER);
+    public boolean isLocalRegion() {
+        return region.equals("local");
     }
 
-    public String getProductName() {
+    private String getProductName() {
         return getProperty("product.name", AppNameUtil.BLYNK);
+    }
+
+    private String getVendorEmail() {
+        return getProperty("vendor.email");
+    }
+
+    private String getRegion() {
+        return getProperty("region", "local");
+    }
+
+    private String getServerHost() {
+        var host = getProperty("server.host");
+        if (host == null || host.isEmpty()) {
+            var netInterface = getProperty("net.interface", "eth");
+            return IPUtils.resolveHostIP(netInterface);
+        } else {
+            return host;
+        }
     }
 
     public String getAdminUrl(String host) {
         String httpsPort = getHttpsPortOrBlankIfDefaultAsString();
         return "https://" + host + httpsPort + getAdminRootPath();
-    }
-
-    public String getVendorEmail() {
-        return getProperty("vendor.email");
     }
 
     public boolean isDBEnabled() {
@@ -61,12 +88,12 @@ public class ServerProperties extends BaseProperties {
         return ":" + httpsPort;
     }
 
-    public String getHttpsPortAsString() {
-        return force80Port() ? "443" : getProperty("https.port");
+    private boolean force80Port() {
+        return getBoolProperty("force.port.80.for.csv");
     }
 
-    public boolean force80Port() {
-        return getBoolProperty("force.port.80.for.csv");
+    public String getHttpsPortAsString() {
+        return force80Port() ? "443" : getProperty("https.port");
     }
 
     public boolean getAllowStoreIp() {

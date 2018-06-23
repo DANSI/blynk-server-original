@@ -185,7 +185,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
 
         //todo back compatibility code. remove in future.
         if (user.region == null || user.region.isEmpty()) {
-            user.region = holder.region;
+            user.region = holder.props.region;
         }
 
         var session = holder.sessionDao.getOrCreateSessionByUser(appStateHolder.userKey, channel.eventLoop());

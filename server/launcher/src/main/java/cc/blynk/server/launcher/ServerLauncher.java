@@ -25,6 +25,7 @@ import java.io.File;
 import java.net.BindException;
 import java.security.Security;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Entry point for server launch.
@@ -54,9 +55,9 @@ public final class ServerLauncher {
     }
 
     public static void main(String[] args) throws Exception {
-        var cmdProperties = ArgumentsParser.parse(args);
+        Map<String, String> cmdProperties = ArgumentsParser.parse(args);
 
-        var serverProperties = new ServerProperties(cmdProperties);
+        ServerProperties serverProperties = new ServerProperties(cmdProperties);
 
         LoggerUtil.configureLogging(serverProperties);
 
@@ -66,11 +67,11 @@ public final class ServerLauncher {
         //required to avoid dependencies within model to server.properties
         setGlobalProperties(serverProperties);
 
-        var mailProperties = new MailProperties(cmdProperties);
-        var smsProperties = new SmsProperties(cmdProperties);
-        var gcmProperties = new GCMProperties(cmdProperties);
-        var twitterProperties = new TwitterProperties(cmdProperties);
-        var slackProperties = new SlackProperties(cmdProperties);
+        MailProperties mailProperties = new MailProperties(cmdProperties);
+        SmsProperties smsProperties = new SmsProperties(cmdProperties);
+        GCMProperties gcmProperties = new GCMProperties(cmdProperties);
+        TwitterProperties twitterProperties = new TwitterProperties(cmdProperties);
+        SlackProperties slackProperties = new SlackProperties(cmdProperties);
 
         Security.addProvider(new BouncyCastleProvider());
 
@@ -80,15 +81,15 @@ public final class ServerLauncher {
     }
 
     private static void setGlobalProperties(ServerProperties serverProperties) {
-        var globalProps = new HashMap<String, String>(4);
+        Map<String, String> globalProps = new HashMap<>(4);
         globalProps.put("terminal.strings.pool.size", "25");
         globalProps.put("initial.energy", "2000");
         globalProps.put("table.rows.pool.size", "100");
         globalProps.put("csv.export.data.points.max", "43200");
 
         for (var entry : globalProps.entrySet()) {
-            var name = entry.getKey();
-            var value = serverProperties.getProperty(name, entry.getValue());
+            String name = entry.getKey();
+            String value = serverProperties.getProperty(name, entry.getValue());
             System.setProperty(name, value);
         }
     }
@@ -97,7 +98,7 @@ public final class ServerLauncher {
                               SmsProperties smsProperties, GCMProperties gcmProperties,
                               TwitterProperties twitterProperties, SlackProperties slackProperties,
                               boolean restore) {
-        var holder = new Holder(serverProperties,
+        Holder holder = new Holder(serverProperties,
                 mailProperties, smsProperties, gcmProperties, twitterProperties, slackProperties,
                 restore);
 
@@ -125,7 +126,7 @@ public final class ServerLauncher {
 
     private static void createSuperUser(Holder holder) {
         ServerProperties props = holder.props;
-        String url = props.getAdminUrl(holder.host);
+        String url = props.getAdminUrl(props.host);
         String email = props.getProperty("admin.email", "admin@blynk.cc");
         String pass = props.getProperty("admin.pass");
 
@@ -142,10 +143,9 @@ public final class ServerLauncher {
             String hash = SHA256Util.makeHash(pass, email);
             holder.userDao.add(email, hash, AppNameUtil.BLYNK, true);
 
-            String vendorEmail = props.getVendorEmail();
+            String vendorEmail = props.vendorEmail;
             if (vendorEmail != null) {
-                String productName = props.getProductName();
-                String subj = "Your private Blynk server for " + productName + " is up!";
+                String subj = "Your private Blynk server for " + props.productName + " is up!";
                 String body = buildServerUpEmailBody(url, email, pass);
                 holder.blockingIOProcessor.messagingExecutor.execute(() -> {
                     try {

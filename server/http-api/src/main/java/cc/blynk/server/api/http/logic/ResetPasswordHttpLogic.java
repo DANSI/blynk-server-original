@@ -65,13 +65,13 @@ public class ResetPasswordHttpLogic extends BaseHttpHandler {
         super(holder, "");
         this.userDao = holder.userDao;
         this.tokensPool = holder.tokensPool;
-        String productName = holder.props.getProductName();
+        String productName = holder.props.productName;
         this.emailSubj = "Password reset request for the " + productName + " app.";
         this.emailBody = FileLoaderUtil.readResetEmailTemplateAsString()
                 .replace(Placeholders.PRODUCT_NAME, productName);
         this.mailWrapper = holder.mailWrapper;
 
-        String host = holder.props.getServerHost();
+        String host = holder.props.host;
 
         //using https for private servers as they have valid certificates.
         String protocol = host.endsWith(".blynk.cc") ? "https://" : "http://";
