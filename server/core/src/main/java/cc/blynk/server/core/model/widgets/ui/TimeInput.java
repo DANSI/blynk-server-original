@@ -51,7 +51,7 @@ public class TimeInput extends OnePinWidget {
             if (values.length > 2) {
                 startAt = calcTime(values[0]);
                 stopAt = calcTime(values[1]);
-                tzName = ZoneId.of(values[2]);
+                tzName = StringToZoneId.parseZoneId(values[2]);
                 if (values.length == 3 || values[3].isEmpty()) {
                     days = null;
                 } else {
