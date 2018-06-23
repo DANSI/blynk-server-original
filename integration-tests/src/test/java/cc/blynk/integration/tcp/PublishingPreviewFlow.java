@@ -16,6 +16,7 @@ import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
+import cc.blynk.server.core.model.widgets.outputs.Gauge;
 import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
@@ -498,6 +499,122 @@ public class PublishingPreviewFlow extends IntegrationBase {
         assertNotNull(deviceTiles.templates);
         assertEquals(0, deviceTiles.tiles.length);
         assertEquals(1, deviceTiles.templates.length);
+    }
+
+    @Test
+    public void testChildProjectDoesntGetParentValues() throws Exception {
+        DashBoard dashBoard = new DashBoard();
+        dashBoard.id = 10;
+        dashBoard.parentId = 1;
+        dashBoard.isPreview = true;
+        dashBoard.name = "Face Edit Test";
+
+        clientPair.appClient.createDash(dashBoard);
+
+        Device device0 = new Device(0, "My Dashboard", "UNO");
+        clientPair.appClient.createDevice(10, device0);
+        device0 = clientPair.appClient.getDevice(2);
+        clientPair.appClient.verifyResult(createDevice(2, device0));
+
+        Device device2 = new Device(2, "My Dashboard", "UNO");
+        clientPair.appClient.createDevice(10, device2);
+        device2 = clientPair.appClient.getDevice(3);
+        clientPair.appClient.verifyResult(createDevice(3, device2));
+
+        clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"AppPreview\",\"icon\":\"myIcon\",\"projectIds\":[10]}");
+        App app = clientPair.appClient.getApp(4);
+        assertNotNull(app);
+        assertNotNull(app.id);
+
+
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        //creating manually widget for child project
+        clientPair.appClient.createWidget(10, deviceTiles);
+        clientPair.appClient.verifyResult(ok(5));
+
+        TileTemplate tileTemplate = new PageTileTemplate(1,
+                null, new int[] {2}, "123", "name", "iconName", "ESP8266", null,
+                false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
+
+        clientPair.appClient.send("createTemplate " + b("10 " + widgetId + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        clientPair.appClient.verifyResult(ok(6));
+
+        clientPair.appClient.createWidget(1, "{\"id\":155, \"value\":\"data\", \"deviceId\":0, \"frequency\":400, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"GAUGE\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
+        clientPair.appClient.verifyResult(ok(7));
+
+        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient2.start();
+
+        appClient2.register("test@blynk.cc", "a", app.id);
+        appClient2.verifyResult(ok(1));
+
+        appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
+        appClient2.verifyResult(ok(2));
+
+        appClient2.send("loadProfileGzipped");
+        Profile profile = appClient2.getProfile(3);
+        assertEquals(1, profile.dashBoards.length);
+        dashBoard = profile.dashBoards[0];
+        assertNotNull(dashBoard);
+        assertEquals(1, dashBoard.id);
+        assertEquals(1, dashBoard.parentId);
+        assertEquals(1, dashBoard.widgets.length);
+        assertTrue(dashBoard.widgets[0] instanceof DeviceTiles);
+        deviceTiles = (DeviceTiles) dashBoard.getWidgetById(widgetId);
+        assertNotNull(deviceTiles.tiles);
+        assertNotNull(deviceTiles.templates);
+        assertEquals(0, deviceTiles.tiles.length);
+        assertEquals(1, deviceTiles.templates.length);
+        Gauge gauge = (Gauge) dashBoard.getWidgetById(155);
+        assertNull(gauge);
+
+        clientPair.appClient.send("updateFace 1");
+        clientPair.appClient.verifyResult(ok(8));
+
+        assertTrue(appClient2.isClosed());
+
+        appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient2.start();
+
+        appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
+        appClient2.verifyResult(ok(1));
+
+        appClient2.send("loadProfileGzipped");
+        profile = appClient2.getProfile(2);
+        assertEquals(1, profile.dashBoards.length);
+        dashBoard = profile.dashBoards[0];
+        gauge = (Gauge) dashBoard.getWidgetById(155);
+        assertNotNull(gauge);
+        assertNull(gauge.value);
+
+        //one more time, to check another branch
+        clientPair.appClient.send("updateFace 1");
+        clientPair.appClient.verifyResult(ok(9));
+
+        assertTrue(appClient2.isClosed());
+
+        appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient2.start();
+
+        appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
+        appClient2.verifyResult(ok(1));
+
+        appClient2.send("loadProfileGzipped");
+        profile = appClient2.getProfile(2);
+        assertEquals(1, profile.dashBoards.length);
+        dashBoard = profile.dashBoards[0];
+        gauge = (Gauge) dashBoard.getWidgetById(155);
+        assertNotNull(gauge);
+        assertNull(gauge.value);
     }
 
     @Test
