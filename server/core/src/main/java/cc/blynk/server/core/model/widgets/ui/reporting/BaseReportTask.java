@@ -143,6 +143,9 @@ public abstract class BaseReportTask implements Runnable {
     private ReportResult generateReport(Path userCsvFolder, DashBoard dash, long now) throws Exception {
         int fetchCount = (int) report.reportType.getFetchCount(report.granularityType);
         long startFrom = now - TimeUnit.DAYS.toMillis(report.reportType.getDuration());
+        //truncate second, minute, hour, depending of granularity in order to do not filter first point.
+        //https://github.com/blynkkk/blynk-server/issues/1149
+        startFrom = (startFrom / report.granularityType.period) * report.granularityType.period;
         Path output = Paths.get(userCsvFolder.toString() + ".gz");
 
         boolean hasData = generateReport(output, dash, fetchCount, startFrom);
@@ -275,7 +278,6 @@ public abstract class BaseReportTask implements Runnable {
                 pin, deviceName, startFrom, formatter);
         return byteArrayOutputStream.toByteArray();
     }
-
 
     private byte[] toCSV(ByteBuffer onePinData, String pin, long startFrom, DateTimeFormatter formatter) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(onePinData.capacity());

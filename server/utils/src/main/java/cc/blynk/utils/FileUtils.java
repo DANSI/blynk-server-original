@@ -155,7 +155,7 @@ public final class FileUtils {
             double value = onePinData.getDouble();
             long ts = onePinData.getLong();
 
-            if (startFrom < ts) {
+            if (startFrom <= ts) {
                 String formattedTs = formatTS(formatter, ts);
                 String data = formattedTs + ',' + pin + ',' + deviceName + "," + value + '\n';
                 baos.write(data.getBytes(US_ASCII), 0, data.length());
@@ -170,7 +170,7 @@ public final class FileUtils {
             double value = onePinData.getDouble();
             long ts = onePinData.getLong();
 
-            if (startFrom < ts) {
+            if (startFrom <= ts) {
                 String formattedTs = formatTS(formatter, ts);
                 String data = formattedTs + ',' + pin + ',' + value + '\n';
                 baos.write(data.getBytes(US_ASCII), 0, data.length());
@@ -185,7 +185,7 @@ public final class FileUtils {
             double value = onePinData.getDouble();
             long ts = onePinData.getLong();
 
-            if (startFrom < ts) {
+            if (startFrom <= ts) {
                 String formattedTs = formatTS(formatter, ts);
                 String data = formattedTs + ',' + value + '\n';
                 baos.write(data.getBytes(US_ASCII), 0, data.length());

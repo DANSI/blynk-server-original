@@ -76,7 +76,7 @@ public class Report {
         this.reportSources = reportSources;
         this.reportType = reportType;
         this.recipients = recipients;
-        this.granularityType = granularityType;
+        this.granularityType = granularityType == null ? GraphGranularityType.MINUTE : granularityType;
         this.isActive = isActive;
         this.reportOutput = reportOutput == null ? CSV_FILE_PER_DEVICE_PER_PIN : reportOutput;
         this.format = format;

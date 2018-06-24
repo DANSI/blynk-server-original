@@ -532,6 +532,74 @@ public class ReportingTest extends IntegrationBase {
     }
 
     @Test
+    public void testDailyReportWith24PointsCorrectlyFetched() throws Exception {
+        String tempDir = holder.props.getProperty("data.folder");
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.HOURLY));
+        long pointNow = System.currentTimeMillis();
+        long pointNowTruncated = (pointNow / GraphGranularityType.HOURLY.period) * GraphGranularityType.HOURLY.period;
+        pointNowTruncated -= TimeUnit.DAYS.toMillis(1);
+        for (int i = 0; i < 24; i++) {
+            FileUtils.write(pinReportingDataPath10, i, pointNowTruncated + TimeUnit.HOURS.toMillis(i));
+        }
+
+        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportSource reportSource = new TileTemplateReportSource(
+                new ReportDataStream[] {reportDataStream},
+                1,
+                new int[] {0}
+        );
+
+        ReportingWidget reportingWidget = new ReportingWidget();
+        reportingWidget.height = 1;
+        reportingWidget.width = 1;
+        reportingWidget.reportSources = new ReportSource[] {
+                reportSource
+        };
+
+        clientPair.appClient.createWidget(1, reportingWidget);
+        clientPair.appClient.verifyResult(ok(1));
+
+        //a bit upfront
+        long now = pointNow + 1000;
+        LocalTime localTime = LocalTime.ofInstant(Instant.ofEpochMilli(now), ZoneId.of("UTC"));
+        localTime = LocalTime.of(localTime.getHour(), localTime.getMinute());
+
+        Report report = new Report(1, "DailyReport",
+                new ReportSource[] {reportSource},
+                new DailyReport(now, ReportDurationType.INFINITE, 0, 0), "test@gmail.com",
+                GraphGranularityType.HOURLY, true, CSV_FILE_PER_DEVICE_PER_PIN,
+                Format.ISO_SIMPLE, ZoneId.of("UTC"), 0, 0, null);
+        clientPair.appClient.createReport(1, report);
+
+        report = clientPair.appClient.parseReportFromResponse(2);
+        assertNotNull(report);
+        assertEquals(System.currentTimeMillis(), report.nextReportAt, 3000);
+
+        String date = LocalDate.now(report.tzName).toString();
+        String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
+        String downloadUrl = "http://127.0.0.1:18080/" + filename;
+        verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
+                eq("Your daily DailyReport is ready"),
+                eq(downloadUrl),
+                eq("Report name: DailyReport<br>Period: Daily, at " + localTime));
+        sleep(200);
+        assertEquals(1, holder.reportScheduler.getCompletedTaskCount());
+        assertEquals(2, holder.reportScheduler.getTaskCount());
+
+        Path result = Paths.get(FileUtils.CSV_DIR,
+                DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+        assertTrue(Files.exists(result));
+        String resultCsvString = readStringFromFirstZipEntry(result);
+        String[] split = resultCsvString.split("\n");
+        assertEquals(24, split.length);
+    }
+
+    @Test
     public void testFinalFileNameCSVPerDevicePerPin() throws Exception {
         Device device1 = new Device(2, "My Device2 with big name", "ESP8266");
         clientPair.appClient.createDevice(1, device1);
@@ -1866,7 +1934,7 @@ public class ReportingTest extends IntegrationBase {
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
                 ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
-        FileUtils.write(pinReportingDataPath10, 1.12D, pointNow - TimeUnit.DAYS.toMillis(1));
+        FileUtils.write(pinReportingDataPath10, 1.12D, pointNow - TimeUnit.HOURS.toMillis(25));
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
 
         ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, null, true);
