@@ -59,16 +59,16 @@ public class WidgetWorkflowTest extends IntegrationBase {
     @Test
     public void testCorrectBehaviourOnWrongInput() throws Exception {
         clientPair.appClient.send("createWidget ");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(illegalCommand(1)));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(illegalCommand(1)));
 
         clientPair.appClient.send("createWidget 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(illegalCommand(2)));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(illegalCommand(2)));
 
         clientPair.appClient.send("createWidget 1" + "\0");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(illegalCommand(3)));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(illegalCommand(3)));
 
         clientPair.appClient.send("createWidget 1" + "\0" + "{}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(4, ILLEGAL_COMMAND_BODY)));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(4, ILLEGAL_COMMAND_BODY)));
 
         //very large widget
         StringBuilder sb = new StringBuilder();
