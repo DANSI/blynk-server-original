@@ -19,7 +19,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND_BODY;
 import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
@@ -68,7 +67,7 @@ public class WidgetWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(illegalCommand(3)));
 
         clientPair.appClient.send("createWidget 1" + "\0" + "{}");
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(4, ILLEGAL_COMMAND_BODY)));
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(notAllowed(4)));
 
         //very large widget
         StringBuilder sb = new StringBuilder();
