@@ -40,7 +40,7 @@ public class ResetPasswordHandler extends SimpleChannelInboundHandler<ResetPassw
 
     public ResetPasswordHandler(Holder holder) {
         this.tokensPool = holder.tokensPool;
-        String productName = holder.props.getProductName();
+        String productName = holder.props.productName;
         this.emailSubj = "Password reset request for the " + productName + " app.";
         this.emailBody = FileLoaderUtil.readAppResetEmailTemplateAsString()
                 .replace(Placeholders.PRODUCT_NAME, productName);

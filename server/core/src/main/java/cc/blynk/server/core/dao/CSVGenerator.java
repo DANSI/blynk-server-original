@@ -39,7 +39,7 @@ public class CSVGenerator {
 
     public Path createCSV(User user, int dashId, int inDeviceId, PinType pinType, byte pin, int... deviceIds)
             throws Exception {
-        if (pinType == null || pin == DataStream.NO_PIN) {
+        if (!DataStream.isValid(pin, pinType)) {
             throw new IllegalStateException("Wrong pin format.");
         }
 

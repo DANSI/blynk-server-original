@@ -15,6 +15,9 @@ public final class DateTimeUtils {
     }
 
     public static final ZoneId UTC = ZoneId.of("UTC");
+    public static final ZoneId AMERICA_REGINA = ZoneId.of("America/Regina");
+    public static final ZoneId ASIA_HO_CHI = ZoneId.of("Asia/Ho_Chi_Minh");
+
     public static final Calendar UTC_CALENDAR = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 
 }

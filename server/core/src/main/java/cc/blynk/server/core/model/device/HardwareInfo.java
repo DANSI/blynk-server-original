@@ -19,6 +19,8 @@ public class HardwareInfo {
 
     public final String version;
 
+    public final String blynkVersion;
+
     public final String boardType;
 
     public final String cpuType;
@@ -35,6 +37,7 @@ public class HardwareInfo {
 
     @JsonCreator
     public HardwareInfo(@JsonProperty("version") String version,
+                        @JsonProperty("blynkVersion") String blynkVersion,
                         @JsonProperty("boardType") String boardType,
                         @JsonProperty("cpuType") String cpuType,
                         @JsonProperty("connectionType") String connectionType,
@@ -43,6 +46,7 @@ public class HardwareInfo {
                         @JsonProperty("heartbeatInterval") int heartbeatInterval,
                         @JsonProperty("buffIn") int buffIn) {
         this.version = version;
+        this.blynkVersion = blynkVersion;
         this.boardType = boardType;
         this.cpuType = cpuType;
         this.connectionType = connectionType;
@@ -55,6 +59,7 @@ public class HardwareInfo {
     public HardwareInfo(String[] info) {
         HardwareInfoPrivate hardwareInfoPrivate = new HardwareInfoPrivate(info);
         this.version = hardwareInfoPrivate.version;
+        this.blynkVersion = hardwareInfoPrivate.blynkVersion;
         this.boardType = hardwareInfoPrivate.boardType;
         this.cpuType = hardwareInfoPrivate.cpuType;
         this.connectionType = hardwareInfoPrivate.connectionType;
@@ -67,6 +72,7 @@ public class HardwareInfo {
     //utility class to make fields of HardwareInfo final, used instead of hashmap
     private final class HardwareInfoPrivate {
         private String version;
+        private String blynkVersion;
         private String boardType;
         private String cpuType;
         private String connectionType;
@@ -93,6 +99,9 @@ public class HardwareInfo {
                     }
                     break;
                 case "ver" :
+                    this.blynkVersion = value;
+                    break;
+                case "fw" :
                     this.version = value;
                     break;
                 case "dev" :

@@ -37,7 +37,7 @@ public class StatsWorker implements Runnable {
         this.sessionDao = holder.sessionDao;
         this.userDao = holder.userDao;
         this.reportingDBManager = holder.reportingDBManager;
-        this.region = holder.region;
+        this.region = holder.props.region;
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.reportScheduler = holder.reportScheduler;
     }

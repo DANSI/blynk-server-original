@@ -149,4 +149,12 @@ public final class StringUtils {
         }
         return sb.toString();
     }
+
+    public static String escapeCSV(String name) {
+        name = name.replace("\"", "\"\"");
+        if (name.contains(",") || name.contains(";") || name.contains("\"")) {
+            return "\"" + name + "\"";
+        }
+        return name;
+    }
 }

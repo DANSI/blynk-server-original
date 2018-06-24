@@ -13,6 +13,7 @@ import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_TOKEN;
+import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 
 /**
@@ -46,6 +47,11 @@ public class RefreshTokenLogic {
 
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
         Device device = dash.getDeviceById(deviceId);
+
+        if (device == null) {
+            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+            return;
+        }
 
         String token = tokenManager.refreshToken(user, dash, device);
 

@@ -166,7 +166,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
 
     private void sendRedirectResponse(ChannelHandlerContext ctx, String token, String server, int msgId) {
         MessageBase response;
-        if (server == null || server.equals(holder.host)) {
+        if (server == null || server.equals(holder.props.host)) {
             log.debug("HardwareLogic token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());
             response = invalidToken(msgId);
         } else {

@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportDataStream;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportSource;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.FileUtils;
+import cc.blynk.utils.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -79,16 +80,34 @@ public abstract class BaseReportTask implements Runnable {
         }
     }
 
+    private static String getCSVDeviceName(DashBoard dash, int deviceId) {
+        Device device = dash.getDeviceById(deviceId);
+        if (device == null) {
+            return String.valueOf(deviceId);
+        }
+
+        String deviceName = device.name;
+        if (deviceName == null || deviceName.isEmpty()) {
+            return String.valueOf(deviceId);
+        }
+
+        return StringUtils.escapeCSV(deviceName);
+    }
+
     private static String getDeviceName(DashBoard dash, int deviceId) {
         Device device = dash.getDeviceById(deviceId);
         if (device != null) {
-            String name = device.name;
-            if (name != null) {
-                name = NOT_SUPPORTED_CHARS.matcher(name).replaceAll("");
-                return name.length() <= 16 ? name : name.substring(0, 16);
-            }
+            return truncateFileName(device.name);
         }
         return "";
+    }
+
+    private static String truncateFileName(String name) {
+        if (name == null) {
+            return "";
+        }
+        String truncated = NOT_SUPPORTED_CHARS.matcher(name).replaceAll("");
+        return truncated.length() <= 16 ? truncated : truncated.substring(0, 16);
     }
 
     private void sendEmail(Path output) throws Exception {
@@ -124,6 +143,9 @@ public abstract class BaseReportTask implements Runnable {
     private ReportResult generateReport(Path userCsvFolder, DashBoard dash, long now) throws Exception {
         int fetchCount = (int) report.reportType.getFetchCount(report.granularityType);
         long startFrom = now - TimeUnit.DAYS.toMillis(report.reportType.getDuration());
+        //truncate second, minute, hour, depending of granularity in order to do not filter first point.
+        //https://github.com/blynkkk/blynk-server/issues/1149
+        startFrom = (startFrom / report.granularityType.period) * report.granularityType.period;
         Path output = Paths.get(userCsvFolder.toString() + ".gz");
 
         boolean hasData = generateReport(output, dash, fetchCount, startFrom);
@@ -139,14 +161,50 @@ public abstract class BaseReportTask implements Runnable {
     private boolean generateReport(Path output, DashBoard dash, int fetchCount, long startFrom) throws Exception {
         //todo for now supporting only some types of output format
         switch (report.reportOutput) {
-            case MERGED_CSV:
             case EXCEL_TAB_PER_DEVICE:
+            case MERGED_CSV:
+                return merged(output, dash, fetchCount, startFrom);
             case CSV_FILE_PER_DEVICE:
                 return filePerDevice(output, dash, fetchCount, startFrom);
             case CSV_FILE_PER_DEVICE_PER_PIN:
             default:
                 return filePerDevicePerPin(output, dash, fetchCount, startFrom);
         }
+    }
+
+    private boolean merged(Path output, DashBoard dash, int fetchCount, long startFrom) throws Exception {
+        boolean atLeastOne = false;
+        try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(output))) {
+            String fileName = truncateFileName(report.name) + ".csv";
+            ZipEntry zipEntry = new ZipEntry(fileName);
+            zs.putNextEntry(zipEntry);
+            for (ReportSource reportSource : report.reportSources) {
+                if (reportSource.isValid()) {
+                    for (int deviceId : reportSource.getDeviceIds()) {
+                        String deviceName = getCSVDeviceName(dash, deviceId);
+                        for (ReportDataStream reportDataStream : reportSource.reportDataStreams) {
+                            if (reportDataStream.isValid()) {
+                                ByteBuffer onePinData = reportingStorageDao.getByteBufferFromDisk(key.user,
+                                        key.dashId, deviceId, reportDataStream.pinType,
+                                        reportDataStream.pin, fetchCount, report.granularityType, 0);
+
+                                if (onePinData != null) {
+                                    String pin = reportDataStream.formatPin();
+                                    byte[] onePinDataCsv = toCSV(onePinData, pin,
+                                            deviceName, startFrom, report.makeFormatter());
+                                    if (onePinDataCsv.length > 0) {
+                                        zs.write(onePinDataCsv, 0, onePinDataCsv.length);
+                                        atLeastOne = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            zs.closeEntry();
+        }
+        return atLeastOne;
     }
 
     private boolean filePerDevice(Path output, DashBoard dash, int fetchCount, long startFrom) throws Exception {
@@ -211,6 +269,14 @@ public abstract class BaseReportTask implements Runnable {
             }
         }
         return atLeastOne;
+    }
+
+    private byte[] toCSV(ByteBuffer onePinData, String pin, String deviceName,
+                         long startFrom, DateTimeFormatter formatter) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(onePinData.capacity());
+        FileUtils.writeBufToCsvFilterAndFormat(byteArrayOutputStream, onePinData,
+                pin, deviceName, startFrom, formatter);
+        return byteArrayOutputStream.toByteArray();
     }
 
     private byte[] toCSV(ByteBuffer onePinData, String pin, long startFrom, DateTimeFormatter formatter) {

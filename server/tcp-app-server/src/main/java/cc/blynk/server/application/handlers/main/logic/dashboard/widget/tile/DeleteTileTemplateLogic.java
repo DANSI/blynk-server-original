@@ -52,9 +52,12 @@ public final class DeleteTileTemplateLogic {
 
         log.debug("Deleting tile template dashId : {}, widgetId : {}, tileId : {}.", dash, widgetId, tileId);
 
-        user.addEnergy(deviceTiles.templates[existingTileIndex].getPrice());
+        TileTemplate tileTemplate = deviceTiles.templates[existingTileIndex];
+        user.addEnergy(tileTemplate.getPrice());
+
         deviceTiles.templates = ArrayUtil.remove(deviceTiles.templates, existingTileIndex, TileTemplate.class);
         deviceTiles.deleteDeviceTilesByTemplateId(tileId);
+        dash.cleanPinStorageForTileTemplate(tileTemplate, true);
 
         dash.updatedAt = System.currentTimeMillis();
 

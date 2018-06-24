@@ -2,6 +2,7 @@ package cc.blynk.server.core.model.widgets.ui.reporting.source;
 
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.utils.StringUtils;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -36,6 +37,9 @@ public class ReportDataStream {
     }
 
     public String formatPin() {
-        return pinType.pinTypeString + pin;
+        if (label == null || label.isEmpty()) {
+            return pinType.pinTypeString + pin;
+        }
+        return StringUtils.escapeCSV(label);
     }
 }

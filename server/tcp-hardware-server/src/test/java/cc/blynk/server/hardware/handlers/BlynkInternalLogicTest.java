@@ -74,7 +74,7 @@ public class BlynkInternalLogicTest {
 
         StringMessage hardwareInfoLogic =
                 new StringMessage(1, BLYNK_INTERNAL,
-                        "ver 0.3.2-beta h-beat 60 buff-in 256 dev ESP8266".replaceAll(" ", "\0"));
+                        "ver 0.3.2-beta fw 3.3.3 h-beat 60 buff-in 256 dev ESP8266".replaceAll(" ", "\0"));
         logic.messageReceived(ctx, hardwareStateHolder, hardwareInfoLogic);
 
         verify(pipeline).replace(eq(IdleStateHandler.class), eq("H_IdleStateHandler_Replaced"), any());

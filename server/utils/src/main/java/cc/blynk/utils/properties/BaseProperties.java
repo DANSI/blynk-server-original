@@ -1,7 +1,5 @@
 package cc.blynk.utils.properties;
 
-import cc.blynk.utils.IPUtils;
-
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -120,16 +118,6 @@ public abstract class BaseProperties extends Properties {
 
     public long getLongProperty(String propertyName) {
         return Long.parseLong(getProperty(propertyName));
-    }
-
-    public String getServerHost() {
-        String host = getProperty("server.host");
-        if (host == null || host.isEmpty()) {
-            String netInterface = getProperty("net.interface", "eth");
-            return IPUtils.resolveHostIP(netInterface);
-        } else {
-            return host;
-        }
     }
 
     public String getAdminRootPath() {

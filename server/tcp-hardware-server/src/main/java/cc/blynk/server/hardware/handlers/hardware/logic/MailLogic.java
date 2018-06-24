@@ -41,7 +41,7 @@ public class MailLogic extends NotificationBase {
         super(holder.limits.notificationPeriodLimitSec);
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.mailWrapper = holder.mailWrapper;
-        String tmp = holder.props.getVendorEmail();
+        String tmp = holder.props.vendorEmail;
         this.vendorEmail = tmp == null ? "" : tmp;
     }
 

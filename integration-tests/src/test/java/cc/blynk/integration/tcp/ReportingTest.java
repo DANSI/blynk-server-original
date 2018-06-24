@@ -53,6 +53,7 @@ import java.util.zip.ZipFile;
 
 import static cc.blynk.server.core.model.widgets.ui.reporting.ReportOutput.CSV_FILE_PER_DEVICE;
 import static cc.blynk.server.core.model.widgets.ui.reporting.ReportOutput.CSV_FILE_PER_DEVICE_PER_PIN;
+import static cc.blynk.server.core.model.widgets.ui.reporting.ReportOutput.MERGED_CSV;
 import static cc.blynk.server.core.model.widgets.ui.reporting.ReportResult.EXPIRED;
 import static cc.blynk.server.core.model.widgets.ui.reporting.ReportResult.OK;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
@@ -512,12 +513,12 @@ public class ReportingTest extends IntegrationBase {
         assertTrue(Files.exists(result));
         String resultCsvString = readStringFromFirstZipEntry(result);
         String[] split = resultCsvString.split("[,\n]");
-        assertEquals(1.11D, Double.parseDouble(split[0]), 0.0001);
         String nowFormatted = DateTimeFormatter
                 .ofPattern(Format.ISO_SIMPLE.pattern)
                 .withZone(ZoneId.of("UTC"))
                 .format(Instant.ofEpochMilli(pointNow));
-        assertEquals(nowFormatted, split[1]);
+        assertEquals(nowFormatted, split[0]);
+        assertEquals(1.11D, Double.parseDouble(split[1]), 0.0001);
 
         AsyncHttpClient httpclient = new DefaultAsyncHttpClient(
                 new DefaultAsyncHttpClientConfig.Builder()
@@ -528,6 +529,74 @@ public class ReportingTest extends IntegrationBase {
         Future<Response> f = httpclient.prepareGet(downloadUrl).execute();
         Response response = f.get();
         assertEquals(200, response.getStatusCode());
+    }
+
+    @Test
+    public void testDailyReportWith24PointsCorrectlyFetched() throws Exception {
+        String tempDir = holder.props.getProperty("data.folder");
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.HOURLY));
+        long pointNow = System.currentTimeMillis();
+        long pointNowTruncated = (pointNow / GraphGranularityType.HOURLY.period) * GraphGranularityType.HOURLY.period;
+        pointNowTruncated -= TimeUnit.DAYS.toMillis(1);
+        for (int i = 0; i < 24; i++) {
+            FileUtils.write(pinReportingDataPath10, i, pointNowTruncated + TimeUnit.HOURS.toMillis(i));
+        }
+
+        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportSource reportSource = new TileTemplateReportSource(
+                new ReportDataStream[] {reportDataStream},
+                1,
+                new int[] {0}
+        );
+
+        ReportingWidget reportingWidget = new ReportingWidget();
+        reportingWidget.height = 1;
+        reportingWidget.width = 1;
+        reportingWidget.reportSources = new ReportSource[] {
+                reportSource
+        };
+
+        clientPair.appClient.createWidget(1, reportingWidget);
+        clientPair.appClient.verifyResult(ok(1));
+
+        //a bit upfront
+        long now = pointNow + 1000;
+        LocalTime localTime = LocalTime.ofInstant(Instant.ofEpochMilli(now), ZoneId.of("UTC"));
+        localTime = LocalTime.of(localTime.getHour(), localTime.getMinute());
+
+        Report report = new Report(1, "DailyReport",
+                new ReportSource[] {reportSource},
+                new DailyReport(now, ReportDurationType.INFINITE, 0, 0), "test@gmail.com",
+                GraphGranularityType.HOURLY, true, CSV_FILE_PER_DEVICE_PER_PIN,
+                Format.ISO_SIMPLE, ZoneId.of("UTC"), 0, 0, null);
+        clientPair.appClient.createReport(1, report);
+
+        report = clientPair.appClient.parseReportFromResponse(2);
+        assertNotNull(report);
+        assertEquals(System.currentTimeMillis(), report.nextReportAt, 3000);
+
+        String date = LocalDate.now(report.tzName).toString();
+        String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
+        String downloadUrl = "http://127.0.0.1:18080/" + filename;
+        verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
+                eq("Your daily DailyReport is ready"),
+                eq(downloadUrl),
+                eq("Report name: DailyReport<br>Period: Daily, at " + localTime));
+        sleep(200);
+        assertEquals(1, holder.reportScheduler.getCompletedTaskCount());
+        assertEquals(2, holder.reportScheduler.getTaskCount());
+
+        Path result = Paths.get(FileUtils.CSV_DIR,
+                DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+        assertTrue(Files.exists(result));
+        String resultCsvString = readStringFromFirstZipEntry(result);
+        String[] split = resultCsvString.split("\n");
+        assertEquals(24, split.length);
     }
 
     @Test
@@ -630,7 +699,7 @@ public class ReportingTest extends IntegrationBase {
                 ReportingStorageDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath20, 1.11D, pointNow);
 
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, null, true);
         ReportSource reportSource = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},
                 1,
@@ -697,7 +766,7 @@ public class ReportingTest extends IntegrationBase {
                 .ofPattern(Format.ISO_SIMPLE.pattern)
                 .withZone(ZoneId.of("UTC"))
                 .format(Instant.ofEpochMilli(pointNow));
-        assertEquals(resultCsvString, "1.11," + nowFormatted + ",v1\n");
+        assertEquals(resultCsvString, nowFormatted + ",v1,1.11\n");
     }
 
     @Test
@@ -725,8 +794,8 @@ public class ReportingTest extends IntegrationBase {
         FileUtils.write(pinReportingDataPath12, 1.13D, pointNow);
         FileUtils.write(pinReportingDataPath22, 1.14D, pointNow);
 
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
-        ReportDataStream reportDataStream2 = new ReportDataStream((byte) 2, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, null, true);
+        ReportDataStream reportDataStream2 = new ReportDataStream((byte) 2, PinType.VIRTUAL, null, true);
         ReportSource reportSource = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream, reportDataStream2},
                 1,
@@ -793,11 +862,390 @@ public class ReportingTest extends IntegrationBase {
 
         String resultCsvString = readStringFromZipEntry(zipFile, entry);
         assertNotNull(resultCsvString);
-        assertEquals(resultCsvString, "1.11," + nowFormatted + ",v1\n" + "1.12," + nowFormatted + ",v2\n");
+        assertEquals(resultCsvString, nowFormatted + ",v1,1.11\n" + nowFormatted + ",v2,1.12\n");
 
         String resultCsvString2 = readStringFromZipEntry(zipFile, entry2);
         assertNotNull(resultCsvString2);
-        assertEquals(resultCsvString2, "1.13," + nowFormatted + ",v1\n" + "1.14," + nowFormatted + ",v2\n");
+        assertEquals(resultCsvString2, nowFormatted + ",v1,1.13\n" + nowFormatted + ",v2,1.14\n");
+    }
+
+    @Test
+    public void testFinalFileNameCSVPerDevice2DataStreamWithName() throws Exception {
+        Device device1 = new Device(2, "My Device2 with big name", "ESP8266");
+        clientPair.appClient.createDevice(1, device1);
+
+        String tempDir = holder.props.getProperty("data.folder");
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+        Path pinReportingDataPath20 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 2, GraphGranularityType.MINUTE));
+        long pointNow = System.currentTimeMillis();
+        FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
+        FileUtils.write(pinReportingDataPath20, 1.12D, pointNow);
+
+        Path pinReportingDataPath12 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingStorageDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+        Path pinReportingDataPath22 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingStorageDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 2, GraphGranularityType.MINUTE));
+        FileUtils.write(pinReportingDataPath12, 1.13D, pointNow);
+        FileUtils.write(pinReportingDataPath22, 1.14D, pointNow);
+
+        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream2 = new ReportDataStream((byte) 2, PinType.VIRTUAL, "Humidity", true);
+        ReportSource reportSource = new TileTemplateReportSource(
+                new ReportDataStream[] {reportDataStream, reportDataStream2},
+                1,
+                new int[] {0, 2}
+        );
+
+        ReportingWidget reportingWidget = new ReportingWidget();
+        reportingWidget.height = 1;
+        reportingWidget.width = 1;
+        reportingWidget.reportSources = new ReportSource[] {
+                reportSource
+        };
+
+        clientPair.appClient.createWidget(1, reportingWidget);
+        clientPair.appClient.verifyResult(ok(2));
+
+        //a bit upfront
+        long now = System.currentTimeMillis() + 1000;
+        LocalTime localTime = LocalTime.ofInstant(Instant.ofEpochMilli(now), ZoneId.of("UTC"));
+        localTime = LocalTime.of(localTime.getHour(), localTime.getMinute());
+
+        Report report = new Report(1, "DailyReport",
+                new ReportSource[] {reportSource},
+                new DailyReport(now, ReportDurationType.INFINITE, 0, 0), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE,
+                Format.ISO_SIMPLE, ZoneId.of("UTC"), 0, 0, null);
+        clientPair.appClient.createReport(1, report);
+
+        report = clientPair.appClient.parseReportFromResponse(3);
+        assertNotNull(report);
+        assertEquals(System.currentTimeMillis(), report.nextReportAt, 2000);
+
+        String date = LocalDate.now(report.tzName).toString();
+        String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
+        String downloadUrl = "http://127.0.0.1:18080/" + filename;
+        verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
+                eq("Your daily DailyReport is ready"),
+                eq(downloadUrl),
+                eq("Report name: DailyReport<br>Period: Daily, at " + localTime));
+        sleep(200);
+        assertEquals(1, holder.reportScheduler.getCompletedTaskCount());
+        assertEquals(2, holder.reportScheduler.getTaskCount());
+
+        Path result = Paths.get(FileUtils.CSV_DIR,
+                DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+        assertTrue(Files.exists(result));
+        ZipFile zipFile = new ZipFile(result.toString());
+
+        Enumeration<? extends ZipEntry> entries = zipFile.entries();
+        assertTrue(entries.hasMoreElements());
+
+        ZipEntry entry = entries.nextElement();
+        assertNotNull(entry);
+        assertEquals("MyDevice_0.csv", entry.getName());
+
+        ZipEntry entry2 = entries.nextElement();
+        assertNotNull(entry2);
+        assertEquals("MyDevice2withbig_2.csv", entry2.getName());
+
+        String nowFormatted = DateTimeFormatter
+                .ofPattern(Format.ISO_SIMPLE.pattern)
+                .withZone(ZoneId.of("UTC"))
+                .format(Instant.ofEpochMilli(pointNow));
+
+        String resultCsvString = readStringFromZipEntry(zipFile, entry);
+        assertNotNull(resultCsvString);
+        assertEquals(resultCsvString, nowFormatted + ",Temperature,1.11\n" + nowFormatted + ",Humidity,1.12\n");
+
+        String resultCsvString2 = readStringFromZipEntry(zipFile, entry2);
+        assertNotNull(resultCsvString2);
+        assertEquals(resultCsvString2, nowFormatted + ",Temperature,1.13\n" + nowFormatted + ",Humidity,1.14\n");
+    }
+
+    @Test
+    public void testFinalFileNameCSVMerged2DataStreamWithName() throws Exception {
+        Device device1 = new Device(2, "My Device2 with big name", "ESP8266");
+        clientPair.appClient.createDevice(1, device1);
+
+        String tempDir = holder.props.getProperty("data.folder");
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+        Path pinReportingDataPath20 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 2, GraphGranularityType.MINUTE));
+        long pointNow = System.currentTimeMillis();
+        FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
+        FileUtils.write(pinReportingDataPath20, 1.12D, pointNow);
+
+        Path pinReportingDataPath12 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingStorageDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+        Path pinReportingDataPath22 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingStorageDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 2, GraphGranularityType.MINUTE));
+        FileUtils.write(pinReportingDataPath12, 1.13D, pointNow);
+        FileUtils.write(pinReportingDataPath22, 1.14D, pointNow);
+
+        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream2 = new ReportDataStream((byte) 2, PinType.VIRTUAL, "Humidity", true);
+        ReportSource reportSource = new TileTemplateReportSource(
+                new ReportDataStream[] {reportDataStream, reportDataStream2},
+                1,
+                new int[] {0, 2}
+        );
+
+        ReportingWidget reportingWidget = new ReportingWidget();
+        reportingWidget.height = 1;
+        reportingWidget.width = 1;
+        reportingWidget.reportSources = new ReportSource[] {
+                reportSource
+        };
+
+        clientPair.appClient.createWidget(1, reportingWidget);
+        clientPair.appClient.verifyResult(ok(2));
+
+        //a bit upfront
+        long now = System.currentTimeMillis() + 1000;
+        LocalTime localTime = LocalTime.ofInstant(Instant.ofEpochMilli(now), ZoneId.of("UTC"));
+        localTime = LocalTime.of(localTime.getHour(), localTime.getMinute());
+
+        Report report = new Report(1, "DailyReport",
+                new ReportSource[] {reportSource},
+                new DailyReport(now, ReportDurationType.INFINITE, 0, 0), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, MERGED_CSV,
+                Format.ISO_SIMPLE, ZoneId.of("UTC"), 0, 0, null);
+        clientPair.appClient.createReport(1, report);
+
+        report = clientPair.appClient.parseReportFromResponse(3);
+        assertNotNull(report);
+        assertEquals(System.currentTimeMillis(), report.nextReportAt, 2000);
+
+        String date = LocalDate.now(report.tzName).toString();
+        String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
+        String downloadUrl = "http://127.0.0.1:18080/" + filename;
+        verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
+                eq("Your daily DailyReport is ready"),
+                eq(downloadUrl),
+                eq("Report name: DailyReport<br>Period: Daily, at " + localTime));
+        sleep(200);
+        assertEquals(1, holder.reportScheduler.getCompletedTaskCount());
+        assertEquals(2, holder.reportScheduler.getTaskCount());
+
+        Path result = Paths.get(FileUtils.CSV_DIR,
+                DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+        assertTrue(Files.exists(result));
+        ZipFile zipFile = new ZipFile(result.toString());
+
+        Enumeration<? extends ZipEntry> entries = zipFile.entries();
+        assertTrue(entries.hasMoreElements());
+
+        ZipEntry entry = entries.nextElement();
+        assertNotNull(entry);
+        assertEquals("DailyReport.csv", entry.getName());
+
+        String nowFormatted = DateTimeFormatter
+                .ofPattern(Format.ISO_SIMPLE.pattern)
+                .withZone(ZoneId.of("UTC"))
+                .format(Instant.ofEpochMilli(pointNow));
+
+        String resultCsvString = readStringFromZipEntry(zipFile, entry);
+        assertNotNull(resultCsvString);
+        assertEquals(resultCsvString, nowFormatted + ",Temperature,My Device,1.11\n" + nowFormatted + ",Humidity,My Device,1.12\n"
+                +                     nowFormatted + ",Temperature,My Device2 with big name,1.13\n" + nowFormatted + ",Humidity,My Device2 with big name,1.14\n");
+    }
+
+    @Test
+    public void testFinalFileNameCSVMerged2DataStreamWithNameCorrectEscaping() throws Exception {
+        Device device1 = new Device(2, "My Device2 with \"big\" name", "ESP8266");
+        clientPair.appClient.createDevice(1, device1);
+
+        String tempDir = holder.props.getProperty("data.folder");
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+        Path pinReportingDataPath20 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 2, GraphGranularityType.MINUTE));
+        long pointNow = System.currentTimeMillis();
+        FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
+        FileUtils.write(pinReportingDataPath20, 1.12D, pointNow);
+
+        Path pinReportingDataPath12 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingStorageDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+        Path pinReportingDataPath22 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingStorageDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 2, GraphGranularityType.MINUTE));
+        FileUtils.write(pinReportingDataPath12, 1.13D, pointNow);
+        FileUtils.write(pinReportingDataPath22, 1.14D, pointNow);
+
+        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream2 = new ReportDataStream((byte) 2, PinType.VIRTUAL, "Humidity", true);
+        ReportSource reportSource = new TileTemplateReportSource(
+                new ReportDataStream[] {reportDataStream, reportDataStream2},
+                1,
+                new int[] {0, 2}
+        );
+
+        ReportingWidget reportingWidget = new ReportingWidget();
+        reportingWidget.height = 1;
+        reportingWidget.width = 1;
+        reportingWidget.reportSources = new ReportSource[] {
+                reportSource
+        };
+
+        clientPair.appClient.createWidget(1, reportingWidget);
+        clientPair.appClient.verifyResult(ok(2));
+
+        //a bit upfront
+        long now = System.currentTimeMillis() + 1000;
+        LocalTime localTime = LocalTime.ofInstant(Instant.ofEpochMilli(now), ZoneId.of("UTC"));
+        localTime = LocalTime.of(localTime.getHour(), localTime.getMinute());
+
+        Report report = new Report(1, "DailyReport",
+                new ReportSource[] {reportSource},
+                new DailyReport(now, ReportDurationType.INFINITE, 0, 0), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, MERGED_CSV,
+                Format.ISO_SIMPLE, ZoneId.of("UTC"), 0, 0, null);
+        clientPair.appClient.createReport(1, report);
+
+        report = clientPair.appClient.parseReportFromResponse(3);
+        assertNotNull(report);
+        assertEquals(System.currentTimeMillis(), report.nextReportAt, 2000);
+
+        String date = LocalDate.now(report.tzName).toString();
+        String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
+        String downloadUrl = "http://127.0.0.1:18080/" + filename;
+        verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
+                eq("Your daily DailyReport is ready"),
+                eq(downloadUrl),
+                eq("Report name: DailyReport<br>Period: Daily, at " + localTime));
+        sleep(200);
+        assertEquals(1, holder.reportScheduler.getCompletedTaskCount());
+        assertEquals(2, holder.reportScheduler.getTaskCount());
+
+        Path result = Paths.get(FileUtils.CSV_DIR,
+                DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+        assertTrue(Files.exists(result));
+        ZipFile zipFile = new ZipFile(result.toString());
+
+        Enumeration<? extends ZipEntry> entries = zipFile.entries();
+        assertTrue(entries.hasMoreElements());
+
+        ZipEntry entry = entries.nextElement();
+        assertNotNull(entry);
+        assertEquals("DailyReport.csv", entry.getName());
+
+        String nowFormatted = DateTimeFormatter
+                .ofPattern(Format.ISO_SIMPLE.pattern)
+                .withZone(ZoneId.of("UTC"))
+                .format(Instant.ofEpochMilli(pointNow));
+
+        String resultCsvString = readStringFromZipEntry(zipFile, entry);
+        assertNotNull(resultCsvString);
+        assertEquals(resultCsvString, nowFormatted + ",Temperature,My Device,1.11\n" + nowFormatted + ",Humidity,My Device,1.12\n"
+                +                     nowFormatted + ",Temperature,\"My Device2 with \"\"big\"\" name\",1.13\n" + nowFormatted + ",Humidity,\"My Device2 with \"\"big\"\" name\",1.14\n");
+    }
+
+    @Test
+    public void testFinalFileNameCSVMerged2DataStreamWithNameCorrectEscaping2() throws Exception {
+        Device device1 = new Device(2, "My Device2 with, big name", "ESP8266");
+        clientPair.appClient.createDevice(1, device1);
+
+        String tempDir = holder.props.getProperty("data.folder");
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+        Path pinReportingDataPath20 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 2, GraphGranularityType.MINUTE));
+        long pointNow = System.currentTimeMillis();
+        FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
+        FileUtils.write(pinReportingDataPath20, 1.12D, pointNow);
+
+        Path pinReportingDataPath12 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingStorageDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+        Path pinReportingDataPath22 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingStorageDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 2, GraphGranularityType.MINUTE));
+        FileUtils.write(pinReportingDataPath12, 1.13D, pointNow);
+        FileUtils.write(pinReportingDataPath22, 1.14D, pointNow);
+
+        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream2 = new ReportDataStream((byte) 2, PinType.VIRTUAL, "Humidity", true);
+        ReportSource reportSource = new TileTemplateReportSource(
+                new ReportDataStream[] {reportDataStream, reportDataStream2},
+                1,
+                new int[] {0, 2}
+        );
+
+        ReportingWidget reportingWidget = new ReportingWidget();
+        reportingWidget.height = 1;
+        reportingWidget.width = 1;
+        reportingWidget.reportSources = new ReportSource[] {
+                reportSource
+        };
+
+        clientPair.appClient.createWidget(1, reportingWidget);
+        clientPair.appClient.verifyResult(ok(2));
+
+        //a bit upfront
+        long now = System.currentTimeMillis() + 1000;
+        LocalTime localTime = LocalTime.ofInstant(Instant.ofEpochMilli(now), ZoneId.of("UTC"));
+        localTime = LocalTime.of(localTime.getHour(), localTime.getMinute());
+
+        Report report = new Report(1, "DailyReport",
+                new ReportSource[] {reportSource},
+                new DailyReport(now, ReportDurationType.INFINITE, 0, 0), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, MERGED_CSV,
+                Format.ISO_SIMPLE, ZoneId.of("UTC"), 0, 0, null);
+        clientPair.appClient.createReport(1, report);
+
+        report = clientPair.appClient.parseReportFromResponse(3);
+        assertNotNull(report);
+        assertEquals(System.currentTimeMillis(), report.nextReportAt, 2000);
+
+        String date = LocalDate.now(report.tzName).toString();
+        String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
+        String downloadUrl = "http://127.0.0.1:18080/" + filename;
+        verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
+                eq("Your daily DailyReport is ready"),
+                eq(downloadUrl),
+                eq("Report name: DailyReport<br>Period: Daily, at " + localTime));
+        sleep(200);
+        assertEquals(1, holder.reportScheduler.getCompletedTaskCount());
+        assertEquals(2, holder.reportScheduler.getTaskCount());
+
+        Path result = Paths.get(FileUtils.CSV_DIR,
+                DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+        assertTrue(Files.exists(result));
+        ZipFile zipFile = new ZipFile(result.toString());
+
+        Enumeration<? extends ZipEntry> entries = zipFile.entries();
+        assertTrue(entries.hasMoreElements());
+
+        ZipEntry entry = entries.nextElement();
+        assertNotNull(entry);
+        assertEquals("DailyReport.csv", entry.getName());
+
+        String nowFormatted = DateTimeFormatter
+                .ofPattern(Format.ISO_SIMPLE.pattern)
+                .withZone(ZoneId.of("UTC"))
+                .format(Instant.ofEpochMilli(pointNow));
+
+        String resultCsvString = readStringFromZipEntry(zipFile, entry);
+        assertNotNull(resultCsvString);
+        assertEquals(resultCsvString, nowFormatted + ",Temperature,My Device,1.11\n" + nowFormatted + ",Humidity,My Device,1.12\n"
+                +                     nowFormatted + ",Temperature,\"My Device2 with, big name\",1.13\n" + nowFormatted + ",Humidity,\"My Device2 with, big name\",1.14\n");
     }
 
     @Test
@@ -812,7 +1260,7 @@ public class ReportingTest extends IntegrationBase {
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
 
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, null, true);
         ReportSource reportSource = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},
                 1,
@@ -859,12 +1307,12 @@ public class ReportingTest extends IntegrationBase {
         assertTrue(Files.exists(result));
         String resultCsvString = readStringFromFirstZipEntry(result);
         String[] split = resultCsvString.split("[,\n]");
-        assertEquals(1.11D, Double.parseDouble(split[0]), 0.0001);
         String nowFormatted = DateTimeFormatter
                 .ofPattern(Format.ISO_SIMPLE.pattern)
                 .withZone(ZoneId.of("UTC"))
                 .format(Instant.ofEpochMilli(pointNow));
-        assertEquals(nowFormatted, split[1]);
+        assertEquals(nowFormatted, split[0]);
+        assertEquals(1.11D, Double.parseDouble(split[1]), 0.0001);
 
         clientPair.appClient.getWidget(1, 222222);
         ReportingWidget reportingWidget2 = (ReportingWidget) JsonParser.parseWidget(clientPair.appClient.getBody(3), 0);
@@ -943,12 +1391,12 @@ public class ReportingTest extends IntegrationBase {
         String resultCsvString = readStringFromFirstZipEntry(result);
         assertNotNull(resultCsvString);
         String[] split = resultCsvString.split("[,\n]");
-        assertEquals(1.11D, Double.parseDouble(split[0]), 0.0001);
         String nowFormatted = DateTimeFormatter
                 .ofPattern(Format.ISO_SIMPLE.pattern)
                 .withZone(ZoneId.of("UTC"))
                 .format(Instant.ofEpochMilli(now));
-        assertEquals(nowFormatted, split[1]);
+        assertEquals(nowFormatted, split[0]);
+        assertEquals(1.11D, Double.parseDouble(split[1]), 0.0001);
     }
 
     @Test
@@ -1027,12 +1475,12 @@ public class ReportingTest extends IntegrationBase {
         String resultCsvString = readStringFromFirstZipEntry(result);
         assertNotNull(resultCsvString);
         String[] split = resultCsvString.split("[,\n]");
-        assertEquals(1.11D, Double.parseDouble(split[0]), 0.0001);
         String nowFormatted = DateTimeFormatter
                 .ofPattern(Format.ISO_SIMPLE.pattern)
                 .withZone(ZoneId.of("UTC"))
                 .format(Instant.ofEpochMilli(now));
-        assertEquals(nowFormatted, split[1]);
+        assertEquals(nowFormatted, split[0]);
+        assertEquals(1.11D, Double.parseDouble(split[1]), 0.0001);
     }
 
     @Test
@@ -1106,12 +1554,12 @@ public class ReportingTest extends IntegrationBase {
         String resultCsvString = readStringFromFirstZipEntry(result);
         assertNotNull(resultCsvString);
         String[] split = resultCsvString.split("[,\n]");
-        assertEquals(1.11D, Double.parseDouble(split[0]), 0.0001);
         String nowFormatted = DateTimeFormatter
                 .ofPattern(Format.ISO_SIMPLE.pattern)
                 .withZone(ZoneId.of("UTC"))
                 .format(Instant.ofEpochMilli(now));
-        assertEquals(nowFormatted, split[1]);
+        assertEquals(nowFormatted, split[0]);
+        assertEquals(1.11D, Double.parseDouble(split[1]), 0.0001);
     }
 
     @Test
@@ -1242,8 +1690,8 @@ public class ReportingTest extends IntegrationBase {
         String resultCsvString = readStringFromFirstZipEntry(result);
         assertNotNull(resultCsvString);
         String[] split = resultCsvString.split("[,\n]");
-        assertEquals(1.11D, Double.parseDouble(split[0]), 0.0001);
-        assertEquals(now, Long.parseLong(split[1]), 2000);
+        assertEquals(now, Long.parseLong(split[0]), 2000);
+        assertEquals(1.11D, Double.parseDouble(split[1]), 0.0001);
     }
 
     @Test
@@ -1486,10 +1934,10 @@ public class ReportingTest extends IntegrationBase {
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
                 ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
-        FileUtils.write(pinReportingDataPath10, 1.12D, pointNow - TimeUnit.DAYS.toMillis(1));
+        FileUtils.write(pinReportingDataPath10, 1.12D, pointNow - TimeUnit.HOURS.toMillis(25));
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
 
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, null, true);
         ReportSource reportSource = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},
                 1,
@@ -1536,12 +1984,12 @@ public class ReportingTest extends IntegrationBase {
         assertTrue(Files.exists(result));
         String resultCsvString = readStringFromFirstZipEntry(result);
         String[] split = resultCsvString.split("[,\n]");
-        assertEquals(1.11D, Double.parseDouble(split[0]), 0.0001);
         String nowFormatted = DateTimeFormatter
                 .ofPattern(Format.ISO_SIMPLE.pattern)
                 .withZone(ZoneId.of("UTC"))
                 .format(Instant.ofEpochMilli(pointNow));
-        assertEquals(nowFormatted, split[1]);
+        assertEquals(nowFormatted, split[0]);
+        assertEquals(1.11D, Double.parseDouble(split[1]), 0.0001);
 
         clientPair.appClient.getWidget(1, 222222);
         ReportingWidget reportingWidget2 = (ReportingWidget) JsonParser.parseWidget(clientPair.appClient.getBody(3), 0);

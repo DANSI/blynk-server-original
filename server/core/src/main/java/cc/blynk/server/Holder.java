@@ -7,7 +7,9 @@ import cc.blynk.server.core.dao.ReportingStorageDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.dao.ota.OTAManager;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportScheduler;
 import cc.blynk.server.core.processors.EventorProcessor;
 import cc.blynk.server.core.stats.GlobalStats;
@@ -34,6 +36,7 @@ import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 
 import java.util.Collections;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 import static cc.blynk.server.internal.ReportingUtil.getReportingFolder;
@@ -70,7 +73,6 @@ public class Holder {
     public final MailWrapper mailWrapper;
     public final GCMWrapper gcmWrapper;
     public final SMSWrapper smsWrapper;
-    public final String region;
     public final TimerWorker timerWorker;
     public final ReadingWidgetsWorker readingWidgetsWorker;
     public final ReportScheduler reportScheduler;
@@ -86,8 +88,6 @@ public class Holder {
 
     public final String downloadUrl;
 
-    public final String host;
-
     public final SslContextHolder sslContextHolder;
 
     public final TokensPool tokensPool;
@@ -99,11 +99,8 @@ public class Holder {
         disableNettyLeakDetector();
         this.props = serverProperties;
 
-        this.region = serverProperties.getProperty("region", "local");
-        this.host = serverProperties.getServerHost();
-
         String dataFolder = serverProperties.getProperty("data.folder");
-        this.fileManager = new FileManager(dataFolder, host);
+        this.fileManager = new FileManager(dataFolder, serverProperties.host);
         this.sessionDao = new SessionDao();
         this.blockingIOProcessor = new BlockingIOProcessor(
                 serverProperties.getIntProperty("blocking.processor.thread.pool.limit", 6),
@@ -116,17 +113,18 @@ public class Holder {
 
         if (restore) {
             try {
-                this.userDao = new UserDao(dbManager.userDBDao.getAllUsers(this.region), this.region, host);
+                ConcurrentMap<UserKey, User> allUsers = dbManager.userDBDao.getAllUsers(serverProperties.region);
+                this.userDao = new UserDao(allUsers, serverProperties.region, serverProperties.host);
             } catch (Exception e) {
                 System.out.println("Error restoring data from DB!");
                 e.printStackTrace();
                 throw new RuntimeException(e);
             }
         } else {
-            this.userDao = new UserDao(fileManager.deserializeUsers(), this.region, host);
+            this.userDao = new UserDao(fileManager.deserializeUsers(), serverProperties.region, serverProperties.host);
         }
 
-        this.tokenManager = new TokenManager(this.userDao.users, dbManager, host);
+        this.tokenManager = new TokenManager(this.userDao.users, dbManager, serverProperties.host);
         this.stats = new GlobalStats();
         final String reportingFolder = getReportingFolder(dataFolder);
         this.reportingDao = new ReportingStorageDao(reportingFolder,
@@ -146,12 +144,11 @@ public class Holder {
                 .build()
         );
 
-        String productName = serverProperties.getProductName();
         this.twitterWrapper = new TwitterWrapper(twitterProperties, asyncHttpClient);
-        this.mailWrapper = new MailWrapper(mailProperties, productName);
-        this.gcmWrapper = new GCMWrapper(gcmProperties, asyncHttpClient, productName);
+        this.mailWrapper = new MailWrapper(mailProperties, serverProperties.productName);
+        this.gcmWrapper = new GCMWrapper(gcmProperties, asyncHttpClient, serverProperties.productName);
         this.smsWrapper = new SMSWrapper(smsProperties, asyncHttpClient);
-        this.slackWrapper = new SlackWrapper(slackProperties, asyncHttpClient, region);
+        this.slackWrapper = new SlackWrapper(slackProperties, asyncHttpClient, serverProperties.region);
 
         this.otaManager = new OTAManager(props);
 
@@ -162,7 +159,7 @@ public class Holder {
         this.limits = new Limits(props);
         this.textHolder = new TextHolder(gcmProperties);
 
-        this.downloadUrl = FileUtils.downloadUrl(host,
+        this.downloadUrl = FileUtils.downloadUrl(serverProperties.host,
                 props.getProperty("http.port"),
                 props.getBoolProperty("force.port.80.for.csv")
         );
@@ -182,13 +179,10 @@ public class Holder {
         disableNettyLeakDetector();
         this.props = serverProperties;
 
-        this.region = "local";
-        this.host = serverProperties.getServerHost();
-
         String dataFolder = serverProperties.getProperty("data.folder");
-        this.fileManager = new FileManager(dataFolder, host);
+        this.fileManager = new FileManager(dataFolder, serverProperties.host);
         this.sessionDao = new SessionDao();
-        this.userDao = new UserDao(fileManager.deserializeUsers(), this.region, host);
+        this.userDao = new UserDao(fileManager.deserializeUsers(), serverProperties.region, serverProperties.host);
         this.blockingIOProcessor = new BlockingIOProcessor(
                 serverProperties.getIntProperty("blocking.processor.thread.pool.limit", 5),
                 serverProperties.getIntProperty("notifications.queue.limit", 2000)
@@ -198,7 +192,7 @@ public class Holder {
         this.dbManager = new DBManager(dbFileName, blockingIOProcessor, enableDB);
         this.reportingDBManager = new ReportingDBManager(dbFileName, blockingIOProcessor, enableDB);
 
-        this.tokenManager = new TokenManager(this.userDao.users, dbManager, host);
+        this.tokenManager = new TokenManager(this.userDao.users, dbManager, serverProperties.host);
         this.stats = new GlobalStats();
         final String reportingFolder = getReportingFolder(dataFolder);
         this.reportingDao = new ReportingStorageDao(reportingFolder,
@@ -229,7 +223,7 @@ public class Holder {
         this.limits = new Limits(props);
         this.textHolder = new TextHolder(new GCMProperties(Collections.emptyMap()));
 
-        this.downloadUrl = FileUtils.downloadUrl(host,
+        this.downloadUrl = FileUtils.downloadUrl(serverProperties.host,
                 props.getProperty("http.port"),
                 props.getBoolProperty("force.port.80.for.csv")
         );
@@ -245,10 +239,6 @@ public class Holder {
         if (leakProperty == null) {
             System.setProperty("io.netty.leakDetection.level", "disabled");
         }
-    }
-
-    public boolean isLocalRegion() {
-        return region.equals("local");
     }
 
     public void close() {

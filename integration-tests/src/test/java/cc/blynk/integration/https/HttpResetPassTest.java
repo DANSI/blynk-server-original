@@ -75,7 +75,7 @@ public class HttpResetPassTest extends BaseTest {
             assertEquals("Email was sent.", data);
         }
 
-        String productName = properties.getProductName();
+        String productName = properties.productName;
         verify(mailWrapper).sendHtml(eq(email),
                 eq("Password reset request for the " + productName + " app."),
                 contains("/landing?token="));

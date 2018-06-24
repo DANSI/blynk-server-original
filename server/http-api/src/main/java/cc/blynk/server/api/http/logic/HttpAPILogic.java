@@ -99,7 +99,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
         this.eventorProcessor = holder.eventorProcessor;
         this.dbManager = holder.dbManager;
         this.fileManager = holder.fileManager;
-        this.host = holder.props.getServerHost();
+        this.host = holder.props.host;
         this.httpsPort = holder.props.getHttpsPortAsString();
     }
 

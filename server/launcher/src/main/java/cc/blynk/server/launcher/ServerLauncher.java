@@ -81,7 +81,7 @@ public final class ServerLauncher {
     }
 
     private static void setGlobalProperties(ServerProperties serverProperties) {
-        HashMap<String, String> globalProps = new HashMap<>(4);
+        Map<String, String> globalProps = new HashMap<>(4);
         globalProps.put("terminal.strings.pool.size", "25");
         globalProps.put("initial.energy", "2000");
         globalProps.put("table.rows.pool.size", "100");
@@ -126,7 +126,7 @@ public final class ServerLauncher {
 
     private static void createSuperUser(Holder holder) {
         ServerProperties props = holder.props;
-        String url = props.getAdminUrl(holder.host);
+        String url = props.getAdminUrl(props.host);
         String email = props.getProperty("admin.email", "admin@blynk.cc");
         String pass = props.getProperty("admin.pass");
 
@@ -143,10 +143,9 @@ public final class ServerLauncher {
             String hash = SHA256Util.makeHash(pass, email);
             holder.userDao.add(email, hash, AppNameUtil.BLYNK, true);
 
-            String vendorEmail = props.getVendorEmail();
+            String vendorEmail = props.vendorEmail;
             if (vendorEmail != null) {
-                String productName = props.getProductName();
-                String subj = "Your private Blynk server for " + productName + " is up!";
+                String subj = "Your private Blynk server for " + props.productName + " is up!";
                 String body = buildServerUpEmailBody(url, email, pass);
                 holder.blockingIOProcessor.messagingExecutor.execute(() -> {
                     try {
