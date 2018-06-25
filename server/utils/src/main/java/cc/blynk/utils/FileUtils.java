@@ -190,7 +190,8 @@ public final class FileUtils {
             if (startFrom <= ts) {
                 String formattedTs = formatTS(formatter, ts);
                 String data = formattedTs + ',' + value + '\n';
-                baos.write(data.getBytes(UTF_8), 0, data.length());
+                byte[] bytes = data.getBytes(UTF_8);
+                baos.write(bytes, 0, bytes.length);
             }
         }
     }
