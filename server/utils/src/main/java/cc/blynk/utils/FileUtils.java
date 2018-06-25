@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.EnumSet;
 
 import static java.nio.charset.StandardCharsets.US_ASCII;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardOpenOption.APPEND;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.READ;
@@ -158,7 +159,8 @@ public final class FileUtils {
             if (startFrom <= ts) {
                 String formattedTs = formatTS(formatter, ts);
                 String data = formattedTs + ',' + pin + ',' + deviceName + "," + value + '\n';
-                baos.write(data.getBytes(US_ASCII), 0, data.length());
+                byte[] bytes = data.getBytes(UTF_8);
+                baos.write(bytes, 0, bytes.length);
             }
         }
     }
@@ -173,7 +175,8 @@ public final class FileUtils {
             if (startFrom <= ts) {
                 String formattedTs = formatTS(formatter, ts);
                 String data = formattedTs + ',' + pin + ',' + value + '\n';
-                baos.write(data.getBytes(US_ASCII), 0, data.length());
+                byte[] bytes = data.getBytes(UTF_8);
+                baos.write(bytes, 0, bytes.length);
             }
         }
     }

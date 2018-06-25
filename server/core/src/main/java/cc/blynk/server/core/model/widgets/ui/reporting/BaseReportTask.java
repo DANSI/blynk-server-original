@@ -131,7 +131,7 @@ public abstract class BaseReportTask implements Runnable {
         } catch (Exception e) {
             report.lastRunResult = ReportResult.ERROR;
             log.error("Error generating report {} for user {}. ", report.id, key.user.email);
-            log.error("Error:", e);
+            log.error("Error: ", e);
         }
 
         long newNow = System.currentTimeMillis();
