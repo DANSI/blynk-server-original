@@ -27,6 +27,7 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipOutputStream;
 
 import static cc.blynk.utils.StringUtils.NOT_SUPPORTED_CHARS;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * The Blynk Project.
@@ -174,7 +175,7 @@ public abstract class BaseReportTask implements Runnable {
 
     private boolean merged(Path output, DashBoard dash, int fetchCount, long startFrom) throws Exception {
         boolean atLeastOne = false;
-        try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(output))) {
+        try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(output), UTF_8)) {
             String fileName = truncateFileName(report.name) + ".csv";
             ZipEntry zipEntry = new ZipEntry(fileName);
             zs.putNextEntry(zipEntry);
@@ -193,7 +194,7 @@ public abstract class BaseReportTask implements Runnable {
                                     byte[] onePinDataCsv = toCSV(onePinData, pin,
                                             deviceName, startFrom, report.makeFormatter());
                                     if (onePinDataCsv.length > 0) {
-                                        zs.write(onePinDataCsv, 0, onePinDataCsv.length);
+                                        zs.write(onePinDataCsv);
                                         atLeastOne = true;
                                     }
                                 }
@@ -209,7 +210,7 @@ public abstract class BaseReportTask implements Runnable {
 
     private boolean filePerDevice(Path output, DashBoard dash, int fetchCount, long startFrom) throws Exception {
         boolean atLeastOne = false;
-        try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(output))) {
+        try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(output), UTF_8)) {
             for (ReportSource reportSource : report.reportSources) {
                 if (reportSource.isValid()) {
                     for (int deviceId : reportSource.getDeviceIds()) {
@@ -227,7 +228,7 @@ public abstract class BaseReportTask implements Runnable {
                                     String pin = reportDataStream.formatPin();
                                     byte[] onePinDataCsv = toCSV(onePinData, pin, startFrom, report.makeFormatter());
                                     if (onePinDataCsv.length > 0) {
-                                        zs.write(onePinDataCsv, 0, onePinDataCsv.length);
+                                        zs.write(onePinDataCsv);
                                         atLeastOne = true;
                                     }
                                 }
@@ -243,7 +244,7 @@ public abstract class BaseReportTask implements Runnable {
 
     private boolean filePerDevicePerPin(Path output, DashBoard dash, int fetchCount, long startFrom) throws Exception {
         boolean atLeastOne = false;
-        try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(output))) {
+        try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(output), UTF_8)) {
             for (ReportSource reportSource : report.reportSources) {
                 if (reportSource.isValid()) {
                     for (int deviceId : reportSource.getDeviceIds()) {
@@ -296,7 +297,7 @@ public abstract class BaseReportTask implements Runnable {
         ZipEntry zipEntry = new ZipEntry(onePinFileName);
         try {
             zs.putNextEntry(zipEntry);
-            zs.write(onePinDataCsv, 0, onePinDataCsv.length);
+            zs.write(onePinDataCsv);
             zs.closeEntry();
             return true;
         } catch (ZipException zipException) {

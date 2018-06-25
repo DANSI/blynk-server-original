@@ -59,6 +59,7 @@ import static cc.blynk.server.core.model.widgets.ui.reporting.ReportResult.OK;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Response.QUOTA_LIMIT;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -2100,7 +2101,7 @@ public class ReportingTest extends IntegrationBase {
 
     private String readStringFromZipEntry(ZipFile zipFile, ZipEntry entry) throws Exception {
         try (BufferedInputStream bis = new BufferedInputStream(zipFile.getInputStream(entry))) {
-            return new String(bis.readAllBytes());
+            return new String(bis.readAllBytes(), UTF_8);
         }
     }
 }
