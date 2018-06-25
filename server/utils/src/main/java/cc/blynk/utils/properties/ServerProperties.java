@@ -58,9 +58,9 @@ public class ServerProperties extends BaseProperties {
     }
 
     private String getServerHost() {
-        var host = getProperty("server.host");
+        String host = getProperty("server.host");
         if (host == null || host.isEmpty()) {
-            var netInterface = getProperty("net.interface", "eth");
+            String netInterface = getProperty("net.interface", "eth");
             return IPUtils.resolveHostIP(netInterface);
         } else {
             return host;
