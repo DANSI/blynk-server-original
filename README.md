@@ -460,14 +460,17 @@ Enable raw data in ```server.properties``` :
 #### 3. Download Blynk DB script
 
         wget https://raw.githubusercontent.com/blynkkk/blynk-server/master/server/core/src/main/resources/create_schema.sql
+        wget https://raw.githubusercontent.com/blynkkk/blynk-server/master/server/core/src/main/resources/reporting_schema.sql
 
-#### 4. Move create_schema.sql to temp folder (to avoid permission problems)
+#### 4. Move create_schema.sql and reporting_schema.sql to temp folder (to avoid permission problems)
 
         mv create_schema.sql /tmp
+        mv reporting_schema.sql /tmp
         
 Result:  
 
         /tmp/create_schema.sql
+        /tmp/reporting_schema.sql
         
 Copy it to clipboard from your console.
 
@@ -476,9 +479,10 @@ Copy it to clipboard from your console.
         sudo su - postgres
         psql
 
-#### 6. Create Blynk DB, test user and tables
+#### 6. Create Blynk DB and Reporting DB, test user and tables
 
         \i /tmp/create_schema.sql
+        \i /tmp/reporting_schema.sql
         
 ```/tmp/create_schema.sql``` - is path from step 4.
         
