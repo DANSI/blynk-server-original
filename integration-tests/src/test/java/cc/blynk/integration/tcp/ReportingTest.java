@@ -310,7 +310,7 @@ public class ReportingTest extends IntegrationBase {
 
         report = clientPair.appClient.parseReportFromResponse(3);
         assertNotNull(report);
-        assertEquals(System.currentTimeMillis(), report.nextReportAt, 3000);
+        assertEquals(now, report.nextReportAt, 3000);
 
         Report report2 = new Report(2, "DailyReport2",
                 new ReportSource[] {reportSource},
@@ -320,7 +320,7 @@ public class ReportingTest extends IntegrationBase {
 
         report = clientPair.appClient.parseReportFromResponse(4);
         assertNotNull(report);
-        assertEquals(System.currentTimeMillis(), report.nextReportAt, 3000);
+        assertEquals(now, report.nextReportAt, 3000);
 
         //expecting now is ignored as duration is INFINITE
         Report report3 = new Report(3, "DailyReport3",
@@ -351,7 +351,7 @@ public class ReportingTest extends IntegrationBase {
 
         report = clientPair.appClient.parseReportFromResponse(7);
         assertNotNull(report);
-        assertEquals(System.currentTimeMillis() + 86400_000, report.nextReportAt, 3000);
+        assertEquals(now + 86400_000, report.nextReportAt, 3000);
 
         //report wit the same id is not allowed
         Report report6 = new Report(5, "DailyReport6",
