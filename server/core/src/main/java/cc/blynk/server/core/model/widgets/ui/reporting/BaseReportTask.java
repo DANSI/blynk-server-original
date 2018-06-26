@@ -13,14 +13,12 @@ import cc.blynk.utils.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
@@ -191,10 +189,10 @@ public abstract class BaseReportTask implements Runnable {
 
                                 if (onePinData != null) {
                                     String pin = reportDataStream.formatPin();
-                                    byte[] onePinDataCsv = toCSV(onePinData, pin,
+                                    String onePinDataCsv = FileUtils.writeBufToCsvFilterAndFormat(onePinData, pin,
                                             deviceName, startFrom, report.makeFormatter());
-                                    if (onePinDataCsv.length > 0) {
-                                        zs.write(onePinDataCsv);
+                                    if (onePinDataCsv.length() > 0) {
+                                        zs.write(onePinDataCsv.getBytes(UTF_8));
                                         atLeastOne = true;
                                     }
                                 }
@@ -226,9 +224,10 @@ public abstract class BaseReportTask implements Runnable {
 
                                 if (onePinData != null) {
                                     String pin = reportDataStream.formatPin();
-                                    byte[] onePinDataCsv = toCSV(onePinData, pin, startFrom, report.makeFormatter());
-                                    if (onePinDataCsv.length > 0) {
-                                        zs.write(onePinDataCsv);
+                                    String onePinDataCsv = FileUtils.writeBufToCsvFilterAndFormat(onePinData,
+                                            pin, startFrom, report.makeFormatter());
+                                    if (onePinDataCsv.length() > 0) {
+                                        zs.write(onePinDataCsv.getBytes(UTF_8));
                                         atLeastOne = true;
                                     }
                                 }
@@ -256,11 +255,13 @@ public abstract class BaseReportTask implements Runnable {
                                         reportDataStream.pin, fetchCount, report.granularityType, 0);
 
                                 if (onePinData != null) {
-                                    byte[] onePinDataCsv = toCSV(onePinData, startFrom, report.makeFormatter());
-                                    if (onePinDataCsv.length > 0) {
+                                    String onePinDataCsv = FileUtils.writeBufToCsvFilterAndFormat(onePinData,
+                                            startFrom, report.makeFormatter());
+                                    if (onePinDataCsv.length() > 0) {
                                         String onePinFileName =
                                                 deviceAndPinFileName(deviceName, deviceId, reportDataStream);
-                                        atLeastOne = addZipEntryAndWrite(zs, onePinFileName, onePinDataCsv);
+                                        atLeastOne = addZipEntryAndWrite(zs,
+                                                onePinFileName, onePinDataCsv.getBytes(UTF_8));
                                     }
                                 }
                             }
@@ -270,26 +271,6 @@ public abstract class BaseReportTask implements Runnable {
             }
         }
         return atLeastOne;
-    }
-
-    private byte[] toCSV(ByteBuffer onePinData, String pin, String deviceName,
-                         long startFrom, DateTimeFormatter formatter) {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(onePinData.capacity());
-        FileUtils.writeBufToCsvFilterAndFormat(byteArrayOutputStream, onePinData,
-                pin, deviceName, startFrom, formatter);
-        return byteArrayOutputStream.toByteArray();
-    }
-
-    private byte[] toCSV(ByteBuffer onePinData, String pin, long startFrom, DateTimeFormatter formatter) {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(onePinData.capacity());
-        FileUtils.writeBufToCsvFilterAndFormat(byteArrayOutputStream, onePinData, pin, startFrom, formatter);
-        return byteArrayOutputStream.toByteArray();
-    }
-
-    private byte[] toCSV(ByteBuffer onePinData, long startFrom, DateTimeFormatter formatter) {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(onePinData.capacity());
-        FileUtils.writeBufToCsvFilterAndFormat(byteArrayOutputStream, onePinData, startFrom, formatter);
-        return byteArrayOutputStream.toByteArray();
     }
 
     private boolean addZipEntryAndWrite(ZipOutputStream zs,

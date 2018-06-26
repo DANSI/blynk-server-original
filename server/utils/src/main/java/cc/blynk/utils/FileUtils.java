@@ -4,7 +4,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +21,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.EnumSet;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardOpenOption.APPEND;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.READ;
@@ -147,53 +145,59 @@ public final class FileUtils {
         }
     }
 
-    public static void writeBufToCsvFilterAndFormat(ByteArrayOutputStream baos, ByteBuffer onePinData,
+    public static String writeBufToCsvFilterAndFormat(ByteBuffer onePinData,
                                                     String pin, String deviceName,
                                                     long startFrom, DateTimeFormatter formatter) {
 
+        StringBuilder sb = new StringBuilder(onePinData.capacity() * 3);
         while (onePinData.remaining() > 0) {
             double value = onePinData.getDouble();
             long ts = onePinData.getLong();
 
             if (startFrom <= ts) {
                 String formattedTs = formatTS(formatter, ts);
-                String data = formattedTs + ',' + pin + ',' + deviceName + "," + value + '\n';
-                byte[] bytes = data.getBytes(UTF_8);
-                baos.write(bytes, 0, bytes.length);
+                sb.append(formattedTs).append(',')
+                        .append(pin).append(',')
+                        .append(deviceName).append(',')
+                        .append(value).append('\n');
             }
         }
+        return sb.toString();
     }
 
-    public static void writeBufToCsvFilterAndFormat(ByteArrayOutputStream baos, ByteBuffer onePinData,
+    public static String writeBufToCsvFilterAndFormat(ByteBuffer onePinData,
                                                     String pin, long startFrom, DateTimeFormatter formatter) {
 
+        StringBuilder sb = new StringBuilder(onePinData.capacity() * 3);
         while (onePinData.remaining() > 0) {
             double value = onePinData.getDouble();
             long ts = onePinData.getLong();
 
             if (startFrom <= ts) {
                 String formattedTs = formatTS(formatter, ts);
-                String data = formattedTs + ',' + pin + ',' + value + '\n';
-                byte[] bytes = data.getBytes(UTF_8);
-                baos.write(bytes, 0, bytes.length);
+                sb.append(formattedTs).append(',')
+                        .append(pin).append(',')
+                        .append(value).append('\n');
             }
         }
+        return sb.toString();
     }
 
-    public static void writeBufToCsvFilterAndFormat(ByteArrayOutputStream baos, ByteBuffer onePinData,
+    public static String writeBufToCsvFilterAndFormat(ByteBuffer onePinData,
                                                     long startFrom, DateTimeFormatter formatter) {
 
+        StringBuilder sb = new StringBuilder(onePinData.capacity() * 3);
         while (onePinData.remaining() > 0) {
             double value = onePinData.getDouble();
             long ts = onePinData.getLong();
 
             if (startFrom <= ts) {
                 String formattedTs = formatTS(formatter, ts);
-                String data = formattedTs + ',' + value + '\n';
-                byte[] bytes = data.getBytes(UTF_8);
-                baos.write(bytes, 0, bytes.length);
+                sb.append(formattedTs).append(',')
+                        .append(value).append('\n');
             }
         }
+        return sb.toString();
     }
 
     private static String formatTS(DateTimeFormatter formatter, long ts) {
