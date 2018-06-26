@@ -15,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -46,6 +47,8 @@ public abstract class BaseReportTask implements Runnable {
     private final ReportingStorageDao reportingStorageDao;
 
     private final String downloadUrl;
+
+    private static final Charset REPORT_ENCODING = UTF_8;
 
     protected BaseReportTask(User user, int dashId, Report report,
                              MailWrapper mailWrapper, ReportingStorageDao reportingStorageDao,
@@ -173,10 +176,10 @@ public abstract class BaseReportTask implements Runnable {
 
     private boolean merged(Path output, DashBoard dash, int fetchCount, long startFrom) throws Exception {
         boolean atLeastOne = false;
-        try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(output), UTF_8)) {
+        try (ZipOutputStream zipStream = new ZipOutputStream(Files.newOutputStream(output), REPORT_ENCODING)) {
             String fileName = truncateFileName(report.name) + ".csv";
             ZipEntry zipEntry = new ZipEntry(fileName);
-            zs.putNextEntry(zipEntry);
+            zipStream.putNextEntry(zipEntry);
             for (ReportSource reportSource : report.reportSources) {
                 if (reportSource.isValid()) {
                     for (int deviceId : reportSource.getDeviceIds()) {
@@ -192,7 +195,7 @@ public abstract class BaseReportTask implements Runnable {
                                     String onePinDataCsv = FileUtils.writeBufToCsvFilterAndFormat(onePinData, pin,
                                             deviceName, startFrom, report.makeFormatter());
                                     if (onePinDataCsv.length() > 0) {
-                                        zs.write(onePinDataCsv.getBytes(UTF_8));
+                                        zipStream.write(onePinDataCsv.getBytes(REPORT_ENCODING));
                                         atLeastOne = true;
                                     }
                                 }
@@ -201,21 +204,21 @@ public abstract class BaseReportTask implements Runnable {
                     }
                 }
             }
-            zs.closeEntry();
+            zipStream.closeEntry();
         }
         return atLeastOne;
     }
 
     private boolean filePerDevice(Path output, DashBoard dash, int fetchCount, long startFrom) throws Exception {
         boolean atLeastOne = false;
-        try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(output), UTF_8)) {
+        try (ZipOutputStream zipStream = new ZipOutputStream(Files.newOutputStream(output), REPORT_ENCODING)) {
             for (ReportSource reportSource : report.reportSources) {
                 if (reportSource.isValid()) {
                     for (int deviceId : reportSource.getDeviceIds()) {
                         String deviceName = getDeviceName(dash, deviceId);
                         String deviceFileName = deviceFileName(deviceName, deviceId);
                         ZipEntry zipEntry = new ZipEntry(deviceFileName);
-                        zs.putNextEntry(zipEntry);
+                        zipStream.putNextEntry(zipEntry);
                         for (ReportDataStream reportDataStream : reportSource.reportDataStreams) {
                             if (reportDataStream.isValid()) {
                                 ByteBuffer onePinData = reportingStorageDao.getByteBufferFromDisk(key.user,
@@ -227,13 +230,13 @@ public abstract class BaseReportTask implements Runnable {
                                     String onePinDataCsv = FileUtils.writeBufToCsvFilterAndFormat(onePinData,
                                             pin, startFrom, report.makeFormatter());
                                     if (onePinDataCsv.length() > 0) {
-                                        zs.write(onePinDataCsv.getBytes(UTF_8));
+                                        zipStream.write(onePinDataCsv.getBytes(REPORT_ENCODING));
                                         atLeastOne = true;
                                     }
                                 }
                             }
                         }
-                        zs.closeEntry();
+                        zipStream.closeEntry();
                     }
                 }
             }
@@ -243,7 +246,7 @@ public abstract class BaseReportTask implements Runnable {
 
     private boolean filePerDevicePerPin(Path output, DashBoard dash, int fetchCount, long startFrom) throws Exception {
         boolean atLeastOne = false;
-        try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(output), UTF_8)) {
+        try (ZipOutputStream zipStream = new ZipOutputStream(Files.newOutputStream(output), REPORT_ENCODING)) {
             for (ReportSource reportSource : report.reportSources) {
                 if (reportSource.isValid()) {
                     for (int deviceId : reportSource.getDeviceIds()) {
@@ -260,8 +263,8 @@ public abstract class BaseReportTask implements Runnable {
                                     if (onePinDataCsv.length() > 0) {
                                         String onePinFileName =
                                                 deviceAndPinFileName(deviceName, deviceId, reportDataStream);
-                                        atLeastOne = addZipEntryAndWrite(zs,
-                                                onePinFileName, onePinDataCsv.getBytes(UTF_8));
+                                        atLeastOne = addZipEntryAndWrite(zipStream,
+                                                onePinFileName, onePinDataCsv.getBytes(REPORT_ENCODING));
                                     }
                                 }
                             }
@@ -273,13 +276,13 @@ public abstract class BaseReportTask implements Runnable {
         return atLeastOne;
     }
 
-    private boolean addZipEntryAndWrite(ZipOutputStream zs,
+    private boolean addZipEntryAndWrite(ZipOutputStream zipStream,
                                         String onePinFileName, byte[] onePinDataCsv) throws IOException {
         ZipEntry zipEntry = new ZipEntry(onePinFileName);
         try {
-            zs.putNextEntry(zipEntry);
-            zs.write(onePinDataCsv);
-            zs.closeEntry();
+            zipStream.putNextEntry(zipEntry);
+            zipStream.write(onePinDataCsv);
+            zipStream.closeEntry();
             return true;
         } catch (ZipException zipException) {
             String message = zipException.getMessage();
