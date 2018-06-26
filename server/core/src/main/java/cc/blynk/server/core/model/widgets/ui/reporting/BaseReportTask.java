@@ -27,7 +27,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipOutputStream;
 
-import static cc.blynk.utils.StringUtils.NOT_SUPPORTED_CHARS;
+import static cc.blynk.utils.StringUtils.removeUnsupportedChars;
+import static cc.blynk.utils.StringUtils.truncate;
 import static java.nio.charset.StandardCharsets.UTF_16;
 
 /**
@@ -111,8 +112,9 @@ public abstract class BaseReportTask implements Runnable {
         if (name == null) {
             return "";
         }
-        String truncated = NOT_SUPPORTED_CHARS.matcher(name).replaceAll("");
-        return truncated.length() <= 16 ? truncated : truncated.substring(0, 16);
+
+        String truncated = removeUnsupportedChars(name);
+        return truncate(truncated, 16);
     }
 
     private void sendEmail(Path output) throws Exception {
