@@ -1,16 +1,20 @@
 package cc.blynk.utils;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 /**
  * Utility class to work with jar file. Used in order to find all static resources
@@ -45,13 +49,34 @@ public final class JarUtil {
                     Files.deleteIfExists(newStaticFile);
                     Files.createDirectories(newStaticFile);
 
-                    Files.copy(is, newStaticFile, StandardCopyOption.REPLACE_EXISTING);
+                    Files.copy(is, newStaticFile, REPLACE_EXISTING);
                 }
             }
 
+            // Now override the static files with installation-specific override files.
+            File overrides = new File("static-override");
+            if (overrides.exists()) {
+                File staticDir = new File("static");
+                copyFolder(overrides.toPath(), staticDir.toPath());
+            }
             return true;
         } catch (Exception e) {
             throw new RuntimeException("Error unpacking static files.", e);
+        }
+    }
+
+    private static void copyFolder(Path src, Path dest) throws IOException {
+        try (Stream<Path> stream = Files.walk(src)) {
+            stream.forEach(from -> {
+                try {
+                    Path to = dest.resolve(src.relativize(from));
+                    if (!Files.isDirectory(from)) {
+                        Files.copy(from, to, REPLACE_EXISTING);
+                    }
+                } catch (Exception e) {
+                    System.out.println("Error overriding static file. " + e.getMessage());
+                }
+            });
         }
     }
 
@@ -76,8 +101,6 @@ public final class JarUtil {
                 while ((ze = zip.getNextEntry()) != null) {
                     String entryName = ze.getName();
                     if (!ze.isDirectory() && entryName.startsWith(staticResourcesFolder)) {
-                        //logging is disabled as logger is created later
-                        //log.debug("Unpacking : {}", entryName);
                         staticResources.add(entryName);
                     }
                 }
