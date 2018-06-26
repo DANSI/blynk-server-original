@@ -13,7 +13,9 @@ import cc.blynk.utils.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -26,7 +28,7 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipOutputStream;
 
 import static cc.blynk.utils.StringUtils.NOT_SUPPORTED_CHARS;
-import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.charset.StandardCharsets.UTF_16;
 
 /**
  * The Blynk Project.
@@ -48,7 +50,8 @@ public abstract class BaseReportTask implements Runnable {
 
     private final String downloadUrl;
 
-    private static final Charset REPORT_ENCODING = UTF_8;
+    private static final Charset REPORT_ENCODING = UTF_16;
+    private static final int size = 64 * 1024;
 
     protected BaseReportTask(User user, int dashId, Report report,
                              MailWrapper mailWrapper, ReportingStorageDao reportingStorageDao,
@@ -176,7 +179,8 @@ public abstract class BaseReportTask implements Runnable {
 
     private boolean merged(Path output, DashBoard dash, int fetchCount, long startFrom) throws Exception {
         boolean atLeastOne = false;
-        try (ZipOutputStream zipStream = new ZipOutputStream(Files.newOutputStream(output), REPORT_ENCODING)) {
+        try (ZipOutputStream zipStream = new ZipOutputStream(Files.newOutputStream(output), REPORT_ENCODING);
+             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(zipStream, REPORT_ENCODING), size)) {
             String fileName = truncateFileName(report.name) + ".csv";
             ZipEntry zipEntry = new ZipEntry(fileName);
             zipStream.putNextEntry(zipEntry);
@@ -192,12 +196,8 @@ public abstract class BaseReportTask implements Runnable {
 
                                 if (onePinData != null) {
                                     String pin = reportDataStream.formatPin();
-                                    String onePinDataCsv = FileUtils.writeBufToCsvFilterAndFormat(onePinData, pin,
-                                            deviceName, startFrom, report.makeFormatter());
-                                    if (onePinDataCsv.length() > 0) {
-                                        zipStream.write(onePinDataCsv.getBytes(REPORT_ENCODING));
-                                        atLeastOne = true;
-                                    }
+                                    atLeastOne = FileUtils.writeBufToCsvFilterAndFormat(writer,
+                                            onePinData, pin, deviceName, startFrom, report.makeFormatter());
                                 }
                             }
                         }
@@ -211,7 +211,8 @@ public abstract class BaseReportTask implements Runnable {
 
     private boolean filePerDevice(Path output, DashBoard dash, int fetchCount, long startFrom) throws Exception {
         boolean atLeastOne = false;
-        try (ZipOutputStream zipStream = new ZipOutputStream(Files.newOutputStream(output), REPORT_ENCODING)) {
+        try (ZipOutputStream zipStream = new ZipOutputStream(Files.newOutputStream(output), REPORT_ENCODING);
+             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(zipStream, REPORT_ENCODING), size)) {
             for (ReportSource reportSource : report.reportSources) {
                 if (reportSource.isValid()) {
                     for (int deviceId : reportSource.getDeviceIds()) {
@@ -227,12 +228,8 @@ public abstract class BaseReportTask implements Runnable {
 
                                 if (onePinData != null) {
                                     String pin = reportDataStream.formatPin();
-                                    String onePinDataCsv = FileUtils.writeBufToCsvFilterAndFormat(onePinData,
-                                            pin, startFrom, report.makeFormatter());
-                                    if (onePinDataCsv.length() > 0) {
-                                        zipStream.write(onePinDataCsv.getBytes(REPORT_ENCODING));
-                                        atLeastOne = true;
-                                    }
+                                    atLeastOne = FileUtils.writeBufToCsvFilterAndFormat(writer,
+                                            onePinData, pin, startFrom, report.makeFormatter());
                                 }
                             }
                         }

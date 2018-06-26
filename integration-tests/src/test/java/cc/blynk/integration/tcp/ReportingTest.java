@@ -59,7 +59,7 @@ import static cc.blynk.server.core.model.widgets.ui.reporting.ReportResult.OK;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Response.QUOTA_LIMIT;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
-import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.charset.StandardCharsets.UTF_16;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -666,7 +666,7 @@ public class ReportingTest extends IntegrationBase {
         Path result = Paths.get(FileUtils.CSV_DIR,
                 DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
         assertTrue(Files.exists(result));
-        ZipFile zipFile = new ZipFile(result.toString());
+        ZipFile zipFile = new ZipFile(result.toString(), UTF_16);
 
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
         assertTrue(entries.hasMoreElements());
@@ -747,7 +747,7 @@ public class ReportingTest extends IntegrationBase {
         Path result = Paths.get(FileUtils.CSV_DIR,
                 DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
         assertTrue(Files.exists(result));
-        ZipFile zipFile = new ZipFile(result.toString());
+        ZipFile zipFile = new ZipFile(result.toString(), UTF_16);
 
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
         assertTrue(entries.hasMoreElements());
@@ -836,7 +836,7 @@ public class ReportingTest extends IntegrationBase {
         Path result = Paths.get(FileUtils.CSV_DIR,
                 DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
         assertTrue(Files.exists(result));
-        ZipFile zipFile = new ZipFile(result.toString());
+        ZipFile zipFile = new ZipFile(result.toString(), UTF_16);
 
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
         assertTrue(entries.hasMoreElements());
@@ -932,7 +932,7 @@ public class ReportingTest extends IntegrationBase {
         Path result = Paths.get(FileUtils.CSV_DIR,
                 DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
         assertTrue(Files.exists(result));
-        ZipFile zipFile = new ZipFile(result.toString());
+        ZipFile zipFile = new ZipFile(result.toString(), UTF_16);
 
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
         assertTrue(entries.hasMoreElements());
@@ -1032,7 +1032,7 @@ public class ReportingTest extends IntegrationBase {
         Path result = Paths.get(FileUtils.CSV_DIR,
                 DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
         assertTrue(Files.exists(result));
-        ZipFile zipFile = new ZipFile(result.toString());
+        ZipFile zipFile = new ZipFile(result.toString(), UTF_16);
 
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
         assertTrue(entries.hasMoreElements());
@@ -1132,7 +1132,7 @@ public class ReportingTest extends IntegrationBase {
         Path result = Paths.get(FileUtils.CSV_DIR,
                 DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
         assertTrue(Files.exists(result));
-        ZipFile zipFile = new ZipFile(result.toString());
+        ZipFile zipFile = new ZipFile(result.toString(), UTF_16);
 
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
         assertTrue(entries.hasMoreElements());
@@ -1225,7 +1225,7 @@ public class ReportingTest extends IntegrationBase {
         Path result = Paths.get(FileUtils.CSV_DIR,
                 DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
         assertTrue(Files.exists(result));
-        ZipFile zipFile = new ZipFile(result.toString());
+        ZipFile zipFile = new ZipFile(result.toString(), UTF_16);
 
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
         assertTrue(entries.hasMoreElements());
@@ -1318,7 +1318,7 @@ public class ReportingTest extends IntegrationBase {
         Path result = Paths.get(FileUtils.CSV_DIR,
                 DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
         assertTrue(Files.exists(result));
-        ZipFile zipFile = new ZipFile(result.toString());
+        ZipFile zipFile = new ZipFile(result.toString(), UTF_16);
 
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
         assertTrue(entries.hasMoreElements());
@@ -2088,7 +2088,7 @@ public class ReportingTest extends IntegrationBase {
     }
 
     private String readStringFromFirstZipEntry(Path path) throws Exception {
-        ZipFile zipFile = new ZipFile(path.toString());
+        ZipFile zipFile = new ZipFile(path.toString(), UTF_16);
 
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
@@ -2101,7 +2101,7 @@ public class ReportingTest extends IntegrationBase {
 
     private String readStringFromZipEntry(ZipFile zipFile, ZipEntry entry) throws Exception {
         try (BufferedInputStream bis = new BufferedInputStream(zipFile.getInputStream(entry))) {
-            return new String(bis.readAllBytes(), UTF_8);
+            return new String(bis.readAllBytes(), UTF_16);
         }
     }
 }

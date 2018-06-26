@@ -145,47 +145,47 @@ public final class FileUtils {
         }
     }
 
-    public static String writeBufToCsvFilterAndFormat(ByteBuffer onePinData,
-                                                    String pin, String deviceName,
-                                                    long startFrom, DateTimeFormatter formatter) {
-
-        StringBuilder sb = new StringBuilder(onePinData.capacity() * 3);
+    public static boolean writeBufToCsvFilterAndFormat(BufferedWriter writer, ByteBuffer onePinData,
+                                                      String pin, String deviceName,
+                                                      long startFrom, DateTimeFormatter formatter) throws IOException {
+        boolean hasData = false;
         while (onePinData.remaining() > 0) {
             double value = onePinData.getDouble();
             long ts = onePinData.getLong();
 
             if (startFrom <= ts) {
                 String formattedTs = formatTS(formatter, ts);
-                sb.append(formattedTs).append(',')
-                        .append(pin).append(',')
-                        .append(deviceName).append(',')
-                        .append(value).append('\n');
+                writer.write(formattedTs + ',' + pin + ',' + deviceName + ',' + value + '\n');
+                hasData = true;
             }
         }
-        return sb.toString();
+        if (hasData) {
+            writer.flush();
+        }
+        return hasData;
     }
 
-    public static String writeBufToCsvFilterAndFormat(ByteBuffer onePinData,
-                                                    String pin, long startFrom, DateTimeFormatter formatter) {
-
-        StringBuilder sb = new StringBuilder(onePinData.capacity() * 3);
+    public static boolean writeBufToCsvFilterAndFormat(BufferedWriter writer, ByteBuffer onePinData, String pin,
+                                                      long startFrom, DateTimeFormatter formatter) throws IOException {
+        boolean hasData = false;
         while (onePinData.remaining() > 0) {
             double value = onePinData.getDouble();
             long ts = onePinData.getLong();
 
             if (startFrom <= ts) {
                 String formattedTs = formatTS(formatter, ts);
-                sb.append(formattedTs).append(',')
-                        .append(pin).append(',')
-                        .append(value).append('\n');
+                writer.write(formattedTs + ',' + pin + ',' + value + '\n');
+                hasData = true;
             }
         }
-        return sb.toString();
+        if (hasData) {
+            writer.flush();
+        }
+        return hasData;
     }
 
     public static String writeBufToCsvFilterAndFormat(ByteBuffer onePinData,
                                                     long startFrom, DateTimeFormatter formatter) {
-
         StringBuilder sb = new StringBuilder(onePinData.capacity() * 3);
         while (onePinData.remaining() > 0) {
             double value = onePinData.getDouble();
