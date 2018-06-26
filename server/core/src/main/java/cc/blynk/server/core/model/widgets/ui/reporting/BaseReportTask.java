@@ -181,7 +181,7 @@ public abstract class BaseReportTask implements Runnable {
 
     private boolean merged(Path output, DashBoard dash, int fetchCount, long startFrom) throws Exception {
         boolean atLeastOne = false;
-        try (ZipOutputStream zipStream = new ZipOutputStream(Files.newOutputStream(output), REPORT_ENCODING);
+        try (ZipOutputStream zipStream = new ZipOutputStream(Files.newOutputStream(output));
              BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(zipStream, REPORT_ENCODING), size)) {
             String fileName = truncateFileName(report.name) + ".csv";
             ZipEntry zipEntry = new ZipEntry(fileName);
@@ -213,7 +213,7 @@ public abstract class BaseReportTask implements Runnable {
 
     private boolean filePerDevice(Path output, DashBoard dash, int fetchCount, long startFrom) throws Exception {
         boolean atLeastOne = false;
-        try (ZipOutputStream zipStream = new ZipOutputStream(Files.newOutputStream(output), REPORT_ENCODING);
+        try (ZipOutputStream zipStream = new ZipOutputStream(Files.newOutputStream(output));
              BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(zipStream, REPORT_ENCODING), size)) {
             for (ReportSource reportSource : report.reportSources) {
                 if (reportSource.isValid()) {
@@ -245,7 +245,7 @@ public abstract class BaseReportTask implements Runnable {
 
     private boolean filePerDevicePerPin(Path output, DashBoard dash, int fetchCount, long startFrom) throws Exception {
         boolean atLeastOne = false;
-        try (ZipOutputStream zipStream = new ZipOutputStream(Files.newOutputStream(output), REPORT_ENCODING)) {
+        try (ZipOutputStream zipStream = new ZipOutputStream(Files.newOutputStream(output))) {
             for (ReportSource reportSource : report.reportSources) {
                 if (reportSource.isValid()) {
                     for (int deviceId : reportSource.getDeviceIds()) {

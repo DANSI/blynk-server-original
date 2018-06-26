@@ -666,7 +666,7 @@ public class ReportingTest extends IntegrationBase {
         Path result = Paths.get(FileUtils.CSV_DIR,
                 DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
         assertTrue(Files.exists(result));
-        ZipFile zipFile = new ZipFile(result.toString(), UTF_16);
+        ZipFile zipFile = new ZipFile(result.toString());
 
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
         assertTrue(entries.hasMoreElements());
@@ -747,7 +747,7 @@ public class ReportingTest extends IntegrationBase {
         Path result = Paths.get(FileUtils.CSV_DIR,
                 DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
         assertTrue(Files.exists(result));
-        ZipFile zipFile = new ZipFile(result.toString(), UTF_16);
+        ZipFile zipFile = new ZipFile(result.toString());
 
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
         assertTrue(entries.hasMoreElements());
@@ -836,7 +836,7 @@ public class ReportingTest extends IntegrationBase {
         Path result = Paths.get(FileUtils.CSV_DIR,
                 DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
         assertTrue(Files.exists(result));
-        ZipFile zipFile = new ZipFile(result.toString(), UTF_16);
+        ZipFile zipFile = new ZipFile(result.toString());
 
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
         assertTrue(entries.hasMoreElements());
@@ -932,7 +932,7 @@ public class ReportingTest extends IntegrationBase {
         Path result = Paths.get(FileUtils.CSV_DIR,
                 DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
         assertTrue(Files.exists(result));
-        ZipFile zipFile = new ZipFile(result.toString(), UTF_16);
+        ZipFile zipFile = new ZipFile(result.toString());
 
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
         assertTrue(entries.hasMoreElements());
@@ -957,6 +957,92 @@ public class ReportingTest extends IntegrationBase {
         String resultCsvString2 = readStringFromZipEntry(zipFile, entry2);
         assertNotNull(resultCsvString2);
         assertEquals(resultCsvString2, nowFormatted + ",v1,1.13\n" + nowFormatted + ",v2,1.14\n");
+    }
+
+    @Test
+    public void testFinalFileNameCSVPerDeviceUnicode() throws Exception {
+        Device device1 = new Device(2, "Мій девайс", "ESP8266");
+        clientPair.appClient.createDevice(1, device1);
+
+        String tempDir = holder.props.getProperty("data.folder");
+        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+        long pointNow = System.currentTimeMillis();
+
+        Path pinReportingDataPath12 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingStorageDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+        Path pinReportingDataPath22 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+                ReportingStorageDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 2, GraphGranularityType.MINUTE));
+        FileUtils.write(pinReportingDataPath12, 1.13D, pointNow);
+        FileUtils.write(pinReportingDataPath22, 1.14D, pointNow);
+
+        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, null, true);
+        ReportDataStream reportDataStream2 = new ReportDataStream((byte) 2, PinType.VIRTUAL, null, true);
+        ReportSource reportSource = new TileTemplateReportSource(
+                new ReportDataStream[] {reportDataStream, reportDataStream2},
+                1,
+                new int[] {2}
+        );
+
+        ReportingWidget reportingWidget = new ReportingWidget();
+        reportingWidget.height = 1;
+        reportingWidget.width = 1;
+        reportingWidget.reportSources = new ReportSource[] {
+                reportSource
+        };
+
+        clientPair.appClient.createWidget(1, reportingWidget);
+        clientPair.appClient.verifyResult(ok(2));
+
+        //a bit upfront
+        long now = System.currentTimeMillis() + 1000;
+        LocalTime localTime = LocalTime.ofInstant(Instant.ofEpochMilli(now), ZoneId.of("UTC"));
+        localTime = LocalTime.of(localTime.getHour(), localTime.getMinute());
+
+        Report report = new Report(1, "DailyReport",
+                new ReportSource[] {reportSource},
+                new DailyReport(now, ReportDurationType.INFINITE, 0, 0), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE,
+                Format.ISO_SIMPLE, ZoneId.of("UTC"), 0, 0, null);
+        clientPair.appClient.createReport(1, report);
+
+        report = clientPair.appClient.parseReportFromResponse(3);
+        assertNotNull(report);
+        assertEquals(System.currentTimeMillis(), report.nextReportAt, 3000);
+
+        String date = LocalDate.now(report.tzName).toString();
+        String filename = DEFAULT_TEST_USER + "_Blynk_" + report.id + "_" + date + ".gz";
+        String downloadUrl = "http://127.0.0.1:18080/" + filename;
+        verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
+                eq("Your daily DailyReport is ready"),
+                eq(downloadUrl),
+                eq("Report name: DailyReport<br>Period: Daily, at " + localTime));
+        sleep(200);
+        assertEquals(1, holder.reportScheduler.getCompletedTaskCount());
+        assertEquals(2, holder.reportScheduler.getTaskCount());
+
+        Path result = Paths.get(FileUtils.CSV_DIR,
+                DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+        assertTrue(Files.exists(result));
+        ZipFile zipFile = new ZipFile(result.toString());
+
+        Enumeration<? extends ZipEntry> entries = zipFile.entries();
+        assertTrue(entries.hasMoreElements());
+
+        ZipEntry entry = entries.nextElement();
+        assertNotNull(entry);
+        assertEquals("Мійдевайс_2.csv", entry.getName());
+
+        String nowFormatted = DateTimeFormatter
+                .ofPattern(Format.ISO_SIMPLE.pattern)
+                .withZone(ZoneId.of("UTC"))
+                .format(Instant.ofEpochMilli(pointNow));
+
+        String resultCsvString = readStringFromZipEntry(zipFile, entry);
+        assertNotNull(resultCsvString);
+        assertEquals(nowFormatted + ",v1,1.13\n" + nowFormatted + ",v2,1.14\n", resultCsvString);
     }
 
     @Test
@@ -1032,7 +1118,7 @@ public class ReportingTest extends IntegrationBase {
         Path result = Paths.get(FileUtils.CSV_DIR,
                 DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
         assertTrue(Files.exists(result));
-        ZipFile zipFile = new ZipFile(result.toString(), UTF_16);
+        ZipFile zipFile = new ZipFile(result.toString());
 
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
         assertTrue(entries.hasMoreElements());
@@ -1132,7 +1218,7 @@ public class ReportingTest extends IntegrationBase {
         Path result = Paths.get(FileUtils.CSV_DIR,
                 DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
         assertTrue(Files.exists(result));
-        ZipFile zipFile = new ZipFile(result.toString(), UTF_16);
+        ZipFile zipFile = new ZipFile(result.toString());
 
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
         assertTrue(entries.hasMoreElements());
@@ -1225,7 +1311,7 @@ public class ReportingTest extends IntegrationBase {
         Path result = Paths.get(FileUtils.CSV_DIR,
                 DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
         assertTrue(Files.exists(result));
-        ZipFile zipFile = new ZipFile(result.toString(), UTF_16);
+        ZipFile zipFile = new ZipFile(result.toString());
 
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
         assertTrue(entries.hasMoreElements());
@@ -1318,7 +1404,7 @@ public class ReportingTest extends IntegrationBase {
         Path result = Paths.get(FileUtils.CSV_DIR,
                 DEFAULT_TEST_USER + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
         assertTrue(Files.exists(result));
-        ZipFile zipFile = new ZipFile(result.toString(), UTF_16);
+        ZipFile zipFile = new ZipFile(result.toString());
 
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
         assertTrue(entries.hasMoreElements());
@@ -2088,7 +2174,7 @@ public class ReportingTest extends IntegrationBase {
     }
 
     private String readStringFromFirstZipEntry(Path path) throws Exception {
-        ZipFile zipFile = new ZipFile(path.toString(), UTF_16);
+        ZipFile zipFile = new ZipFile(path.toString());
 
         Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
