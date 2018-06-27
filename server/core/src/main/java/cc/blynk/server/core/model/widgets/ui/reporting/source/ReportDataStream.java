@@ -40,6 +40,7 @@ public class ReportDataStream {
         if (label == null || label.isEmpty()) {
             return pinType.pinTypeString + pin;
         }
-        return StringUtils.escapeCSV(label);
+        String truncated = StringUtils.truncate(label, 16);
+        return StringUtils.escapeCSV(truncated);
     }
 }

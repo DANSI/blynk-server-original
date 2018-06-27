@@ -1,8 +1,5 @@
 package cc.blynk.utils;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -16,8 +13,6 @@ import java.util.Enumeration;
  * Created on 13.03.16.
  */
 public final class IPUtils {
-
-    private static final Logger log = LogManager.getLogger(IPUtils.class);
 
     private IPUtils() {
     }
@@ -40,7 +35,6 @@ public final class IPUtils {
             }
             return InetAddress.getLocalHost().getHostAddress();
         } catch (Exception e) {
-            log.warn("Problem resolving current host IP.", e.getMessage());
             return "127.0.0.1";
         }
     }
@@ -50,7 +44,7 @@ public final class IPUtils {
             InetSocketAddress socketAddress = (InetSocketAddress) remoteSocketAddress;
             return socketAddress.getAddress().getHostAddress();
         } catch (Exception e) {
-            log.warn("Error getting IP. {}", remoteSocketAddress);
+            //ignoring
         }
         return null;
     }

@@ -35,11 +35,6 @@ public abstract class BaseProperties extends Properties {
         putAll(cmdProperties);
     }
 
-    BaseProperties(String propertiesFileName) {
-        this.jarPath = getJarPath();
-        initProperties(propertiesFileName);
-    }
-
     private static String getJarPath() {
         try {
             CodeSource codeSource = BaseProperties.class.getProtectionDomain().getCodeSource();

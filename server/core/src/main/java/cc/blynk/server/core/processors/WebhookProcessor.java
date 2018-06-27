@@ -97,6 +97,15 @@ public class WebhookProcessor extends NotificationBase {
             //https://github.com/blynkkk/blynk-server/issues/1001
             log.debug("Error during webhook initialization.", nfe);
             return;
+        } catch (IllegalArgumentException iae) {
+            String error = iae.getMessage();
+            if (error != null && error.contains("missing scheme")) {
+                //this is known possible error due to malformed input
+                log.debug("Error during webhook initialization.", iae);
+                return;
+            } else {
+                throw iae;
+            }
         }
 
         if (webHook.headers != null) {

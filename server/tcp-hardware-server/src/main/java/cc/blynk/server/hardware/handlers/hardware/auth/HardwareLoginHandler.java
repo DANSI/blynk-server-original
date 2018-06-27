@@ -118,7 +118,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         Device device = tokenValue.device;
         DashBoard dash = tokenValue.dash;
 
-        if (tokenValue.isTemporary) {
+        if (tokenValue.isTemporary()) {
             holder.tokenManager.updateRegularCache(token, tokenValue);
             dash.devices = ArrayUtil.add(dash.devices, device, Device.class);
             dash.updatedAt = System.currentTimeMillis();

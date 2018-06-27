@@ -4,6 +4,7 @@ import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.dao.ReportingStorageDao;
+import cc.blynk.server.core.dao.TemporaryTokenValue;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
@@ -607,6 +608,8 @@ public class DeviceWorkflowTest extends IntegrationBase {
         assertNotNull(dash);
         assertEquals(1, dash.devices.length);
 
+        assertTrue(holder.tokenManager.getTokenValueByToken(device1.token) instanceof TemporaryTokenValue);
+
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
 
@@ -632,6 +635,9 @@ public class DeviceWorkflowTest extends IntegrationBase {
         dash = clientPair.appClient.getDash(2);
         assertNotNull(dash);
         assertEquals(2, dash.devices.length);
+
+        assertFalse(holder.tokenManager.getTokenValueByToken(device1.token) instanceof TemporaryTokenValue);
+        assertFalse(holder.tokenManager.clearTemporaryTokens());
     }
 
     @Test

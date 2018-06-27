@@ -9,6 +9,8 @@ import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.internal.TokenUser;
 import cc.blynk.server.internal.TokensPool;
 import cc.blynk.server.notifications.mail.MailWrapper;
+import cc.blynk.server.notifications.mail.QrHolder;
+import cc.blynk.server.notifications.mail.ResetQrHolder;
 import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.TokenGeneratorUtil;
@@ -17,6 +19,8 @@ import cc.blynk.utils.validators.BlynkEmailValidator;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import net.glxn.qrgen.core.image.ImageType;
+import net.glxn.qrgen.javase.QRCode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -109,8 +113,8 @@ public class ResetPasswordHandler extends SimpleChannelInboundHandler<ResetPassw
         }
     }
 
-    private static String makeResetUrl(String appName, String token) {
-        return appName.toLowerCase() + "://restore?token=" + token;
+    private static String makeResetUrl(String token, String email) {
+        return "http://blynk.cc/restore?token=" + token + "&email=" + email;
     }
 
     private void sendResetEMail(ChannelHandlerContext ctx, String inEMail, String appName, int msgId) {
@@ -143,12 +147,15 @@ public class ResetPasswordHandler extends SimpleChannelInboundHandler<ResetPassw
         TokenUser userToken = new TokenUser(trimmedEmail, appName);
         tokensPool.addToken(token, userToken);
 
-        String resetUrl = makeResetUrl(appName, token);
+        String resetUrl = makeResetUrl(token, trimmedEmail);
         String body = emailBody.replace(Placeholders.RESET_URL, resetUrl);
+        String qrString = "blynk://token/reset/" + token + "&email=" + trimmedEmail;
+        byte[] qrBytes = QRCode.from(qrString).to(ImageType.JPG).stream().toByteArray();
+        QrHolder qrHolder = new ResetQrHolder("resetPassQr.jpg", qrBytes);
 
         blockingIOProcessor.execute(() -> {
             try {
-                mailWrapper.sendHtml(trimmedEmail, emailSubj, body);
+                mailWrapper.sendWithAttachment(trimmedEmail, emailSubj, body, qrHolder);
                 log.debug("{} mail sent.", trimmedEmail);
                 ctx.writeAndFlush(ok(msgId), ctx.voidPromise());
             } catch (Exception e) {

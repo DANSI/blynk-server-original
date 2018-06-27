@@ -28,7 +28,7 @@ public final class StringUtils {
     public static final Pattern PIN_PATTERN_8 =  Pattern.compile("/pin[8]/", Pattern.LITERAL);
     public static final Pattern PIN_PATTERN_9 =  Pattern.compile("/pin[9]/", Pattern.LITERAL);
     public static final Pattern GENERIC_PLACEHOLDER = Pattern.compile("%s", Pattern.LITERAL);
-    public static final Pattern NOT_SUPPORTED_CHARS = Pattern.compile("[\\\\/:*?\"<>| ]");
+    private static final Pattern NOT_SUPPORTED_CHARS = Pattern.compile("[\\\\/:*?\"<>| ]");
 
     public static final Pattern DATETIME_PATTERN =  Pattern.compile("/datetime_iso/", Pattern.LITERAL);
     public static final String WEBSOCKET_PATH = "/websocket";
@@ -148,6 +148,14 @@ public final class StringUtils {
             sb.append(inData.charAt(SECURE_RANDOM.nextInt(inDataLength)));
         }
         return sb.toString();
+    }
+
+    public static String removeUnsupportedChars(String name) {
+        return NOT_SUPPORTED_CHARS.matcher(name).replaceAll("");
+    }
+
+    public static String truncate(String name, int size) {
+        return name.length() <= size ? name : name.substring(0, size);
     }
 
     public static String escapeCSV(String name) {

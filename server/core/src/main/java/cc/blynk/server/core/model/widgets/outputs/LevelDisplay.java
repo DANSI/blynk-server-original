@@ -10,7 +10,9 @@ import cc.blynk.server.core.model.widgets.OnePinReadingWidget;
  */
 public class LevelDisplay extends OnePinReadingWidget {
 
-    private boolean isAxisFlipOn;
+    public boolean isAxisFlipOn;
+
+    public boolean showValueOn = true;
 
     @Override
     public PinMode getModeType() {
