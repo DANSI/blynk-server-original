@@ -57,14 +57,27 @@ public class ServerProperties extends BaseProperties {
         return getProperty("region", "local");
     }
 
+    private static final String DEFAULT_RESET_HOST = "blynk.cc";
+
     private String getServerHost() {
-        var host = getProperty("server.host");
+        String host = getHostProperty();
         if (host == null || host.isEmpty()) {
             var netInterface = getProperty("net.interface", "eth");
             return IPUtils.resolveHostIP(netInterface);
         } else {
             return host;
         }
+    }
+
+    public String getResetClickHost() {
+        if (getHostProperty() == null) {
+           return DEFAULT_RESET_HOST;
+        }
+        return host;
+    }
+
+    private String getHostProperty() {
+        return getProperty("server.host");
     }
 
     public String getAdminUrl(String host) {

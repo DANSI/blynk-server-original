@@ -41,6 +41,7 @@ public class ResetPasswordHandler extends SimpleChannelInboundHandler<ResetPassw
     private final MailWrapper mailWrapper;
     private final UserDao userDao;
     private final BlockingIOProcessor blockingIOProcessor;
+    private final String host;
 
     public ResetPasswordHandler(Holder holder) {
         this.tokensPool = holder.tokensPool;
@@ -51,6 +52,7 @@ public class ResetPasswordHandler extends SimpleChannelInboundHandler<ResetPassw
         this.mailWrapper = holder.mailWrapper;
         this.userDao = holder.userDao;
         this.blockingIOProcessor = holder.blockingIOProcessor;
+        this.host = holder.props.getResetClickHost();
     }
 
     @Override
@@ -113,8 +115,8 @@ public class ResetPasswordHandler extends SimpleChannelInboundHandler<ResetPassw
         }
     }
 
-    private static String makeResetUrl(String token, String email) {
-        return "http://blynk.cc/restore?token=" + token + "&email=" + email;
+    private static String makeResetUrl(String host, String token, String email) {
+        return "http://" + host + "/restore?token=" + token + "&email=" + email;
     }
 
     private void sendResetEMail(ChannelHandlerContext ctx, String inEMail, String appName, int msgId) {
@@ -147,10 +149,10 @@ public class ResetPasswordHandler extends SimpleChannelInboundHandler<ResetPassw
         TokenUser userToken = new TokenUser(trimmedEmail, appName);
         tokensPool.addToken(token, userToken);
 
-        String resetUrl = makeResetUrl(token, trimmedEmail);
+        String resetUrl = makeResetUrl(host, token, trimmedEmail);
         String body = emailBody.replace(Placeholders.RESET_URL, resetUrl);
-        String qrString = "blynk://token/reset/" + token + "&email=" + trimmedEmail;
-        byte[] qrBytes = QRCode.from(qrString).to(ImageType.JPG).stream().toByteArray();
+        String qrString = "blynk://restore?token=" + token + "&email=" + trimmedEmail;
+        byte[] qrBytes = QRCode.from(qrString).to(ImageType.JPG).withSize(250, 250).stream().toByteArray();
         QrHolder qrHolder = new ResetQrHolder("resetPassQr.jpg", qrBytes);
 
         blockingIOProcessor.execute(() -> {
