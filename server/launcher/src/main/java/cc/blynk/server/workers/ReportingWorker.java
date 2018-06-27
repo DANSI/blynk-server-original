@@ -1,6 +1,6 @@
 package cc.blynk.server.workers;
 
-import cc.blynk.server.core.dao.ReportingStorageDao;
+import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import static cc.blynk.server.core.dao.ReportingStorageDao.generateFilename;
+import static cc.blynk.server.core.dao.ReportingDiskDao.generateFilename;
 
 /**
  * Worker that runs once a minute. During run - stores all aggregated reporting data
@@ -33,11 +33,11 @@ public class ReportingWorker implements Runnable {
 
     private static final Logger log = LogManager.getLogger(ReportingWorker.class);
 
-    private final ReportingStorageDao reportingDao;
+    private final ReportingDiskDao reportingDao;
     private final String reportingPath;
     private final ReportingDBManager reportingDBManager;
 
-    public ReportingWorker(ReportingStorageDao reportingDao,
+    public ReportingWorker(ReportingDiskDao reportingDao,
                            String reportingPath, ReportingDBManager reportingDBManager) {
         this.reportingDao = reportingDao;
         this.reportingPath = reportingPath;

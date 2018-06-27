@@ -3,7 +3,7 @@ package cc.blynk.server.admin.http.logic.admin;
 import cc.blynk.core.http.Response;
 import cc.blynk.server.admin.http.logic.UsersLogic;
 import cc.blynk.server.core.dao.FileManager;
-import cc.blynk.server.core.dao.ReportingStorageDao;
+import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.dao.UserKey;
@@ -42,7 +42,7 @@ public class UsersLogicTest {
     @Mock
     private DBManager dbManager;
     @Mock
-    private ReportingStorageDao reportingDao;
+    private ReportingDiskDao reportingDao;
 
     private User user;
 

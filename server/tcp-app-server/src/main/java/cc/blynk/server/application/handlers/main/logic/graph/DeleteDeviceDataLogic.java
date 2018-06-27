@@ -3,7 +3,7 @@ package cc.blynk.server.application.handlers.main.logic.graph;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareStateHolder;
 import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.ReportingStorageDao;
+import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
@@ -32,9 +32,9 @@ public class DeleteDeviceDataLogic {
     private static final Logger log = LogManager.getLogger(DeleteDeviceDataLogic.class);
 
     private final BlockingIOProcessor blockingIOProcessor;
-    private final ReportingStorageDao reportingDao;
+    private final ReportingDiskDao reportingDao;
 
-    public DeleteDeviceDataLogic(ReportingStorageDao reportingDao, BlockingIOProcessor blockingIOProcessor) {
+    public DeleteDeviceDataLogic(ReportingDiskDao reportingDao, BlockingIOProcessor blockingIOProcessor) {
         this.reportingDao = reportingDao;
         this.blockingIOProcessor = blockingIOProcessor;
     }

@@ -25,7 +25,7 @@ public class MqttHardwareHandler extends BaseSimpleChannelInboundHandler<MqttMes
 
     public MqttHardwareHandler(Holder holder, HardwareStateHolder stateHolder) {
         super(MqttMessage.class);
-        this.hardware = new MqttHardwareLogic(holder.sessionDao, holder.reportingDao);
+        this.hardware = new MqttHardwareLogic(holder.sessionDao, holder.reportingDiskDao);
         this.state = stateHolder;
         this.stats = holder.stats;
     }

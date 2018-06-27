@@ -47,9 +47,10 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
     public AppShareHandler(Holder holder, AppShareStateHolder state) {
         super(StringMessage.class);
         this.hardwareApp = new HardwareAppShareLogic(holder, state.userKey.email);
-        this.graphData = new GetGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
-        this.enhancedGraphDataLogic = new GetEnhancedGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
-        this.deleteDeviceDataLogic = new DeleteDeviceDataLogic(holder.reportingDao, holder.blockingIOProcessor);
+        this.graphData = new GetGraphDataLogic(holder.reportingDiskDao, holder.blockingIOProcessor);
+        this.enhancedGraphDataLogic = new GetEnhancedGraphDataLogic(
+                holder.reportingDiskDao, holder.blockingIOProcessor);
+        this.deleteDeviceDataLogic = new DeleteDeviceDataLogic(holder.reportingDiskDao, holder.blockingIOProcessor);
         this.state = state;
         this.stats = holder.stats;
     }

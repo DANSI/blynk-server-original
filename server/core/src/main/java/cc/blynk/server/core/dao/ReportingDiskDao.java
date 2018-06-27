@@ -40,9 +40,9 @@ import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/18/2015.
  */
-public class ReportingStorageDao implements Closeable {
+public class ReportingDiskDao implements Closeable {
 
-    private static final Logger log = LogManager.getLogger(ReportingStorageDao.class);
+    private static final Logger log = LogManager.getLogger(ReportingDiskDao.class);
 
     public final AverageAggregatorProcessor averageAggregator;
     private final RawDataCacheForGraphProcessor rawDataCacheForGraphProcessor;
@@ -56,8 +56,8 @@ public class ReportingStorageDao implements Closeable {
     private static final Function<Path, Boolean> NO_FILTER = s -> true;
 
     //for test only
-    public ReportingStorageDao(String reportingFolder, AverageAggregatorProcessor averageAggregator,
-                               boolean isEnabled) {
+    public ReportingDiskDao(String reportingFolder, AverageAggregatorProcessor averageAggregator,
+                            boolean isEnabled) {
         this.averageAggregator = averageAggregator;
         this.rawDataCacheForGraphProcessor = new RawDataCacheForGraphProcessor();
         this.dataFolder = reportingFolder;
@@ -66,7 +66,7 @@ public class ReportingStorageDao implements Closeable {
         this.csvGenerator = new CSVGenerator(this);
     }
 
-    public ReportingStorageDao(String reportingFolder, boolean isEnabled) {
+    public ReportingDiskDao(String reportingFolder, boolean isEnabled) {
         this.averageAggregator = new AverageAggregatorProcessor(reportingFolder);
         this.rawDataCacheForGraphProcessor = new RawDataCacheForGraphProcessor();
         this.dataFolder = reportingFolder;

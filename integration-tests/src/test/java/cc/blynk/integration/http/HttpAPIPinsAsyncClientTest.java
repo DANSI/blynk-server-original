@@ -243,7 +243,7 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
 
     @Test
     public void testGetCSVDataRedirect() throws Exception {
-        Path reportingPath = Paths.get(localHolder.reportingDao.dataFolder, "dmitriy@blynk.cc");
+        Path reportingPath = Paths.get(localHolder.reportingDiskDao.dataFolder, "dmitriy@blynk.cc");
         Files.createDirectories(reportingPath);
         FileUtils.write(Paths.get(reportingPath.toString(), "history_125564119-0_v10_minute.bin"), 1, 2);
 

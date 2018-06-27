@@ -1,7 +1,7 @@
 package cc.blynk.server.workers;
 
 import cc.blynk.server.core.dao.CSVGenerator;
-import cc.blynk.server.core.dao.ReportingStorageDao;
+import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.utils.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,16 +29,16 @@ public class ReportingTruncateWorker implements Runnable {
 
     private static final Logger log = LogManager.getLogger(ReportingTruncateWorker.class);
 
-    private final ReportingStorageDao reportingDao;
+    private final ReportingDiskDao reportingDao;
     private final long exportExpirePeriod;
     private final int maxRecordsCount;
 
-    public ReportingTruncateWorker(ReportingStorageDao reportingDao) {
+    public ReportingTruncateWorker(ReportingDiskDao reportingDao) {
         //storing minute points only for 30 days
         this(reportingDao, (int) TimeUnit.DAYS.toMinutes(30), TimeUnit.DAYS.toMillis(90));
     }
 
-    public ReportingTruncateWorker(ReportingStorageDao reportingDao, int maxRecordsCount, long exportExpirePeriod) {
+    public ReportingTruncateWorker(ReportingDiskDao reportingDao, int maxRecordsCount, long exportExpirePeriod) {
         this.reportingDao = reportingDao;
         this.maxRecordsCount = maxRecordsCount;
         this.exportExpirePeriod = exportExpirePeriod;

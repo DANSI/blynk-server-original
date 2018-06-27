@@ -40,7 +40,7 @@ final class JobLauncher {
         long startDelay;
 
         var reportingWorker = new ReportingWorker(
-                holder.reportingDao,
+                holder.reportingDiskDao,
                 ReportingUtil.getReportingFolder(holder.props.getProperty("data.folder")),
                 holder.reportingDBManager
         );
@@ -71,11 +71,11 @@ final class JobLauncher {
 
         //running once every 3 day
         var reportingDataDiskCleaner =
-                new HistoryGraphUnusedPinDataCleanerWorker(holder.userDao, holder.reportingDao);
+                new HistoryGraphUnusedPinDataCleanerWorker(holder.userDao, holder.reportingDiskDao);
         //once every 3 days
         scheduler.scheduleAtFixedRate(reportingDataDiskCleaner, 72, 72, HOURS);
 
-        var reportingTruncateWorker = new ReportingTruncateWorker(holder.reportingDao);
+        var reportingTruncateWorker = new ReportingTruncateWorker(holder.reportingDiskDao);
         //once every week
         scheduler.scheduleAtFixedRate(reportingTruncateWorker, 1, 144, HOURS);
 

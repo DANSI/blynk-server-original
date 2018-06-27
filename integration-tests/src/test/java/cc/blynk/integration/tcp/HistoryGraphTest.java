@@ -4,7 +4,7 @@ import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
-import cc.blynk.server.core.dao.ReportingStorageDao;
+import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
@@ -100,7 +100,7 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
 
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
@@ -159,13 +159,13 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath1 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphPeriod.THREE_MONTHS.granularityType));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphPeriod.THREE_MONTHS.granularityType));
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 9, GraphPeriod.THREE_MONTHS.granularityType));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 9, GraphPeriod.THREE_MONTHS.granularityType));
         Path pinReportingDataPath3 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 10, GraphPeriod.THREE_MONTHS.granularityType));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 10, GraphPeriod.THREE_MONTHS.granularityType));
         Path pinReportingDataPath4 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 11, GraphPeriod.THREE_MONTHS.granularityType));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 11, GraphPeriod.THREE_MONTHS.granularityType));
 
         for (int i = 0; i < GraphPeriod.THREE_MONTHS.numberOfPoints; i++) {
             long now = System.currentTimeMillis();
@@ -219,7 +219,7 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
@@ -283,12 +283,12 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
@@ -349,12 +349,12 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
@@ -415,12 +415,12 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
@@ -481,12 +481,12 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
@@ -547,12 +547,12 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
@@ -620,17 +620,17 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
         Path pinReportingDataPath3 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath3, 1.113D, 1111111);
         FileUtils.write(pinReportingDataPath3, 1.223D, 2222222);
 
@@ -673,7 +673,7 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
 
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
@@ -705,7 +705,7 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphPeriod.ONE_HOUR.granularityType));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphPeriod.ONE_HOUR.granularityType));
 
         for (int point = 0; point < GraphPeriod.ONE_HOUR.numberOfPoints + 1; point++) {
             FileUtils.write(pinReportingDataPath, (double) point, 1111111 + point);
@@ -751,7 +751,7 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphPeriod.DAY.granularityType));
 
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
@@ -799,7 +799,7 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
 
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
@@ -1059,7 +1059,7 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
 
         try (DataOutputStream dos = new DataOutputStream(
                     Files.newOutputStream(pinReportingDataPath, CREATE, APPEND))) {
@@ -1108,7 +1108,7 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
 
         try (DataOutputStream dos = new DataOutputStream(
                 Files.newOutputStream(pinReportingDataPath, CREATE, APPEND))) {
@@ -1159,7 +1159,7 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
 
         try (DataOutputStream dos = new DataOutputStream(
                 Files.newOutputStream(pinReportingDataPath, CREATE, APPEND))) {
@@ -1198,7 +1198,7 @@ public class HistoryGraphTest extends IntegrationBase {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
 
         try (DataOutputStream dos = new DataOutputStream(
                 Files.newOutputStream(pinReportingDataPath, CREATE, APPEND))) {
@@ -1268,7 +1268,7 @@ public class HistoryGraphTest extends IntegrationBase {
         Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", DEFAULT_TEST_USER);
         Files.createDirectories(userReportDirectory);
         Path userReportFile = Paths.get(userReportDirectory.toString(),
-                ReportingStorageDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE));
         FileUtils.write(userReportFile, 1.1, 1L);
         FileUtils.write(userReportFile, 2.2, 2L);
 
@@ -1281,7 +1281,7 @@ public class HistoryGraphTest extends IntegrationBase {
         //generate fake reporting data
         Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", DEFAULT_TEST_USER);
         Files.createDirectories(userReportDirectory);
-        String filename = ReportingStorageDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE);
+        String filename = ReportingDiskDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE);
         Path userReportFile = Paths.get(userReportDirectory.toString(), filename);
         FileUtils.write(userReportFile, 1.1, 1L);
         FileUtils.write(userReportFile, 2.2, 2L);
@@ -1341,12 +1341,12 @@ public class HistoryGraphTest extends IntegrationBase {
         Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", DEFAULT_TEST_USER);
         Files.createDirectories(userReportDirectory);
 
-        String filename = ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE);
+        String filename = ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE);
         Path userReportFile = Paths.get(userReportDirectory.toString(), filename);
         FileUtils.write(userReportFile, 1.1, 1L);
         FileUtils.write(userReportFile, 2.2, 2L);
 
-        filename = ReportingStorageDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE);
+        filename = ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE);
         userReportFile = Paths.get(userReportDirectory.toString(), filename);
         FileUtils.write(userReportFile, 11.1, 11L);
         FileUtils.write(userReportFile, 12.2, 12L);
@@ -1426,12 +1426,12 @@ public class HistoryGraphTest extends IntegrationBase {
         Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", DEFAULT_TEST_USER);
         Files.createDirectories(userReportDirectory);
 
-        String filename = ReportingStorageDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE);
+        String filename = ReportingDiskDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE);
         Path userReportFile = Paths.get(userReportDirectory.toString(), filename);
         FileUtils.write(userReportFile, 1.1, 1L);
         FileUtils.write(userReportFile, 2.2, 2L);
 
-        filename = ReportingStorageDao.generateFilename(1, 1, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE);
+        filename = ReportingDiskDao.generateFilename(1, 1, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE);
         userReportFile = Paths.get(userReportDirectory.toString(), filename);
         FileUtils.write(userReportFile, 11.1, 11L);
         FileUtils.write(userReportFile, 12.2, 12L);
@@ -1492,7 +1492,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
     @Test
     public void cleanNotUsedPinDataWorksAsExpected() throws Exception {
-        HistoryGraphUnusedPinDataCleanerWorker cleaner = new HistoryGraphUnusedPinDataCleanerWorker(holder.userDao, holder.reportingDao);
+        HistoryGraphUnusedPinDataCleanerWorker cleaner = new HistoryGraphUnusedPinDataCleanerWorker(holder.userDao, holder.reportingDiskDao);
         String tempDir = holder.props.getProperty("data.folder");
 
         Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
@@ -1502,20 +1502,20 @@ public class HistoryGraphTest extends IntegrationBase {
 
         //this file has corresponding history graph
         Path pinReportingDataPath1 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath1, 1.11D, 1111111);
 
         //those are not
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 100, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 100, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath2, 1.11D, 1111111);
 
         Path pinReportingDataPath3 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 101, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 101, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath3, 1.11D, 1111111);
 
         Path pinReportingDataPath4 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 102, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 102, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath4, 1.11D, 1111111);
 
         assertTrue(Files.exists(pinReportingDataPath1));
@@ -1537,7 +1537,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
     @Test
     public void cleanNotUsedPinDataWorksAsExpectedForSuperChart() throws Exception {
-        HistoryGraphUnusedPinDataCleanerWorker cleaner = new HistoryGraphUnusedPinDataCleanerWorker(holder.userDao, holder.reportingDao);
+        HistoryGraphUnusedPinDataCleanerWorker cleaner = new HistoryGraphUnusedPinDataCleanerWorker(holder.userDao, holder.reportingDiskDao);
 
         EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
         enhancedHistoryGraph.id = 432;
@@ -1567,20 +1567,20 @@ public class HistoryGraphTest extends IntegrationBase {
 
         //this file has corresponding history graph
         Path pinReportingDataPath1 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath1, 1.11D, 1111111);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 9, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 9, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath2, 1.11D, 1111111);
 
         Path pinReportingDataPath3 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 10, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 10, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath3, 1.11D, 1111111);
 
         //those are not
         Path pinReportingDataPath4 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 11, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 11, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath4, 1.11D, 1111111);
 
         assertTrue(Files.exists(pinReportingDataPath1));
@@ -1598,7 +1598,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
     @Test
     public void cleanNotUsedPinDataWorksAsExpectedForSuperChartInDeviceTiles() throws Exception {
-        HistoryGraphUnusedPinDataCleanerWorker cleaner = new HistoryGraphUnusedPinDataCleanerWorker(holder.userDao, holder.reportingDao);
+        HistoryGraphUnusedPinDataCleanerWorker cleaner = new HistoryGraphUnusedPinDataCleanerWorker(holder.userDao, holder.reportingDiskDao);
 
         DeviceTiles deviceTiles = new DeviceTiles();
         deviceTiles.id = 21321;
@@ -1644,20 +1644,20 @@ public class HistoryGraphTest extends IntegrationBase {
 
         //this file has corresponding history graph
         Path pinReportingDataPath1 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath1, 1.11D, 1111111);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 9, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 9, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath2, 1.11D, 1111111);
 
         //those are not
         Path pinReportingDataPath3 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 10, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 10, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath3, 1.11D, 1111111);
 
         Path pinReportingDataPath4 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 11, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 11, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath4, 1.11D, 1111111);
 
         assertTrue(Files.exists(pinReportingDataPath1));
@@ -1687,7 +1687,7 @@ public class HistoryGraphTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, "{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"value\":0, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         clientPair.appClient.verifyResult(ok(2));
 
-        HistoryGraphUnusedPinDataCleanerWorker cleaner = new HistoryGraphUnusedPinDataCleanerWorker(holder.userDao, holder.reportingDao);
+        HistoryGraphUnusedPinDataCleanerWorker cleaner = new HistoryGraphUnusedPinDataCleanerWorker(holder.userDao, holder.reportingDiskDao);
 
         EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
         enhancedHistoryGraph.id = 432;
@@ -1717,36 +1717,36 @@ public class HistoryGraphTest extends IntegrationBase {
 
         //this file has corresponding history graph
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
 
         Path pinReportingDataPath20 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 9, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 9, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath20, 1.11D, 1111111);
 
         Path pinReportingDataPath30 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 10, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 10, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath30, 1.11D, 1111111);
 
         Path pinReportingDataPath11 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath11, 1.11D, 1111111);
 
         Path pinReportingDataPath21 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 9, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 9, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath21, 1.11D, 1111111);
 
         Path pinReportingDataPath31 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 10, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 10, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath31, 1.11D, 1111111);
 
         //those are not
         Path pinReportingDataPath40 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 11, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 11, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath40, 1.11D, 1111111);
 
         Path pinReportingDataPath41 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 11, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 11, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath41, 1.11D, 1111111);
 
         //3 files for device 0
@@ -1780,7 +1780,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
     @Test
     public void truncateReportingDataWorks() throws Exception {
-        ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDao);
+        ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDiskDao);
         String tempDir = holder.props.getProperty("data.folder");
 
         Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
@@ -1790,14 +1790,14 @@ public class HistoryGraphTest extends IntegrationBase {
 
         //this file has corresponding history graph
         Path pinReportingDataPath1 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE));
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 7, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 7, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath2, 1.11D, 1);
 
         Path pinReportingDataPath3 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 7, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 7, GraphGranularityType.HOURLY));
 
         //write max amount of data for 1 week + 1 point
         for (int i = 0; i < 30 * 24 * 60 + 1; i++) {
@@ -1843,14 +1843,14 @@ public class HistoryGraphTest extends IntegrationBase {
         FileUtils.write(csvFile, 1.11D, 1);
         assertTrue(Files.exists(csvFile));
 
-        ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDao, 0, 0);
+        ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDiskDao, 0, 0);
         truncateWorker.run();
         assertTrue(Files.notExists(csvFile));
     }
 
     @Test
     public void doNotTruncateFileWithCorrectSize() throws Exception {
-        ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDao);
+        ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDiskDao);
         String tempDir = holder.props.getProperty("data.folder");
 
         Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
@@ -1860,7 +1860,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
         //this file has corresponding history graph
         Path pinReportingDataPath1 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
-                ReportingStorageDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE));
 
         //write max amount of data for 1 week + 1 point
         for (int i = 0; i < 7 * 24 * 60; i++) {
@@ -1886,7 +1886,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
     @Test
     public void truncateReportingDataDontFailsInEmptyFolder() throws Exception {
-        ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDao);
+        ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDiskDao);
         String tempDir = holder.props.getProperty("data.folder");
 
         Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
@@ -1901,7 +1901,7 @@ public class HistoryGraphTest extends IntegrationBase {
 
     @Test
     public void truncateReportingDataDeletesEmptyFolder() throws Exception {
-        ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDao);
+        ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDiskDao);
         String tempDir = holder.props.getProperty("data.folder");
 
         Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);

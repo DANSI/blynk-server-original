@@ -183,10 +183,11 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.hardwareApp = new HardwareAppLogic(holder, state.user.email);
         this.hardwareResendFromBTLogic = new HardwareResendFromBTLogic(holder, state.user.email);
         this.refreshToken = new RefreshTokenLogic(holder);
-        this.graphData = new GetGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
-        this.enhancedGraphDataLogic = new GetEnhancedGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
+        this.graphData = new GetGraphDataLogic(holder.reportingDiskDao, holder.blockingIOProcessor);
+        this.enhancedGraphDataLogic = new GetEnhancedGraphDataLogic(
+                holder.reportingDiskDao, holder.blockingIOProcessor);
         this.deleteEnhancedGraphDataLogic = new DeleteEnhancedGraphDataLogic(
-                holder.reportingDao, holder.blockingIOProcessor);
+                holder.reportingDiskDao, holder.blockingIOProcessor);
         this.exportGraphData = new ExportGraphDataLogic(holder);
         this.appMailLogic = new AppMailLogic(holder);
         this.getShareTokenLogic = new GetShareTokenLogic(holder.tokenManager);
@@ -224,7 +225,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.getCloneCodeLogic = new GetCloneCodeLogic(holder);
         this.getProjectByCloneCodeLogic = new GetProjectByClonedTokenLogic(holder);
         this.getProvisionTokenLogic = new GetProvisionTokenLogic(holder);
-        this.deleteDeviceDataLogic = new DeleteDeviceDataLogic(holder.reportingDao, holder.blockingIOProcessor);
+        this.deleteDeviceDataLogic = new DeleteDeviceDataLogic(holder.reportingDiskDao, holder.blockingIOProcessor);
 
         this.createReportLogic = new CreateReportLogic(holder);
         this.updateReportLogic = new UpdateReportLogic(holder);

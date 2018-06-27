@@ -1,7 +1,7 @@
 package cc.blynk.server.application.handlers.main.logic.graph;
 
 import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.ReportingStorageDao;
+import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
@@ -37,9 +37,9 @@ public class GetGraphDataLogic {
     private static final Logger log = LogManager.getLogger(GetGraphDataLogic.class);
 
     private final BlockingIOProcessor blockingIOProcessor;
-    private final ReportingStorageDao reportingDao;
+    private final ReportingDiskDao reportingDao;
 
-    public GetGraphDataLogic(ReportingStorageDao reportingDao, BlockingIOProcessor blockingIOProcessor) {
+    public GetGraphDataLogic(ReportingDiskDao reportingDao, BlockingIOProcessor blockingIOProcessor) {
         this.reportingDao = reportingDao;
         this.blockingIOProcessor = blockingIOProcessor;
     }
