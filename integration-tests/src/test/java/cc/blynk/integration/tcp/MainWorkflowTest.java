@@ -22,6 +22,7 @@ import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.ui.TimeInput;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.server.notifications.mail.QrHolder;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
@@ -110,7 +111,7 @@ public class MainWorkflowTest extends IntegrationBase {
         appClient.verifyResult(notAllowed(2));
 
         String token = holder.tokensPool.getHolder().entrySet().iterator().next().getKey();
-        verify(mailWrapper).sendHtml(eq("dima@mail.ua"), eq("Password reset request for the Blynk app."), contains("blynk://restore?token=" + token));
+        verify(mailWrapper).sendWithAttachment(eq("dima@mail.ua"), eq("Password reset request for the Blynk app."), contains("http://blynk.cc/restore?token=" + token), any(QrHolder.class));
 
         appClient.send("resetPass verify 123");
         appClient.verifyResult(notAllowed(3));
