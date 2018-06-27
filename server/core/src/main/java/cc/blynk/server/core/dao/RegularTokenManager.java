@@ -43,7 +43,10 @@ class RegularTokenManager {
 
         //assign new token
         device.token = newToken;
-        cache.put(newToken, new TokenValue(user, dash, device, isTemporary));
+        TokenValue tokenValue = isTemporary
+                ? new TemporaryTokenValue(user, dash, device)
+                : new TokenValue(user, dash, device);
+        cache.put(newToken, tokenValue);
 
         user.lastModifiedTs = System.currentTimeMillis();
 

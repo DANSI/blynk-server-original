@@ -18,6 +18,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import static java.util.concurrent.TimeUnit.DAYS;
 import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
@@ -66,6 +67,7 @@ final class JobLauncher {
             );
         }
         scheduler.scheduleAtFixedRate(LRUCache.LOGIN_TOKENS_CACHE::clear, 1, 1, HOURS);
+        scheduler.scheduleAtFixedRate(holder.tokenManager::clearTemporaryTokens, 7, 1, DAYS);
 
         //running once every 3 day
         var reportingDataDiskCleaner =

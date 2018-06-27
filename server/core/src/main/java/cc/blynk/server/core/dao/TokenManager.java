@@ -87,4 +87,9 @@ public class TokenManager {
     public void updateSharedCache(String token, User user, int dashId) {
         sharedTokenManager.cache.put(token, new SharedTokenValue(user, dashId));
     }
+
+    public boolean clearTemporaryTokens() {
+        long now = System.currentTimeMillis();
+        return regularTokenManager.cache.entrySet().removeIf(entry -> entry.getValue().isExpired(now));
+    }
 }
