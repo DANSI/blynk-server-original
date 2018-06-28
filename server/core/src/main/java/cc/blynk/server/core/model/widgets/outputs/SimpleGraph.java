@@ -10,7 +10,7 @@ import io.netty.channel.ChannelHandlerContext;
  * Created on 21.03.15.
  */
 @Deprecated
-public class Graph extends OnePinReadingWidget {
+public class SimpleGraph extends OnePinReadingWidget {
 
     public boolean isBar;
 
