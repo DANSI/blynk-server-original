@@ -25,6 +25,7 @@
 
         <module>tcp-app-server</module>
         <module>tcp-hardware-server</module>
+        <module>tcp-web-server</module>
 
         <module>launcher</module>
         <module>tools</module>
