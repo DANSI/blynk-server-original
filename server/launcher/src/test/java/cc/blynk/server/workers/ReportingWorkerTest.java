@@ -31,7 +31,7 @@ import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static cc.blynk.server.core.dao.ReportingDiskDao.generateFilename;
-import static cc.blynk.server.internal.ReportingUtil.getReportingFolder;
+import static cc.blynk.utils.ReportingUtil.getReportingFolder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;

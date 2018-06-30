@@ -17,7 +17,7 @@ import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 
-import static cc.blynk.server.internal.ReportingUtil.REPORTING_RECORD_SIZE;
+import static cc.blynk.utils.ReportingUtil.REPORTING_RECORD_SIZE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 
 /**

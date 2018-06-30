@@ -16,7 +16,6 @@ import java.time.ZoneOffset;
 
 import static cc.blynk.server.core.reporting.average.AverageAggregatorProcessor.DAY;
 import static cc.blynk.server.core.reporting.average.AverageAggregatorProcessor.HOUR;
-import static cc.blynk.server.internal.ReportingUtil.getReportingFolder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -27,7 +26,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class AverageAggregatorTest {
 
-    private final String reportingFolder = getReportingFolder(System.getProperty("java.io.tmpdir"));
+    private final String reportingFolder = Paths.get(System.getProperty("java.io.tmpdir"), "data").toString();
 
     private static long getMillis(int year, int month, int dayOfMonth, int hour, int minute) {
         LocalDateTime dateTime = LocalDateTime.of(year, month, dayOfMonth, hour, minute);

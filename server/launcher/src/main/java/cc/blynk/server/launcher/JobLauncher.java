@@ -2,7 +2,6 @@ package cc.blynk.server.launcher;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
-import cc.blynk.server.internal.ReportingUtil;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.workers.CertificateRenewalWorker;
 import cc.blynk.server.workers.HistoryGraphUnusedPinDataCleanerWorker;
@@ -39,9 +38,9 @@ final class JobLauncher {
 
         long startDelay;
 
-        var reportingWorker = new ReportingWorker(
+        ReportingWorker reportingWorker = new ReportingWorker(
                 holder.reportingDiskDao,
-                ReportingUtil.getReportingFolder(holder.props.getProperty("data.folder")),
+                holder.props.getReportingFolder(),
                 holder.reportingDBManager
         );
 

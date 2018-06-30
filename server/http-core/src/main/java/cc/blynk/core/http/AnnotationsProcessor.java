@@ -1,6 +1,5 @@
-package cc.blynk.core.http.utils;
+package cc.blynk.core.http;
 
-import cc.blynk.core.http.UriTemplate;
 import cc.blynk.core.http.annotation.Consumes;
 import cc.blynk.core.http.annotation.Context;
 import cc.blynk.core.http.annotation.Path;
@@ -27,9 +26,9 @@ import java.util.List;
  * Created by Dmitriy Dumanskiy.
  * Created on 09.12.15.
  */
-public final class AnnotationsUtil {
+public final class AnnotationsProcessor {
 
-    private AnnotationsUtil() {
+    private AnnotationsProcessor() {
     }
 
     public static HandlerWrapper[] register(String rootPath, Object o, GlobalStats globalStats) {

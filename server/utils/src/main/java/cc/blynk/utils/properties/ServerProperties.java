@@ -4,6 +4,7 @@ import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.IPUtils;
 import cc.blynk.utils.JarUtil;
 
+import java.nio.file.Paths;
 import java.util.Map;
 
 /**
@@ -55,6 +56,14 @@ public class ServerProperties extends BaseProperties {
 
     private String getRegion() {
         return getProperty("region", "local");
+    }
+
+    public String getDataFolder() {
+        return getProperty("data.folder");
+    }
+
+    public String getReportingFolder() {
+        return Paths.get(getDataFolder(), "data").toString();
     }
 
     private static final String DEFAULT_RESET_HOST = "blynk.cc";
