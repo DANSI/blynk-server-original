@@ -13,10 +13,12 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.Theme;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.serialization.View;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Button;
 import cc.blynk.server.core.model.widgets.controls.Step;
+import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.model.widgets.others.Player;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.ui.TimeInput;
@@ -1489,5 +1491,21 @@ public class MainWorkflowTest extends BaseTest {
 
         user = holder.userDao.getByName("test@blynk.cc", "Blynk");
         assertNull(user.lastLoggedIP);
+    }
+
+    @Test
+    public void test() throws Exception {
+            Twitter twitter = new Twitter();
+            twitter.secret = "123";
+            twitter.token = "124";
+
+            DashBoard dash = new DashBoard();
+            dash.sharedToken = "ffffffffffffffffffffffffffff";
+            dash.widgets = new Widget[] {
+                    twitter
+            };
+
+            System.out.println(JsonParser.init().writerFor(DashBoard.class).writeValueAsString(dash));
+            System.out.println(JsonParser.init().writerFor(DashBoard.class).withView(View.PublicOnly.class).writeValueAsString(dash));
     }
 }

@@ -10,8 +10,6 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.storage.SinglePinStorageValue;
 import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.model.widgets.notifications.Notification;
-import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.model.widgets.ui.reporting.Report;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
@@ -74,30 +72,16 @@ public final class JsonParser {
     private static final ObjectWriter reportWriter = MAPPER.writerFor(Report.class);
 
     public static final ObjectWriter restrictiveDashWriter = init()
-            .addMixIn(Twitter.class, TwitterIgnoreMixIn.class)
-            .addMixIn(Notification.class, NotificationIgnoreMixIn.class)
-            .addMixIn(Device.class, DeviceIgnoreMixIn.class)
-            .addMixIn(DashBoard.class, DashboardMixIn.class)
-            .writerFor(DashBoard.class);
+            .writerFor(DashBoard.class).withView(View.PublicOnly.class);
 
     private static final ObjectWriter restrictiveDashWriterForHttp = init()
-            .addMixIn(Twitter.class, TwitterIgnoreMixIn.class)
-            //.addMixIn(Notification.class, NotificationIgnoreMixIn.class)
-            .addMixIn(Device.class, DeviceIgnoreMixIn.class)
-            .addMixIn(DashBoard.class, DashboardMixIn.class)
-            .writerFor(DashBoard.class);
+            .writerFor(DashBoard.class).withView(View.PublicOnly.class).withView(View.HttpAPIField.class);
 
     private static final ObjectWriter restrictiveProfileWriter = init()
-            .addMixIn(Twitter.class, TwitterIgnoreMixIn.class)
-            .addMixIn(Notification.class, NotificationIgnoreMixIn.class)
-            .addMixIn(Device.class, DeviceIgnoreMixIn.class)
-            .addMixIn(DashBoard.class, DashboardMixIn.class)
-            .writerFor(Profile.class);
+            .writerFor(Profile.class).withView(View.PublicOnly.class);
 
     private static final ObjectWriter restrictiveWidgetWriter = init()
-            .addMixIn(Twitter.class, TwitterIgnoreMixIn.class)
-            .addMixIn(Notification.class, NotificationIgnoreMixIn.class)
-            .writerFor(Widget.class);
+            .writerFor(Widget.class).withView(View.PublicOnly.class);
 
     private static final ObjectWriter statWriter = init().writerWithDefaultPrettyPrinter().forType(Stat.class);
 
