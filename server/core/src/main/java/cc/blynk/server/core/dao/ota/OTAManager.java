@@ -99,7 +99,7 @@ public class OTAManager {
         log.info("Ota initiated. {}", allInfo);
     }
 
-    private static String getBuildPatternFromString(Path path) {
+    public static String getBuildPatternFromString(Path path) {
         try {
             return getPatternFromString(path, "\0" + "build" + "\0");
         } catch (IOException ioe) {

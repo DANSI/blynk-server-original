@@ -4,12 +4,12 @@ import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.https.HttpsAdminServerTest;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestHardClient;
+import cc.blynk.server.core.dao.ota.OTAManager;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
-import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.SHA256Util;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import org.apache.http.HttpEntity;
@@ -393,7 +393,7 @@ public class OTATest extends BaseTest {
         String fileName = "test.bin";
         Path path = new File("src/test/resources/static/ota/" + fileName).toPath();
 
-        assertEquals("Aug 14 2017 20:31:49", FileUtils.getBuildPatternFromString(path));
+        assertEquals("Aug 14 2017 20:31:49", OTAManager.getBuildPatternFromString(path));
     }
 
     @Test
