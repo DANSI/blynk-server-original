@@ -1,6 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.IntegrationBase;
+import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.dao.ReportingDiskDao;
@@ -35,6 +35,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
+import static cc.blynk.integration.TestUtil.appSync;
+import static cc.blynk.integration.TestUtil.b;
+import static cc.blynk.integration.TestUtil.createDevice;
+import static cc.blynk.integration.TestUtil.createTag;
+import static cc.blynk.integration.TestUtil.hardware;
+import static cc.blynk.integration.TestUtil.hardwareConnected;
+import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
@@ -55,7 +63,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class DeviceWorkflowTest extends IntegrationBase {
+public class DeviceWorkflowTest extends BaseTest {
 
     private BaseServer appServer;
     private BaseServer hardwareServer;

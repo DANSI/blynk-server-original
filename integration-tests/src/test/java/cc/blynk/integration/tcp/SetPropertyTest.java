@@ -1,6 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.IntegrationBase;
+import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.device.Tag;
@@ -24,6 +24,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static cc.blynk.integration.TestUtil.createTag;
+import static cc.blynk.integration.TestUtil.illegalCommandBody;
+import static cc.blynk.integration.TestUtil.ok;
+import static cc.blynk.integration.TestUtil.setProperty;
 import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND_BODY;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -43,7 +47,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class SetPropertyTest extends IntegrationBase {
+public class SetPropertyTest extends BaseTest {
 
     private BaseServer appServer;
     private BaseServer hardwareServer;

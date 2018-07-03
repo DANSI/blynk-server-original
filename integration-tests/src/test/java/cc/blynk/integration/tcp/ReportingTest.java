@@ -1,6 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.IntegrationBase;
+import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.model.DashBoard;
@@ -51,6 +51,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
+import static cc.blynk.integration.TestUtil.illegalCommand;
+import static cc.blynk.integration.TestUtil.illegalCommandBody;
+import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.server.core.model.widgets.ui.reporting.ReportOutput.CSV_FILE_PER_DEVICE;
 import static cc.blynk.server.core.model.widgets.ui.reporting.ReportOutput.CSV_FILE_PER_DEVICE_PER_PIN;
 import static cc.blynk.server.core.model.widgets.ui.reporting.ReportOutput.MERGED_CSV;
@@ -77,7 +81,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ReportingTest extends IntegrationBase {
+public class ReportingTest extends BaseTest {
 
     private BaseServer appServer;
     private BaseServer hardwareServer;

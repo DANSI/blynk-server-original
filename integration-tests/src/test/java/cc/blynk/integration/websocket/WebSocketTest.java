@@ -1,6 +1,6 @@
 package cc.blynk.integration.websocket;
 
-import cc.blynk.integration.IntegrationBase;
+import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.websocket.WebSocketClient;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
@@ -14,6 +14,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static cc.blynk.integration.TestUtil.b;
+import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.mockito.ArgumentMatchers.any;
@@ -27,7 +29,7 @@ import static org.mockito.Mockito.verify;
  * Created on 13.01.16.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class WebSocketTest extends IntegrationBase {
+public class WebSocketTest extends BaseTest {
 
     private BaseServer webSocketServer;
     private BaseServer appServer;

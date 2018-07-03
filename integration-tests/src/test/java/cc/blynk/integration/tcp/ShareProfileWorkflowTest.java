@@ -1,6 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.IntegrationBase;
+import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.server.core.model.DashBoard;
@@ -36,6 +36,14 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.zip.DeflaterOutputStream;
 
+import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
+import static cc.blynk.integration.TestUtil.b;
+import static cc.blynk.integration.TestUtil.hardware;
+import static cc.blynk.integration.TestUtil.notAllowed;
+import static cc.blynk.integration.TestUtil.ok;
+import static cc.blynk.integration.TestUtil.parseProfile;
+import static cc.blynk.integration.TestUtil.readTestUserProfile;
+import static cc.blynk.integration.TestUtil.setProperty;
 import static cc.blynk.server.core.protocol.enums.Command.ACTIVATE_DASHBOARD;
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.DEACTIVATE_DASHBOARD;
@@ -64,7 +72,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ShareProfileWorkflowTest extends IntegrationBase {
+public class ShareProfileWorkflowTest extends BaseTest {
 
     private BaseServer appServer;
     private BaseServer hardwareServer;

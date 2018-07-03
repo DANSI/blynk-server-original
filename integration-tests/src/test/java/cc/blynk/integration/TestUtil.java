@@ -1,5 +1,6 @@
 package cc.blynk.integration;
 
+import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
@@ -34,8 +35,12 @@ import static cc.blynk.server.core.protocol.enums.Command.CONNECT_REDIRECT;
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.CREATE_TAG;
 import static cc.blynk.server.core.protocol.enums.Command.DEVICE_OFFLINE;
+import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_CLONE_CODE;
+import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.GET_PROVISION_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.GET_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_CONNECTED;
+import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.core.protocol.enums.Command.OUTDATED_APP_NOTIFICATION;
 import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
 import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND;
@@ -49,15 +54,34 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 
-/**
- * The Blynk Project.
- * Created by Dmitriy Dumanskiy.
- * Created on 2/4/2015.
- */
-public abstract class IntegrationBase extends BaseTest {
+public final class TestUtil {
 
     public static final String DEFAULT_TEST_USER = "dima@mail.ua";
     private static final ObjectReader profileReader = JsonParser.init().readerFor(Profile.class);
+
+    private TestUtil() {
+    }
+
+    public static String getBody(SimpleClientHandler responseMock) throws Exception {
+        return getBody(responseMock, 1);
+    }
+
+    public static String getBody(SimpleClientHandler responseMock, int expectedMessageOrder) throws Exception {
+        ArgumentCaptor<MessageBase> objectArgumentCaptor = ArgumentCaptor.forClass(MessageBase.class);
+        verify(responseMock, timeout(1000).times(expectedMessageOrder)).channelRead(any(), objectArgumentCaptor.capture());
+        List<MessageBase> arguments = objectArgumentCaptor.getAllValues();
+        MessageBase messageBase = arguments.get(expectedMessageOrder - 1);
+        if (messageBase instanceof StringMessage) {
+            return ((StringMessage) messageBase).body;
+        } else if (messageBase.command == LOAD_PROFILE_GZIPPED
+                || messageBase.command == GET_PROJECT_BY_TOKEN
+                || messageBase.command == GET_PROVISION_TOKEN
+                || messageBase.command == GET_PROJECT_BY_CLONE_CODE) {
+            return new String(BaseTest.decompress(messageBase.getBytes()));
+        }
+
+        throw new RuntimeException("Unexpected message");
+    }
 
     public static Profile parseProfile(InputStream reader) throws Exception {
         return profileReader.readValue(reader);
@@ -72,7 +96,7 @@ public abstract class IntegrationBase extends BaseTest {
         if (fileName == null) {
             fileName = "user_profile_json.txt";
         }
-        InputStream is = IntegrationBase.class.getResourceAsStream("/json_test/" + fileName);
+        InputStream is = TestUtil.class.getResourceAsStream("/json_test/" + fileName);
         Profile profile = parseProfile(is);
         return profile.toString();
     }
@@ -259,19 +283,4 @@ public abstract class IntegrationBase extends BaseTest {
         return new ClientPair(appClient, hardClient, token);
     }
 
-    public static ClientPair initAppAndHardPair(int tcpAppPort, int tcpHartPort, ServerProperties properties) throws Exception {
-        return initAppAndHardPair("localhost", tcpAppPort, tcpHartPort, DEFAULT_TEST_USER, "1", null, properties, 10000);
-    }
-
-    public static ClientPair initAppAndHardPair() throws Exception {
-        return initAppAndHardPair("localhost", tcpAppPort, tcpHardPort, DEFAULT_TEST_USER, "1", null, properties, 10000);
-    }
-
-    public static ClientPair initAppAndHardPair(int energy) throws Exception {
-        return initAppAndHardPair("localhost", tcpAppPort, tcpHardPort, DEFAULT_TEST_USER, "1", null, properties, energy);
-    }
-
-    public static ClientPair initAppAndHardPair(String jsonProfile) throws Exception {
-        return initAppAndHardPair("localhost", tcpAppPort, tcpHardPort, DEFAULT_TEST_USER, "1", jsonProfile, properties, 10000);
-    }
 }

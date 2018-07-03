@@ -38,10 +38,9 @@ import javax.net.ssl.SSLContext;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cc.blynk.integration.IntegrationBase.DEFAULT_TEST_USER;
-import static cc.blynk.integration.IntegrationBase.b;
-import static cc.blynk.integration.IntegrationBase.initAppAndHardPair;
-import static cc.blynk.integration.IntegrationBase.ok;
+import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
+import static cc.blynk.integration.TestUtil.b;
+import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertEquals;

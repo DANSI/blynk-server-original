@@ -1,6 +1,6 @@
 package cc.blynk.integration.websocket;
 
-import cc.blynk.integration.IntegrationBase;
+import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.server.Holder;
@@ -20,6 +20,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
 
+import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
+import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.utils.StringUtils.WEBSOCKET_WEB_PATH;
 
 /**
@@ -28,7 +30,7 @@ import static cc.blynk.utils.StringUtils.WEBSOCKET_WEB_PATH;
  * Created on 13.01.16.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class AppWebDashboardSocketTest extends IntegrationBase {
+public class AppWebDashboardSocketTest extends BaseTest {
 
     private static BaseServer hardwareServer;
     private static BaseServer appServer;

@@ -1,6 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.IntegrationBase;
+import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.App;
@@ -19,6 +19,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import static cc.blynk.integration.TestUtil.ok;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -31,7 +32,7 @@ import static org.junit.Assert.assertTrue;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class AppWorkflowTest extends IntegrationBase {
+public class AppWorkflowTest extends BaseTest {
 
     private BaseServer appServer;
     private BaseServer hardwareServer;

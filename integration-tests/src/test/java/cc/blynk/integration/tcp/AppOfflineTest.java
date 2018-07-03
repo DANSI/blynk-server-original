@@ -1,6 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.IntegrationBase;
+import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.Holder;
 import cc.blynk.server.servers.BaseServer;
@@ -12,6 +12,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static cc.blynk.integration.TestUtil.internal;
+import static cc.blynk.integration.TestUtil.ok;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -19,7 +22,7 @@ import org.mockito.junit.MockitoJUnitRunner;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class AppOfflineTest extends IntegrationBase {
+public class AppOfflineTest extends BaseTest {
 
     private BaseServer appServer;
     private BaseServer hardwareServer;

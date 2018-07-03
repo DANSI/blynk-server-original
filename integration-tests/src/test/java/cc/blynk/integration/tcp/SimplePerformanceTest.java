@@ -1,6 +1,7 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.IntegrationBase;
+import cc.blynk.integration.BaseTest;
+import cc.blynk.integration.TestUtil;
 import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
@@ -32,7 +33,7 @@ import static org.junit.Assert.assertEquals;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class SimplePerformanceTest extends IntegrationBase {
+public class SimplePerformanceTest extends BaseTest {
 
     private NioEventLoopGroup sharedNioEventLoopGroup;
 
@@ -92,7 +93,7 @@ public class SimplePerformanceTest extends IntegrationBase {
         TestAppClient appClient = new TestAppClient(host, appPort, properties, sharedNioEventLoopGroup);
         TestHardClient hardClient = new TestHardClient(host, hardPort, sharedNioEventLoopGroup);
 
-        return initAppAndHardPair(appClient, hardClient, user, pass, jsonProfile, 10000);
+        return TestUtil.initAppAndHardPair(appClient, hardClient, user, pass, jsonProfile, 10000);
     }
 
 }

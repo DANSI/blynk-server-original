@@ -1,6 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.IntegrationBase;
+import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
@@ -22,6 +22,14 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Map;
 
+import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
+import static cc.blynk.integration.TestUtil.createDevice;
+import static cc.blynk.integration.TestUtil.deviceOffline;
+import static cc.blynk.integration.TestUtil.hardwareConnected;
+import static cc.blynk.integration.TestUtil.notAllowed;
+import static cc.blynk.integration.TestUtil.ok;
+import static cc.blynk.integration.TestUtil.parseProfile;
+import static cc.blynk.integration.TestUtil.readTestUserProfile;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -38,7 +46,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class NotificationsLogicTest extends IntegrationBase {
+public class NotificationsLogicTest extends BaseTest {
 
     private BaseServer appServer;
     private BaseServer hardwareServer;

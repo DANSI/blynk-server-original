@@ -1,7 +1,6 @@
 package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.BaseTest;
-import cc.blynk.integration.IntegrationBase;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.server.core.dao.ReportingDiskDao;
@@ -49,6 +48,12 @@ import java.nio.file.Paths;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.zip.GZIPInputStream;
 
+import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
+import static cc.blynk.integration.TestUtil.b;
+import static cc.blynk.integration.TestUtil.createDevice;
+import static cc.blynk.integration.TestUtil.createTag;
+import static cc.blynk.integration.TestUtil.illegalCommand;
+import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.server.core.model.serialization.JsonParser.MAPPER;
 import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
 import static java.nio.file.StandardOpenOption.APPEND;
@@ -69,7 +74,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class HistoryGraphTest extends IntegrationBase {
+public class HistoryGraphTest extends BaseTest {
 
     private BaseServer appServer;
     private BaseServer hardwareServer;

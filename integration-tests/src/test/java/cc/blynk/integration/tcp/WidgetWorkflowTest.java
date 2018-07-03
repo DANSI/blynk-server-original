@@ -1,6 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.IntegrationBase;
+import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
@@ -19,6 +19,12 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import static cc.blynk.integration.TestUtil.appSync;
+import static cc.blynk.integration.TestUtil.hardware;
+import static cc.blynk.integration.TestUtil.illegalCommand;
+import static cc.blynk.integration.TestUtil.illegalCommandBody;
+import static cc.blynk.integration.TestUtil.notAllowed;
+import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
@@ -32,7 +38,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class WidgetWorkflowTest extends IntegrationBase {
+public class WidgetWorkflowTest extends BaseTest {
 
     private BaseServer appServer;
     private BaseServer hardwareServer;

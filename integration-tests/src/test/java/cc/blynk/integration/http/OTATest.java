@@ -38,10 +38,9 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Base64;
 
-import static cc.blynk.integration.IntegrationBase.b;
-import static cc.blynk.integration.IntegrationBase.initAppAndHardPair;
-import static cc.blynk.integration.IntegrationBase.internal;
-import static cc.blynk.integration.IntegrationBase.ok;
+import static cc.blynk.integration.TestUtil.b;
+import static cc.blynk.integration.TestUtil.internal;
+import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertEquals;

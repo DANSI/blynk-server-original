@@ -1,6 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.IntegrationBase;
+import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
@@ -41,6 +41,15 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
+import static cc.blynk.integration.TestUtil.b;
+import static cc.blynk.integration.TestUtil.createDevice;
+import static cc.blynk.integration.TestUtil.hardware;
+import static cc.blynk.integration.TestUtil.hardwareConnected;
+import static cc.blynk.integration.TestUtil.illegalCommand;
+import static cc.blynk.integration.TestUtil.notAllowed;
+import static cc.blynk.integration.TestUtil.ok;
+import static cc.blynk.integration.TestUtil.readTestUserProfile;
 import static cc.blynk.server.core.model.serialization.JsonParser.MAPPER;
 import static cc.blynk.utils.properties.Placeholders.DYNAMIC_SECTION;
 import static org.junit.Assert.assertEquals;
@@ -59,7 +68,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class PublishingPreviewFlow extends IntegrationBase {
+public class PublishingPreviewFlow extends BaseTest {
 
     private BaseServer appServer;
     private BaseServer hardwareServer;

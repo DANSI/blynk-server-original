@@ -1,7 +1,6 @@
 package cc.blynk.integration.model.tcp;
 
 import cc.blynk.client.handlers.decoders.AppClientMessageDecoder;
-import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
@@ -15,8 +14,6 @@ import cc.blynk.server.core.model.widgets.ui.reporting.Report;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.handlers.encoders.AppMessageEncoder;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
-import cc.blynk.server.core.protocol.model.messages.MessageBase;
-import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.utils.SHA256Util;
 import cc.blynk.utils.properties.ServerProperties;
@@ -27,14 +24,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Random;
 import java.util.StringJoiner;
 
-import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_CLONE_CODE;
-import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_TOKEN;
-import static cc.blynk.server.core.protocol.enums.Command.GET_PROVISION_TOKEN;
-import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
@@ -48,8 +40,6 @@ import static org.mockito.Mockito.verify;
  * Created on 1/31/2015.
  */
 public class TestAppClient extends BaseTestAppClient {
-
-    private int msgId = 0;
 
     public TestAppClient(String host, int port) {
         super(host, port, Mockito.mock(Random.class), new ServerProperties(Collections.emptyMap()));
@@ -112,31 +102,10 @@ public class TestAppClient extends BaseTestAppClient {
         return JsonParser.parseReport(getBody(expectedMessageOrder), 0);
     }
 
-    public String getBody() throws Exception {
-        return getBody(1);
-    }
-
     public BinaryMessage getBinaryBody() throws Exception {
         ArgumentCaptor<BinaryMessage> objectArgumentCaptor = ArgumentCaptor.forClass(BinaryMessage.class);
         verify(responseMock, timeout(1000)).channelRead(any(), objectArgumentCaptor.capture());
         return objectArgumentCaptor.getValue();
-    }
-
-    public String getBody(int expectedMessageOrder) throws Exception {
-        ArgumentCaptor<MessageBase> objectArgumentCaptor = ArgumentCaptor.forClass(MessageBase.class);
-        verify(responseMock, timeout(1000).times(expectedMessageOrder)).channelRead(any(), objectArgumentCaptor.capture());
-        List<MessageBase> arguments = objectArgumentCaptor.getAllValues();
-        MessageBase messageBase = arguments.get(expectedMessageOrder - 1);
-        if (messageBase instanceof StringMessage) {
-            return ((StringMessage) messageBase).body;
-        } else if (messageBase.command == LOAD_PROFILE_GZIPPED
-                || messageBase.command == GET_PROJECT_BY_TOKEN
-                || messageBase.command == GET_PROVISION_TOKEN
-                || messageBase.command == GET_PROJECT_BY_CLONE_CODE) {
-            return new String(BaseTest.decompress(messageBase.getBytes()));
-        }
-
-        throw new RuntimeException("Unexpected message");
     }
 
     @Override
@@ -341,11 +310,6 @@ public class TestAppClient extends BaseTestAppClient {
 
     public void send(String line, int id) {
         send(produceMessageBaseOnUserInput(line, id));
-    }
-
-    public void reset() {
-        Mockito.reset(responseMock);
-        msgId = 0;
     }
 
     public void replace(SimpleClientHandler simpleClientHandler) {

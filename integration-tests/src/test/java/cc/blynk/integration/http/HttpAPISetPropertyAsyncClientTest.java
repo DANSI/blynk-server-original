@@ -1,6 +1,6 @@
 package cc.blynk.integration.http;
 
-import cc.blynk.integration.IntegrationBase;
+import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.enums.PinType;
@@ -22,6 +22,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.concurrent.Future;
 
+import static cc.blynk.integration.TestUtil.ok;
+import static cc.blynk.integration.TestUtil.setProperty;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -35,7 +37,7 @@ import static org.mockito.Mockito.verify;
  * Created on 24.12.15.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
+public class HttpAPISetPropertyAsyncClientTest extends BaseTest {
 
     private static BaseServer httpServer;
     private static AsyncHttpClient httpclient;

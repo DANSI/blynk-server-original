@@ -1,6 +1,7 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.IntegrationBase;
+import cc.blynk.integration.BaseTest;
+import cc.blynk.integration.TestUtil;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
@@ -20,6 +21,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static cc.blynk.integration.TestUtil.hardwareConnected;
+import static cc.blynk.integration.TestUtil.ok;
+import static cc.blynk.integration.TestUtil.parseProfile;
+import static cc.blynk.integration.TestUtil.readTestUserProfile;
+import static cc.blynk.integration.TestUtil.saveProfile;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -33,7 +39,7 @@ import static org.mockito.Mockito.verify;
  */
 @RunWith(MockitoJUnitRunner.class)
 @Ignore("ignored cause requires token to work properly")
-public class FacebookLoginTest extends IntegrationBase {
+public class FacebookLoginTest extends BaseTest {
 
     private BaseServer appServer;
     private BaseServer hardwareServer;
@@ -56,7 +62,7 @@ public class FacebookLoginTest extends IntegrationBase {
         String host = "localhost";
         String email = "shartax@gmail.com";
 
-        ClientPair clientPair = initAppAndHardPair(host, tcpAppPort, tcpHardPort, email, "1", null, properties, 10000);
+        ClientPair clientPair = TestUtil.initAppAndHardPair(host, tcpAppPort, tcpHardPort, email, "1", null, properties, 10000);
 
         ChannelFuture channelFuture = clientPair.appClient.stop();
         channelFuture.await();

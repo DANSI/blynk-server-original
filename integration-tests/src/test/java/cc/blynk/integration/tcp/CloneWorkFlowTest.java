@@ -1,6 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.IntegrationBase;
+import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
@@ -23,6 +23,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.concurrent.Future;
 
+import static cc.blynk.integration.TestUtil.serverError;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -34,7 +35,7 @@ import static org.junit.Assert.assertNull;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class CloneWorkFlowTest extends IntegrationBase {
+public class CloneWorkFlowTest extends BaseTest {
 
     private BaseServer appServer;
     private BaseServer httpServer;

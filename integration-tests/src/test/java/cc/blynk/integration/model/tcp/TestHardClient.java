@@ -4,22 +4,15 @@ import cc.blynk.client.handlers.decoders.ClientMessageDecoder;
 import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
-import cc.blynk.server.core.protocol.model.messages.MessageBase;
-import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.stats.GlobalStats;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import java.util.List;
 import java.util.Random;
 
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -28,8 +21,6 @@ import static org.mockito.Mockito.verify;
  */
 public class TestHardClient extends BaseTestHardwareClient {
 
-    private int msgId;
-
     public TestHardClient(String host, int port) {
         this(host, port, new NioEventLoopGroup());
     }
@@ -37,24 +28,6 @@ public class TestHardClient extends BaseTestHardwareClient {
     public TestHardClient(String host, int port, NioEventLoopGroup nioEventLoopGroup) {
         super(host, port, Mockito.mock(Random.class));
         this.nioEventLoopGroup = nioEventLoopGroup;
-
-        this.msgId = 0;
-    }
-
-    public String getBody() throws Exception {
-        return getBody(1);
-    }
-
-    public String getBody(int expectedMessageOrder) throws Exception {
-        ArgumentCaptor<MessageBase> objectArgumentCaptor = ArgumentCaptor.forClass(MessageBase.class);
-        verify(responseMock, timeout(1000).times(expectedMessageOrder)).channelRead(any(), objectArgumentCaptor.capture());
-        List<MessageBase> arguments = objectArgumentCaptor.getAllValues();
-        MessageBase messageBase = arguments.get(expectedMessageOrder - 1);
-        if (messageBase instanceof StringMessage) {
-            return ((StringMessage) messageBase).body;
-        }
-
-        throw new RuntimeException("Unexpected message");
     }
 
     @Override
@@ -89,15 +62,6 @@ public class TestHardClient extends BaseTestHardwareClient {
 
     public void sync(PinType pinType, int pin1, int pin2) {
         send("hardsync " + pinType.pintTypeChar + "r" + BODY_SEPARATOR + pin1 + BODY_SEPARATOR + pin2);
-    }
-
-    public void send(String line) {
-        send(produceMessageBaseOnUserInput(line, ++msgId));
-    }
-
-    public void reset() {
-        Mockito.reset(responseMock);
-        msgId = 0;
     }
 
     public void replace(SimpleClientHandler simpleClientHandler) {
