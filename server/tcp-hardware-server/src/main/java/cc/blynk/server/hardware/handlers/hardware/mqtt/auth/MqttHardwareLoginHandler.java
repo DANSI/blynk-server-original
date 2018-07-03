@@ -1,7 +1,6 @@
 package cc.blynk.server.hardware.handlers.hardware.mqtt.auth;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.common.DefaultReregisterHandler;
 import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
@@ -10,6 +9,7 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.hardware.handlers.hardware.MqttHardwareHandler;
+import cc.blynk.server.internal.ReregisterChannelUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -40,8 +40,7 @@ import static io.netty.handler.codec.mqtt.MqttConnectReturnCode.CONNECTION_REFUS
  *
  */
 @ChannelHandler.Sharable
-public class MqttHardwareLoginHandler extends SimpleChannelInboundHandler<MqttConnectMessage>
-        implements DefaultReregisterHandler {
+public class MqttHardwareLoginHandler extends SimpleChannelInboundHandler<MqttConnectMessage> {
 
     private static final Logger log = LogManager.getLogger(MqttHardwareLoginHandler.class);
 
@@ -101,7 +100,7 @@ public class MqttHardwareLoginHandler extends SimpleChannelInboundHandler<MqttCo
             completeLogin(ctx.channel(), session, user, dash, device, -1);
         } else {
             log.debug("Re registering hard channel. {}", ctx.channel());
-            reRegisterChannel(ctx, session, channelFuture ->
+            ReregisterChannelUtil.reRegisterChannel(ctx, session, channelFuture ->
                     completeLogin(channelFuture.channel(), session, user, dash, device, -1));
         }
     }

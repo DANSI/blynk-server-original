@@ -4,7 +4,6 @@ import cc.blynk.core.http.rest.HandlerHolder;
 import cc.blynk.core.http.rest.HandlerWrapper;
 import cc.blynk.core.http.rest.URIDecoder;
 import cc.blynk.server.Holder;
-import cc.blynk.server.common.DefaultReregisterHandler;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.stats.GlobalStats;
@@ -27,8 +26,7 @@ import static cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler.han
  * Created by Dmitriy Dumanskiy.
  * Created on 24.12.15.
  */
-public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter
-        implements DefaultReregisterHandler {
+public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter {
 
     protected static final Logger log = LogManager.getLogger(BaseHttpHandler.class);
 

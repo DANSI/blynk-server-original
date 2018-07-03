@@ -1,4 +1,4 @@
-package cc.blynk.server.common;
+package cc.blynk.server.internal;
 
 import cc.blynk.server.core.model.auth.Session;
 import io.netty.channel.ChannelFuture;
@@ -10,9 +10,13 @@ import io.netty.channel.ChannelHandlerContext;
  * Created by Dmitriy Dumanskiy.
  * Created on 17.10.15.
  */
-public interface DefaultReregisterHandler {
+public final class ReregisterChannelUtil {
 
-    default void reRegisterChannel(ChannelHandlerContext ctx, Session session, ChannelFutureListener completeHandler) {
+    private ReregisterChannelUtil() {
+    }
+
+    public static void reRegisterChannel(ChannelHandlerContext ctx,
+                                         Session session, ChannelFutureListener completeHandler) {
         ChannelFuture cf = ctx.deregister();
         cf.addListener(new ChannelFutureListener() {
             @Override
