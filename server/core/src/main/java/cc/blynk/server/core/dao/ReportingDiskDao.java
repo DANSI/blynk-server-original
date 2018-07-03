@@ -32,6 +32,7 @@ import java.util.TreeMap;
 import java.util.function.Function;
 
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_BYTES;
+import static cc.blynk.utils.FileUtils.CSV_DIR;
 import static cc.blynk.utils.FileUtils.SIZE_OF_REPORT_ENTRY;
 import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
 
@@ -73,6 +74,15 @@ public class ReportingDiskDao implements Closeable {
         this.enableRawDbDataStore = isEnabled;
         this.rawDataProcessor = new RawDataProcessor(enableRawDbDataStore);
         this.csvGenerator = new CSVGenerator(this);
+        createCSVFolder();
+    }
+
+    private static void createCSVFolder() {
+        try {
+            Files.createDirectories(Paths.get(CSV_DIR));
+        } catch (IOException ioe) {
+            log.error("Error creating temp '{}' folder for csv export data.", CSV_DIR);
+        }
     }
 
     public ByteBuffer getByteBufferFromDisk(User user, int dashId, int deviceId,
