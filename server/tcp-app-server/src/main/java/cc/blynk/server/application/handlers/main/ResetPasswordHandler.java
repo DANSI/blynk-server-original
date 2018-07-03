@@ -1,4 +1,4 @@
-package cc.blynk.server.application.handlers.main.logic;
+package cc.blynk.server.application.handlers.main;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;

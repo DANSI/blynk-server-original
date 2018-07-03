@@ -8,9 +8,7 @@ import cc.blynk.server.application.handlers.main.logic.AppMailLogic;
 import cc.blynk.server.application.handlers.main.logic.AppSetWidgetPropertyLogic;
 import cc.blynk.server.application.handlers.main.logic.AppSyncLogic;
 import cc.blynk.server.application.handlers.main.logic.AssignTokenLogic;
-import cc.blynk.server.application.handlers.main.logic.CreateAppLogic;
 import cc.blynk.server.application.handlers.main.logic.DeActivateDashboardLogic;
-import cc.blynk.server.application.handlers.main.logic.DeleteAppLogic;
 import cc.blynk.server.application.handlers.main.logic.GetCloneCodeLogic;
 import cc.blynk.server.application.handlers.main.logic.GetEnergyLogic;
 import cc.blynk.server.application.handlers.main.logic.GetProjectByClonedTokenLogic;
@@ -20,12 +18,10 @@ import cc.blynk.server.application.handlers.main.logic.GetTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.HardwareAppLogic;
 import cc.blynk.server.application.handlers.main.logic.HardwareResendFromBTLogic;
 import cc.blynk.server.application.handlers.main.logic.LoadProfileGzippedLogic;
-import cc.blynk.server.application.handlers.main.logic.MailQRsLogic;
+import cc.blynk.server.application.handlers.main.logic.LogoutLogic;
 import cc.blynk.server.application.handlers.main.logic.PurchaseLogic;
 import cc.blynk.server.application.handlers.main.logic.RedeemLogic;
 import cc.blynk.server.application.handlers.main.logic.RefreshTokenLogic;
-import cc.blynk.server.application.handlers.main.logic.UpdateAppLogic;
-import cc.blynk.server.application.handlers.main.logic.UpdateFaceLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.CreateDashLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.DeleteDashLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.UpdateDashLogic;
@@ -45,6 +41,11 @@ import cc.blynk.server.application.handlers.main.logic.dashboard.widget.UpdateWi
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.tile.CreateTileTemplateLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.tile.DeleteTileTemplateLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.widget.tile.UpdateTileTemplateLogic;
+import cc.blynk.server.application.handlers.main.logic.face.CreateAppLogic;
+import cc.blynk.server.application.handlers.main.logic.face.DeleteAppLogic;
+import cc.blynk.server.application.handlers.main.logic.face.MailQRsLogic;
+import cc.blynk.server.application.handlers.main.logic.face.UpdateAppLogic;
+import cc.blynk.server.application.handlers.main.logic.face.UpdateFaceLogic;
 import cc.blynk.server.application.handlers.main.logic.graph.DeleteDeviceDataLogic;
 import cc.blynk.server.application.handlers.main.logic.graph.DeleteEnhancedGraphDataLogic;
 import cc.blynk.server.application.handlers.main.logic.graph.ExportGraphDataLogic;
@@ -58,8 +59,7 @@ import cc.blynk.server.application.handlers.main.logic.sharing.GetShareTokenLogi
 import cc.blynk.server.application.handlers.main.logic.sharing.RefreshShareTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.sharing.ShareLogic;
 import cc.blynk.server.common.BaseSimpleChannelInboundHandler;
-import cc.blynk.server.common.handlers.LogoutHandler;
-import cc.blynk.server.common.handlers.PingHandler;
+import cc.blynk.server.common.handlers.logic.PingLogic;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.StateHolderBase;
 import cc.blynk.server.core.stats.GlobalStats;
@@ -285,7 +285,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 exportGraphData.messageReceived(ctx, state.user, msg);
                 break;
             case PING :
-                PingHandler.messageReceived(ctx, msg.id);
+                PingLogic.messageReceived(ctx, msg.id);
                 break;
 
             case GET_SHARE_TOKEN :
@@ -403,7 +403,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 getProjectByCloneCodeLogic.messageReceived(ctx, state.user, msg);
                 break;
             case LOGOUT :
-                LogoutHandler.messageReceived(ctx, state.user, msg);
+                LogoutLogic.messageReceived(ctx, state.user, msg);
                 break;
             case SET_WIDGET_PROPERTY :
                 AppSetWidgetPropertyLogic.messageReceived(ctx, state.user, msg);

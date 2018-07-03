@@ -1,4 +1,4 @@
-package cc.blynk.server.common;
+package cc.blynk.server.internal;
 
 import cc.blynk.server.core.protocol.enums.Response;
 import cc.blynk.server.core.stats.metrics.InstanceLoadMeter;

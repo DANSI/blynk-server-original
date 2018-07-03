@@ -2,7 +2,7 @@ package cc.blynk.server.application.handlers.main.auth;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.AppHandler;
-import cc.blynk.server.application.handlers.main.logic.ResetPasswordHandler;
+import cc.blynk.server.application.handlers.main.ResetPasswordHandler;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareLoginHandler;
 import cc.blynk.server.common.handlers.UserNotLoggedHandler;
 import cc.blynk.server.core.model.DashBoard;
