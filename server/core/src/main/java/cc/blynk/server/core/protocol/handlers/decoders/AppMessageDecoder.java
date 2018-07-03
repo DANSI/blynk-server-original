@@ -1,13 +1,13 @@
 package cc.blynk.server.core.protocol.handlers.decoders;
 
 import cc.blynk.server.Limits;
+import cc.blynk.server.common.QuotaLimitChecker;
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.exceptions.UnsupportedCommandException;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.core.stats.metrics.InstanceLoadMeter;
-import cc.blynk.server.handlers.QuotaLimitChecker;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;

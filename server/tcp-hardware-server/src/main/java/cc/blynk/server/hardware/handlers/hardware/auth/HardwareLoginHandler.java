@@ -1,6 +1,7 @@
 package cc.blynk.server.hardware.handlers.hardware.auth;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.common.DefaultReregisterHandler;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.model.DashBoard;
@@ -11,7 +12,6 @@ import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.db.DBManager;
-import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareHandler;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.IPUtils;

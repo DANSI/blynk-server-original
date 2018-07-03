@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers.common;
+package cc.blynk.server.common.handlers;
 
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
@@ -16,11 +16,11 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
  * Created on 2/1/2015.
  *
  */
-public final class LogoutLogic {
+public final class LogoutHandler {
 
-    private static final Logger log = LogManager.getLogger(LogoutLogic.class);
+    private static final Logger log = LogManager.getLogger(LogoutHandler.class);
 
-    private LogoutLogic() {
+    private LogoutHandler() {
     }
 
     public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage msg) {

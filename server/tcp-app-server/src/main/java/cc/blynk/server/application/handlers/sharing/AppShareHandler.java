@@ -10,12 +10,12 @@ import cc.blynk.server.application.handlers.main.logic.graph.GetEnhancedGraphDat
 import cc.blynk.server.application.handlers.main.logic.graph.GetGraphDataLogic;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareStateHolder;
 import cc.blynk.server.application.handlers.sharing.logic.HardwareAppShareLogic;
+import cc.blynk.server.common.BaseSimpleChannelInboundHandler;
+import cc.blynk.server.common.handlers.LogoutHandler;
+import cc.blynk.server.common.handlers.PingHandler;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.StateHolderBase;
 import cc.blynk.server.core.stats.GlobalStats;
-import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
-import cc.blynk.server.handlers.common.LogoutLogic;
-import cc.blynk.server.handlers.common.PingLogic;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.ADD_PUSH_TOKEN;
@@ -78,13 +78,13 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
                 GetDevicesLogic.messageReceived(ctx, state.user, msg);
                 break;
             case PING :
-                PingLogic.messageReceived(ctx, msg.id);
+                PingHandler.messageReceived(ctx, msg.id);
                 break;
             case APP_SYNC :
                 AppSyncLogic.messageReceived(ctx, state, msg);
                 break;
             case LOGOUT :
-                LogoutLogic.messageReceived(ctx, state.user, msg);
+                LogoutHandler.messageReceived(ctx, state.user, msg);
                 break;
             case DELETE_DEVICE_DATA :
                 deleteDeviceDataLogic.messageReceived(ctx, state, msg);

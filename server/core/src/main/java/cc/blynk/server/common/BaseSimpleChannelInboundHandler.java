@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers;
+package cc.blynk.server.common;
 
 import cc.blynk.server.core.protocol.exceptions.BaseServerException;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;

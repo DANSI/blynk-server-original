@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers;
+package cc.blynk.server.common;
 
 import cc.blynk.server.core.model.auth.Session;
 import io.netty.channel.ChannelFuture;

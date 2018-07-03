@@ -57,12 +57,12 @@ import cc.blynk.server.application.handlers.main.logic.reporting.UpdateReportLog
 import cc.blynk.server.application.handlers.main.logic.sharing.GetShareTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.sharing.RefreshShareTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.sharing.ShareLogic;
+import cc.blynk.server.common.BaseSimpleChannelInboundHandler;
+import cc.blynk.server.common.handlers.LogoutHandler;
+import cc.blynk.server.common.handlers.PingHandler;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.StateHolderBase;
 import cc.blynk.server.core.stats.GlobalStats;
-import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
-import cc.blynk.server.handlers.common.LogoutLogic;
-import cc.blynk.server.handlers.common.PingLogic;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.ACTIVATE_DASHBOARD;
@@ -285,7 +285,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 exportGraphData.messageReceived(ctx, state.user, msg);
                 break;
             case PING :
-                PingLogic.messageReceived(ctx, msg.id);
+                PingHandler.messageReceived(ctx, msg.id);
                 break;
 
             case GET_SHARE_TOKEN :
@@ -403,7 +403,7 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 getProjectByCloneCodeLogic.messageReceived(ctx, state.user, msg);
                 break;
             case LOGOUT :
-                LogoutLogic.messageReceived(ctx, state.user, msg);
+                LogoutHandler.messageReceived(ctx, state.user, msg);
                 break;
             case SET_WIDGET_PROPERTY :
                 AppSetWidgetPropertyLogic.messageReceived(ctx, state.user, msg);

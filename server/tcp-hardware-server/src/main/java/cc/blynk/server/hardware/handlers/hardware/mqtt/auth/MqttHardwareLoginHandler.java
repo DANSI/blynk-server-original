@@ -1,6 +1,7 @@
 package cc.blynk.server.hardware.handlers.hardware.mqtt.auth;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.common.DefaultReregisterHandler;
 import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
@@ -8,7 +9,6 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.session.HardwareStateHolder;
-import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.hardware.handlers.hardware.MqttHardwareHandler;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;

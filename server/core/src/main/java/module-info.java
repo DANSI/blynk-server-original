@@ -27,7 +27,7 @@ module cc.blynk.core {
     exports cc.blynk.server.core.protocol.exceptions;
     exports cc.blynk.server.db;
     exports cc.blynk.server.internal;
-    exports cc.blynk.server.handlers;
+    exports cc.blynk.server.common;
     exports cc.blynk.server.core.model.device;
     requires cc.blynk.server.notifications.mail;
     requires cc.blynk.server.notifications.push;

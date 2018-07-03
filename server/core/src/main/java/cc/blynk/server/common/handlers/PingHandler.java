@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers.common;
+package cc.blynk.server.common.handlers;
 
 import io.netty.channel.ChannelHandlerContext;
 
@@ -10,9 +10,9 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
  * Created on 2/1/2015.
  *
  */
-public final class PingLogic {
+public final class PingHandler {
 
-    private PingLogic() {
+    private PingHandler() {
     }
 
     public static void messageReceived(ChannelHandlerContext ctx, int messageId) {
