@@ -43,7 +43,7 @@ public class GetProjectByTokenLogic {
             var dbFlashedToken = dbManager.selectFlashedToken(token);
 
             if (dbFlashedToken == null) {
-                log.error("{} token not exists for app {}.", token, user.appName);
+                log.error("{} token not exists for app {} for {} (GetProject).", token, user.appName, user.email);
                 ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
                 return;
             }
