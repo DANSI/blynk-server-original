@@ -31,6 +31,7 @@ region=test
 admin.rootPath=/test
 product.name=test
 server.host=test.blynk.cc
+restore.host=test.blynk.cc
 admin.email=test@blynk.cc
 admin.pass=
 vendor.email=

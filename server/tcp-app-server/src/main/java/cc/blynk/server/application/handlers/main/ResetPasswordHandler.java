@@ -50,7 +50,7 @@ public class ResetPasswordHandler extends SimpleChannelInboundHandler<ResetPassw
         this.mailWrapper = holder.mailWrapper;
         this.userDao = holder.userDao;
         this.blockingIOProcessor = holder.blockingIOProcessor;
-        this.host = holder.props.getResetClickHost();
+        this.host = holder.props.getRestoreHost();
     }
 
     @Override
@@ -113,7 +113,7 @@ public class ResetPasswordHandler extends SimpleChannelInboundHandler<ResetPassw
         }
     }
 
-    private static String makeResetUrl(String host, String token, String email) {
+    public static String makeResetUrl(String host, String token, String email) {
         return "http://" + host + "/restore?token=" + token + "&email=" + email;
     }
 

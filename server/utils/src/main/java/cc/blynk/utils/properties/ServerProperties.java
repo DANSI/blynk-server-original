@@ -66,8 +66,6 @@ public class ServerProperties extends BaseProperties {
         return Paths.get(getDataFolder(), "data").toString();
     }
 
-    private static final String DEFAULT_RESET_HOST = "blynk.cc";
-
     private String getServerHost() {
         String host = getHostProperty();
         if (host == null || host.isEmpty()) {
@@ -78,11 +76,8 @@ public class ServerProperties extends BaseProperties {
         }
     }
 
-    public String getResetClickHost() {
-        if (getHostProperty() == null) {
-           return DEFAULT_RESET_HOST;
-        }
-        return host;
+    public String getRestoreHost() {
+        return getProperty("restore.host");
     }
 
     private String getHostProperty() {

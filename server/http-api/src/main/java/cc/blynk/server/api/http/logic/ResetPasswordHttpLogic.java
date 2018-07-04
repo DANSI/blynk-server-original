@@ -12,6 +12,7 @@ import cc.blynk.core.http.annotation.Path;
 import cc.blynk.core.http.annotation.PathParam;
 import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.server.Holder;
+import cc.blynk.server.application.handlers.main.ResetPasswordHandler;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.UserDao;
@@ -57,9 +58,11 @@ public class ResetPasswordHttpLogic extends BaseHttpHandler {
     private final MailWrapper mailWrapper;
     private final String resetPassUrl;
     private final String pageContent;
+    private final String newResetPage;
     private final BlockingIOProcessor blockingIOProcessor;
     private final DBManager dbManager;
     private final FileManager fileManager;
+    private final String resetClickHost;
 
     public ResetPasswordHttpLogic(Holder holder) {
         super(holder, "");
@@ -68,6 +71,8 @@ public class ResetPasswordHttpLogic extends BaseHttpHandler {
         String productName = holder.props.productName;
         this.emailSubj = "Password reset request for the " + productName + " app.";
         this.emailBody = FileLoaderUtil.readResetEmailTemplateAsString()
+                .replace(Placeholders.PRODUCT_NAME, productName);
+        this.newResetPage = FileLoaderUtil.readAppResetEmailTemplateAsString()
                 .replace(Placeholders.PRODUCT_NAME, productName);
         this.mailWrapper = holder.mailWrapper;
 
@@ -80,6 +85,7 @@ public class ResetPasswordHttpLogic extends BaseHttpHandler {
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.dbManager = holder.dbManager;
         this.fileManager = holder.fileManager;
+        this.resetClickHost = holder.props.getRestoreHost();
     }
 
     private static String generateToken() {
@@ -143,6 +149,22 @@ public class ResetPasswordHttpLogic extends BaseHttpHandler {
         log.info("{} landed.", user.email);
         String page = pageContent.replace(Placeholders.EMAIL, user.email).replace(Placeholders.TOKEN, token);
         return ok(page, MediaType.TEXT_HTML);
+    }
+
+    @GET
+    @Path("restore")
+    public Response getNewResetPage(@QueryParam("token") String token, @QueryParam("email") String email) {
+        //we do not check token here, as we used single host but we may have many servers
+
+        //TokenUser user = tokensPool.getUser(token);
+        //if (user == null) {
+        //    return badRequest("Your token was not found or it is outdated. Please try again.");
+        //}
+
+        log.info("{} landed.", email);
+        String resetUrl = ResetPasswordHandler.makeResetUrl(resetClickHost, token, email);
+        String body = newResetPage.replace(Placeholders.RESET_URL, resetUrl);
+        return ok(body, MediaType.TEXT_HTML);
     }
 
     @POST
