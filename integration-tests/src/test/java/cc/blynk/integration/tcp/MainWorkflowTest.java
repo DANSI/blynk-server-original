@@ -124,7 +124,7 @@ public class MainWorkflowTest extends BaseTest {
         appClient.verifyResult(notAllowed(2));
 
         String token = holder.tokensPool.getHolder().entrySet().iterator().next().getKey();
-        verify(mailWrapper).sendWithAttachment(eq("dima@mail.ua"), eq("Password reset request for the Blynk app."), contains("http://127.0.0.1/restore?token=" + token), any(QrHolder.class));
+        verify(mailWrapper).sendWithAttachment(eq("dima@mail.ua"), eq("Password restoration for your Blynk account."), contains("http://127.0.0.1/restore?token=" + token), any(QrHolder.class));
 
         appClient.send("resetPass verify 123");
         appClient.verifyResult(notAllowed(3));
