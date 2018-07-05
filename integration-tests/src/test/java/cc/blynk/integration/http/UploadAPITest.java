@@ -57,7 +57,7 @@ public class UploadAPITest extends BaseTest {
     public void uploadFileToServer() throws Exception {
         String pathToImage = upload("static/ota/test.bin");
 
-        HttpGet index = new HttpGet("http://localhost:" + httpPort + pathToImage);
+        HttpGet index = new HttpGet("http://localhost:" + properties.getHttpPort() + pathToImage);
 
         try (CloseableHttpResponse response = httpclient.execute(index)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -68,7 +68,7 @@ public class UploadAPITest extends BaseTest {
     private String upload(String filename) throws Exception {
         InputStream logoStream = UploadAPITest.class.getResourceAsStream("/" + filename);
 
-        HttpPost post = new HttpPost("http://localhost:" + httpPort + "/upload");
+        HttpPost post = new HttpPost("http://localhost:" + properties.getHttpPort() + "/upload");
         ContentBody fileBody = new InputStreamBody(logoStream, ContentType.APPLICATION_OCTET_STREAM, filename);
         StringBody stringBody1 = new StringBody("Message 1", ContentType.MULTIPART_FORM_DATA);
 

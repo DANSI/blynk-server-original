@@ -59,7 +59,7 @@ public class WebhookTest extends BaseTest {
 
     @BeforeClass
     public static void initHttpClient() {
-        httpServerUrl = String.format("http://localhost:%s/", httpPort);
+        httpServerUrl = String.format("http://localhost:%s/", properties.getHttpPort());
         httpclient = new DefaultAsyncHttpClient(
                 new DefaultAsyncHttpClientConfig.Builder()
                         .setUserAgent("")

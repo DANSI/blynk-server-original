@@ -62,12 +62,12 @@ public class FacebookLoginTest extends BaseTest {
         String host = "localhost";
         String email = "dima@gmail.com";
 
-        ClientPair clientPair = TestUtil.initAppAndHardPair(host, tcpAppPort, tcpHardPort, email, "1", null, properties, 10000);
+        ClientPair clientPair = TestUtil.initAppAndHardPair(host, properties.getHttpsPort(), tcpHardPort, email, "1", null, properties, 10000);
 
         ChannelFuture channelFuture = clientPair.appClient.stop();
         channelFuture.await();
 
-        TestAppClient appClient = new TestAppClient(host, tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
         appClient.send("login " + email + "\0" + facebookAuthToken + "\0" + "Android" + "\0" + "1.10.4" + "\0" + "facebook");
         verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
@@ -85,7 +85,7 @@ public class FacebookLoginTest extends BaseTest {
 
     @Test
     public void testFacebookLoginWorksForExistingUser() throws Exception {
-        initFacebookAppAndHardPair("localhost", tcpAppPort, tcpHardPort, "dima@gmail.com", facebookAuthToken);
+        initFacebookAppAndHardPair("localhost", properties.getHttpsPort(), tcpHardPort, "dima@gmail.com", facebookAuthToken);
     }
 
     private ClientPair initFacebookAppAndHardPair(String host, int appPort, int hardPort, String user, String facebookAuthToken) throws Exception {

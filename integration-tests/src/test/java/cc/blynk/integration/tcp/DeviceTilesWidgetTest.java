@@ -1685,7 +1685,7 @@ public class DeviceTilesWidgetTest extends BaseTest {
                         .build()
         );
 
-        String httpsServerUrl = String.format("http://localhost:%s/", httpPort);
+        String httpsServerUrl = String.format("http://localhost:%s/", properties.getHttpPort());
         Future<Response> f = httpclient.prepareGet(httpsServerUrl + device.token + "/get/v111").execute();
         Response response = f.get();
         assertEquals(200, response.getStatusCode());
@@ -2026,7 +2026,7 @@ public class DeviceTilesWidgetTest extends BaseTest {
                         .build()
         );
 
-        String httpsServerUrl = String.format("http://localhost:%s/", httpPort);
+        String httpsServerUrl = String.format("http://localhost:%s/", properties.getHttpPort());
         Future<Response> f = httpclient
                 .prepareGet(httpsServerUrl + device.token + "/update/v5?value=111")
                 .execute();

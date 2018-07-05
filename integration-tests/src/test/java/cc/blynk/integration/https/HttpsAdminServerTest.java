@@ -81,8 +81,8 @@ public class HttpsAdminServerTest extends BaseTest {
     public void init() throws Exception {
         this.httpAdminServer = new AppAndHttpsServer(holder).start();
 
-        httpsAdminServerUrl = String.format("https://localhost:%s/admin", httpsPort);
-        httpServerUrl = String.format("http://localhost:%s/", httpPort);
+        httpsAdminServerUrl = String.format("https://localhost:%s/admin", properties.getHttpsPort());
+        httpServerUrl = String.format("http://localhost:%s/", properties.getHttpPort());
 
         SSLContext sslcontext = initUnsecuredSSLContext();
 

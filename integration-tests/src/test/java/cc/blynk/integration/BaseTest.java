@@ -57,12 +57,7 @@ public abstract class BaseTest {
     public static ServerProperties properties;
 
     //tcp app/hardware ports
-    public static int tcpAppPort;
     public static int tcpHardPort;
-
-    //http/s ports
-    public static int httpPort;
-    public static int httpsPort;
 
     public Holder holder;
     @Mock
@@ -97,12 +92,7 @@ public abstract class BaseTest {
     @BeforeClass
     public static void initProps() {
         properties = new ServerProperties(Collections.emptyMap());
-
-        httpPort = properties.getHttpPort();
-        httpsPort = properties.getHttpsPort();
-
-        tcpAppPort = httpsPort;
-        tcpHardPort = httpPort;
+        tcpHardPort = properties.getHttpPort();
     }
 
     @SuppressWarnings("unchecked")
@@ -209,15 +199,15 @@ public abstract class BaseTest {
     }
 
     public static ClientPair initAppAndHardPair() throws Exception {
-        return TestUtil.initAppAndHardPair("localhost", tcpAppPort, tcpHardPort, DEFAULT_TEST_USER, "1", null, properties, 10000);
+        return TestUtil.initAppAndHardPair("localhost", properties.getHttpsPort(), tcpHardPort, DEFAULT_TEST_USER, "1", null, properties, 10000);
     }
 
     public static ClientPair initAppAndHardPair(int energy) throws Exception {
-        return TestUtil.initAppAndHardPair("localhost", tcpAppPort, tcpHardPort, DEFAULT_TEST_USER, "1", null, properties, energy);
+        return TestUtil.initAppAndHardPair("localhost", properties.getHttpsPort(), tcpHardPort, DEFAULT_TEST_USER, "1", null, properties, energy);
     }
 
     public static ClientPair initAppAndHardPair(String jsonProfile) throws Exception {
-        return TestUtil.initAppAndHardPair("localhost", tcpAppPort, tcpHardPort, DEFAULT_TEST_USER, "1", jsonProfile, properties, 10000);
+        return TestUtil.initAppAndHardPair("localhost", properties.getHttpsPort(), tcpHardPort, DEFAULT_TEST_USER, "1", jsonProfile, properties, 10000);
     }
 
     public static ClientPair initAppAndHardPair(int tcpAppPort, int tcpHartPort, ServerProperties properties) throws Exception {

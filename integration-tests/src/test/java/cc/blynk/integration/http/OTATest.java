@@ -83,7 +83,7 @@ public class OTATest extends BaseTest {
     public void init() throws Exception {
         httpServer = new HardwareAndHttpAPIServer(holder).start();
         httpsServer = new AppAndHttpsServer(holder).start();
-        httpsAdminServerUrl = String.format("https://localhost:%s/admin", httpsPort);
+        httpsAdminServerUrl = String.format("https://localhost:%s/admin", properties.getHttpsPort());
 
         String pass = "admin";
         User user = new User();
@@ -178,7 +178,7 @@ public class OTATest extends BaseTest {
         String responseUrl = "http://127.0.0.1:18080" + path;
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
 
-        HttpGet index = new HttpGet("http://localhost:" + httpPort + path);
+        HttpGet index = new HttpGet("http://localhost:" + properties.getHttpPort() + path);
 
         try (CloseableHttpResponse response = httpclient.execute(index)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -426,7 +426,7 @@ public class OTATest extends BaseTest {
         String responseUrl = "http://127.0.0.1:18080" + path;
         verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
 
-        HttpGet index = new HttpGet("http://localhost:" + httpPort + path);
+        HttpGet index = new HttpGet("http://localhost:" + properties.getHttpPort() + path);
 
         try (CloseableHttpResponse response = httpclient.execute(index)) {
             assertEquals(200, response.getStatusLine().getStatusCode());

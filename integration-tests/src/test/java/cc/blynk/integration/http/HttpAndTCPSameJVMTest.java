@@ -99,7 +99,7 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
     public void init() throws Exception {
         httpServer = new HardwareAndHttpAPIServer(holder).start();
         appServer = new AppAndHttpsServer(holder).start();
-        httpServerUrl = String.format("http://localhost:%s/", httpPort);
+        httpServerUrl = String.format("http://localhost:%s/", properties.getHttpPort());
         httpclient = HttpClients.createDefault();
         clientPair = initAppAndHardPair(properties);
         clientPair.hardwareClient.reset();

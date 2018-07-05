@@ -144,7 +144,7 @@ public class CloneWorkFlowTest extends BaseTest {
                         .build()
         );
 
-        Future<Response> f = httpclient.prepareGet("http://localhost:" + httpPort + "/" + token + "/clone").execute();
+        Future<Response> f = httpclient.prepareGet("http://localhost:" + properties.getHttpPort() + "/" + token + "/clone").execute();
         Response response = f.get();
         assertEquals(200, response.getStatusCode());
         String responseBody = response.getResponseBody();
@@ -162,7 +162,7 @@ public class CloneWorkFlowTest extends BaseTest {
                         .build()
         );
 
-        Future<Response> f = httpclient.prepareGet("http://localhost:" + httpPort + "/" + 123 + "/clone").execute();
+        Future<Response> f = httpclient.prepareGet("http://localhost:" + properties.getHttpPort() + "/" + 123 + "/clone").execute();
         Response response = f.get();
         assertEquals(500, response.getStatusCode());
         String responseBody = response.getResponseBody();

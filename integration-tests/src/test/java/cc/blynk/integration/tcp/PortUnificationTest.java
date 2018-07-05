@@ -43,7 +43,7 @@ public class PortUnificationTest extends BaseTest {
 
     @Test
     public void testAppConectsOk() throws Exception {
-        int appPort = httpsPort;
+        int appPort = properties.getHttpsPort();
         TestAppClient appClient = new TestAppClient("localhost", appPort, properties);
         appClient.start();
 
@@ -55,7 +55,7 @@ public class PortUnificationTest extends BaseTest {
 
     @Test
     public void testHardwareConnectsOk() throws Exception {
-        int appPort = httpsPort;
+        int appPort = properties.getHttpsPort();
         TestAppClient appClient = new TestAppClient("localhost", appPort, properties);
         appClient.start();
 
@@ -74,7 +74,7 @@ public class PortUnificationTest extends BaseTest {
         assertNotNull(device);
         assertNotNull(device.token);
 
-        int hardwarePort = httpPort;
+        int hardwarePort = properties.getHttpPort();
         TestHardClient hardClient = new TestHardClient("localhost", hardwarePort);
         hardClient.start();
 

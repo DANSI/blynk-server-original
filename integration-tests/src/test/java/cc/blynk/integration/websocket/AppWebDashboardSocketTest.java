@@ -38,7 +38,7 @@ public class AppWebDashboardSocketTest extends BaseTest {
     private static Holder localHolder;
 
     @AfterClass
-    public static void shutdown() throws Exception {
+    public static void shutdown() {
         hardwareServer.close();
         appServer.close();
         clientPair.stop();
@@ -58,12 +58,12 @@ public class AppWebDashboardSocketTest extends BaseTest {
         );
         hardwareServer = new HardwareAndHttpAPIServer(localHolder).start();
         appServer = new AppAndHttpsServer(localHolder).start();
-        clientPair = initAppAndHardPair(httpsPort, httpPort, properties);
+        clientPair = initAppAndHardPair(properties);
     }
 
     @Test
     public void testAppWebDashSocketlogin() throws Exception{
-        AppWebSocketClient appWebSocketClient = new AppWebSocketClient("localhost", httpsPort, WEBSOCKET_WEB_PATH);
+        AppWebSocketClient appWebSocketClient = new AppWebSocketClient("localhost", properties.getHttpsPort(), WEBSOCKET_WEB_PATH);
         appWebSocketClient.start();
         appWebSocketClient.login(DEFAULT_TEST_USER, "1");
 

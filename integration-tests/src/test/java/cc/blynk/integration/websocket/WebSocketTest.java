@@ -49,7 +49,7 @@ public class WebSocketTest extends BaseTest {
 
     @Before
     public void init() throws Exception {
-        tcpWebSocketPort = httpPort;
+        tcpWebSocketPort = properties.getHttpPort();
         webSocketServer = new HardwareAndHttpAPIServer(holder).start();
         appServer = new AppAndHttpsServer(holder).start();
         clientPair = initAppAndHardPair(properties);

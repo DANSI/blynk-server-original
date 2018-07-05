@@ -68,7 +68,7 @@ public class SimplePerformanceTest extends BaseTest {
             String email = "dima" + i +  "@mail.ua";
 
             Future<ClientPair> future = executorService.submit(
-                    () -> initClientsWithSharedNio("localhost", tcpAppPort, tcpHardPort, email, "1", null, properties)
+                    () -> initClientsWithSharedNio("localhost", properties.getHttpsPort(), tcpHardPort, email, "1", null, properties)
             );
             futures.add(future);
         }

@@ -81,7 +81,7 @@ public class LoadBalancingIntegrationTest extends BaseTest {
 
         holder.dbManager.executeSQL("DELETE FROM users");
         holder.dbManager.executeSQL("DELETE FROM forwarding_tokens");
-        clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties2);
+        clientPair = initAppAndHardPair(properties.getHttpsPort(), properties.getHttpPort(), properties2);
     }
 
     @After

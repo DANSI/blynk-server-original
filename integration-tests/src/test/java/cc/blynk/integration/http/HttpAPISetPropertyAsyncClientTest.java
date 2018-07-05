@@ -70,7 +70,7 @@ public class HttpAPISetPropertyAsyncClientTest extends BaseTest {
                 mock(SMSWrapper.class), mock(SlackWrapper.class),
                 "no-db.properties");
         httpServer = new HardwareAndHttpAPIServer(staticHolder).start();
-        httpsServerUrl = String.format("http://localhost:%s/", httpPort);
+        httpsServerUrl = String.format("http://localhost:%s/", properties.getHttpPort());
         httpclient = new DefaultAsyncHttpClient(
                 new DefaultAsyncHttpClientConfig.Builder()
                         .setUserAgent("")
