@@ -11,7 +11,6 @@ import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
-import cc.blynk.utils.PinUtil;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -78,7 +77,7 @@ public final class HardwareSyncLogic {
 
         PinType pinType = PinType.getPinType(bodyParts[0].charAt(0));
 
-        if (PinUtil.isReadOperation(bodyParts[0])) {
+        if (StringUtils.isReadOperation(bodyParts[0])) {
             for (int i = 1; i < bodyParts.length; i++) {
                 byte pin = Byte.parseByte(bodyParts[i]);
                 Widget widget = dash.findWidgetByPin(deviceId, pin, pinType);

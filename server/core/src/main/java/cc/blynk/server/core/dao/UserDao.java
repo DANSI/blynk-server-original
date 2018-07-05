@@ -146,8 +146,8 @@ public class UserDao {
         for (User user : users.values()) {
             for (DashBoard dashBoard : user.profile.dashBoards) {
                 for (Device device : dashBoard.devices) {
-                    if (device.hardwareInfo != null && device.hardwareInfo.version != null) {
-                        String key = device.hardwareInfo.version;
+                    if (device.hardwareInfo != null && device.hardwareInfo.blynkVersion != null) {
+                        String key = device.hardwareInfo.blynkVersion;
                         Integer i = data.getOrDefault(key, 0);
                         data.put(key, ++i);
                     }

@@ -2,7 +2,6 @@ package cc.blynk.server.launcher;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
-import cc.blynk.server.internal.ReportingUtil;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.workers.CertificateRenewalWorker;
 import cc.blynk.server.workers.HistoryGraphUnusedPinDataCleanerWorker;
@@ -40,8 +39,8 @@ final class JobLauncher {
         long startDelay;
 
         ReportingWorker reportingWorker = new ReportingWorker(
-                holder.reportingDao,
-                ReportingUtil.getReportingFolder(holder.props.getProperty("data.folder")),
+                holder.reportingDiskDao,
+                holder.props.getReportingFolder(),
                 holder.reportingDBManager
         );
 
@@ -72,11 +71,11 @@ final class JobLauncher {
 
         //running once every 3 day
         HistoryGraphUnusedPinDataCleanerWorker reportingDataDiskCleaner =
-                new HistoryGraphUnusedPinDataCleanerWorker(holder.userDao, holder.reportingDao);
+                new HistoryGraphUnusedPinDataCleanerWorker(holder.userDao, holder.reportingDiskDao);
         //once every 3 days
         scheduler.scheduleAtFixedRate(reportingDataDiskCleaner, 72, 72, HOURS);
 
-        ReportingTruncateWorker reportingTruncateWorker = new ReportingTruncateWorker(holder.reportingDao);
+        ReportingTruncateWorker reportingTruncateWorker = new ReportingTruncateWorker(holder.reportingDiskDao);
         //once every week
         scheduler.scheduleAtFixedRate(reportingTruncateWorker, 1, 144, HOURS);
 

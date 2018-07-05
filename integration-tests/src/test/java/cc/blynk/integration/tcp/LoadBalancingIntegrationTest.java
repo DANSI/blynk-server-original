@@ -1,6 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.IntegrationBase;
+import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
@@ -24,13 +24,20 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
 
+import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
+import static cc.blynk.integration.TestUtil.connectRedirect;
+import static cc.blynk.integration.TestUtil.createDevice;
+import static cc.blynk.integration.TestUtil.getServer;
+import static cc.blynk.integration.TestUtil.illegalCommand;
+import static cc.blynk.integration.TestUtil.invalidToken;
+import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 
@@ -41,7 +48,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class LoadBalancingIntegrationTest extends IntegrationBase {
+public class LoadBalancingIntegrationTest extends BaseTest {
 
     private BaseServer appServer1;
     private BaseServer hardwareServer1;
@@ -74,7 +81,7 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
 
         holder.dbManager.executeSQL("DELETE FROM users");
         holder.dbManager.executeSQL("DELETE FROM forwarding_tokens");
-        clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties2);
+        clientPair = initAppAndHardPair(properties.getHttpsPort(), properties.getHttpPort(), properties2);
     }
 
     @After
@@ -93,7 +100,7 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
 
     @Test
     public void test2NewUsersStoredOnDifferentServers() throws Exception {
-        TestAppClient appClient1 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient1 =new TestAppClient(properties);
         appClient1.start();
 
         String email = "test_new@gmail.com";
@@ -142,7 +149,7 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
 
     @Test
     public void testNoGetServerHandlerAfterLogin() throws Exception {
-        TestAppClient appClient1 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient1 =new TestAppClient(properties);
         appClient1.start();
         workflowForUser(appClient1, "123@gmail.com", "a", AppNameUtil.BLYNK);
         appClient1.send("getServer " + "123@gmail.com" + "\0" + AppNameUtil.BLYNK);
@@ -151,7 +158,7 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
 
     @Test
     public void testUserRedirectedToCorrectServer() throws Exception {
-        TestAppClient appClient1 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient1 =new TestAppClient(properties);
         appClient1.start();
 
         String email = "test_new@gmail.com";
@@ -181,7 +188,7 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
 
     @Test
     public void testCreateFewAccountWithDifferentApp() throws Exception {
-        TestAppClient appClient1 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient1 = new TestAppClient(properties);
         appClient1.start();
 
         String email = "test@gmmail.com";
@@ -226,7 +233,7 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResultAfter(500, createDevice(1, device));
@@ -240,7 +247,7 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResultAfter(1000, createDevice(1, device));
@@ -282,7 +289,7 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
     }
 
     @Test
-    public void invalidToken() throws Exception {
+    public void testInvalidToken() throws Exception {
         String token = "1234567890123456789012345678901";
 
         assertTrue(holder.dbManager.forwardingTokenDBDao.insertTokenHost(

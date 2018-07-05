@@ -1,6 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.IntegrationBase;
+import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.server.core.model.device.Device;
@@ -14,6 +14,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
+import static cc.blynk.integration.TestUtil.createDevice;
+import static cc.blynk.integration.TestUtil.illegalCommand;
+import static cc.blynk.integration.TestUtil.notAllowed;
+import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.server.core.protocol.enums.Response.QUOTA_LIMIT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -31,7 +36,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class AppMailTest extends IntegrationBase {
+public class AppMailTest extends BaseTest {
 
     private BaseServer appServer;
     private BaseServer hardwareServer;
@@ -54,7 +59,7 @@ public class AppMailTest extends IntegrationBase {
 
     @Test
     public void testSendEmail() throws Exception {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
         appClient.login("dima@mail.ua", "1");
         appClient.verifyResult(ok(1));
@@ -65,7 +70,7 @@ public class AppMailTest extends IntegrationBase {
 
     @Test
     public void testSendEmailForDevice() throws Exception {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
         appClient.login("dima@mail.ua", "1");
         appClient.verifyResult(ok(1));
@@ -76,13 +81,13 @@ public class AppMailTest extends IntegrationBase {
 
     @Test
     public void testSendEmailForSingleDevice() throws Exception {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
         appClient.login("dima@mail.ua", "1");
         appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.getDevices();
+        Device[] devices = clientPair.appClient.parseDevices();
 
         assertEquals(1, devices.length);
 
@@ -97,7 +102,7 @@ public class AppMailTest extends IntegrationBase {
                 "Sketch generator -> https://examples.blynk.cc/\n" +
                 "\n" +
                 "Latest Blynk library -> https://github.com/blynkkk/blynk-library/releases/download/v0.5.3/Blynk_Release_v0.5.3.zip\n" +
-                "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.38.1/server-0.38.1.jar\n" +
+                "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.38.4/server-0.38.4.jar\n" +
                 "-\n" +
                 "https://www.blynk.cc\n" +
                 "twitter.com/blynk_app\n" +
@@ -108,7 +113,7 @@ public class AppMailTest extends IntegrationBase {
 
     @Test
     public void testSendEmailForMultiDevices() throws Exception {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
         appClient.login("dima@mail.ua", "1");
         appClient.verifyResult(ok(1));
@@ -116,14 +121,14 @@ public class AppMailTest extends IntegrationBase {
         Device device1 = new Device(1, "My Device2", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
 
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
 
         clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.getDevices(2);
+        Device[] devices = clientPair.appClient.parseDevices(2);
 
         appClient.send("email 1");
 
@@ -137,7 +142,7 @@ public class AppMailTest extends IntegrationBase {
                 "Sketch generator -> https://examples.blynk.cc/\n" +
                 "\n" +
                 "Latest Blynk library -> https://github.com/blynkkk/blynk-library/releases/download/v0.5.3/Blynk_Release_v0.5.3.zip\n" +
-                "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.38.1/server-0.38.1.jar\n" +
+                "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.38.4/server-0.38.4.jar\n" +
                 "-\n" +
                 "https://www.blynk.cc\n" +
                 "twitter.com/blynk_app\n" +

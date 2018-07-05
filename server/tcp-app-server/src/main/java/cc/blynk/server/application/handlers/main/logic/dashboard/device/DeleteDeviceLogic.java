@@ -3,7 +3,7 @@ package cc.blynk.server.application.handlers.main.logic.dashboard.device;
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.ReportingStorageDao;
+import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.DashBoard;
@@ -30,13 +30,13 @@ public class DeleteDeviceLogic {
 
     private final TokenManager tokenManager;
     private final SessionDao sessionDao;
-    private final ReportingStorageDao reportingDao;
+    private final ReportingDiskDao reportingDao;
     private final BlockingIOProcessor blockingIOProcessor;
 
     public DeleteDeviceLogic(Holder holder) {
         this.tokenManager = holder.tokenManager;
         this.sessionDao = holder.sessionDao;
-        this.reportingDao = holder.reportingDao;
+        this.reportingDao = holder.reportingDiskDao;
         this.blockingIOProcessor = holder.blockingIOProcessor;
     }
 

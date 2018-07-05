@@ -1,7 +1,7 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.dao.ReportingStorageDao;
+import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
@@ -31,7 +31,7 @@ import static cc.blynk.utils.StringUtils.split3;
  */
 public class HardwareLogic extends BaseProcessorHandler {
 
-    private final ReportingStorageDao reportingDao;
+    private final ReportingDiskDao reportingDao;
     private final SessionDao sessionDao;
 
     public HardwareLogic(Holder holder, String email) {
@@ -42,7 +42,7 @@ public class HardwareLogic extends BaseProcessorHandler {
                 holder.stats,
                 email));
         this.sessionDao = holder.sessionDao;
-        this.reportingDao = holder.reportingDao;
+        this.reportingDao = holder.reportingDiskDao;
     }
 
     private static boolean isWriteOperation(String body) {

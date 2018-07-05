@@ -152,7 +152,7 @@ public class WebhookProcessor extends NotificationBase {
                     }
                 } else {
                     webHook.failureCounter++;
-                    log.error("Error sending webhook for {}. Code {}.", email, response.getStatusCode());
+                    log.debug("Error sending webhook for {}. Code {}.", email, response.getStatusCode());
                     if (log.isDebugEnabled()) {
                         log.debug("Reason {}", response.getResponseBody());
                     }
@@ -164,7 +164,7 @@ public class WebhookProcessor extends NotificationBase {
             @Override
             public void onThrowable(Throwable t) {
                 webHook.failureCounter++;
-                log.error("Error sending webhook for {}.", email);
+                log.debug("Error sending webhook for {}.", email);
                 if (log.isDebugEnabled()) {
                     log.debug("Reason {}", t.getMessage());
                 }

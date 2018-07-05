@@ -1,6 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.IntegrationBase;
+import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
@@ -18,6 +18,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static cc.blynk.integration.TestUtil.bridge;
+import static cc.blynk.integration.TestUtil.createDevice;
+import static cc.blynk.integration.TestUtil.hardware;
+import static cc.blynk.integration.TestUtil.hardwareConnected;
+import static cc.blynk.integration.TestUtil.illegalCommand;
+import static cc.blynk.integration.TestUtil.notAllowed;
+import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_CONNECTED;
 import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
@@ -30,7 +37,7 @@ import static org.junit.Assert.assertNotNull;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class BridgeWorkflowTest extends IntegrationBase {
+public class BridgeWorkflowTest extends BaseTest {
 
     private BaseServer appServer;
     private BaseServer hardwareServer;
@@ -122,7 +129,7 @@ public class BridgeWorkflowTest extends IntegrationBase {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -367,7 +374,7 @@ public class BridgeWorkflowTest extends IntegrationBase {
 
     @Test
     public void bridgeOnlyWorksWithinOneAccount() throws Exception {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
 
         appClient.start();
 
@@ -386,7 +393,7 @@ public class BridgeWorkflowTest extends IntegrationBase {
         device1.status = Status.OFFLINE;
 
         appClient.createDevice(1, device1);
-        Device device = appClient.getDevice();
+        Device device = appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         appClient.verifyResult(createDevice(1, device));
@@ -408,7 +415,7 @@ public class BridgeWorkflowTest extends IntegrationBase {
 
         Device device = new Device(1, "My Device", "ESP8266");
         clientPair.appClient.createDevice(dash.id, device);
-        device = clientPair.appClient.getDevice(2);
+        device = clientPair.appClient.parseDevice(2);
 
         //creating 1 new hard client
         TestHardClient hardClient1 = new TestHardClient("localhost", tcpHardPort);
@@ -438,7 +445,7 @@ public class BridgeWorkflowTest extends IntegrationBase {
 
         Device device = new Device(0, "My Device", "ESP8266");
         clientPair.appClient.createDevice(dash.id, device);
-        device = clientPair.appClient.getDevice(2);
+        device = clientPair.appClient.parseDevice(2);
 
         TestHardClient hardClient1 = new TestHardClient("localhost", tcpHardPort);
         hardClient1.start();
@@ -454,7 +461,7 @@ public class BridgeWorkflowTest extends IntegrationBase {
 
         device = new Device(0, "My Device", "ESP8266");
         clientPair.appClient.createDevice(dash.id, device);
-        device = clientPair.appClient.getDevice(2);
+        device = clientPair.appClient.parseDevice(2);
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();

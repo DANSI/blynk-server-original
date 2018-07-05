@@ -7,6 +7,7 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.Theme;
 import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.serialization.View;
 import cc.blynk.server.core.model.storage.PinPropertyStorageKey;
 import cc.blynk.server.core.model.storage.PinStorageKey;
 import cc.blynk.server.core.model.storage.PinStorageKeyDeserializer;
@@ -34,6 +35,7 @@ import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.ArrayUtil;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.netty.channel.Channel;
 
@@ -92,8 +94,10 @@ public class DashBoard {
 
     public volatile boolean widgetBackgroundOn;
 
+    @JsonView(View.Private.class)
     public volatile String sharedToken;
 
+    @JsonView(View.Private.class)
     @JsonDeserialize(keyUsing = PinStorageKeyDeserializer.class,
                      contentUsing = PinStorageValueDeserializer.class)
     public Map<PinStorageKey, PinStorageValue> pinsStorage = Collections.emptyMap();

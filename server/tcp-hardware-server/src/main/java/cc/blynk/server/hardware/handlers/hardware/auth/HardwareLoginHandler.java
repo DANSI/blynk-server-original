@@ -11,8 +11,8 @@ import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.db.DBManager;
-import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareHandler;
+import cc.blynk.server.internal.ReregisterChannelUtil;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.IPUtils;
 import cc.blynk.utils.StringUtils;
@@ -47,8 +47,7 @@ import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
  *
  */
 @ChannelHandler.Sharable
-public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
-        implements DefaultReregisterHandler {
+public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessage> {
 
     private static final Logger log = LogManager.getLogger(HardwareLoginHandler.class);
 
@@ -136,7 +135,7 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
             completeLogin(ctx.channel(), session, user, dash, device, message.id);
         } else {
             log.debug("Re registering hard channel. {}", ctx.channel());
-            reRegisterChannel(ctx, session, channelFuture ->
+            ReregisterChannelUtil.reRegisterChannel(ctx, session, channelFuture ->
                     completeLogin(channelFuture.channel(), session, user, dash, device, message.id));
         }
     }

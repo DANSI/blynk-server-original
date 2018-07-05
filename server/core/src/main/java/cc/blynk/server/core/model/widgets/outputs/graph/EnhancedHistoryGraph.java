@@ -49,6 +49,8 @@ public class EnhancedHistoryGraph extends Widget {
 
     public boolean overrideYAxis;
 
+    public boolean hideGradient;
+
     public float yAxisMin;
 
     public float yAxisMax;
@@ -58,6 +60,8 @@ public class EnhancedHistoryGraph extends Widget {
     public String goalText;
 
     public GoalLine goalLine;
+
+    public LineType lineType;
 
     public GraphPeriod[] selectedPeriods = DEFAULT_PERIODS;
 

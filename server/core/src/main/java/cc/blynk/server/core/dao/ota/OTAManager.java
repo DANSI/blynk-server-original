@@ -7,18 +7,19 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.DeviceOtaInfo;
 import cc.blynk.server.core.model.device.HardwareInfo;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.properties.ServerProperties;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeASCIIStringMessage;
+import static cc.blynk.utils.FileUtils.getPatternFromString;
 
 /**
  * Very basic OTA manager implementation.
@@ -98,10 +99,18 @@ public class OTAManager {
         log.info("Ota initiated. {}", allInfo);
     }
 
-    //todo this is ugly. but for now is ok.
+    public static String getBuildPatternFromString(Path path) {
+        try {
+            return getPatternFromString(path, "\0" + "build" + "\0");
+        } catch (IOException ioe) {
+            log.error("Error getting pattern from file. Reason : {}", ioe.getMessage());
+            throw new RuntimeException(ioe);
+        }
+    }
+
     private String fetchBuildNumber(String pathToFirmware) {
         Path path = Paths.get(staticFilesFolder, pathToFirmware);
-        return FileUtils.getBuildPatternFromString(path);
+        return getBuildPatternFromString(path);
     }
 
     public void stop(User user) {

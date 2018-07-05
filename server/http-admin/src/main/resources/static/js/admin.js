@@ -137,7 +137,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
         );
 
 
-    var libraryVersion = nga.entity('libraryVersion').identifier(nga.field('name')).url('hardwareInfo/version').readOnly();
+    var libraryVersion = nga.entity('libraryVersion').identifier(nga.field('name')).url('hardwareInfo/blynkVersion').readOnly();
     libraryVersion.listView()
         .title('Library versions')
         .perPage(50)

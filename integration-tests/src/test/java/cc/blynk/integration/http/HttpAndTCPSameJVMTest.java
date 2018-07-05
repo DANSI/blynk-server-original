@@ -1,6 +1,6 @@
 package cc.blynk.integration.http;
 
-import cc.blynk.integration.IntegrationBase;
+import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.integration.tcp.EventorTest;
@@ -53,6 +53,10 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import static cc.blynk.integration.TestUtil.b;
+import static cc.blynk.integration.TestUtil.createDevice;
+import static cc.blynk.integration.TestUtil.hardware;
+import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.server.core.model.enums.PinType.VIRTUAL;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
@@ -73,7 +77,7 @@ import static org.mockito.Mockito.verify;
  * Created on 07.01.16.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class HttpAndTCPSameJVMTest extends IntegrationBase {
+public class HttpAndTCPSameJVMTest extends BaseTest {
 
     private BaseServer httpServer;
     private BaseServer appServer;
@@ -95,9 +99,9 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
     public void init() throws Exception {
         httpServer = new HardwareAndHttpAPIServer(holder).start();
         appServer = new AppAndHttpsServer(holder).start();
-        httpServerUrl = String.format("http://localhost:%s/", httpPort);
+        httpServerUrl = String.format("http://localhost:%s/", properties.getHttpPort());
         httpclient = HttpClients.createDefault();
-        clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
+        clientPair = initAppAndHardPair(properties);
         clientPair.hardwareClient.reset();
         clientPair.appClient.reset();
     }
@@ -385,7 +389,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         }
 
         clientPair.appClient.send("getProjectByCloneCode " + cloneToken);
-        DashBoard dashBoard = clientPair.appClient.getDash(2);
+        DashBoard dashBoard = clientPair.appClient.parseDash(2);
         assertEquals("My Dashboard", dashBoard.name);
     }
 
@@ -438,7 +442,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
             assertEquals("false", value);
         }
 
-        clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
+        clientPair = initAppAndHardPair(properties);
     }
 
     @Test
@@ -467,7 +471,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice(2);
+        Device device = clientPair.appClient.parseDevice(2);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(2, device)));
@@ -475,7 +479,7 @@ public class HttpAndTCPSameJVMTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.getDevices();
+        Device[] devices = clientPair.appClient.parseDevices();
 
         assertNotNull(devices);
         assertEquals(2, devices.length);

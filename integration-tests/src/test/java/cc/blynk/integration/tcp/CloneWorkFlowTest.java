@@ -1,6 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.IntegrationBase;
+import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
@@ -23,6 +23,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.concurrent.Future;
 
+import static cc.blynk.integration.TestUtil.serverError;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -34,7 +35,7 @@ import static org.junit.Assert.assertNull;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class CloneWorkFlowTest extends IntegrationBase {
+public class CloneWorkFlowTest extends BaseTest {
 
     private BaseServer appServer;
     private BaseServer httpServer;
@@ -77,7 +78,7 @@ public class CloneWorkFlowTest extends IntegrationBase {
         assertEquals(32, token.length());
 
         clientPair.appClient.send("getProjectByCloneCode " + token);
-        DashBoard dashBoard = clientPair.appClient.getDash(2);
+        DashBoard dashBoard = clientPair.appClient.parseDash(2);
         assertEquals("My Dashboard", dashBoard.name);
     }
 
@@ -97,7 +98,7 @@ public class CloneWorkFlowTest extends IntegrationBase {
         assertEquals(32, token.length());
 
         clientPair.appClient.send("getProjectByCloneCode " + token);
-        DashBoard dashBoard = clientPair.appClient.getDash(2);
+        DashBoard dashBoard = clientPair.appClient.parseDash(2);
         assertEquals("My Dashboard", dashBoard.name);
         Device device = dashBoard.devices[0];
         assertEquals(0, device.connectTime);
@@ -108,7 +109,7 @@ public class CloneWorkFlowTest extends IntegrationBase {
         assertNull(device.hardwareInfo);
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile(3);
+        Profile profile = clientPair.appClient.parseProfile(3);
         assertEquals(1, profile.dashBoards.length);
     }
 
@@ -120,11 +121,11 @@ public class CloneWorkFlowTest extends IntegrationBase {
         assertEquals(32, token.length());
 
         clientPair.appClient.send("getProjectByCloneCode " + token + StringUtils.BODY_SEPARATOR_STRING + "new");
-        DashBoard dashBoard = clientPair.appClient.getDash(2);
+        DashBoard dashBoard = clientPair.appClient.parseDash(2);
         assertEquals("My Dashboard", dashBoard.name);
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile(3);
+        Profile profile = clientPair.appClient.parseProfile(3);
         assertEquals(2, profile.dashBoards.length);
         assertEquals(2, profile.dashBoards[1].id);
     }
@@ -143,7 +144,7 @@ public class CloneWorkFlowTest extends IntegrationBase {
                         .build()
         );
 
-        Future<Response> f = httpclient.prepareGet("http://localhost:" + httpPort + "/" + token + "/clone").execute();
+        Future<Response> f = httpclient.prepareGet("http://localhost:" + properties.getHttpPort() + "/" + token + "/clone").execute();
         Response response = f.get();
         assertEquals(200, response.getStatusCode());
         String responseBody = response.getResponseBody();
@@ -161,7 +162,7 @@ public class CloneWorkFlowTest extends IntegrationBase {
                         .build()
         );
 
-        Future<Response> f = httpclient.prepareGet("http://localhost:" + httpPort + "/" + 123 + "/clone").execute();
+        Future<Response> f = httpclient.prepareGet("http://localhost:" + properties.getHttpPort() + "/" + 123 + "/clone").execute();
         Response response = f.get();
         assertEquals(500, response.getStatusCode());
         String responseBody = response.getResponseBody();

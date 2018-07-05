@@ -1,6 +1,6 @@
 package cc.blynk.server.core.reporting.average;
 
-import cc.blynk.server.core.dao.ReportingStorageDao;
+import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.reporting.raw.BaseReportingKey;
@@ -16,7 +16,6 @@ import java.time.ZoneOffset;
 
 import static cc.blynk.server.core.reporting.average.AverageAggregatorProcessor.DAY;
 import static cc.blynk.server.core.reporting.average.AverageAggregatorProcessor.HOUR;
-import static cc.blynk.server.internal.ReportingUtil.getReportingFolder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -27,7 +26,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class AverageAggregatorTest {
 
-    private final String reportingFolder = getReportingFolder(System.getProperty("java.io.tmpdir"));
+    private final String reportingFolder = Paths.get(System.getProperty("java.io.tmpdir"), "data").toString();
 
     private static long getMillis(int year, int month, int dayOfMonth, int hour, int minute) {
         LocalDateTime dateTime = LocalDateTime.of(year, month, dayOfMonth, hour, minute);
@@ -155,7 +154,7 @@ public class AverageAggregatorTest {
         assertTrue(Files.notExists(Paths.get(reportingFolder, AverageAggregatorProcessor.HOURLY_TEMP_FILENAME)));
         assertTrue(Files.notExists(Paths.get(reportingFolder, AverageAggregatorProcessor.DAILY_TEMP_FILENAME)));
 
-        ReportingStorageDao reportingDao = new ReportingStorageDao(reportingFolder, true);
+        ReportingDiskDao reportingDao = new ReportingDiskDao(reportingFolder, true);
 
         reportingDao.delete(user, dashId, 0, PinType.VIRTUAL, pin);
         assertTrue(Files.notExists(Paths.get(reportingFolder, AverageAggregatorProcessor.HOURLY_TEMP_FILENAME)));

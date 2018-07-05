@@ -4,6 +4,7 @@ import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.IPUtils;
 import cc.blynk.utils.JarUtil;
 
+import java.nio.file.Paths;
 import java.util.Map;
 
 /**
@@ -57,14 +58,38 @@ public class ServerProperties extends BaseProperties {
         return getProperty("region", "local");
     }
 
+    public String getDataFolder() {
+        return getProperty("data.folder");
+    }
+
+    public String getReportingFolder() {
+        return Paths.get(getDataFolder(), "data").toString();
+    }
+
+    public int getHttpPort() {
+        return getIntProperty("http.port");
+    }
+
+    public int getHttpsPort() {
+        return getIntProperty("https.port");
+    }
+
     private String getServerHost() {
-        String host = getProperty("server.host");
+        String host = getHostProperty();
         if (host == null || host.isEmpty()) {
             String netInterface = getProperty("net.interface", "eth");
             return IPUtils.resolveHostIP(netInterface);
         } else {
             return host;
         }
+    }
+
+    public String getRestoreHost() {
+        return getProperty("restore.host");
+    }
+
+    private String getHostProperty() {
+        return getProperty("server.host");
     }
 
     public String getAdminUrl(String host) {

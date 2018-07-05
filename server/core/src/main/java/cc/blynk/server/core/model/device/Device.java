@@ -1,7 +1,9 @@
 package cc.blynk.server.core.model.device;
 
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.serialization.View;
 import cc.blynk.server.core.model.widgets.Target;
+import com.fasterxml.jackson.annotation.JsonView;
 
 import static cc.blynk.server.core.model.device.HardwareInfo.DEFAULT_HARDWARE_BUFFER_SIZE;
 
@@ -18,26 +20,35 @@ public class Device implements Target {
 
     public volatile String boardType;
 
+    @JsonView(View.Private.class)
     public volatile String token;
 
     public volatile String vendor;
 
     public volatile ConnectionType connectionType;
 
+    @JsonView(View.Private.class)
     public volatile Status status = Status.OFFLINE;
 
+    @JsonView(View.Private.class)
     public volatile long disconnectTime;
 
+    @JsonView(View.Private.class)
     public volatile long connectTime;
 
+    @JsonView(View.Private.class)
     public volatile long firstConnectTime;
 
+    @JsonView(View.Private.class)
     public volatile long dataReceivedAt;
 
+    @JsonView(View.Private.class)
     public volatile String lastLoggedIP;
 
+    @JsonView(View.Private.class)
     public volatile HardwareInfo hardwareInfo;
 
+    @JsonView(View.Private.class)
     public volatile DeviceOtaInfo deviceOtaInfo;
 
     public volatile String iconName;

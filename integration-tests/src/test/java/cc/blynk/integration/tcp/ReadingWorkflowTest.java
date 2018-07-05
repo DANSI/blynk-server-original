@@ -1,6 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.IntegrationBase;
+import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.model.device.Device;
@@ -16,6 +16,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import static cc.blynk.integration.TestUtil.b;
+import static cc.blynk.integration.TestUtil.createDevice;
+import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.server.core.model.widgets.FrequencyWidget.READING_MSG_ID;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
@@ -33,7 +36,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ReadingWorkflowTest extends IntegrationBase {
+public class ReadingWorkflowTest extends BaseTest {
 
     private BaseServer appServer;
     private BaseServer hardwareServer;
@@ -116,7 +119,7 @@ public class ReadingWorkflowTest extends IntegrationBase {
         Device device2 = new Device(2, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device2);
-        device2 = clientPair.appClient.getDevice();
+        device2 = clientPair.appClient.parseDevice();
 
         assertNotNull(device2);
         assertNotNull(device2.token);
@@ -147,7 +150,7 @@ public class ReadingWorkflowTest extends IntegrationBase {
         Device device2 = new Device(2, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device2);
-        device2 = clientPair.appClient.getDevice();
+        device2 = clientPair.appClient.parseDevice();
 
         assertNotNull(device2);
         assertNotNull(device2.token);
@@ -185,7 +188,7 @@ public class ReadingWorkflowTest extends IntegrationBase {
         Device device2 = new Device(2, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device2);
-        device2 = clientPair.appClient.getDevice();
+        device2 = clientPair.appClient.parseDevice();
 
         assertNotNull(device2);
         assertNotNull(device2.token);
@@ -242,7 +245,7 @@ public class ReadingWorkflowTest extends IntegrationBase {
 
         clientPair.appClient.createDevice(1, device2);
 
-        device2 = clientPair.appClient.getDevice();
+        device2 = clientPair.appClient.parseDevice();
         assertNotNull(device2);
         assertNotNull(device2.token);
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(createDevice(1, device2)));

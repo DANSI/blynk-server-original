@@ -8,11 +8,11 @@ import cc.blynk.server.application.handlers.main.auth.Version;
 import cc.blynk.server.application.handlers.sharing.AppShareHandler;
 import cc.blynk.server.core.dao.SharedTokenValue;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.common.handlers.UserNotLoggedHandler;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.ShareLoginMessage;
-import cc.blynk.server.handlers.DefaultReregisterHandler;
-import cc.blynk.server.handlers.common.UserNotLoggedHandler;
+import cc.blynk.server.internal.ReregisterChannelUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -34,8 +34,7 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
  *
  */
 @ChannelHandler.Sharable
-public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLoginMessage>
-        implements DefaultReregisterHandler {
+public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLoginMessage> {
 
     private static final Logger log = LogManager.getLogger(AppShareLoginHandler.class);
 
@@ -96,7 +95,7 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
             completeLogin(ctx.channel(), session, user.email, messageId);
         } else {
             log.debug("Re registering app channel. {}", ctx.channel());
-            reRegisterChannel(ctx, session, channelFuture ->
+            ReregisterChannelUtil.reRegisterChannel(ctx, session, channelFuture ->
                     completeLogin(channelFuture.channel(), session, user.email, messageId));
         }
     }

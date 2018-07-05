@@ -1,11 +1,17 @@
 package cc.blynk.integration.http;
 
-import cc.blynk.integration.IntegrationBase;
+import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.server.Holder;
+import cc.blynk.server.core.SlackWrapper;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Button;
+import cc.blynk.server.notifications.mail.MailWrapper;
+import cc.blynk.server.notifications.push.GCMWrapper;
+import cc.blynk.server.notifications.sms.SMSWrapper;
+import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
@@ -22,10 +28,13 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.concurrent.Future;
 
+import static cc.blynk.integration.TestUtil.ok;
+import static cc.blynk.integration.TestUtil.setProperty;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 
@@ -35,7 +44,7 @@ import static org.mockito.Mockito.verify;
  * Created on 24.12.15.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
+public class HttpAPISetPropertyAsyncClientTest extends BaseTest {
 
     private static BaseServer httpServer;
     private static AsyncHttpClient httpclient;
@@ -43,6 +52,7 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
 
     private static BaseServer appServer;
     private static ClientPair clientPair;
+    private static Holder staticHolder;
 
     @AfterClass
     public static void shutdown() throws Exception {
@@ -50,12 +60,17 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
         httpServer.close();
         appServer.close();
         clientPair.stop();
+        staticHolder.close();
     }
 
     @BeforeClass
     public static void init() throws Exception {
+        staticHolder = new Holder(properties, mock(TwitterWrapper.class),
+                mock(MailWrapper.class), mock(GCMWrapper.class),
+                mock(SMSWrapper.class), mock(SlackWrapper.class),
+                "no-db.properties");
         httpServer = new HardwareAndHttpAPIServer(staticHolder).start();
-        httpsServerUrl = String.format("http://localhost:%s/", httpPort);
+        httpsServerUrl = String.format("http://localhost:%s/", properties.getHttpPort());
         httpclient = new DefaultAsyncHttpClient(
                 new DefaultAsyncHttpClientConfig.Builder()
                         .setUserAgent("")
@@ -64,7 +79,7 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
         );
         appServer = new AppAndHttpsServer(staticHolder).start();
 
-        clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
+        clientPair = initAppAndHardPair(properties);
     }
 
     @Before
@@ -86,7 +101,7 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile();
+        Profile profile = clientPair.appClient.parseProfile(1);
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
         assertNotNull(widget);
@@ -107,7 +122,7 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile();
+        Profile profile = clientPair.appClient.parseProfile(1);
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
         assertNotNull(widget);
@@ -130,7 +145,7 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile();
+        Profile profile = clientPair.appClient.parseProfile(1);
 
         Button button = (Button) profile.dashBoards[0].findWidgetByPin(0, (byte) 2, PinType.VIRTUAL);
         assertNotNull(button);
@@ -154,7 +169,7 @@ public class HttpAPISetPropertyAsyncClientTest extends IntegrationBase {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile();
+        Profile profile = clientPair.appClient.parseProfile(1);
 
         Button button = (Button) profile.dashBoards[0].findWidgetByPin(0, (byte) 1, PinType.VIRTUAL);
         assertNotNull(button);

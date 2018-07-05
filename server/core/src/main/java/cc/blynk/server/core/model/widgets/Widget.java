@@ -34,13 +34,13 @@ import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.model.widgets.outputs.Gauge;
-import cc.blynk.server.core.model.widgets.outputs.Graph;
 import cc.blynk.server.core.model.widgets.outputs.HistoryGraph;
 import cc.blynk.server.core.model.widgets.outputs.LCD;
 import cc.blynk.server.core.model.widgets.outputs.LED;
 import cc.blynk.server.core.model.widgets.outputs.LabeledValueDisplay;
 import cc.blynk.server.core.model.widgets.outputs.LevelDisplay;
 import cc.blynk.server.core.model.widgets.outputs.Map;
+import cc.blynk.server.core.model.widgets.outputs.SimpleGraph;
 import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
 import cc.blynk.server.core.model.widgets.outputs.VerticalLevelDisplay;
 import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
@@ -103,7 +103,7 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
         @JsonSubTypes.Type(value = LabeledValueDisplay.class, name = "LABELED_VALUE_DISPLAY"),
         @JsonSubTypes.Type(value = Gauge.class, name = "GAUGE"),
         @JsonSubTypes.Type(value = LCD.class, name = "LCD"),
-        @JsonSubTypes.Type(value = Graph.class, name = "GRAPH"),
+        @JsonSubTypes.Type(value = SimpleGraph.class, name = "GRAPH"),
         @JsonSubTypes.Type(value = LevelDisplay.class, name = "LEVEL_DISPLAY"),
         @JsonSubTypes.Type(value = VerticalLevelDisplay.class, name = "VERTICAL_LEVEL_DISPLAY"),
         @JsonSubTypes.Type(value = Video.class, name = "VIDEO"),

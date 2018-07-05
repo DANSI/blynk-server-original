@@ -2,16 +2,16 @@ package cc.blynk.server.application.handlers.main.auth;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.AppHandler;
-import cc.blynk.server.application.handlers.main.logic.ResetPasswordHandler;
+import cc.blynk.server.application.handlers.main.ResetPasswordHandler;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareLoginHandler;
+import cc.blynk.server.common.handlers.UserNotLoggedHandler;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.FacebookTokenResponse;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
-import cc.blynk.server.handlers.DefaultReregisterHandler;
-import cc.blynk.server.handlers.common.UserNotLoggedHandler;
+import cc.blynk.server.internal.ReregisterChannelUtil;
 import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.IPUtils;
 import io.netty.channel.Channel;
@@ -48,8 +48,7 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
  *
  */
 @ChannelHandler.Sharable
-public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
-        implements DefaultReregisterHandler {
+public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> {
 
     private static final String URL = "https://graph.facebook.com/me?fields=email&access_token=";
     private static final Logger log = LogManager.getLogger(AppLoginHandler.class);
@@ -193,7 +192,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
             completeLogin(channel, session, user, messageId, version);
         } else {
             log.debug("Re registering app channel. {}", ctx.channel());
-            reRegisterChannel(ctx, session, channelFuture ->
+            ReregisterChannelUtil.reRegisterChannel(ctx, session, channelFuture ->
                     completeLogin(channelFuture.channel(), session, user, messageId, version));
         }
     }

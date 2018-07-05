@@ -1,6 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.IntegrationBase;
+import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.Holder;
@@ -20,6 +20,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.UUID;
 
+import static cc.blynk.integration.TestUtil.notAllowed;
+import static cc.blynk.integration.TestUtil.ok;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -30,7 +32,7 @@ import static org.junit.Assert.assertNotNull;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class AssignTokenTest extends IntegrationBase {
+public class AssignTokenTest extends BaseTest {
 
     private DBManager dbManager;
     private BaseServer appServer;
@@ -98,7 +100,7 @@ public class AssignTokenTest extends IntegrationBase {
 
         clientPair.appClient.send("getDevices 1");
 
-        Device[] devices = clientPair.appClient.getDevices(3);
+        Device[] devices = clientPair.appClient.parseDevices(3);
         assertNotNull(devices);
         assertEquals(1, devices.length);
         assertEquals(flashedToken.token, devices[0].token);

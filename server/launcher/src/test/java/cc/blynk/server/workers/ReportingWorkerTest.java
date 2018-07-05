@@ -1,7 +1,7 @@
 package cc.blynk.server.workers;
 
 import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.ReportingStorageDao;
+import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
@@ -30,8 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static cc.blynk.server.core.dao.ReportingStorageDao.generateFilename;
-import static cc.blynk.server.internal.ReportingUtil.getReportingFolder;
+import static cc.blynk.server.core.dao.ReportingDiskDao.generateFilename;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -48,12 +47,12 @@ public class ReportingWorkerTest {
 
     private final static Logger log = LogManager.getLogger(ReportingWorkerTest.class);
 
-    private final String reportingFolder = getReportingFolder(System.getProperty("java.io.tmpdir"));
+    private final String reportingFolder = Paths.get(System.getProperty("java.io.tmpdir"), "data").toString();
 
     @Mock
     public AverageAggregatorProcessor averageAggregator;
 
-    public ReportingStorageDao reportingDaoMock;
+    public ReportingDiskDao reportingDaoMock;
 
     @Mock
     public ServerProperties properties;
@@ -71,7 +70,7 @@ public class ReportingWorkerTest {
         FileUtils.deleteDirectory(dataFolder2.toFile());
         createReportingFolder(reportingFolder, "test2");
 
-        reportingDaoMock = new ReportingStorageDao(reportingFolder, averageAggregator, true);
+        reportingDaoMock = new ReportingDiskDao(reportingFolder, averageAggregator, true);
     }
 
     private static void createReportingFolder(String reportingFolder, String email) {
@@ -269,7 +268,7 @@ public class ReportingWorkerTest {
         user.email = "test";
         user.appName = AppNameUtil.BLYNK;
 
-        new ReportingStorageDao(reportingFolder, true).delete(user, 1, 0, PinType.ANALOG, (byte) 1);
+        new ReportingDiskDao(reportingFolder, true).delete(user, 1, 0, PinType.ANALOG, (byte) 1);
         assertFalse(Files.exists(Paths.get(reportingFolder, "test", generateFilename(1, 0, PinType.ANALOG, (byte) 1, GraphGranularityType.HOURLY))));
     }
 

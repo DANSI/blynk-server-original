@@ -1,10 +1,10 @@
 package cc.blynk.server.core.model.auth;
 
+import cc.blynk.server.common.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.core.protocol.handlers.decoders.AppMessageDecoder;
 import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
-import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;

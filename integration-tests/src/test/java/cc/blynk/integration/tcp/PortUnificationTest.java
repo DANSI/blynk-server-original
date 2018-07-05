@@ -1,6 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.IntegrationBase;
+import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.model.device.Device;
@@ -13,6 +13,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
+import static cc.blynk.integration.TestUtil.ok;
 import static org.junit.Assert.assertNotNull;
 
 /**
@@ -22,7 +24,7 @@ import static org.junit.Assert.assertNotNull;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class PortUnificationTest extends IntegrationBase {
+public class PortUnificationTest extends BaseTest {
 
     private BaseServer httpsAndAppServer;
     private BaseServer httpAndHardwareServer;
@@ -41,7 +43,7 @@ public class PortUnificationTest extends IntegrationBase {
 
     @Test
     public void testAppConectsOk() throws Exception {
-        int appPort = httpsPort;
+        int appPort = properties.getHttpsPort();
         TestAppClient appClient = new TestAppClient("localhost", appPort, properties);
         appClient.start();
 
@@ -53,7 +55,7 @@ public class PortUnificationTest extends IntegrationBase {
 
     @Test
     public void testHardwareConnectsOk() throws Exception {
-        int appPort = httpsPort;
+        int appPort = properties.getHttpsPort();
         TestAppClient appClient = new TestAppClient("localhost", appPort, properties);
         appClient.start();
 
@@ -68,11 +70,11 @@ public class PortUnificationTest extends IntegrationBase {
         appClient.verifyResult(ok(2));
         appClient.verifyResult(ok(3));
 
-        Device device = appClient.getDevice(4);
+        Device device = appClient.parseDevice(4);
         assertNotNull(device);
         assertNotNull(device.token);
 
-        int hardwarePort = httpPort;
+        int hardwarePort = properties.getHttpPort();
         TestHardClient hardClient = new TestHardClient("localhost", hardwarePort);
         hardClient.start();
 

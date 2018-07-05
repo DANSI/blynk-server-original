@@ -24,13 +24,13 @@ public class ReportingDaoTest {
         byte pin = 2;
 
         assertEquals(String.format(REPORTING_MINUTE_FILE_NAME, dashId, pinType.pintTypeChar, pin),
-                ReportingStorageDao.generateFilename(dashId, 0, pinType, pin, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(dashId, 0, pinType, pin, GraphGranularityType.MINUTE));
 
         assertEquals(String.format(REPORTING_HOURLY_FILE_NAME, dashId, pinType.pintTypeChar, pin),
-                ReportingStorageDao.generateFilename(dashId, 0, pinType, pin, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(dashId, 0, pinType, pin, GraphGranularityType.HOURLY));
 
         assertEquals(String.format(REPORTING_DAILY_FILE_NAME, dashId, pinType.pintTypeChar, pin),
-                ReportingStorageDao.generateFilename(dashId, 0, pinType, pin, GraphGranularityType.DAILY));
+                ReportingDiskDao.generateFilename(dashId, 0, pinType, pin, GraphGranularityType.DAILY));
 
     }
 

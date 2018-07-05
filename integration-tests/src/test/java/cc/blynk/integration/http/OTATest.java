@@ -4,12 +4,12 @@ import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.https.HttpsAdminServerTest;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestHardClient;
+import cc.blynk.server.core.dao.ota.OTAManager;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
-import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.SHA256Util;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import org.apache.http.HttpEntity;
@@ -38,10 +38,9 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Base64;
 
-import static cc.blynk.integration.IntegrationBase.b;
-import static cc.blynk.integration.IntegrationBase.initAppAndHardPair;
-import static cc.blynk.integration.IntegrationBase.internal;
-import static cc.blynk.integration.IntegrationBase.ok;
+import static cc.blynk.integration.TestUtil.b;
+import static cc.blynk.integration.TestUtil.internal;
+import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertEquals;
@@ -84,7 +83,7 @@ public class OTATest extends BaseTest {
     public void init() throws Exception {
         httpServer = new HardwareAndHttpAPIServer(holder).start();
         httpsServer = new AppAndHttpsServer(holder).start();
-        httpsAdminServerUrl = String.format("https://localhost:%s/admin", httpsPort);
+        httpsAdminServerUrl = String.format("https://localhost:%s/admin", properties.getHttpsPort());
 
         String pass = "admin";
         User user = new User();
@@ -102,7 +101,7 @@ public class OTATest extends BaseTest {
                 .setSSLSocketFactory(sslsf)
                 .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
                 .build();
-        clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
+        clientPair = initAppAndHardPair(properties);
     }
 
     @Test
@@ -179,7 +178,7 @@ public class OTATest extends BaseTest {
         String responseUrl = "http://127.0.0.1:18080" + path;
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
 
-        HttpGet index = new HttpGet("http://localhost:" + httpPort + path);
+        HttpGet index = new HttpGet("http://localhost:" + properties.getHttpPort() + path);
 
         try (CloseableHttpResponse response = httpclient.execute(index)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -305,7 +304,7 @@ public class OTATest extends BaseTest {
 
         clientPair.appClient.send("getDevices 1");
 
-        Device[] devices = clientPair.appClient.getDevices(2);
+        Device[] devices = clientPair.appClient.parseDevices(2);
         assertNotNull(devices);
         assertEquals(1, devices.length);
         Device device = devices[0];
@@ -358,7 +357,7 @@ public class OTATest extends BaseTest {
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
 
         clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.getDevices(2);
+        Device[] devices = clientPair.appClient.parseDevices(2);
 
         assertNotNull(devices);
         assertEquals(1, devices.length);
@@ -375,7 +374,7 @@ public class OTATest extends BaseTest {
         clientPair.hardwareClient.verifyResult(ok(2));
 
         clientPair.appClient.send("getDevices 1");
-        devices = clientPair.appClient.getDevices(3);
+        devices = clientPair.appClient.parseDevices(3);
 
         assertNotNull(devices);
         assertEquals(1, devices.length);
@@ -394,7 +393,7 @@ public class OTATest extends BaseTest {
         String fileName = "test.bin";
         Path path = new File("src/test/resources/static/ota/" + fileName).toPath();
 
-        assertEquals("Aug 14 2017 20:31:49", FileUtils.getBuildPatternFromString(path));
+        assertEquals("Aug 14 2017 20:31:49", OTAManager.getBuildPatternFromString(path));
     }
 
     @Test
@@ -427,7 +426,7 @@ public class OTATest extends BaseTest {
         String responseUrl = "http://127.0.0.1:18080" + path;
         verify(clientPair.hardwareClient.responseMock, after(500).never()).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
 
-        HttpGet index = new HttpGet("http://localhost:" + httpPort + path);
+        HttpGet index = new HttpGet("http://localhost:" + properties.getHttpPort() + path);
 
         try (CloseableHttpResponse response = httpclient.execute(index)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -467,7 +466,7 @@ public class OTATest extends BaseTest {
         clientPair.hardwareClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.getDevices();
+        Device[] devices = clientPair.appClient.parseDevices();
 
         assertNotNull(devices);
         assertEquals(1, devices.length);

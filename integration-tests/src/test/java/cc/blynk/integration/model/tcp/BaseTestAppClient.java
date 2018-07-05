@@ -1,6 +1,7 @@
 package cc.blynk.integration.model.tcp;
 
 import cc.blynk.client.core.AppClient;
+import cc.blynk.integration.TestUtil;
 import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.utils.properties.ServerProperties;
 import org.mockito.Mockito;
@@ -21,6 +22,7 @@ import static org.mockito.Mockito.verify;
 public abstract class BaseTestAppClient extends AppClient {
 
     public final SimpleClientHandler responseMock = Mockito.mock(SimpleClientHandler.class);
+    int msgId = 0;
 
     public BaseTestAppClient(String host, int port, Random msgIdGenerator, ServerProperties properties) {
         super(host, port, msgIdGenerator, properties);
@@ -48,5 +50,22 @@ public abstract class BaseTestAppClient extends AppClient {
 
     public void verifyAny() throws Exception {
         verify(responseMock, timeout(500)).channelRead(any(), any());
+    }
+
+    public String getBody() throws Exception {
+        return TestUtil.getBody(responseMock, 1);
+    }
+
+    public String getBody(int expectedMessageOrder) throws Exception {
+        return TestUtil.getBody(responseMock, expectedMessageOrder);
+    }
+
+    public void reset() {
+        Mockito.reset(responseMock);
+        msgId = 0;
+    }
+
+    public void send(String line) {
+        send(produceMessageBaseOnUserInput(line, ++msgId));
     }
 }

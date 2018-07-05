@@ -1,6 +1,6 @@
 package cc.blynk.server.core.model.widgets.ui.reporting;
 
-import cc.blynk.server.core.dao.ReportingStorageDao;
+import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
@@ -47,7 +47,7 @@ public abstract class BaseReportTask implements Runnable {
 
     private final MailWrapper mailWrapper;
 
-    private final ReportingStorageDao reportingStorageDao;
+    private final ReportingDiskDao reportingDiskDao;
 
     private final String downloadUrl;
 
@@ -55,12 +55,12 @@ public abstract class BaseReportTask implements Runnable {
     private static final int size = 64 * 1024;
 
     protected BaseReportTask(User user, int dashId, Report report,
-                             MailWrapper mailWrapper, ReportingStorageDao reportingStorageDao,
+                             MailWrapper mailWrapper, ReportingDiskDao reportingDiskDao,
                              String downloadUrl) {
         this.key = new ReportTaskKey(user, dashId, report.id);
         this.report = report;
         this.mailWrapper = mailWrapper;
-        this.reportingStorageDao = reportingStorageDao;
+        this.reportingDiskDao = reportingDiskDao;
         this.downloadUrl = downloadUrl;
     }
 
@@ -192,7 +192,7 @@ public abstract class BaseReportTask implements Runnable {
                         String deviceName = getCSVDeviceName(dash, deviceId);
                         for (ReportDataStream reportDataStream : reportSource.reportDataStreams) {
                             if (reportDataStream.isValid()) {
-                                ByteBuffer onePinData = reportingStorageDao.getByteBufferFromDisk(key.user,
+                                ByteBuffer onePinData = reportingDiskDao.getByteBufferFromDisk(key.user,
                                         key.dashId, deviceId, reportDataStream.pinType,
                                         reportDataStream.pin, fetchCount, report.granularityType, 0);
 
@@ -224,7 +224,7 @@ public abstract class BaseReportTask implements Runnable {
                         zipStream.putNextEntry(zipEntry);
                         for (ReportDataStream reportDataStream : reportSource.reportDataStreams) {
                             if (reportDataStream.isValid()) {
-                                ByteBuffer onePinData = reportingStorageDao.getByteBufferFromDisk(key.user,
+                                ByteBuffer onePinData = reportingDiskDao.getByteBufferFromDisk(key.user,
                                         key.dashId, deviceId, reportDataStream.pinType,
                                         reportDataStream.pin, fetchCount, report.granularityType, 0);
 
@@ -252,7 +252,7 @@ public abstract class BaseReportTask implements Runnable {
                         String deviceName = getDeviceName(dash, deviceId);
                         for (ReportDataStream reportDataStream : reportSource.reportDataStreams) {
                             if (reportDataStream.isValid()) {
-                                ByteBuffer onePinData = reportingStorageDao.getByteBufferFromDisk(key.user,
+                                ByteBuffer onePinData = reportingDiskDao.getByteBufferFromDisk(key.user,
                                         key.dashId, deviceId, reportDataStream.pinType,
                                         reportDataStream.pin, fetchCount, report.granularityType, 0);
 

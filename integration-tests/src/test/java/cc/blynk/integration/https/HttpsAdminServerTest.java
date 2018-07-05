@@ -38,10 +38,9 @@ import javax.net.ssl.SSLContext;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cc.blynk.integration.IntegrationBase.DEFAULT_TEST_USER;
-import static cc.blynk.integration.IntegrationBase.b;
-import static cc.blynk.integration.IntegrationBase.initAppAndHardPair;
-import static cc.blynk.integration.IntegrationBase.ok;
+import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
+import static cc.blynk.integration.TestUtil.b;
+import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertEquals;
@@ -82,8 +81,8 @@ public class HttpsAdminServerTest extends BaseTest {
     public void init() throws Exception {
         this.httpAdminServer = new AppAndHttpsServer(holder).start();
 
-        httpsAdminServerUrl = String.format("https://localhost:%s/admin", httpsPort);
-        httpServerUrl = String.format("http://localhost:%s/", httpPort);
+        httpsAdminServerUrl = String.format("https://localhost:%s/admin", properties.getHttpsPort());
+        httpServerUrl = String.format("http://localhost:%s/", properties.getHttpPort());
 
         SSLContext sslcontext = initUnsecuredSSLContext();
 
@@ -101,7 +100,7 @@ public class HttpsAdminServerTest extends BaseTest {
         admin = new User(name, SHA256Util.makeHash(pass, name), AppNameUtil.BLYNK, "local", "127.0.0.1", false, true);
         holder.userDao.add(admin);
 
-        clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
+        clientPair = initAppAndHardPair(properties);
     }
 
     @Override
@@ -318,7 +317,7 @@ public class HttpsAdminServerTest extends BaseTest {
             assertEquals(12333, user.energy);
         }
 
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
         appClient.login(DEFAULT_TEST_USER, "1","iOS", "1.10.2");
         appClient.verifyResult(ok(1));
@@ -332,7 +331,7 @@ public class HttpsAdminServerTest extends BaseTest {
         appClient.reset();
 
         appClient.send("getDevices 1");
-        Device[] devices = appClient.getDevices();
+        Device[] devices = appClient.parseDevices();
 
         assertNotNull(devices);
         assertEquals(1, devices.length);

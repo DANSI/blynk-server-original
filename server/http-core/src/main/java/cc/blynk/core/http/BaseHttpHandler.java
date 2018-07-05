@@ -3,12 +3,10 @@ package cc.blynk.core.http;
 import cc.blynk.core.http.rest.HandlerHolder;
 import cc.blynk.core.http.rest.HandlerWrapper;
 import cc.blynk.core.http.rest.URIDecoder;
-import cc.blynk.core.http.utils.AnnotationsUtil;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.stats.GlobalStats;
-import cc.blynk.server.handlers.DefaultReregisterHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.FullHttpResponse;
@@ -28,8 +26,7 @@ import static cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler.han
  * Created by Dmitriy Dumanskiy.
  * Created on 24.12.15.
  */
-public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter
-        implements DefaultReregisterHandler {
+public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter {
 
     protected static final Logger log = LogManager.getLogger(BaseHttpHandler.class);
 
@@ -47,7 +44,7 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter
         this.tokenManager = tokenManager;
         this.sessionDao = sessionDao;
         this.rootPath = rootPath;
-        this.handlers = AnnotationsUtil.register(rootPath, this, globalStats);
+        this.handlers = AnnotationsProcessor.register(rootPath, this, globalStats);
     }
 
     @Override

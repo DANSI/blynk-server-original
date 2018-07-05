@@ -4,18 +4,18 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.logic.AddPushLogic;
 import cc.blynk.server.application.handlers.main.logic.AppSyncLogic;
 import cc.blynk.server.application.handlers.main.logic.LoadSharedProfileGzippedLogic;
+import cc.blynk.server.application.handlers.main.logic.LogoutLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.GetDevicesLogic;
 import cc.blynk.server.application.handlers.main.logic.graph.DeleteDeviceDataLogic;
 import cc.blynk.server.application.handlers.main.logic.graph.GetEnhancedGraphDataLogic;
 import cc.blynk.server.application.handlers.main.logic.graph.GetGraphDataLogic;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareStateHolder;
 import cc.blynk.server.application.handlers.sharing.logic.HardwareAppShareLogic;
+import cc.blynk.server.common.BaseSimpleChannelInboundHandler;
+import cc.blynk.server.common.handlers.logic.PingLogic;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.StateHolderBase;
 import cc.blynk.server.core.stats.GlobalStats;
-import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
-import cc.blynk.server.handlers.common.LogoutLogic;
-import cc.blynk.server.handlers.common.PingLogic;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.ADD_PUSH_TOKEN;
@@ -47,9 +47,10 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
     public AppShareHandler(Holder holder, AppShareStateHolder state) {
         super(StringMessage.class);
         this.hardwareApp = new HardwareAppShareLogic(holder, state.userKey.email);
-        this.graphData = new GetGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
-        this.enhancedGraphDataLogic = new GetEnhancedGraphDataLogic(holder.reportingDao, holder.blockingIOProcessor);
-        this.deleteDeviceDataLogic = new DeleteDeviceDataLogic(holder.reportingDao, holder.blockingIOProcessor);
+        this.graphData = new GetGraphDataLogic(holder.reportingDiskDao, holder.blockingIOProcessor);
+        this.enhancedGraphDataLogic = new GetEnhancedGraphDataLogic(
+                holder.reportingDiskDao, holder.blockingIOProcessor);
+        this.deleteDeviceDataLogic = new DeleteDeviceDataLogic(holder.reportingDiskDao, holder.blockingIOProcessor);
         this.state = state;
         this.stats = holder.stats;
     }

@@ -46,7 +46,7 @@ public class HttpResetPassTest extends BaseTest {
 
     @Before
     public void init() throws Exception {
-        httpServerUrl = String.format("http://localhost:%s/", httpPort);
+        httpServerUrl = String.format("http://localhost:%s/", properties.getHttpPort());
 
         // Allow TLSv1 protocol only
         this.httpclient = HttpClients.createDefault();

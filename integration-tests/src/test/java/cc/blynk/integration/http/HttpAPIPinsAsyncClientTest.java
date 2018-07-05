@@ -67,7 +67,7 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
                 false
         );
         httpServer = new HardwareAndHttpAPIServer(localHolder).start();
-        httpsServerUrl = String.format("http://localhost:%s/", httpPort);
+        httpsServerUrl = String.format("http://localhost:%s/", properties.getHttpPort());
         httpclient = new DefaultAsyncHttpClient(
                 new DefaultAsyncHttpClientConfig.Builder()
                         .setUserAgent(null)
@@ -243,7 +243,7 @@ public class HttpAPIPinsAsyncClientTest extends BaseTest {
 
     @Test
     public void testGetCSVDataRedirect() throws Exception {
-        Path reportingPath = Paths.get(localHolder.reportingDao.dataFolder, "dmitriy@blynk.cc");
+        Path reportingPath = Paths.get(localHolder.reportingDiskDao.dataFolder, "dmitriy@blynk.cc");
         Files.createDirectories(reportingPath);
         FileUtils.write(Paths.get(reportingPath.toString(), "history_125564119-0_v10_minute.bin"), 1, 2);
 

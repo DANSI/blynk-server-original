@@ -1,10 +1,10 @@
 package cc.blynk.server.hardware.handlers.hardware;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.common.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.core.session.StateHolderBase;
 import cc.blynk.server.core.stats.GlobalStats;
-import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.hardware.handlers.hardware.mqtt.logic.MqttHardwareLogic;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.mqtt.MqttMessage;
@@ -25,7 +25,7 @@ public class MqttHardwareHandler extends BaseSimpleChannelInboundHandler<MqttMes
 
     public MqttHardwareHandler(Holder holder, HardwareStateHolder stateHolder) {
         super(MqttMessage.class);
-        this.hardware = new MqttHardwareLogic(holder.sessionDao, holder.reportingDao);
+        this.hardware = new MqttHardwareLogic(holder.sessionDao, holder.reportingDiskDao);
         this.state = stateHolder;
         this.stats = holder.stats;
     }

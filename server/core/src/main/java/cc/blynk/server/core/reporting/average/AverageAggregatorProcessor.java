@@ -6,13 +6,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.Closeable;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static cc.blynk.server.internal.ReportingUtil.read;
-import static cc.blynk.server.internal.ReportingUtil.write;
 
 /**
  * The Blynk Project.
@@ -92,6 +94,31 @@ public class AverageAggregatorProcessor implements Closeable {
         }
         write(Paths.get(dataFolder, HOURLY_TEMP_FILENAME), hourly);
         write(Paths.get(dataFolder, DAILY_TEMP_FILENAME), daily);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static ConcurrentHashMap<AggregationKey, AggregationValue> read(Path path) {
+        if (Files.exists(path)) {
+            try (InputStream is = Files.newInputStream(path);
+                 ObjectInputStream objectinputstream = new ObjectInputStream(is)) {
+                return (ConcurrentHashMap<AggregationKey, AggregationValue>) objectinputstream.readObject();
+            } catch (Exception e) {
+                log.error(e);
+            }
+        }
+
+        return new ConcurrentHashMap<>();
+    }
+
+    private static void write(Path path, Map<AggregationKey, AggregationValue> map) {
+        if (map.size() > 0) {
+            try (OutputStream os = Files.newOutputStream(path);
+                 ObjectOutputStream oos = new ObjectOutputStream(os)) {
+                oos.writeObject(map);
+            } catch (Exception e) {
+                log.error(e);
+            }
+        }
     }
 
 }

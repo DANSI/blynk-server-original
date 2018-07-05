@@ -1,6 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.IntegrationBase;
+import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
@@ -22,6 +22,14 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Map;
 
+import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
+import static cc.blynk.integration.TestUtil.createDevice;
+import static cc.blynk.integration.TestUtil.deviceOffline;
+import static cc.blynk.integration.TestUtil.hardwareConnected;
+import static cc.blynk.integration.TestUtil.notAllowed;
+import static cc.blynk.integration.TestUtil.ok;
+import static cc.blynk.integration.TestUtil.parseProfile;
+import static cc.blynk.integration.TestUtil.readTestUserProfile;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -38,7 +46,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class NotificationsLogicTest extends IntegrationBase {
+public class NotificationsLogicTest extends BaseTest {
 
     private BaseServer appServer;
     private BaseServer hardwareServer;
@@ -61,7 +69,7 @@ public class NotificationsLogicTest extends IntegrationBase {
 
     @Test
     public void addPushTokenWrongInput()  throws Exception  {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
 
         appClient.start();
 
@@ -84,7 +92,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile(2);
+        Profile profile = clientPair.appClient.parseProfile(2);
 
         Notification notification = profile.getDashById(1).getNotificationWidget();
         assertNotNull(notification);
@@ -101,7 +109,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile(2);
+        Profile profile = clientPair.appClient.parseProfile(2);
 
         Notification notification = profile.getDashById(1).getNotificationWidget();
         assertNotNull(notification);
@@ -115,7 +123,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         clientPair.appClient.verifyResult(ok(3));
 
         clientPair.appClient.send("loadProfileGzipped");
-        profile = clientPair.appClient.getProfile(4);
+        profile = clientPair.appClient.parseProfile(4);
 
         notification = profile.getDashById(1).getNotificationWidget();
         assertNotNull(notification);
@@ -128,7 +136,7 @@ public class NotificationsLogicTest extends IntegrationBase {
 
     @Test
     public void addPushTokenWorksForIos() throws Exception {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
 
         appClient.start();
 
@@ -141,7 +149,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         appClient.reset();
 
         appClient.send("loadProfileGzipped");
-        Profile profile = appClient.getProfile();
+        Profile profile = appClient.parseProfile(1);
 
         Notification notification = profile.getDashById(1).getNotificationWidget();
         assertNotNull(notification);
@@ -198,7 +206,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         Device device1 = new Device(1, "Name", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -312,7 +320,7 @@ public class NotificationsLogicTest extends IntegrationBase {
 
         verify(gcmWrapper, after(500).never()).send(any(), any(), any());
 
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
         appClient.login("dima@mail.ua", "1", "Android", "1.10.4");
         appClient.verifyResult(ok(1));
@@ -348,7 +356,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody(2);
 
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
         appClient.login("dima@mail.ua", "1", "Android", "1.10.4");
         appClient.verifyResult(ok(1));
@@ -381,7 +389,7 @@ public class NotificationsLogicTest extends IntegrationBase {
         clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody(2);
 
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
         appClient.login("dima@mail.ua", "1", "Android", "1.10.4");
         appClient.verifyResult(ok(1));
@@ -412,7 +420,7 @@ public class NotificationsLogicTest extends IntegrationBase {
 
         String token = clientPair.appClient.getBody();
 
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
         appClient.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
@@ -542,7 +550,7 @@ public class NotificationsLogicTest extends IntegrationBase {
 
     @Test
     public void testOfflineMessageIsSentToBothApps()  throws Exception  {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
 
         appClient.login(DEFAULT_TEST_USER, "1", "iOS", "1.10.2");

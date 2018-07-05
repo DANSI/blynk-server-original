@@ -8,6 +8,7 @@ import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.stats.GlobalStats;
+import cc.blynk.server.internal.ReregisterChannelUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpResponse;
@@ -46,7 +47,7 @@ public abstract class TokenBaseHttpHandler extends BaseHttpHandler {
             completeLogin(ctx.channel(), handler.invoke(params));
         } else {
             log.debug("Re registering http channel. {}", ctx.channel());
-            reRegisterChannel(ctx, session, channelFuture -> completeLogin(
+            ReregisterChannelUtil.reRegisterChannel(ctx, session, channelFuture -> completeLogin(
                     channelFuture.channel(), handler.invoke(params)));
         }
     }

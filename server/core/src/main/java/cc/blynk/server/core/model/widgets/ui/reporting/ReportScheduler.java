@@ -1,6 +1,6 @@
 package cc.blynk.server.core.model.widgets.ui.reporting;
 
-import cc.blynk.server.core.dao.ReportingStorageDao;
+import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
@@ -31,11 +31,11 @@ public class ReportScheduler extends ScheduledThreadPoolExecutor {
 
     public final Map<ReportTaskKey, ScheduledFuture<?>> map;
     public final MailWrapper mailWrapper;
-    public final ReportingStorageDao reportingDao;
+    public final ReportingDiskDao reportingDao;
     public final String downloadUrl;
 
     public ReportScheduler(int corePoolSize, String downloadUrl,
-                           MailWrapper mailWrapper, ReportingStorageDao reportingDao, Map<UserKey, User> users) {
+                           MailWrapper mailWrapper, ReportingDiskDao reportingDao, Map<UserKey, User> users) {
         super(corePoolSize,  BlynkTPFactory.build("report"));
         setRemoveOnCancelPolicy(true);
         setExecuteExistingDelayedTasksAfterShutdownPolicy(false);

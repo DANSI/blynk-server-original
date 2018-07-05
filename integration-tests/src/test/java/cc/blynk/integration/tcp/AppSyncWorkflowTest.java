@@ -1,6 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.IntegrationBase;
+import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.server.core.model.DataStream;
@@ -24,13 +24,20 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
+import static cc.blynk.integration.TestUtil.appSync;
+import static cc.blynk.integration.TestUtil.b;
+import static cc.blynk.integration.TestUtil.createDevice;
+import static cc.blynk.integration.TestUtil.hardware;
+import static cc.blynk.integration.TestUtil.ok;
+import static cc.blynk.integration.TestUtil.setProperty;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 
@@ -41,7 +48,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class AppSyncWorkflowTest extends IntegrationBase {
+public class AppSyncWorkflowTest extends BaseTest {
 
     private BaseServer appServer;
     private BaseServer hardwareServer;
@@ -134,7 +141,7 @@ public class AppSyncWorkflowTest extends IntegrationBase {
     @Test
     public void testTerminalSendsSyncOnActivate() throws Exception {
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile();
+        Profile profile = clientPair.appClient.parseProfile(1);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         clientPair.appClient.send("getEnergy");
@@ -163,7 +170,7 @@ public class AppSyncWorkflowTest extends IntegrationBase {
     @Test
     public void testTerminalStorageRemembersCommands() throws Exception {
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile();
+        Profile profile = clientPair.appClient.parseProfile(1);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         clientPair.appClient.send("getEnergy");
@@ -191,14 +198,14 @@ public class AppSyncWorkflowTest extends IntegrationBase {
     public void testTerminalStorageRemembersCommandsInNewFormat() throws Exception {
         clientPair.appClient.stop();
 
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
 
         appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.26.0");
         appClient.verifyResult(ok(1));
 
         appClient.send("loadProfileGzipped");
-        Profile profile = appClient.getProfile(2);
+        Profile profile = appClient.parseProfile(2);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         appClient.send("getEnergy");
@@ -229,14 +236,14 @@ public class AppSyncWorkflowTest extends IntegrationBase {
     public void testTerminalAndAnotherWidgetOnTheSamePin() throws Exception {
         clientPair.appClient.stop();
 
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
 
         appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.26.0");
         appClient.verifyResult(ok(1));
 
         appClient.send("loadProfileGzipped");
-        Profile profile = appClient.getProfile(2);
+        Profile profile = appClient.parseProfile(2);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         appClient.send("getEnergy");
@@ -272,21 +279,21 @@ public class AppSyncWorkflowTest extends IntegrationBase {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
 
         clientPair.appClient.stop();
 
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
 
         appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.26.0");
         appClient.verifyResult(ok(1));
 
         appClient.send("loadProfileGzipped");
-        Profile profile = appClient.getProfile(2);
+        Profile profile = appClient.parseProfile(2);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         appClient.send("getEnergy");
@@ -331,21 +338,21 @@ public class AppSyncWorkflowTest extends IntegrationBase {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
 
         clientPair.appClient.stop();
 
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
 
         appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.26.0");
         appClient.verifyResult(ok(1));
 
         appClient.send("loadProfileGzipped");
-        Profile profile = appClient.getProfile(2);
+        Profile profile = appClient.parseProfile(2);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         appClient.send("getEnergy");
@@ -390,21 +397,21 @@ public class AppSyncWorkflowTest extends IntegrationBase {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
 
         clientPair.appClient.stop();
 
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
 
         appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.25.0");
         appClient.verifyResult(ok(1));
 
         appClient.send("loadProfileGzipped");
-        Profile profile = appClient.getProfile(2);
+        Profile profile = appClient.parseProfile(2);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         appClient.send("getEnergy");
@@ -450,21 +457,21 @@ public class AppSyncWorkflowTest extends IntegrationBase {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
 
         clientPair.appClient.stop();
 
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
 
         appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.26.0");
         appClient.verifyResult(ok(1));
 
         appClient.send("loadProfileGzipped");
-        Profile profile = appClient.getProfile(2);
+        Profile profile = appClient.parseProfile(2);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         appClient.send("getEnergy");
@@ -514,21 +521,21 @@ public class AppSyncWorkflowTest extends IntegrationBase {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
 
         clientPair.appClient.stop();
 
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
 
         appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.26.0");
         appClient.verifyResult(ok(1));
 
         appClient.send("loadProfileGzipped");
-        Profile profile = appClient.getProfile(2);
+        Profile profile = appClient.parseProfile(2);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         appClient.send("getEnergy");
@@ -599,21 +606,21 @@ public class AppSyncWorkflowTest extends IntegrationBase {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
 
         clientPair.appClient.stop();
 
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
 
         appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.26.0");
         appClient.verifyResult(ok(1));
 
         appClient.send("loadProfileGzipped");
-        Profile profile = appClient.getProfile(2);
+        Profile profile = appClient.parseProfile(2);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         appClient.send("getEnergy");
@@ -653,14 +660,14 @@ public class AppSyncWorkflowTest extends IntegrationBase {
     public void testTableSyncWorkForNewCommandFormat() throws Exception {
         clientPair.appClient.stop();
 
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
 
         appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.26.0");
         appClient.verifyResult(ok(1));
 
         appClient.send("loadProfileGzipped");
-        Profile profile = appClient.getProfile(2);
+        Profile profile = appClient.parseProfile(2);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         appClient.send("getEnergy");
@@ -839,7 +846,7 @@ public class AppSyncWorkflowTest extends IntegrationBase {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -884,7 +891,7 @@ public class AppSyncWorkflowTest extends IntegrationBase {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -966,7 +973,7 @@ public class AppSyncWorkflowTest extends IntegrationBase {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
