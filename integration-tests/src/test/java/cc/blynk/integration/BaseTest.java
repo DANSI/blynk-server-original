@@ -14,7 +14,6 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.mockito.Mock;
@@ -42,7 +41,6 @@ import java.util.List;
 import java.util.zip.InflaterInputStream;
 
 import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
-import static org.mockito.Mockito.mock;
 
 /**
  * The Blynk Project.
@@ -81,9 +79,6 @@ public abstract class BaseTest {
     public SMSWrapper smsWrapper;
     @Mock
     public SlackWrapper slackWrapper;
-
-
-    public static Holder staticHolder;
 
     public static void sleep(int ms) {
         try {
@@ -134,11 +129,6 @@ public abstract class BaseTest {
 
         tcpAppPort = httpsPort;
         tcpHardPort = httpPort;
-
-        staticHolder = new Holder(properties, mock(TwitterWrapper.class),
-                mock(MailWrapper.class), mock(GCMWrapper.class),
-                mock(SMSWrapper.class), mock(SlackWrapper.class),
-                "no-db.properties");
     }
 
     @Before
@@ -155,11 +145,6 @@ public abstract class BaseTest {
     @After
     public void closeTransport() {
         holder.close();
-    }
-
-    @AfterClass
-    public static void closeStaticTransport() {
-        staticHolder.close();
     }
 
     public String getDataFolder() {
