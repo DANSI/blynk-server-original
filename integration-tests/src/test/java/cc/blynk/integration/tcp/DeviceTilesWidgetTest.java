@@ -416,7 +416,7 @@ public class DeviceTilesWidgetTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -503,7 +503,7 @@ public class DeviceTilesWidgetTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -631,7 +631,7 @@ public class DeviceTilesWidgetTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -705,7 +705,7 @@ public class DeviceTilesWidgetTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -1398,7 +1398,7 @@ public class DeviceTilesWidgetTest extends BaseTest {
         clientPair.appClient.verifyResult(ok(9));
 
         clientPair.appClient.send("loadProfileGzipped 1");
-        DashBoard dashBoard = clientPair.appClient.getDash(10);
+        DashBoard dashBoard = clientPair.appClient.parseDash(10);
         assertNotNull(dashBoard);
         Tabs dashTabs = dashBoard.getWidgetByType(Tabs.class);
         assertNotNull(dashTabs);
@@ -1521,7 +1521,7 @@ public class DeviceTilesWidgetTest extends BaseTest {
         clientPair.appClient.verifyResult(ok(10));
 
         clientPair.appClient.send("loadProfileGzipped 1");
-        DashBoard dashBoard = clientPair.appClient.getDash(11);
+        DashBoard dashBoard = clientPair.appClient.parseDash(11);
         assertNotNull(dashBoard);
         Tabs searchTabs = (Tabs) dashBoard.getWidgetById(tabs.id);
         assertNotNull(searchTabs);
@@ -1634,7 +1634,7 @@ public class DeviceTilesWidgetTest extends BaseTest {
         clientPair.appClient.verifyResult(ok(9));
 
         clientPair.appClient.send("loadProfileGzipped 1");
-        DashBoard dashBoard = clientPair.appClient.getDash(10);
+        DashBoard dashBoard = clientPair.appClient.parseDash(10);
         assertNotNull(dashBoard);
         Tabs dashTabs = dashBoard.getWidgetByType(Tabs.class);
         assertNotNull(dashTabs);
@@ -1672,7 +1672,7 @@ public class DeviceTilesWidgetTest extends BaseTest {
         clientPair.appClient.verifyResult(ok(2));
 
         clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.getDevices(3);
+        Device[] devices = clientPair.appClient.parseDevices(3);
         Device device = devices[0];
         assertEquals(0, device.id);
 
@@ -1717,7 +1717,7 @@ public class DeviceTilesWidgetTest extends BaseTest {
         clientPair.appClient.verifyResult(hardware(1, "1-0 vw 111 1"));
 
         clientPair.appClient.send("loadProfileGzipped 1");
-        DashBoard dashBoard = clientPair.appClient.getDash(4);
+        DashBoard dashBoard = clientPair.appClient.parseDash(4);
         assertNotNull(dashBoard);
         deviceTiles = dashBoard.getWidgetByType(DeviceTiles.class);
         assertNotNull(deviceTiles);
@@ -2014,7 +2014,7 @@ public class DeviceTilesWidgetTest extends BaseTest {
         clientPair.appClient.verifyResult(ok(2));
 
         clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.getDevices(3);
+        Device[] devices = clientPair.appClient.parseDevices(3);
         Device device = devices[0];
         assertNotNull(device);
         assertNotNull(device.token);

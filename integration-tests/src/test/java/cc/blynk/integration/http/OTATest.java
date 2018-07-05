@@ -304,7 +304,7 @@ public class OTATest extends BaseTest {
 
         clientPair.appClient.send("getDevices 1");
 
-        Device[] devices = clientPair.appClient.getDevices(2);
+        Device[] devices = clientPair.appClient.parseDevices(2);
         assertNotNull(devices);
         assertEquals(1, devices.length);
         Device device = devices[0];
@@ -357,7 +357,7 @@ public class OTATest extends BaseTest {
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
 
         clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.getDevices(2);
+        Device[] devices = clientPair.appClient.parseDevices(2);
 
         assertNotNull(devices);
         assertEquals(1, devices.length);
@@ -374,7 +374,7 @@ public class OTATest extends BaseTest {
         clientPair.hardwareClient.verifyResult(ok(2));
 
         clientPair.appClient.send("getDevices 1");
-        devices = clientPair.appClient.getDevices(3);
+        devices = clientPair.appClient.parseDevices(3);
 
         assertNotNull(devices);
         assertEquals(1, devices.length);
@@ -466,7 +466,7 @@ public class OTATest extends BaseTest {
         clientPair.hardwareClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.getDevices();
+        Device[] devices = clientPair.appClient.parseDevices();
 
         assertNotNull(devices);
         assertEquals(1, devices.length);

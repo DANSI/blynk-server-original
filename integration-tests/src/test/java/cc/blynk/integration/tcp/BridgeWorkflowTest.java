@@ -129,7 +129,7 @@ public class BridgeWorkflowTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -393,7 +393,7 @@ public class BridgeWorkflowTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         appClient.createDevice(1, device1);
-        Device device = appClient.getDevice();
+        Device device = appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         appClient.verifyResult(createDevice(1, device));
@@ -415,7 +415,7 @@ public class BridgeWorkflowTest extends BaseTest {
 
         Device device = new Device(1, "My Device", "ESP8266");
         clientPair.appClient.createDevice(dash.id, device);
-        device = clientPair.appClient.getDevice(2);
+        device = clientPair.appClient.parseDevice(2);
 
         //creating 1 new hard client
         TestHardClient hardClient1 = new TestHardClient("localhost", tcpHardPort);
@@ -445,7 +445,7 @@ public class BridgeWorkflowTest extends BaseTest {
 
         Device device = new Device(0, "My Device", "ESP8266");
         clientPair.appClient.createDevice(dash.id, device);
-        device = clientPair.appClient.getDevice(2);
+        device = clientPair.appClient.parseDevice(2);
 
         TestHardClient hardClient1 = new TestHardClient("localhost", tcpHardPort);
         hardClient1.start();
@@ -461,7 +461,7 @@ public class BridgeWorkflowTest extends BaseTest {
 
         device = new Device(0, "My Device", "ESP8266");
         clientPair.appClient.createDevice(dash.id, device);
-        device = clientPair.appClient.getDevice(2);
+        device = clientPair.appClient.parseDevice(2);
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();

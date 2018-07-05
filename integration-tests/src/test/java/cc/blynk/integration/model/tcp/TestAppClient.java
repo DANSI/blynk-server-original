@@ -62,47 +62,35 @@ public class TestAppClient extends BaseTestAppClient {
         this.nioEventLoopGroup = nioEventLoopGroup;
     }
 
-    public Device getDevice() throws Exception {
-        return getDevice(1);
+    public Device parseDevice() throws Exception {
+        return parseDevice(1);
     }
 
-    public Profile getProfile(int expectedMessageOrder) throws Exception {
+    public Profile parseProfile(int expectedMessageOrder) throws Exception {
         return JsonParser.parseProfileFromString(getBody(expectedMessageOrder));
     }
 
-    public Profile getProfile() throws Exception {
-        return getProfile(1);
-    }
-
-    public Device getDevice(int expectedMessageOrder) throws Exception {
+    public Device parseDevice(int expectedMessageOrder) throws Exception {
         return JsonParser.parseDevice(getBody(expectedMessageOrder), 0);
     }
 
-    public Device[] getDevices() throws Exception {
-        return getDevices(1);
+    public Device[] parseDevices() throws Exception {
+        return parseDevices(1);
     }
 
-    public Device[] getDevices(int expectedMessageOrder) throws Exception {
+    public Device[] parseDevices(int expectedMessageOrder) throws Exception {
         return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), Device[].class);
     }
 
-    public Tag[] getTags(int expectedMessageOrder) throws Exception {
+    public Tag[] parseTags(int expectedMessageOrder) throws Exception {
         return JsonParser.MAPPER.readValue(getBody(expectedMessageOrder), Tag[].class);
     }
 
-    public App getApp(int expectedMessageOrder) throws Exception {
+    public App parseApp(int expectedMessageOrder) throws Exception {
         return JsonParser.parseApp(getBody(expectedMessageOrder), 0);
     }
 
-    public App getApp() throws Exception {
-        return getApp(1);
-    }
-
-    public DashBoard getDash() throws Exception {
-        return getDash(1);
-    }
-
-    public DashBoard getDash(int expectedMessageOrder) throws Exception {
+    public DashBoard parseDash(int expectedMessageOrder) throws Exception {
         return JsonParser.parseDashboard(getBody(expectedMessageOrder), 0);
     }
 
@@ -118,9 +106,9 @@ public class TestAppClient extends BaseTestAppClient {
 
     @Override
     public ChannelInitializer<SocketChannel> getChannelInitializer() {
-        return new ChannelInitializer<SocketChannel>() {
+        return new ChannelInitializer<>() {
             @Override
-            protected void initChannel(SocketChannel ch) throws Exception {
+            protected void initChannel(SocketChannel ch) {
                 ch.pipeline().addLast(
                         sslCtx.newHandler(ch.alloc(), host, port),
                         new AppClientMessageDecoder(),
@@ -275,7 +263,7 @@ public class TestAppClient extends BaseTestAppClient {
         createTemplate(dashId, widgetId, JsonParser.MAPPER.writeValueAsString(tileTemplate));
     }
 
-    public void createTemplate(int dashId, long widgetId, String tileTemplate) throws Exception {
+    public void createTemplate(int dashId, long widgetId, String tileTemplate) {
         send("createTemplate " + dashId + BODY_SEPARATOR + widgetId + BODY_SEPARATOR + tileTemplate);
     }
 

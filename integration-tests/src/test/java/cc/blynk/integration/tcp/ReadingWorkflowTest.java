@@ -119,7 +119,7 @@ public class ReadingWorkflowTest extends BaseTest {
         Device device2 = new Device(2, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device2);
-        device2 = clientPair.appClient.getDevice();
+        device2 = clientPair.appClient.parseDevice();
 
         assertNotNull(device2);
         assertNotNull(device2.token);
@@ -150,7 +150,7 @@ public class ReadingWorkflowTest extends BaseTest {
         Device device2 = new Device(2, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device2);
-        device2 = clientPair.appClient.getDevice();
+        device2 = clientPair.appClient.parseDevice();
 
         assertNotNull(device2);
         assertNotNull(device2.token);
@@ -188,7 +188,7 @@ public class ReadingWorkflowTest extends BaseTest {
         Device device2 = new Device(2, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device2);
-        device2 = clientPair.appClient.getDevice();
+        device2 = clientPair.appClient.parseDevice();
 
         assertNotNull(device2);
         assertNotNull(device2.token);
@@ -245,7 +245,7 @@ public class ReadingWorkflowTest extends BaseTest {
 
         clientPair.appClient.createDevice(1, device2);
 
-        device2 = clientPair.appClient.getDevice();
+        device2 = clientPair.appClient.parseDevice();
         assertNotNull(device2);
         assertNotNull(device2.token);
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(createDevice(1, device2)));

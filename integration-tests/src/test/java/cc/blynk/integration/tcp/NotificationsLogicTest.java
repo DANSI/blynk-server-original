@@ -92,7 +92,7 @@ public class NotificationsLogicTest extends BaseTest {
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile(2);
+        Profile profile = clientPair.appClient.parseProfile(2);
 
         Notification notification = profile.getDashById(1).getNotificationWidget();
         assertNotNull(notification);
@@ -109,7 +109,7 @@ public class NotificationsLogicTest extends BaseTest {
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile(2);
+        Profile profile = clientPair.appClient.parseProfile(2);
 
         Notification notification = profile.getDashById(1).getNotificationWidget();
         assertNotNull(notification);
@@ -123,7 +123,7 @@ public class NotificationsLogicTest extends BaseTest {
         clientPair.appClient.verifyResult(ok(3));
 
         clientPair.appClient.send("loadProfileGzipped");
-        profile = clientPair.appClient.getProfile(4);
+        profile = clientPair.appClient.parseProfile(4);
 
         notification = profile.getDashById(1).getNotificationWidget();
         assertNotNull(notification);
@@ -149,7 +149,7 @@ public class NotificationsLogicTest extends BaseTest {
         appClient.reset();
 
         appClient.send("loadProfileGzipped");
-        Profile profile = appClient.getProfile();
+        Profile profile = appClient.parseProfile(1);
 
         Notification notification = profile.getDashById(1).getNotificationWidget();
         assertNotNull(notification);
@@ -206,7 +206,7 @@ public class NotificationsLogicTest extends BaseTest {
         Device device1 = new Device(1, "Name", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));

@@ -87,7 +87,7 @@ public class BlynkInternalTest extends BaseTest {
         HardwareInfo hardwareInfo = new HardwareInfo("3.3.3", "0.3.1", "Arduino", "ATmega328P", "W5100", null, "tmpl00123", 10, 256);
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile();
+        Profile profile = clientPair.appClient.parseProfile(1);
 
         assertEquals(JsonParser.toJson(hardwareInfo), JsonParser.toJson(profile.dashBoards[0].devices[0].hardwareInfo));
 

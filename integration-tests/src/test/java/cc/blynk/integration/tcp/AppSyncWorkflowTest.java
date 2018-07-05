@@ -141,7 +141,7 @@ public class AppSyncWorkflowTest extends BaseTest {
     @Test
     public void testTerminalSendsSyncOnActivate() throws Exception {
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile();
+        Profile profile = clientPair.appClient.parseProfile(1);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         clientPair.appClient.send("getEnergy");
@@ -170,7 +170,7 @@ public class AppSyncWorkflowTest extends BaseTest {
     @Test
     public void testTerminalStorageRemembersCommands() throws Exception {
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile();
+        Profile profile = clientPair.appClient.parseProfile(1);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         clientPair.appClient.send("getEnergy");
@@ -205,7 +205,7 @@ public class AppSyncWorkflowTest extends BaseTest {
         appClient.verifyResult(ok(1));
 
         appClient.send("loadProfileGzipped");
-        Profile profile = appClient.getProfile(2);
+        Profile profile = appClient.parseProfile(2);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         appClient.send("getEnergy");
@@ -243,7 +243,7 @@ public class AppSyncWorkflowTest extends BaseTest {
         appClient.verifyResult(ok(1));
 
         appClient.send("loadProfileGzipped");
-        Profile profile = appClient.getProfile(2);
+        Profile profile = appClient.parseProfile(2);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         appClient.send("getEnergy");
@@ -279,7 +279,7 @@ public class AppSyncWorkflowTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -293,7 +293,7 @@ public class AppSyncWorkflowTest extends BaseTest {
         appClient.verifyResult(ok(1));
 
         appClient.send("loadProfileGzipped");
-        Profile profile = appClient.getProfile(2);
+        Profile profile = appClient.parseProfile(2);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         appClient.send("getEnergy");
@@ -338,7 +338,7 @@ public class AppSyncWorkflowTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -352,7 +352,7 @@ public class AppSyncWorkflowTest extends BaseTest {
         appClient.verifyResult(ok(1));
 
         appClient.send("loadProfileGzipped");
-        Profile profile = appClient.getProfile(2);
+        Profile profile = appClient.parseProfile(2);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         appClient.send("getEnergy");
@@ -397,7 +397,7 @@ public class AppSyncWorkflowTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -411,7 +411,7 @@ public class AppSyncWorkflowTest extends BaseTest {
         appClient.verifyResult(ok(1));
 
         appClient.send("loadProfileGzipped");
-        Profile profile = appClient.getProfile(2);
+        Profile profile = appClient.parseProfile(2);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         appClient.send("getEnergy");
@@ -457,7 +457,7 @@ public class AppSyncWorkflowTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -471,7 +471,7 @@ public class AppSyncWorkflowTest extends BaseTest {
         appClient.verifyResult(ok(1));
 
         appClient.send("loadProfileGzipped");
-        Profile profile = appClient.getProfile(2);
+        Profile profile = appClient.parseProfile(2);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         appClient.send("getEnergy");
@@ -521,7 +521,7 @@ public class AppSyncWorkflowTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -535,7 +535,7 @@ public class AppSyncWorkflowTest extends BaseTest {
         appClient.verifyResult(ok(1));
 
         appClient.send("loadProfileGzipped");
-        Profile profile = appClient.getProfile(2);
+        Profile profile = appClient.parseProfile(2);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         appClient.send("getEnergy");
@@ -606,7 +606,7 @@ public class AppSyncWorkflowTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -620,7 +620,7 @@ public class AppSyncWorkflowTest extends BaseTest {
         appClient.verifyResult(ok(1));
 
         appClient.send("loadProfileGzipped");
-        Profile profile = appClient.getProfile(2);
+        Profile profile = appClient.parseProfile(2);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         appClient.send("getEnergy");
@@ -667,7 +667,7 @@ public class AppSyncWorkflowTest extends BaseTest {
         appClient.verifyResult(ok(1));
 
         appClient.send("loadProfileGzipped");
-        Profile profile = appClient.getProfile(2);
+        Profile profile = appClient.parseProfile(2);
         assertEquals(16, profile.dashBoards[0].widgets.length);
 
         appClient.send("getEnergy");
@@ -846,7 +846,7 @@ public class AppSyncWorkflowTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -891,7 +891,7 @@ public class AppSyncWorkflowTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -973,7 +973,7 @@ public class AppSyncWorkflowTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));

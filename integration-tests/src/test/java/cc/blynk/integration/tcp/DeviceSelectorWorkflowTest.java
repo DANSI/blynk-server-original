@@ -91,7 +91,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -104,7 +104,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.getDevices();
+        Device[] devices = clientPair.appClient.parseDevices();
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -152,7 +152,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -171,7 +171,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.getDevices();
+        Device[] devices = clientPair.appClient.parseDevices();
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -242,7 +242,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -255,7 +255,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         clientPair.appClient.verifyResult(ok(4));
 
         clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.getDevices(5);
+        Device[] devices = clientPair.appClient.parseDevices(5);
 
         assertNotNull(devices);
         assertEquals(2, devices.length);
@@ -326,7 +326,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -341,7 +341,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.getDevices();
+        Device[] devices = clientPair.appClient.parseDevices();
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -372,7 +372,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -385,7 +385,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.getDevices();
+        Device[] devices = clientPair.appClient.parseDevices();
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -418,7 +418,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
 
         assertNotNull(device);
         assertNotNull(device.token);
@@ -434,7 +434,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.getDevices();
+        Device[] devices = clientPair.appClient.parseDevices();
 
         assertNotNull(devices);
         assertEquals(2, devices.length);
@@ -487,7 +487,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
 
         assertNotNull(device);
         assertNotNull(device.token);
@@ -503,7 +503,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.getDevices();
+        Device[] devices = clientPair.appClient.parseDevices();
 
         assertNotNull(devices);
         assertEquals(2, devices.length);
@@ -556,7 +556,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -584,7 +584,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -599,7 +599,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.getDevices();
+        Device[] devices = clientPair.appClient.parseDevices();
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -639,7 +639,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        var device = clientPair.appClient.getDevice();
+        var device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -689,7 +689,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        var device = clientPair.appClient.getDevice();
+        var device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -739,7 +739,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        var device = clientPair.appClient.getDevice();
+        var device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));

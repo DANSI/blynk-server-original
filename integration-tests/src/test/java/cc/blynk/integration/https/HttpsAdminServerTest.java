@@ -331,7 +331,7 @@ public class HttpsAdminServerTest extends BaseTest {
         appClient.reset();
 
         appClient.send("getDevices 1");
-        Device[] devices = appClient.getDevices();
+        Device[] devices = appClient.parseDevices();
 
         assertNotNull(devices);
         assertEquals(1, devices.length);

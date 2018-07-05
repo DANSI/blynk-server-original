@@ -63,14 +63,14 @@ public class OfflineNotificationTest extends BaseTest {
         device2.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device2);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
 
         clientPair.appClient.send("getDevices 1");
 
-        Device[] devices = clientPair.appClient.getDevices(2);
+        Device[] devices = clientPair.appClient.parseDevices(2);
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -102,14 +102,14 @@ public class OfflineNotificationTest extends BaseTest {
         device2.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device2);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
 
         clientPair.appClient.send("getDevices 1");
 
-        Device[] devices = clientPair.appClient.getDevices(2);
+        Device[] devices = clientPair.appClient.parseDevices(2);
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -138,7 +138,7 @@ public class OfflineNotificationTest extends BaseTest {
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile(2);
+        Profile profile = clientPair.appClient.parseProfile(2);
         DashBoard dashBoard = profile.dashBoards[0];
         assertNotNull(dashBoard);
         assertEquals(settings.name, dashBoard.name);
@@ -158,14 +158,14 @@ public class OfflineNotificationTest extends BaseTest {
         device2.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device2);
-        Device device = clientPair.appClient.getDevice(3);
+        Device device = clientPair.appClient.parseDevice(3);
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(3, device));
 
         clientPair.appClient.send("getDevices 1");
 
-        Device[] devices = clientPair.appClient.getDevices(4);
+        Device[] devices = clientPair.appClient.parseDevices(4);
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -206,7 +206,7 @@ public class OfflineNotificationTest extends BaseTest {
         clientPair.appClient.createDevice(1, device2);
         clientPair.appClient.send("getDevices 1");
 
-        Device[] devices = clientPair.appClient.getDevices(2);
+        Device[] devices = clientPair.appClient.parseDevices(2);
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -234,7 +234,7 @@ public class OfflineNotificationTest extends BaseTest {
         clientPair.appClient.createDevice(1, device2);
         clientPair.appClient.send("getDevices 1");
 
-        Device[] devices = clientPair.appClient.getDevices(2);
+        Device[] devices = clientPair.appClient.parseDevices(2);
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -254,7 +254,7 @@ public class OfflineNotificationTest extends BaseTest {
         testAppClient.verifyResult(ok(1));
 
         testAppClient.send("getDevices 1");
-        devices = testAppClient.getDevices(2);
+        devices = testAppClient.parseDevices(2);
         assertNotNull(devices);
         assertEquals(2, devices.length);
         assertEquals(1, devices[1].id);

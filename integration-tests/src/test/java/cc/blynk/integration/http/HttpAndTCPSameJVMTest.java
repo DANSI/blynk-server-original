@@ -389,7 +389,7 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
         }
 
         clientPair.appClient.send("getProjectByCloneCode " + cloneToken);
-        DashBoard dashBoard = clientPair.appClient.getDash(2);
+        DashBoard dashBoard = clientPair.appClient.parseDash(2);
         assertEquals("My Dashboard", dashBoard.name);
     }
 
@@ -471,7 +471,7 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice(2);
+        Device device = clientPair.appClient.parseDevice(2);
         assertNotNull(device);
         assertNotNull(device.token);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(2, device)));
@@ -479,7 +479,7 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.getDevices();
+        Device[] devices = clientPair.appClient.parseDevices();
 
         assertNotNull(devices);
         assertEquals(2, devices.length);

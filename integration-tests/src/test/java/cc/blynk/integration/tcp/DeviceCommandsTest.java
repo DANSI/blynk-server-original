@@ -55,7 +55,7 @@ public class DeviceCommandsTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -64,7 +64,7 @@ public class DeviceCommandsTest extends BaseTest {
 
         clientPair.appClient.send("getDevices 1");
 
-        Device[] devices = clientPair.appClient.getDevices();
+        Device[] devices = clientPair.appClient.parseDevices();
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -83,7 +83,7 @@ public class DeviceCommandsTest extends BaseTest {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.getDevices();
+        Device[] devices = clientPair.appClient.parseDevices();
 
         assertNotNull(devices);
         assertEquals(1, devices.length);
@@ -106,7 +106,7 @@ public class DeviceCommandsTest extends BaseTest {
 
         clientPair.appClient.send("getDevices 1");
 
-        Device[] devices = clientPair.appClient.getDevices();
+        Device[] devices = clientPair.appClient.parseDevices();
         assertNotNull(devices);
         assertEquals(1, devices.length);
 
@@ -120,7 +120,7 @@ public class DeviceCommandsTest extends BaseTest {
 
         clientPair.appClient.send("getDevices 1");
 
-        Device[] devices = clientPair.appClient.getDevices();
+        Device[] devices = clientPair.appClient.parseDevices();
         assertNotNull(devices);
         assertEquals(1, devices.length);
 
@@ -136,7 +136,7 @@ public class DeviceCommandsTest extends BaseTest {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        devices = clientPair.appClient.getDevices();
+        devices = clientPair.appClient.parseDevices();
 
         assertNotNull(devices);
         assertEquals(1, devices.length);
@@ -155,7 +155,7 @@ public class DeviceCommandsTest extends BaseTest {
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
@@ -164,7 +164,7 @@ public class DeviceCommandsTest extends BaseTest {
 
         clientPair.appClient.send("getDevices 1");
 
-        Device[] devices = clientPair.appClient.getDevices();
+        Device[] devices = clientPair.appClient.parseDevices();
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
@@ -177,7 +177,7 @@ public class DeviceCommandsTest extends BaseTest {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        devices = clientPair.appClient.getDevices();
+        devices = clientPair.appClient.parseDevices();
 
         assertNotNull(devices);
         assertEquals(1, devices.length);

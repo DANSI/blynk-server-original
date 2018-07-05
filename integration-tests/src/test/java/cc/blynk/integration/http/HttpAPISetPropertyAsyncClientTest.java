@@ -101,7 +101,7 @@ public class HttpAPISetPropertyAsyncClientTest extends BaseTest {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile();
+        Profile profile = clientPair.appClient.parseProfile(1);
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
         assertNotNull(widget);
@@ -122,7 +122,7 @@ public class HttpAPISetPropertyAsyncClientTest extends BaseTest {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile();
+        Profile profile = clientPair.appClient.parseProfile(1);
 
         Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
         assertNotNull(widget);
@@ -145,7 +145,7 @@ public class HttpAPISetPropertyAsyncClientTest extends BaseTest {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile();
+        Profile profile = clientPair.appClient.parseProfile(1);
 
         Button button = (Button) profile.dashBoards[0].findWidgetByPin(0, (byte) 2, PinType.VIRTUAL);
         assertNotNull(button);
@@ -169,7 +169,7 @@ public class HttpAPISetPropertyAsyncClientTest extends BaseTest {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile();
+        Profile profile = clientPair.appClient.parseProfile(1);
 
         Button button = (Button) profile.dashBoards[0].findWidgetByPin(0, (byte) 1, PinType.VIRTUAL);
         assertNotNull(button);

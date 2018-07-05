@@ -78,7 +78,7 @@ public class CloneWorkFlowTest extends BaseTest {
         assertEquals(32, token.length());
 
         clientPair.appClient.send("getProjectByCloneCode " + token);
-        DashBoard dashBoard = clientPair.appClient.getDash(2);
+        DashBoard dashBoard = clientPair.appClient.parseDash(2);
         assertEquals("My Dashboard", dashBoard.name);
     }
 
@@ -98,7 +98,7 @@ public class CloneWorkFlowTest extends BaseTest {
         assertEquals(32, token.length());
 
         clientPair.appClient.send("getProjectByCloneCode " + token);
-        DashBoard dashBoard = clientPair.appClient.getDash(2);
+        DashBoard dashBoard = clientPair.appClient.parseDash(2);
         assertEquals("My Dashboard", dashBoard.name);
         Device device = dashBoard.devices[0];
         assertEquals(0, device.connectTime);
@@ -109,7 +109,7 @@ public class CloneWorkFlowTest extends BaseTest {
         assertNull(device.hardwareInfo);
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile(3);
+        Profile profile = clientPair.appClient.parseProfile(3);
         assertEquals(1, profile.dashBoards.length);
     }
 
@@ -121,11 +121,11 @@ public class CloneWorkFlowTest extends BaseTest {
         assertEquals(32, token.length());
 
         clientPair.appClient.send("getProjectByCloneCode " + token + StringUtils.BODY_SEPARATOR_STRING + "new");
-        DashBoard dashBoard = clientPair.appClient.getDash(2);
+        DashBoard dashBoard = clientPair.appClient.parseDash(2);
         assertEquals("My Dashboard", dashBoard.name);
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile(3);
+        Profile profile = clientPair.appClient.parseProfile(3);
         assertEquals(2, profile.dashBoards.length);
         assertEquals(2, profile.dashBoards[1].id);
     }

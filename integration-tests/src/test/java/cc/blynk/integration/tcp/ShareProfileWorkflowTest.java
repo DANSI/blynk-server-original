@@ -125,7 +125,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         appClient2.send("loadProfileGzipped");
-        Profile serverProfile = appClient2.getProfile(2);
+        Profile serverProfile = appClient2.parseProfile(2);
         DashBoard serverDash = serverProfile.dashBoards[0];
 
         Profile profile = parseProfile(readTestUserProfile());
@@ -143,7 +143,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
         assertEquals(profile.dashBoards[0].toString(), serverDash.toString());
 
         clientPair.appClient.send("loadProfileGzipped");
-        profile = clientPair.appClient.getProfile(2);
+        profile = clientPair.appClient.parseProfile(2);
 
         profile.dashBoards[0].updatedAt = 0;
         Notification originalNotification = profile.dashBoards[0].getNotificationWidget();
@@ -340,7 +340,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
         clientPair.hardwareClient.verifyResult(produce(1, HARDWARE, b("aw 3 1")));
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile();
+        Profile profile = clientPair.appClient.parseProfile(1);
 
         OnePinWidget tmp = getWidgetByPin(profile, 3);
 
@@ -354,7 +354,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = clientPair.appClient.getProfile();
+        profile = clientPair.appClient.parseProfile(1);
 
         tmp = getWidgetByPin(profile, 3);
 
@@ -367,7 +367,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        profile = clientPair.appClient.getProfile();
+        profile = clientPair.appClient.parseProfile(1);
 
         tmp = getWidgetByPin(profile, 3);
 
@@ -529,7 +529,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.getProfile();
+        Profile profile = clientPair.appClient.parseProfile(1);
 
         OnePinWidget tmp = getWidgetByPin(profile, 3);
 
@@ -770,7 +770,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         appClient2.send("loadProfileGzipped");
-        Profile serverProfile = appClient2.getProfile(2);
+        Profile serverProfile = appClient2.parseProfile(2);
         DashBoard dashboard = serverProfile.dashBoards[0];
 
         assertNotNull(dashboard);
@@ -792,7 +792,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
         verify(appClient4.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         appClient4.send("loadProfileGzipped");
-        serverProfile = appClient4.getProfile(2);
+        serverProfile = appClient4.parseProfile(2);
         DashBoard serverDash = serverProfile.dashBoards[0];
 
         assertNotNull(dashboard);

@@ -87,7 +87,7 @@ public class AppMailTest extends BaseTest {
         appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.getDevices();
+        Device[] devices = clientPair.appClient.parseDevices();
 
         assertEquals(1, devices.length);
 
@@ -121,14 +121,14 @@ public class AppMailTest extends BaseTest {
         Device device1 = new Device(1, "My Device2", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.getDevice();
+        Device device = clientPair.appClient.parseDevice();
 
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
 
         clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.getDevices(2);
+        Device[] devices = clientPair.appClient.parseDevices(2);
 
         appClient.send("email 1");
 

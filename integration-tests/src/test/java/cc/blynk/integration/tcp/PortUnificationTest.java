@@ -70,7 +70,7 @@ public class PortUnificationTest extends BaseTest {
         appClient.verifyResult(ok(2));
         appClient.verifyResult(ok(3));
 
-        Device device = appClient.getDevice(4);
+        Device device = appClient.parseDevice(4);
         assertNotNull(device);
         assertNotNull(device.token);
 

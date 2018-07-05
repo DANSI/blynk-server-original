@@ -100,7 +100,7 @@ public class AssignTokenTest extends BaseTest {
 
         clientPair.appClient.send("getDevices 1");
 
-        Device[] devices = clientPair.appClient.getDevices(3);
+        Device[] devices = clientPair.appClient.parseDevices(3);
         assertNotNull(devices);
         assertEquals(1, devices.length);
         assertEquals(flashedToken.token, devices[0].token);
