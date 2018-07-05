@@ -114,7 +114,7 @@ public class MainWorkflowTest extends BaseTest {
 
     @Test
     public void testResetEmail() throws Exception {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
 
         appClient.send("resetPass start dima@mail.ua" + " " + AppNameUtil.BLYNK);
@@ -144,7 +144,7 @@ public class MainWorkflowTest extends BaseTest {
 
     @Test
     public void registrationAllowedOnlyOncePerConnection() throws Exception {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
 
         appClient.start();
 
@@ -160,14 +160,14 @@ public class MainWorkflowTest extends BaseTest {
     @Test
     public void registrationLimitCheck() throws Exception {
         for (int i = 0; i < 10; i++) {
-            TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+            TestAppClient appClient = new TestAppClient(properties);
             appClient.start();
             appClient.register("test" + i + "@test.com", "1");
             appClient.verifyResult(ok(1));
             appClient.stop();
         }
 
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
         appClient.register("test" + 11 + "@test.com", "1");
         appClient.verifyResult(notAllowed(1));
@@ -175,7 +175,7 @@ public class MainWorkflowTest extends BaseTest {
 
     @Test
     public void createBasicProfile() throws Exception {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
 
         appClient.start();
 
@@ -238,7 +238,7 @@ public class MainWorkflowTest extends BaseTest {
 
     @Test
     public void testNoEmptyPMCommands() throws Exception {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
 
         appClient.start();
 
@@ -283,7 +283,7 @@ public class MainWorkflowTest extends BaseTest {
 
     @Test
     public void doNotAllowUsersWithQuestionMark() throws Exception {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
 
         appClient.start();
 
@@ -293,7 +293,7 @@ public class MainWorkflowTest extends BaseTest {
 
     @Test
     public void createDashWithDevices() throws Exception {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
 
         appClient.start();
 
@@ -331,7 +331,7 @@ public class MainWorkflowTest extends BaseTest {
 
     @Test
     public void testRegisterWithAnotherApp() throws Exception {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
 
         appClient.start();
 
@@ -431,7 +431,7 @@ public class MainWorkflowTest extends BaseTest {
 
     @Test
     public void testNoEnergyDrainForBusinessApps() throws Exception {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
 
         appClient.start();
 
@@ -740,7 +740,7 @@ public class MainWorkflowTest extends BaseTest {
         newHardClient.login(token);
         newHardClient.verifyResult(new ResponseMessage(1, INVALID_TOKEN));
 
-        TestAppClient newAppClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient newAppClient = new TestAppClient(properties);
         newAppClient.start();
         newAppClient.send("shareLogin " + "dima@mail.ua " + sharedToken + " Android 24");
 
@@ -1215,7 +1215,7 @@ public class MainWorkflowTest extends BaseTest {
 
     @Test
     public void testClosedConnectionWhenNotLogged() throws Exception {
-        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
         appClient2.getToken(1);
         verify(appClient2.responseMock, after(600).never()).channelRead(any(), any());
@@ -1451,7 +1451,7 @@ public class MainWorkflowTest extends BaseTest {
 
     @Test
     public void testOutdatedAppNotificationAlertWorks() throws Exception {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
         appClient.login("dima@mail.ua", "1", "Android", "1.1.1");
         appClient.verifyResult(ok(1));
@@ -1463,7 +1463,7 @@ public class MainWorkflowTest extends BaseTest {
 
     @Test
     public void testOutdatedAppNotificationNotTriggered() throws Exception {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
         appClient.login("dima@mail.ua", "1", "Android", "1.1.2");
         appClient.verifyResult(ok(1));
@@ -1475,7 +1475,7 @@ public class MainWorkflowTest extends BaseTest {
 
     @Test
     public void newUserReceivesGrettingEmailAndNoIPLogged() throws Exception {
-        TestAppClient appClient1 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient1 = new TestAppClient(properties);
         appClient1.start();
 
         appClient1.register("test@blynk.cc", "a", "Blynk");

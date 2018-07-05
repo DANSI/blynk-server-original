@@ -59,7 +59,7 @@ public class AppMailTest extends BaseTest {
 
     @Test
     public void testSendEmail() throws Exception {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
         appClient.login("dima@mail.ua", "1");
         appClient.verifyResult(ok(1));
@@ -70,7 +70,7 @@ public class AppMailTest extends BaseTest {
 
     @Test
     public void testSendEmailForDevice() throws Exception {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
         appClient.login("dima@mail.ua", "1");
         appClient.verifyResult(ok(1));
@@ -81,7 +81,7 @@ public class AppMailTest extends BaseTest {
 
     @Test
     public void testSendEmailForSingleDevice() throws Exception {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
         appClient.login("dima@mail.ua", "1");
         appClient.verifyResult(ok(1));
@@ -113,7 +113,7 @@ public class AppMailTest extends BaseTest {
 
     @Test
     public void testSendEmailForMultiDevices() throws Exception {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
         appClient.login("dima@mail.ua", "1");
         appClient.verifyResult(ok(1));

@@ -101,7 +101,7 @@ public class OTATest extends BaseTest {
                 .setSSLSocketFactory(sslsf)
                 .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
                 .build();
-        clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
+        clientPair = initAppAndHardPair(properties);
     }
 
     @Test

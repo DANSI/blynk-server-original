@@ -52,7 +52,7 @@ public class WebSocketTest extends BaseTest {
         tcpWebSocketPort = httpPort;
         webSocketServer = new HardwareAndHttpAPIServer(holder).start();
         appServer = new AppAndHttpsServer(holder).start();
-        clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
+        clientPair = initAppAndHardPair(properties);
     }
 
     @Override

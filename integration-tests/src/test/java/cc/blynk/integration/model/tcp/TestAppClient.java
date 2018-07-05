@@ -45,6 +45,14 @@ public class TestAppClient extends BaseTestAppClient {
         super(host, port, Mockito.mock(Random.class), new ServerProperties(Collections.emptyMap()));
     }
 
+    public TestAppClient(ServerProperties properties) {
+        this("localhost", properties.getHttpsPort(), properties, new NioEventLoopGroup());
+    }
+
+    public TestAppClient(String host, ServerProperties properties) {
+        this(host, properties.getHttpsPort(), properties, new NioEventLoopGroup());
+    }
+
     public TestAppClient(String host, int port, ServerProperties properties) {
         this(host, port, properties, new NioEventLoopGroup());
     }

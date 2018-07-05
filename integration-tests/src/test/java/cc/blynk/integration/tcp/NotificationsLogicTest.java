@@ -69,7 +69,7 @@ public class NotificationsLogicTest extends BaseTest {
 
     @Test
     public void addPushTokenWrongInput()  throws Exception  {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
 
         appClient.start();
 
@@ -136,7 +136,7 @@ public class NotificationsLogicTest extends BaseTest {
 
     @Test
     public void addPushTokenWorksForIos() throws Exception {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
 
         appClient.start();
 
@@ -320,7 +320,7 @@ public class NotificationsLogicTest extends BaseTest {
 
         verify(gcmWrapper, after(500).never()).send(any(), any(), any());
 
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
         appClient.login("dima@mail.ua", "1", "Android", "1.10.4");
         appClient.verifyResult(ok(1));
@@ -356,7 +356,7 @@ public class NotificationsLogicTest extends BaseTest {
         clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody(2);
 
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
         appClient.login("dima@mail.ua", "1", "Android", "1.10.4");
         appClient.verifyResult(ok(1));
@@ -389,7 +389,7 @@ public class NotificationsLogicTest extends BaseTest {
         clientPair.appClient.getToken(1);
         String token = clientPair.appClient.getBody(2);
 
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
         appClient.login("dima@mail.ua", "1", "Android", "1.10.4");
         appClient.verifyResult(ok(1));
@@ -420,7 +420,7 @@ public class NotificationsLogicTest extends BaseTest {
 
         String token = clientPair.appClient.getBody();
 
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
         appClient.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
@@ -550,7 +550,7 @@ public class NotificationsLogicTest extends BaseTest {
 
     @Test
     public void testOfflineMessageIsSentToBothApps()  throws Exception  {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
 
         appClient.login(DEFAULT_TEST_USER, "1", "iOS", "1.10.2");

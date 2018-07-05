@@ -118,7 +118,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
         assertNotNull(token);
         assertEquals(32, token.length());
 
-        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
 
         appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
@@ -166,7 +166,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
         assertEquals(32, token.length());
 
 
-        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
         appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
@@ -231,12 +231,12 @@ public class ShareProfileWorkflowTest extends BaseTest {
         assertNotNull(token2);
         assertEquals(32, token2.length());
 
-        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
         appClient2.send("shareLogin " + "dima@mail.ua " + token1 + " Android 24");
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        TestAppClient appClient3 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient3 = new TestAppClient(properties);
         appClient3.start();
         appClient3.send("shareLogin " + "dima@mail.ua " + token2 + " Android 24");
         verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
@@ -321,7 +321,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
         assertNotNull(token);
         assertEquals(32, token.length());
 
-        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
         appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
         appClient2.verifyResult(ok(1));
@@ -383,7 +383,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
         assertNotNull(token);
         assertEquals(32, token.length());
 
-        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
         appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
         appClient2.verifyResult(ok(1));
@@ -401,7 +401,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
         assertNotNull(token);
         assertEquals(32, token.length());
 
-        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
         appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
@@ -421,13 +421,13 @@ public class ShareProfileWorkflowTest extends BaseTest {
         assertNotNull(token);
         assertEquals(32, token.length());
 
-        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
         appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        TestAppClient appClient3 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient3 = new TestAppClient(properties);
         appClient3.start();
         appClient3.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
@@ -448,13 +448,13 @@ public class ShareProfileWorkflowTest extends BaseTest {
         assertNotNull(token);
         assertEquals(32, token.length());
 
-        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
         appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        TestAppClient appClient3 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient3 = new TestAppClient(properties);
         appClient3.start();
         appClient3.login(DEFAULT_TEST_USER, "1", "Android", "1.10.4");
 
@@ -488,7 +488,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
         assertNotNull(token);
         assertEquals(32, token.length());
 
-        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
         appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
@@ -512,7 +512,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
         assertNotNull(token);
         assertEquals(32, token.length());
 
-        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
         appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
@@ -545,7 +545,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
         assertNotNull(token);
         assertEquals(32, token.length());
 
-        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
         appClient2.send("shareLogin " + "dima@mail.ua " + token+"a" + " Android 24");
 
@@ -560,7 +560,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
         assertNotNull(token);
         assertEquals(32, token.length());
 
-        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
         appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
@@ -582,7 +582,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
         assertFalse(clientPair.appClient.isClosed());
         assertTrue(appClient2.isClosed());
 
-        TestAppClient appClient3 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient3 = new TestAppClient(properties);
         appClient3.start();
         appClient3.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
@@ -597,11 +597,11 @@ public class ShareProfileWorkflowTest extends BaseTest {
         assertNotNull(token);
         assertEquals(32, token.length());
 
-        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
         appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
-        TestAppClient appClient3 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient3 = new TestAppClient(properties);
         appClient3.start();
         appClient3.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
@@ -629,11 +629,11 @@ public class ShareProfileWorkflowTest extends BaseTest {
         assertNotNull(token);
         assertEquals(32, token.length());
 
-        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
         appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
-        TestAppClient appClient3 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient3 = new TestAppClient(properties);
         appClient3.start();
         appClient3.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
@@ -655,7 +655,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
         assertNotNull(token);
         assertEquals(32, token.length());
 
-        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
         appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
@@ -703,7 +703,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
         assertNotNull(token);
         assertEquals(32, token.length());
 
-        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
         appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
@@ -763,7 +763,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
         assertNotNull(token);
         assertEquals(32, token.length());
 
-        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
 
         appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
@@ -781,12 +781,12 @@ public class ShareProfileWorkflowTest extends BaseTest {
         assertNotNull(refreshedToken);
         assertNotEquals(refreshedToken, token);
 
-        TestAppClient appClient3 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient3 = new TestAppClient(properties);
         appClient3.start();
         appClient3.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
         verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(notAllowed(1)));
 
-        TestAppClient appClient4 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient4 = new TestAppClient(properties);
         appClient4.start();
         appClient4.send("shareLogin " + "dima@mail.ua " + refreshedToken + " Android 24");
         verify(appClient4.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
@@ -816,7 +816,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
 
     @Test
     public void testMasterMasterSyncWorksWithoutToken() throws Exception {
-        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
         appClient2.login("dima@mail.ua", "1", "Android", "24");
 
@@ -838,7 +838,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
         assertEquals(32, token.length());
 
 
-        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
         appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 
@@ -877,7 +877,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
         assertNotNull(token);
         assertEquals(32, token.length());
 
-        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
         appClient2.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
 

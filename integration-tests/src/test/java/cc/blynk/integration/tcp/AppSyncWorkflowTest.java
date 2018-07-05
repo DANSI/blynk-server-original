@@ -198,7 +198,7 @@ public class AppSyncWorkflowTest extends BaseTest {
     public void testTerminalStorageRemembersCommandsInNewFormat() throws Exception {
         clientPair.appClient.stop();
 
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
 
         appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.26.0");
@@ -236,7 +236,7 @@ public class AppSyncWorkflowTest extends BaseTest {
     public void testTerminalAndAnotherWidgetOnTheSamePin() throws Exception {
         clientPair.appClient.stop();
 
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
 
         appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.26.0");
@@ -286,7 +286,7 @@ public class AppSyncWorkflowTest extends BaseTest {
 
         clientPair.appClient.stop();
 
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
 
         appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.26.0");
@@ -345,7 +345,7 @@ public class AppSyncWorkflowTest extends BaseTest {
 
         clientPair.appClient.stop();
 
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
 
         appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.26.0");
@@ -404,7 +404,7 @@ public class AppSyncWorkflowTest extends BaseTest {
 
         clientPair.appClient.stop();
 
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
 
         appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.25.0");
@@ -464,7 +464,7 @@ public class AppSyncWorkflowTest extends BaseTest {
 
         clientPair.appClient.stop();
 
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
 
         appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.26.0");
@@ -528,7 +528,7 @@ public class AppSyncWorkflowTest extends BaseTest {
 
         clientPair.appClient.stop();
 
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
 
         appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.26.0");
@@ -613,7 +613,7 @@ public class AppSyncWorkflowTest extends BaseTest {
 
         clientPair.appClient.stop();
 
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
 
         appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.26.0");
@@ -660,7 +660,7 @@ public class AppSyncWorkflowTest extends BaseTest {
     public void testTableSyncWorkForNewCommandFormat() throws Exception {
         clientPair.appClient.stop();
 
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
 
         appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.26.0");

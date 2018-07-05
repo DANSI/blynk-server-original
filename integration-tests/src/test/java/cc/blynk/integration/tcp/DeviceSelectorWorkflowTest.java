@@ -188,7 +188,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
 
 
         //login with shared app
-        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
         appClient2.send("shareLogin " + "dima@mail.ua " + sharedToken + " Android 24");
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));

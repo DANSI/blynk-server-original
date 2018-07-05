@@ -100,7 +100,7 @@ public class LoadBalancingIntegrationTest extends BaseTest {
 
     @Test
     public void test2NewUsersStoredOnDifferentServers() throws Exception {
-        TestAppClient appClient1 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient1 =new TestAppClient(properties);
         appClient1.start();
 
         String email = "test_new@gmail.com";
@@ -149,7 +149,7 @@ public class LoadBalancingIntegrationTest extends BaseTest {
 
     @Test
     public void testNoGetServerHandlerAfterLogin() throws Exception {
-        TestAppClient appClient1 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient1 =new TestAppClient(properties);
         appClient1.start();
         workflowForUser(appClient1, "123@gmail.com", "a", AppNameUtil.BLYNK);
         appClient1.send("getServer " + "123@gmail.com" + "\0" + AppNameUtil.BLYNK);
@@ -158,7 +158,7 @@ public class LoadBalancingIntegrationTest extends BaseTest {
 
     @Test
     public void testUserRedirectedToCorrectServer() throws Exception {
-        TestAppClient appClient1 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient1 =new TestAppClient(properties);
         appClient1.start();
 
         String email = "test_new@gmail.com";
@@ -188,7 +188,7 @@ public class LoadBalancingIntegrationTest extends BaseTest {
 
     @Test
     public void testCreateFewAccountWithDifferentApp() throws Exception {
-        TestAppClient appClient1 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient1 = new TestAppClient(properties);
         appClient1.start();
 
         String email = "test@gmmail.com";

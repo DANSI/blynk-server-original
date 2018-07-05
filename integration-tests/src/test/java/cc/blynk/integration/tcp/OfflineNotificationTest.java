@@ -248,7 +248,7 @@ public class OfflineNotificationTest extends BaseTest {
 
         holder.sessionDao.close();
 
-        TestAppClient testAppClient = new TestAppClient("localhost", tcpAppPort);
+        TestAppClient testAppClient = new TestAppClient(properties);
         testAppClient.start();
         testAppClient.login(DEFAULT_TEST_USER, "1");
         testAppClient.verifyResult(ok(1));

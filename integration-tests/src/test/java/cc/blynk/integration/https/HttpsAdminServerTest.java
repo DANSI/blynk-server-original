@@ -100,7 +100,7 @@ public class HttpsAdminServerTest extends BaseTest {
         admin = new User(name, SHA256Util.makeHash(pass, name), AppNameUtil.BLYNK, "local", "127.0.0.1", false, true);
         holder.userDao.add(admin);
 
-        clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
+        clientPair = initAppAndHardPair(properties);
     }
 
     @Override
@@ -317,7 +317,7 @@ public class HttpsAdminServerTest extends BaseTest {
             assertEquals(12333, user.energy);
         }
 
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
         appClient.login(DEFAULT_TEST_USER, "1","iOS", "1.10.2");
         appClient.verifyResult(ok(1));

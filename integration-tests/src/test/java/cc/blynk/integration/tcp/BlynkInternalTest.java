@@ -100,7 +100,7 @@ public class BlynkInternalTest extends BaseTest {
         clientPair.appClient.updateDash("{\"id\":1, \"name\":\"test board\", \"isAppConnectedOn\":true}");
         clientPair.appClient.verifyResult(ok(1));
 
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
 
         appClient.login(DEFAULT_TEST_USER, "1", "Android", "1.13.3");

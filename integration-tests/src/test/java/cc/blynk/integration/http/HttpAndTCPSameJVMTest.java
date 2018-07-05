@@ -101,7 +101,7 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
         appServer = new AppAndHttpsServer(holder).start();
         httpServerUrl = String.format("http://localhost:%s/", httpPort);
         httpclient = HttpClients.createDefault();
-        clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
+        clientPair = initAppAndHardPair(properties);
         clientPair.hardwareClient.reset();
         clientPair.appClient.reset();
     }
@@ -442,7 +442,7 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
             assertEquals("false", value);
         }
 
-        clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
+        clientPair = initAppAndHardPair(properties);
     }
 
     @Test

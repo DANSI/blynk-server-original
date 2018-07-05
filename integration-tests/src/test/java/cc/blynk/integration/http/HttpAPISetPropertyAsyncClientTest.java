@@ -79,7 +79,7 @@ public class HttpAPISetPropertyAsyncClientTest extends BaseTest {
         );
         appServer = new AppAndHttpsServer(staticHolder).start();
 
-        clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
+        clientPair = initAppAndHardPair(properties);
     }
 
     @Before

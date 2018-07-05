@@ -374,7 +374,7 @@ public class BridgeWorkflowTest extends BaseTest {
 
     @Test
     public void bridgeOnlyWorksWithinOneAccount() throws Exception {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
 
         appClient.start();
 

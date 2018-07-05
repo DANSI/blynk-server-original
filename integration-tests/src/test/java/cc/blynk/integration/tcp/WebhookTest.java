@@ -79,7 +79,7 @@ public class WebhookTest extends BaseTest {
 
 
         if (clientPair == null) {
-            clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
+            clientPair = initAppAndHardPair(properties);
         }
         clientPair.hardwareClient.reset();
         clientPair.appClient.reset();

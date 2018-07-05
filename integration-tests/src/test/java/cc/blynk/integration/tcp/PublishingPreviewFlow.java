@@ -266,7 +266,7 @@ public class PublishingPreviewFlow extends BaseTest {
         qrHolders[0].attach(sb);
         verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.textHolder.staticMailBody.replace("{project_name}", "Face Edit Test").replace(DYNAMIC_SECTION, sb.toString())), eq(qrHolders));
 
-        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
 
         appClient2.register("test@blynk.cc", "a", app.id);
@@ -288,7 +288,7 @@ public class PublishingPreviewFlow extends BaseTest {
         clientPair.appClient.verifyResult(ok(5));
         assertTrue(appClient2.isClosed());
 
-        appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient2 = new TestAppClient(properties);
         appClient2.start();
         appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
         verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
@@ -372,7 +372,7 @@ public class PublishingPreviewFlow extends BaseTest {
         qrHolders[0].attach(sb);
         verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.textHolder.staticMailBody.replace("{project_name}", "Face Edit Test").replace(DYNAMIC_SECTION, sb.toString())), eq(qrHolders));
 
-        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
 
         appClient2.register("test@blynk.cc", "a", app.id);
@@ -408,7 +408,7 @@ public class PublishingPreviewFlow extends BaseTest {
         clientPair.appClient.verifyResult(ok(10));
         assertTrue(appClient2.isClosed());
 
-        appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient2 = new TestAppClient(properties);
         appClient2.start();
         appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
         verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
@@ -483,7 +483,7 @@ public class PublishingPreviewFlow extends BaseTest {
         clientPair.appClient.createWidget(10, "{\"id\":155, \"deviceId\":0, \"frequency\":400, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"GAUGE\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
         clientPair.appClient.verifyResult(ok(7));
 
-        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
 
         appClient2.register("test@blynk.cc", "a", app.id);
@@ -560,7 +560,7 @@ public class PublishingPreviewFlow extends BaseTest {
         clientPair.appClient.createWidget(1, "{\"id\":155, \"value\":\"data\", \"deviceId\":0, \"frequency\":400, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"GAUGE\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
         clientPair.appClient.verifyResult(ok(7));
 
-        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
 
         appClient2.register("test@blynk.cc", "a", app.id);
@@ -591,7 +591,7 @@ public class PublishingPreviewFlow extends BaseTest {
 
         assertTrue(appClient2.isClosed());
 
-        appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient2 = new TestAppClient(properties);
         appClient2.start();
 
         appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
@@ -611,7 +611,7 @@ public class PublishingPreviewFlow extends BaseTest {
 
         assertTrue(appClient2.isClosed());
 
-        appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient2 = new TestAppClient(properties);
         appClient2.start();
 
         appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
@@ -663,7 +663,7 @@ public class PublishingPreviewFlow extends BaseTest {
         qrHolders[0].attach(sb);
         verify(mailWrapper, timeout(500)).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("AppPreview" + " - App details"), eq(holder.textHolder.staticMailBody.replace("{project_name}", "Face Edit Test").replace(DYNAMIC_SECTION, sb.toString())), eq(qrHolders));
 
-        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
 
         appClient2.register("test@blynk.cc", "a", app.id);
@@ -692,7 +692,7 @@ public class PublishingPreviewFlow extends BaseTest {
 
         assertTrue(appClient2.isClosed());
 
-        appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        appClient2 = new TestAppClient(properties);
         appClient2.start();
         appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
         verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
@@ -825,7 +825,7 @@ public class PublishingPreviewFlow extends BaseTest {
         assertNotNull(app);
         assertNotNull(app.id);
 
-        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
 
         appClient2.register("test@blynk.cc", "a", app.id);
@@ -886,7 +886,7 @@ public class PublishingPreviewFlow extends BaseTest {
 
         QrHolder[] qrHolders = makeQRs(devices, 1, false);
 
-        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
 
         appClient2.register("test@blynk.cc", "a", app.id);

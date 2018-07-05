@@ -223,5 +223,9 @@ public abstract class BaseTest {
     public static ClientPair initAppAndHardPair(int tcpAppPort, int tcpHartPort, ServerProperties properties) throws Exception {
         return TestUtil.initAppAndHardPair("localhost", tcpAppPort, tcpHartPort, DEFAULT_TEST_USER, "1", null, properties, 10000);
     }
+
+    public static ClientPair initAppAndHardPair(ServerProperties properties) throws Exception {
+        return TestUtil.initAppAndHardPair("localhost", properties.getHttpsPort(), properties.getHttpPort(), DEFAULT_TEST_USER, "1", null, properties, 10000);
+    }
 }
 

@@ -60,7 +60,7 @@ public class FacebookLoginTest extends BaseTest {
     @Test
     public void testLoginWorksForNewUser() throws Exception {
         String host = "localhost";
-        String email = "shartax@gmail.com";
+        String email = "dima@gmail.com";
 
         ClientPair clientPair = TestUtil.initAppAndHardPair(host, tcpAppPort, tcpHardPort, email, "1", null, properties, 10000);
 
@@ -85,7 +85,7 @@ public class FacebookLoginTest extends BaseTest {
 
     @Test
     public void testFacebookLoginWorksForExistingUser() throws Exception {
-        initFacebookAppAndHardPair("localhost", tcpAppPort, tcpHardPort, "shartax@gmail.com", facebookAuthToken);
+        initFacebookAppAndHardPair("localhost", tcpAppPort, tcpHardPort, "dima@gmail.com", facebookAuthToken);
     }
 
     private ClientPair initFacebookAppAndHardPair(String host, int appPort, int hardPort, String user, String facebookAuthToken) throws Exception {

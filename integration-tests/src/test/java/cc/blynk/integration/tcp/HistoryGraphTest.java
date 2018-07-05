@@ -128,7 +128,7 @@ public class HistoryGraphTest extends BaseTest {
 
     @Test
     public void testTooManyDataForGraphWorkWithNewProtocol() throws Exception {
-        TestAppClient appClient = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
         appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.18.0");
         appClient.verifyResult(ok(1));

@@ -95,7 +95,7 @@ public class DeviceTilesWidgetTest extends BaseTest {
         appServer = new AppAndHttpsServer(holder).start();
 
         if (clientPair == null) {
-            clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
+            clientPair = initAppAndHardPair(properties);
         }
         clientPair.hardwareClient.reset();
         clientPair.appClient.reset();

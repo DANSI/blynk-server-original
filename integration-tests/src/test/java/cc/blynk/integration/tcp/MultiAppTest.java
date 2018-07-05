@@ -10,9 +10,6 @@ import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
-import org.asynchttpclient.AsyncHttpClient;
-import org.asynchttpclient.DefaultAsyncHttpClient;
-import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,25 +37,15 @@ public class MultiAppTest extends BaseTest {
 
     private BaseServer httpServer;
     private BaseServer appServer;
-    private BaseServer hardwareServer;
-    private AsyncHttpClient httpclient;
-    private String httpServerUrl;
     private ClientPair clientPair;
 
     @Before
     public void init() throws Exception {
         httpServer = new HardwareAndHttpAPIServer(holder).start();
         appServer = new AppAndHttpsServer(holder).start();
-        httpServerUrl = String.format("http://localhost:%s/", httpPort);
-
-        httpclient = new DefaultAsyncHttpClient(
-                new DefaultAsyncHttpClientConfig.Builder()
-                        .setUserAgent("")
-                        .setKeepAlive(true)
-                        .build());
 
         if (clientPair == null) {
-            clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
+            clientPair = initAppAndHardPair(properties);
         }
         clientPair.hardwareClient.reset();
         clientPair.appClient.reset();
@@ -73,9 +60,9 @@ public class MultiAppTest extends BaseTest {
 
     @Test
     public void testCreateFewAccountWithDifferentApp() throws Exception {
-        TestAppClient appClient1 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient1 = new TestAppClient(properties);
         appClient1.start();
-        TestAppClient appClient2 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
 
         String token1 = workflowForUser(appClient1, "test@blynk.cc", "a", "testapp1");
