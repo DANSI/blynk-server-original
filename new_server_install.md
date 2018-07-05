@@ -13,7 +13,7 @@
         sudo apt-get update
         sudo apt-get install oracle-java10-installer
         
-        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.38.3/server-0.38.3.jar"
+        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.38.4/server-0.38.4.jar"
         
 
 server.properties
