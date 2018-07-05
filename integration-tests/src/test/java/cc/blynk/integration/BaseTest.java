@@ -36,6 +36,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.Security;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.zip.InflaterInputStream;
 
 import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
@@ -217,5 +218,7 @@ public abstract class BaseTest {
     public static ClientPair initAppAndHardPair(ServerProperties properties) throws Exception {
         return TestUtil.initAppAndHardPair("localhost", properties.getHttpsPort(), properties.getHttpPort(), DEFAULT_TEST_USER, "1", null, properties, 10000);
     }
+
+    private static final AtomicLong userCounter = new AtomicLong();
 }
 

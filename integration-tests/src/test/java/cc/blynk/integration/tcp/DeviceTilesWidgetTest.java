@@ -1093,7 +1093,7 @@ public class DeviceTilesWidgetTest extends BaseTest {
 
         clientPair.appClient.send("export 1 432");
         clientPair.appClient.verifyResult(ok(4));
-        verify(mailWrapper, timeout(1000)).sendHtml(eq(DEFAULT_TEST_USER), eq("History graph data for project My Dashboard"), contains("/dima@mail.ua_1_0_v88_"));
+        verify(mailWrapper, timeout(1000)).sendHtml(eq(DEFAULT_TEST_USER), eq("History graph data for project My Dashboard"), contains("/" + DEFAULT_TEST_USER + "_1_0_v88_"));
 
         clientPair.appClient.send("deleteEnhancedData 1\0" + "432");
         clientPair.appClient.verifyResult(ok(5));

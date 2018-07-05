@@ -117,14 +117,14 @@ public class MainWorkflowTest extends BaseTest {
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
 
-        appClient.send("resetPass start dima@mail.ua" + " " + AppNameUtil.BLYNK);
+        appClient.send("resetPass start " + DEFAULT_TEST_USER + " " + AppNameUtil.BLYNK);
         appClient.verifyResult(ok(1));
 
-        appClient.send("resetPass start dima@mail.ua" + " " + AppNameUtil.BLYNK);
+        appClient.send("resetPass start " + DEFAULT_TEST_USER + " " + AppNameUtil.BLYNK);
         appClient.verifyResult(notAllowed(2));
 
         String token = holder.tokensPool.getHolder().entrySet().iterator().next().getKey();
-        verify(mailWrapper).sendWithAttachment(eq("dima@mail.ua"), eq("Password restoration for your Blynk account."), contains("http://blynk-cloud.com/restore?token=" + token), any(QrHolder.class));
+        verify(mailWrapper).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("Password restoration for your Blynk account."), contains("http://blynk-cloud.com/restore?token=" + token), any(QrHolder.class));
 
         appClient.send("resetPass verify 123");
         appClient.verifyResult(notAllowed(3));
@@ -132,13 +132,13 @@ public class MainWorkflowTest extends BaseTest {
         appClient.send("resetPass verify " + token);
         appClient.verifyResult(ok(4));
 
-        appClient.send("resetPass reset " + token + " " + SHA256Util.makeHash("2", "dima@mail.ua"));
+        appClient.send("resetPass reset " + token + " " + SHA256Util.makeHash("2", DEFAULT_TEST_USER));
         appClient.verifyResult(ok(5));
 
-        appClient.login("dima@mail.ua", "1");
+        appClient.login(DEFAULT_TEST_USER, "1");
         appClient.verifyResult(new ResponseMessage(6, USER_NOT_AUTHENTICATED));
 
-        appClient.login("dima@mail.ua", "2");
+        appClient.login(DEFAULT_TEST_USER, "2");
         appClient.verifyResult(ok(7));
     }
 
@@ -742,7 +742,7 @@ public class MainWorkflowTest extends BaseTest {
 
         TestAppClient newAppClient = new TestAppClient(properties);
         newAppClient.start();
-        newAppClient.send("shareLogin " + "dima@mail.ua " + sharedToken + " Android 24");
+        newAppClient.send("shareLogin " + DEFAULT_TEST_USER + " " + sharedToken + " Android 24");
 
         newAppClient.verifyResult(notAllowed(1));
     }
@@ -1221,7 +1221,7 @@ public class MainWorkflowTest extends BaseTest {
         verify(appClient2.responseMock, after(600).never()).channelRead(any(), any());
         assertTrue(appClient2.isClosed());
 
-        appClient2.login("dima@mail.ua", "1", "Android", "1RC7");
+        appClient2.login(DEFAULT_TEST_USER, "1", "Android", "1RC7");
         verify(appClient2.responseMock, after(200).never()).channelRead(any(), any());
     }
 
@@ -1454,7 +1454,7 @@ public class MainWorkflowTest extends BaseTest {
     public void testOutdatedAppNotificationAlertWorks() throws Exception {
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
-        appClient.login("dima@mail.ua", "1", "Android", "1.1.1");
+        appClient.login(DEFAULT_TEST_USER, "1", "Android", "1.1.1");
         appClient.verifyResult(ok(1));
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(
                 appIsOutdated(1,
@@ -1466,7 +1466,7 @@ public class MainWorkflowTest extends BaseTest {
     public void testOutdatedAppNotificationNotTriggered() throws Exception {
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
-        appClient.login("dima@mail.ua", "1", "Android", "1.1.2");
+        appClient.login(DEFAULT_TEST_USER, "1", "Android", "1.1.2");
         appClient.verifyResult(ok(1));
         verify(appClient.responseMock, never()).channelRead(any(), eq(
                 appIsOutdated(1,

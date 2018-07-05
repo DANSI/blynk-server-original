@@ -190,7 +190,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         //login with shared app
         TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
-        appClient2.send("shareLogin " + "dima@mail.ua " + sharedToken + " Android 24");
+        appClient2.send("shareLogin " + DEFAULT_TEST_USER + " " + sharedToken + " Android 24");
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         appClient2.send("hardware 1-200000 vw 88 1");

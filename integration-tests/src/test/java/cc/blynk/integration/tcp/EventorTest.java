@@ -38,6 +38,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
 import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.hardware;
 import static cc.blynk.integration.TestUtil.ok;
@@ -367,7 +368,7 @@ public class EventorTest extends BaseTest {
         clientPair.appClient.verifyResult(hardware(1, "1-0 vw 1 37"));
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
-        verify(mailWrapper, timeout(500).times(1)).sendText(eq("dima@mail.ua"), eq("Subj"), eq("Yo!!!!!"));
+        verify(mailWrapper, timeout(500).times(1)).sendText(eq(DEFAULT_TEST_USER), eq("Subj"), eq("Yo!!!!!"));
     }
 
     @Test
@@ -384,7 +385,7 @@ public class EventorTest extends BaseTest {
         clientPair.appClient.verifyResult(hardware(1, "1-0 vw 1 37"));
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
-        verify(mailWrapper, timeout(500).times(1)).sendText(eq("dima@mail.ua"), eq("Subj"), eq("Yo37!!!!!"));
+        verify(mailWrapper, timeout(500).times(1)).sendText(eq(DEFAULT_TEST_USER), eq("Subj"), eq("Yo37!!!!!"));
     }
 
     @Test

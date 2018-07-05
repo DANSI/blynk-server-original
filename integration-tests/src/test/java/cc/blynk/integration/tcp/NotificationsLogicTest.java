@@ -322,7 +322,7 @@ public class NotificationsLogicTest extends BaseTest {
 
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
-        appClient.login("dima@mail.ua", "1", "Android", "1.10.4");
+        appClient.login(DEFAULT_TEST_USER, "1", "Android", "1.10.4");
         appClient.verifyResult(ok(1));
 
         TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
@@ -358,7 +358,7 @@ public class NotificationsLogicTest extends BaseTest {
 
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
-        appClient.login("dima@mail.ua", "1", "Android", "1.10.4");
+        appClient.login(DEFAULT_TEST_USER, "1", "Android", "1.10.4");
         appClient.verifyResult(ok(1));
 
         appClient.send("addPushToken 1\0uid2\0token2");
@@ -391,7 +391,7 @@ public class NotificationsLogicTest extends BaseTest {
 
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
-        appClient.login("dima@mail.ua", "1", "Android", "1.10.4");
+        appClient.login(DEFAULT_TEST_USER, "1", "Android", "1.10.4");
         appClient.verifyResult(ok(1));
 
         appClient.send("addPushToken 1\0uid2\0token2");
@@ -422,7 +422,7 @@ public class NotificationsLogicTest extends BaseTest {
 
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
-        appClient.send("shareLogin " + "dima@mail.ua " + token + " Android 24");
+        appClient.send("shareLogin " + DEFAULT_TEST_USER + " " + token + " Android 24");
 
         appClient.send("addPushToken 1\0uid2\0token2");
         appClient.verifyResult(ok(2));

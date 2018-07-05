@@ -61,7 +61,7 @@ public class AppMailTest extends BaseTest {
     public void testSendEmail() throws Exception {
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
-        appClient.login("dima@mail.ua", "1");
+        appClient.login(DEFAULT_TEST_USER, "1");
         appClient.verifyResult(ok(1));
 
         appClient.send("email 1");
@@ -72,7 +72,7 @@ public class AppMailTest extends BaseTest {
     public void testSendEmailForDevice() throws Exception {
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
-        appClient.login("dima@mail.ua", "1");
+        appClient.login(DEFAULT_TEST_USER, "1");
         appClient.verifyResult(ok(1));
 
         appClient.send("email 1 0");
@@ -83,7 +83,7 @@ public class AppMailTest extends BaseTest {
     public void testSendEmailForSingleDevice() throws Exception {
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
-        appClient.login("dima@mail.ua", "1");
+        appClient.login(DEFAULT_TEST_USER, "1");
         appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("getDevices 1");
@@ -115,7 +115,7 @@ public class AppMailTest extends BaseTest {
     public void testSendEmailForMultiDevices() throws Exception {
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
-        appClient.login("dima@mail.ua", "1");
+        appClient.login(DEFAULT_TEST_USER, "1");
         appClient.verifyResult(ok(1));
 
         Device device1 = new Device(1, "My Device2", "ESP8266");
@@ -232,7 +232,7 @@ public class AppMailTest extends BaseTest {
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("email {DEVICE_OWNER_EMAIL} SUBJ_{DEVICE_OWNER_EMAIL} BODY_{DEVICE_OWNER_EMAIL}");
-        verify(mailWrapper, timeout(500)).sendText(eq("dima@mail.ua"), eq("SUBJ_dima@mail.ua"), eq("BODY_dima@mail.ua"));
+        verify(mailWrapper, timeout(500)).sendText(eq(DEFAULT_TEST_USER), eq("SUBJ_" + DEFAULT_TEST_USER), eq("BODY_" + DEFAULT_TEST_USER));
         clientPair.hardwareClient.verifyResult(ok(1));
     }
 
@@ -258,7 +258,7 @@ public class AppMailTest extends BaseTest {
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("email subj body");
-        verify(mailWrapper, timeout(500)).sendHtml(eq("dima@mail.ua"), eq("subj"), eq("body"));
+        verify(mailWrapper, timeout(500)).sendHtml(eq(DEFAULT_TEST_USER), eq("subj"), eq("body"));
         clientPair.hardwareClient.verifyResult(ok(1));
     }
 

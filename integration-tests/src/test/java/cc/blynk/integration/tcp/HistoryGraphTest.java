@@ -1278,7 +1278,7 @@ public class HistoryGraphTest extends BaseTest {
         FileUtils.write(userReportFile, 2.2, 2L);
 
         clientPair.appClient.send("export 1 14");
-        verify(mailWrapper, timeout(1000)).sendHtml(eq(DEFAULT_TEST_USER), eq("History graph data for project My Dashboard"), contains("/dima@mail.ua_1_0_a7_"));
+        verify(mailWrapper, timeout(1000)).sendHtml(eq(DEFAULT_TEST_USER), eq("History graph data for project My Dashboard"), contains("/" + DEFAULT_TEST_USER + "_1_0_a7_"));
     }
 
     @Test
@@ -1294,7 +1294,7 @@ public class HistoryGraphTest extends BaseTest {
         clientPair.appClient.send("export 1 14");
         clientPair.appClient.verifyResult(ok(1));
 
-        String csvFileName = getFileNameByMask(blynkTempDir, "dima@mail.ua_1_0_a7_");
+        String csvFileName = getFileNameByMask(blynkTempDir, DEFAULT_TEST_USER + "_1_0_a7_");
         verify(mailWrapper, timeout(1000)).sendHtml(eq(DEFAULT_TEST_USER), eq("History graph data for project My Dashboard"), contains(csvFileName));
 
         try (InputStream fileStream = new FileInputStream(Paths.get(blynkTempDir, csvFileName).toString());
@@ -1359,7 +1359,7 @@ public class HistoryGraphTest extends BaseTest {
         clientPair.appClient.send("export 1 432");
         clientPair.appClient.verifyResult(ok(1));
 
-        String csvFileName = getFileNameByMask(blynkTempDir, "dima@mail.ua_1_200000_d8_");
+        String csvFileName = getFileNameByMask(blynkTempDir, DEFAULT_TEST_USER + "_1_200000_d8_");
         verify(mailWrapper, timeout(1000)).sendHtml(eq(DEFAULT_TEST_USER), eq("History graph data for project My Dashboard"), contains(csvFileName));
 
         try (InputStream fileStream = new FileInputStream(Paths.get(blynkTempDir, csvFileName).toString());
@@ -1444,7 +1444,7 @@ public class HistoryGraphTest extends BaseTest {
         clientPair.appClient.send("export 1 14");
         clientPair.appClient.verifyResult(ok(1));
 
-        String csvFileName = getFileNameByMask(blynkTempDir, "dima@mail.ua_1_200000_a7_");
+        String csvFileName = getFileNameByMask(blynkTempDir, DEFAULT_TEST_USER + "_1_200000_a7_");
         verify(mailWrapper, timeout(1000)).sendHtml(eq(DEFAULT_TEST_USER), eq("History graph data for project My Dashboard"), contains(csvFileName));
 
         try (InputStream fileStream = new FileInputStream(Paths.get(blynkTempDir, csvFileName).toString());
