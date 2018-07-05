@@ -126,10 +126,6 @@ public class Holder {
         this.reportingDiskDao = new ReportingDiskDao(serverProperties.getReportingFolder(),
                 serverProperties.isRawDBEnabled() && reportingDBManager.isDBEnabled());
 
-        if (serverProperties.renameOldReportingFiles()) {
-            reportingDiskDao.renameOldReportingFiles();
-        }
-
         this.transportTypeHolder = new TransportTypeHolder(serverProperties);
 
         this.asyncHttpClient = new DefaultAsyncHttpClient(new DefaultAsyncHttpClientConfig.Builder()

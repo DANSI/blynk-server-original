@@ -339,45 +339,6 @@ public class ReportingDiskDao implements Closeable {
         return values;
     }
 
-    public void renameOldReportingFiles() {
-        long now = System.currentTimeMillis();
-        log.info("Renaming of old reporting files started...");
-        Path reportingPath = Paths.get(dataFolder);
-        if (Files.notExists(reportingPath)) {
-            return;
-        }
-        try {
-            try (DirectoryStream<Path> reportingFolder = Files.newDirectoryStream(reportingPath, "*")) {
-                for (Path userReportingDirectory : reportingFolder) {
-                    if (Files.isDirectory(userReportingDirectory)) {
-                        int filesCounter = 0;
-                        try (DirectoryStream<Path> userReportingDirectoryStream =
-                                     Files.newDirectoryStream(userReportingDirectory, "*")) {
-                            for (Path userReportingFile : userReportingDirectoryStream) {
-                                String oldFileName = userReportingFile.getFileName().toString();
-                                if (!oldFileName.contains("-")) {
-                                    int fromIndex = "history_".length();
-                                    int end = oldFileName.indexOf("_", fromIndex);
-                                    String newFileName = oldFileName.substring(0, end) + "-0"
-                                            + oldFileName.substring(end);
-                                    log.debug("Renaming {} -> {}", oldFileName, newFileName);
-                                    Files.move(userReportingFile, userReportingFile.resolveSibling(newFileName));
-                                    filesCounter++;
-                                }
-                            }
-                        }
-                        if (filesCounter > 0) {
-                            log.debug("Renamed {} files for {}", filesCounter, userReportingDirectory.getFileName());
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            log.error("Error renaming old reporting files.", e);
-        }
-        log.info("Renaming of old reporting files finished after {} ms.", System.currentTimeMillis() - now);
-    }
-
     @Override
     public void close() {
         System.out.println("Stopping aggregator...");
