@@ -139,7 +139,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
 
     var libraryVersion = nga.entity('libraryVersion').identifier(nga.field('name')).url('hardwareInfo/blynkVersion').readOnly();
     libraryVersion.listView()
-        .title('Library versions')
+        .title('Blynk library versions')
         .perPage(50)
         .batchActions([])
         .sortField('count')
