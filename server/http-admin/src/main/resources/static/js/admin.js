@@ -348,7 +348,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
                 .addChild(nga.menu(ips).title('IPs').icon(''))
             )
             .addChild(nga.menu().title('Hardware Info')
-                .addChild(nga.menu(libraryVersion).title('Library versions').icon(''))
+                .addChild(nga.menu(libraryVersion).title('Blynk library versions').icon(''))
                 .addChild(nga.menu(cpuType).title('CPU types').icon(''))
                 .addChild(nga.menu(hardwareBoards).title('Hardware boards').icon(''))
                 .addChild(nga.menu(connectionType).title('Connection types').icon(''))
