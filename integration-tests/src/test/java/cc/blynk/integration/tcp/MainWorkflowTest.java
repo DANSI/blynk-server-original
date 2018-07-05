@@ -1422,6 +1422,7 @@ public class MainWorkflowTest extends BaseTest {
         assertEquals(2, counter);
 
         clientPair.hardwareClient.send("hardware vw 37 11");
+        clientPair.appClient.verifyResult(hardware(1, "1-0 vw 37 11"));
         clientPair.appClient.send("loadProfileGzipped");
         profile = clientPair.appClient.getProfile(5);
         counter = 0;
