@@ -24,7 +24,10 @@ import cc.blynk.utils.properties.ServerProperties;
 import com.fasterxml.jackson.databind.ObjectReader;
 import org.mockito.ArgumentCaptor;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.attribute.FileAttribute;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -105,7 +108,7 @@ public final class TestUtil {
         return readTestUserProfile(null);
     }
 
-    protected static StringMessage getGetTokenMessage(List<Object> arguments) {
+    private static StringMessage getGetTokenMessage(List<Object> arguments) {
         for (Object obj : arguments) {
             if (((MessageBase)obj).command == GET_TOKEN) {
                 return (StringMessage) obj;
@@ -281,6 +284,14 @@ public final class TestUtil {
         hardClient.reset();
 
         return new ClientPair(appClient, hardClient, token);
+    }
+
+    public static String getDataFolder() {
+        try {
+            return Files.createTempDirectory("blynk_test_", new FileAttribute[0]).toString();
+        } catch (IOException e) {
+            throw new RuntimeException("Unable create temp dir.", e);
+        }
     }
 
 }

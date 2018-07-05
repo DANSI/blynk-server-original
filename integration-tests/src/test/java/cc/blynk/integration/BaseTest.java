@@ -30,9 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.attribute.FileAttribute;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.Security;
@@ -96,50 +94,25 @@ public abstract class BaseTest {
     }
 
 
-    public SSLContext initUnsecuredSSLContext() throws NoSuchAlgorithmException, KeyManagementException {
-        X509TrustManager tm = new X509TrustManager() {
-            @Override
-            public void checkClientTrusted(java.security.cert.X509Certificate[] x509Certificates, String s) throws java.security.cert.CertificateException {
-
-            }
-
-            @Override
-            public void checkServerTrusted(java.security.cert.X509Certificate[] x509Certificates, String s) throws java.security.cert.CertificateException {
-
-            }
-
-            @Override
-            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                return null;
-            }
-        };
-
-        SSLContext context = SSLContext.getInstance("TLS");
-        context.init(null, new TrustManager[]{ tm }, null);
-
-        return context;
-    }
-
     @BeforeClass
     public static void initProps() {
         properties = new ServerProperties(Collections.emptyMap());
 
-        httpPort = properties.getIntProperty("http.port");
-        httpsPort = properties.getIntProperty("https.port");
+        httpPort = properties.getHttpPort();
+        httpsPort = properties.getHttpsPort();
 
         tcpAppPort = httpsPort;
         tcpHardPort = httpPort;
     }
 
-    @Before
-    public void initHolderAndDataFolder() throws Exception {
-        if (getDataFolder() != null) {
-            properties.setProperty("data.folder", getDataFolder());
-        }
+    @SuppressWarnings("unchecked")
+    protected static List<String> consumeJsonPinValues(String response) {
+        return JsonParser.readAny(response, List.class);
+    }
 
-        this.holder = new Holder(properties,
-                twitterWrapper, mailWrapper,
-                gcmWrapper, smsWrapper, slackWrapper, "no-db.properties");
+    @SuppressWarnings("unchecked")
+    protected static List<String> consumeJsonPinValues(CloseableHttpResponse response) throws IOException {
+        return JsonParser.readAny(consumeText(response), List.class);
     }
 
     @After
@@ -147,12 +120,9 @@ public abstract class BaseTest {
         holder.close();
     }
 
-    public String getDataFolder() {
-        try {
-            return Files.createTempDirectory("blynk_test_", new FileAttribute[0]).toString();
-        } catch (IOException e) {
-            throw new RuntimeException("Unable create temp dir.", e);
-        }
+    @SuppressWarnings("unchecked")
+    protected static String consumeText(CloseableHttpResponse response) throws IOException {
+        return EntityUtils.toString(response.getEntity());
     }
 
     public static String getRelativeDataFolder(String path) {
@@ -168,25 +138,47 @@ public abstract class BaseTest {
         return resourcesPath;
     }
 
-    @SuppressWarnings("unchecked")
-    public static List<String> consumeJsonPinValues(String response) {
-        return JsonParser.readAny(response, List.class);
-    }
-
-    @SuppressWarnings("unchecked")
-    public static List<String> consumeJsonPinValues(CloseableHttpResponse response) throws IOException {
-        return JsonParser.readAny(consumeText(response), List.class);
-    }
-
-    @SuppressWarnings("unchecked")
-    public static String consumeText(CloseableHttpResponse response) throws IOException {
-        return EntityUtils.toString(response.getEntity());
-    }
-
-    public static String getFileNameByMask(String whereToFind, String pattern) {
+    protected static String getFileNameByMask(String whereToFind, String pattern) {
         File dir = new File(whereToFind);
         File[] files = dir.listFiles((dir1, name) -> name.startsWith(pattern));
         return latest(files).getName();
+    }
+
+    protected SSLContext initUnsecuredSSLContext() throws NoSuchAlgorithmException, KeyManagementException {
+        X509TrustManager tm = new X509TrustManager() {
+            @Override
+            public void checkClientTrusted(java.security.cert.X509Certificate[] x509Certificates, String s) {
+
+            }
+
+            @Override
+            public void checkServerTrusted(java.security.cert.X509Certificate[] x509Certificates, String s) {
+
+            }
+
+            @Override
+            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                return null;
+            }
+        };
+
+        SSLContext context = SSLContext.getInstance("TLS");
+        context.init(null, new TrustManager[]{ tm }, null);
+
+        return context;
+    }
+
+    @Before
+    public void initHolderAndDataFolder() {
+        properties.setProperty("data.folder", getDataFolder());
+
+        this.holder = new Holder(properties,
+                twitterWrapper, mailWrapper,
+                gcmWrapper, smsWrapper, slackWrapper, "no-db.properties");
+    }
+
+    public String getDataFolder() {
+        return TestUtil.getDataFolder();
     }
 
     private static File latest(File[] files) {

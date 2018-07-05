@@ -66,6 +66,14 @@ public class ServerProperties extends BaseProperties {
         return Paths.get(getDataFolder(), "data").toString();
     }
 
+    public int getHttpPort() {
+        return getIntProperty("http.port");
+    }
+
+    public int getHttpsPort() {
+        return getIntProperty("https.port");
+    }
+
     private String getServerHost() {
         String host = getHostProperty();
         if (host == null || host.isEmpty()) {
