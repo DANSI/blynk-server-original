@@ -37,10 +37,10 @@ public class WebSocketTest extends BaseTest {
     //private static Holder localHolder;
 
     //web socket ports
-    public static int tcpWebSocketPort;
+    private static int tcpWebSocketPort;
 
     @After
-    public void shutdown() throws Exception {
+    public void shutdown() {
         webSocketServer.close();
         appServer.close();
         clientPair.stop();

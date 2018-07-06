@@ -14,6 +14,7 @@ public class MailWrapper {
     private final MailClient client;
     private final String emailBody;
     private final String reportBody;
+    private final String productName;
 
     public MailWrapper(MailProperties mailProperties, String productName) {
         String host = mailProperties.getProperty("mail.smtp.host");
@@ -24,6 +25,7 @@ public class MailWrapper {
         }
         this.emailBody = FileLoaderUtil.readFileAsString("static/register-email.html");
         this.reportBody = FileLoaderUtil.readFileAsString("static/report-email.html");
+        this.productName = productName;
     }
 
     public void sendReportEmail(String to,
@@ -32,7 +34,8 @@ public class MailWrapper {
                                 String dynamicSection) throws Exception  {
         String body = reportBody
                 .replace(Placeholders.DOWNLOAD_URL, downloadUrl)
-                .replace(Placeholders.DYNAMIC_SECTION, dynamicSection);
+                .replace(Placeholders.DYNAMIC_SECTION, dynamicSection)
+                .replace(Placeholders.PRODUCT_NAME, productName);
         sendHtml(to, subj, body);
     }
 
