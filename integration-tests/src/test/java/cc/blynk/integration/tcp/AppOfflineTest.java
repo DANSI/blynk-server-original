@@ -4,6 +4,11 @@ import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.TestUtil;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.SlackWrapper;
+import cc.blynk.server.notifications.mail.MailWrapper;
+import cc.blynk.server.notifications.push.GCMWrapper;
+import cc.blynk.server.notifications.sms.SMSWrapper;
+import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
@@ -15,6 +20,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static cc.blynk.integration.TestUtil.internal;
 import static cc.blynk.integration.TestUtil.ok;
+import static org.mockito.Mockito.mock;
 
 /**
  * The Blynk Project.
@@ -32,8 +38,11 @@ public class AppOfflineTest extends BaseTest {
     @Before
     public void init() throws Exception {
         properties.setProperty("app.socket.idle.timeout", "1");
-        Holder holder = new Holder(properties, twitterWrapper, mailWrapper,
-                gcmWrapper, smsWrapper, slackWrapper, "no-db.properties");
+        Holder holder = new Holder(properties,
+                mock(TwitterWrapper.class),
+                mock(MailWrapper.class), mock(GCMWrapper.class),
+                mock(SMSWrapper.class), mock(SlackWrapper.class),
+                "no-db.properties");
         this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
         this.appServer = new AppAndHttpsServer(holder).start();
 

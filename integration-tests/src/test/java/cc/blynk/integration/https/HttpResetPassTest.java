@@ -77,15 +77,15 @@ public class HttpResetPassTest extends BaseTest {
         }
 
         String productName = properties.productName;
-        verify(mailWrapper).sendHtml(eq(email),
+        verify(holder.mailWrapper).sendHtml(eq(email),
                 eq("Password reset request for the " + productName + " app."),
                 contains("/landing?token="));
 
-        verify(mailWrapper).sendHtml(eq(email),
+        verify(holder.mailWrapper).sendHtml(eq(email),
                 eq("Password reset request for the " + productName + " app."),
                 contains("You recently made a request to reset your password for the " + productName + " app. To complete the process, click the link below."));
 
-        verify(mailWrapper).sendHtml(eq(email),
+        verify(holder.mailWrapper).sendHtml(eq(email),
                 eq("Password reset request for the " + productName + " app."),
                 contains("If you did not request a password reset from " + productName + ", please ignore this message."));
     }

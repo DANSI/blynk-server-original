@@ -3,10 +3,15 @@ package cc.blynk.integration.tcp;
 import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.SlackWrapper;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.notifications.mail.MailWrapper;
+import cc.blynk.server.notifications.push.GCMWrapper;
+import cc.blynk.server.notifications.sms.SMSWrapper;
+import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
@@ -27,6 +32,7 @@ import static cc.blynk.integration.TestUtil.serverError;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.mock;
 
 /**
  * The Blynk Project.
@@ -43,8 +49,11 @@ public class CloneWorkFlowTest extends BaseTest {
 
     @Before
     public void init() throws Exception {
-        holder = new Holder(properties, twitterWrapper, mailWrapper,
-                gcmWrapper, smsWrapper, slackWrapper, "db-test.properties");
+        holder = new Holder(properties,
+                mock(TwitterWrapper.class),
+                mock(MailWrapper.class), mock(GCMWrapper.class),
+                mock(SMSWrapper.class), mock(SlackWrapper.class),
+                "db-test.properties");
 
         assertNotNull(holder.dbManager.getConnection());
 

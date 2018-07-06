@@ -93,7 +93,7 @@ public class ReportingTest extends BaseTest {
         this.appServer = new AppAndHttpsServer(holder).start();
 
         this.clientPair = initAppAndHardPair();
-        reset(mailWrapper);
+        reset(holder.mailWrapper);
     }
 
     @After
@@ -372,9 +372,9 @@ public class ReportingTest extends BaseTest {
             tries++;
         }
 
-        verify(mailWrapper, never()).sendReportEmail(eq("test@gmail.com"), eq("DailyReport"), any(), any());
-        verify(mailWrapper, never()).sendReportEmail(eq("test@gmail.com"), eq("DailyReport2"), any(), any());
-        verify(mailWrapper, never()).sendReportEmail(eq("test@gmail.com"), eq("DailyReport3"), any(), any());
+        verify(holder.mailWrapper, never()).sendReportEmail(eq("test@gmail.com"), eq("DailyReport"), any(), any());
+        verify(holder.mailWrapper, never()).sendReportEmail(eq("test@gmail.com"), eq("DailyReport2"), any(), any());
+        verify(holder.mailWrapper, never()).sendReportEmail(eq("test@gmail.com"), eq("DailyReport3"), any(), any());
         assertEquals(3, holder.reportScheduler.getCompletedTaskCount());
         assertEquals(7, holder.reportScheduler.getTaskCount());
     }
@@ -430,8 +430,8 @@ public class ReportingTest extends BaseTest {
             tries++;
         }
 
-        verify(mailWrapper, never()).sendReportEmail(eq("test@gmail.com"), eq("DailyReport"), any(), any());
-        verify(mailWrapper, never()).sendReportEmail(eq("test@gmail.com"), eq("DailyReport2"), any(), any());
+        verify(holder.mailWrapper, never()).sendReportEmail(eq("test@gmail.com"), eq("DailyReport"), any(), any());
+        verify(holder.mailWrapper, never()).sendReportEmail(eq("test@gmail.com"), eq("DailyReport2"), any(), any());
         assertEquals(2, holder.reportScheduler.getCompletedTaskCount());
         assertEquals(4, holder.reportScheduler.getTaskCount());
 
@@ -505,7 +505,7 @@ public class ReportingTest extends BaseTest {
         String date = LocalDate.now(report.tzName).toString();
         String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
         String downloadUrl = "http://127.0.0.1:18080/" + filename;
-        verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
+        verify(holder.mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
                 eq(downloadUrl),
                 eq("Report name: DailyReport<br>Period: Daily, at " + localTime));
@@ -588,7 +588,7 @@ public class ReportingTest extends BaseTest {
         String date = LocalDate.now(report.tzName).toString();
         String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
         String downloadUrl = "http://127.0.0.1:18080/" + filename;
-        verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
+        verify(holder.mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
                 eq(downloadUrl),
                 eq("Report name: DailyReport<br>Period: Daily, at " + localTime));
@@ -659,7 +659,7 @@ public class ReportingTest extends BaseTest {
         String date = LocalDate.now(report.tzName).toString();
         String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
         String downloadUrl = "http://127.0.0.1:18080/" + filename;
-        verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
+        verify(holder.mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
                 eq(downloadUrl),
                 eq("Report name: DailyReport<br>Period: Daily, at " + localTime));
@@ -740,7 +740,7 @@ public class ReportingTest extends BaseTest {
         String date = LocalDate.now(report.tzName).toString();
         String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
         String downloadUrl = "http://127.0.0.1:18080/" + filename;
-        verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
+        verify(holder.mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
                 eq(downloadUrl),
                 eq("Report name: DailyReport<br>Period: Daily, at " + localTime));
@@ -829,7 +829,7 @@ public class ReportingTest extends BaseTest {
         String date = LocalDate.now(report.tzName).toString();
         String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
         String downloadUrl = "http://127.0.0.1:18080/" + filename;
-        verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
+        verify(holder.mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
                 eq(downloadUrl),
                 eq("Report name: DailyReport<br>Period: Daily, at " + localTime));
@@ -925,7 +925,7 @@ public class ReportingTest extends BaseTest {
         String date = LocalDate.now(report.tzName).toString();
         String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
         String downloadUrl = "http://127.0.0.1:18080/" + filename;
-        verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
+        verify(holder.mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
                 eq(downloadUrl),
                 eq("Report name: DailyReport<br>Period: Daily, at " + localTime));
@@ -1019,7 +1019,7 @@ public class ReportingTest extends BaseTest {
         String date = LocalDate.now(report.tzName).toString();
         String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
         String downloadUrl = "http://127.0.0.1:18080/" + filename;
-        verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
+        verify(holder.mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
                 eq(downloadUrl),
                 eq("Report name: DailyReport<br>Period: Daily, at " + localTime));
@@ -1111,7 +1111,7 @@ public class ReportingTest extends BaseTest {
         String date = LocalDate.now(report.tzName).toString();
         String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
         String downloadUrl = "http://127.0.0.1:18080/" + filename;
-        verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
+        verify(holder.mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
                 eq(downloadUrl),
                 eq("Report name: DailyReport<br>Period: Daily, at " + localTime));
@@ -1211,7 +1211,7 @@ public class ReportingTest extends BaseTest {
         String date = LocalDate.now(report.tzName).toString();
         String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
         String downloadUrl = "http://127.0.0.1:18080/" + filename;
-        verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
+        verify(holder.mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
                 eq(downloadUrl),
                 eq("Report name: DailyReport<br>Period: Daily, at " + localTime));
@@ -1304,7 +1304,7 @@ public class ReportingTest extends BaseTest {
         String date = LocalDate.now(report.tzName).toString();
         String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
         String downloadUrl = "http://127.0.0.1:18080/" + filename;
-        verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
+        verify(holder.mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
                 eq(downloadUrl),
                 eq("Report name: DailyReport<br>Period: Daily, at " + localTime));
@@ -1397,7 +1397,7 @@ public class ReportingTest extends BaseTest {
         String date = LocalDate.now(report.tzName).toString();
         String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
         String downloadUrl = "http://127.0.0.1:18080/" + filename;
-        verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
+        verify(holder.mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
                 eq(downloadUrl),
                 eq("Report name: DailyReport<br>Period: Daily, at " + localTime));
@@ -1474,7 +1474,7 @@ public class ReportingTest extends BaseTest {
 
         String date = LocalDate.now(report.tzName).toString();
         String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
-        verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
+        verify(holder.mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
                 eq("http://127.0.0.1:18080/" + filename),
                 any());
@@ -1541,7 +1541,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(0, report.nextReportAt);
         assertEquals(0, report.lastReportAt);
 
-        verify(mailWrapper, never()).sendReportEmail(eq("test@gmail.com"),
+        verify(holder.mailWrapper, never()).sendReportEmail(eq("test@gmail.com"),
                 any(),
                 any(),
                 any());
@@ -1555,7 +1555,7 @@ public class ReportingTest extends BaseTest {
 
         String date = LocalDate.now(report.tzName).toString();
         String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
-        verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
+        verify(holder.mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your one time OneTime Report is ready"),
                 eq("http://127.0.0.1:18080/" + filename),
                 eq("Report name: OneTime Report<br>Period: One time"));
@@ -1625,7 +1625,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(0, report.nextReportAt);
         assertEquals(0, report.lastReportAt);
 
-        verify(mailWrapper, never()).sendReportEmail(eq("test@gmail.com"),
+        verify(holder.mailWrapper, never()).sendReportEmail(eq("test@gmail.com"),
                 any(),
                 any(),
                 any());
@@ -1639,7 +1639,7 @@ public class ReportingTest extends BaseTest {
 
         String date = LocalDate.now(report.tzName).toString();
         String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
-        verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
+        verify(holder.mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your one time OneTime Report is ready"),
                 eq("http://127.0.0.1:18080/" + filename),
                 eq("Report name: OneTime Report<br>Period: One time"));
@@ -1704,7 +1704,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(0, report.nextReportAt);
         assertEquals(0, report.lastReportAt);
 
-        verify(mailWrapper, never()).sendReportEmail(eq("test@gmail.com,test2@gmail.com"),
+        verify(holder.mailWrapper, never()).sendReportEmail(eq("test@gmail.com,test2@gmail.com"),
                 any(),
                 any(),
                 any());
@@ -1718,7 +1718,7 @@ public class ReportingTest extends BaseTest {
 
         String date = LocalDate.now(report.tzName).toString();
         String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
-        verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com,test2@gmail.com"),
+        verify(holder.mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com,test2@gmail.com"),
                 eq("Your one time OneTime Report is ready"),
                 eq("http://127.0.0.1:18080/" + filename),
                 eq("Report name: OneTime Report<br>Period: One time"));
@@ -1783,7 +1783,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(0, report.nextReportAt);
         assertEquals(0, report.lastReportAt);
 
-        verify(mailWrapper, never()).sendReportEmail(eq("test@gmail.com"),
+        verify(holder.mailWrapper, never()).sendReportEmail(eq("test@gmail.com"),
                 any(),
                 any(),
                 any());
@@ -1840,7 +1840,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(0, report.nextReportAt);
         assertEquals(0, report.lastReportAt);
 
-        verify(mailWrapper, never()).sendReportEmail(eq("test@gmail.com"),
+        verify(holder.mailWrapper, never()).sendReportEmail(eq("test@gmail.com"),
                 any(),
                 any(),
                 any());
@@ -1854,7 +1854,7 @@ public class ReportingTest extends BaseTest {
 
         String date = LocalDate.now(report.tzName).toString();
         String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
-        verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
+        verify(holder.mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your one time OneTime Report is ready"),
                 eq("http://127.0.0.1:18080/" + filename),
                 eq("Report name: OneTime Report<br>Period: One time"));
@@ -1942,7 +1942,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(System.currentTimeMillis(), report.lastReportAt, 2000);
         assertEquals(ReportResult.NO_DATA, report.lastRunResult);
 
-        verify(mailWrapper, never()).sendReportEmail(eq("test@gmail.com"),
+        verify(holder.mailWrapper, never()).sendReportEmail(eq("test@gmail.com"),
                 any(),
                 any(),
                 any());
@@ -2000,7 +2000,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(System.currentTimeMillis(), report.lastReportAt, 2000);
         assertEquals(ReportResult.NO_DATA, report.lastRunResult);
 
-        verify(mailWrapper, never()).sendReportEmail(eq("test@gmail.com"),
+        verify(holder.mailWrapper, never()).sendReportEmail(eq("test@gmail.com"),
                 any(),
                 any(),
                 any());
@@ -2047,7 +2047,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(0, reportingWidget2.reports.length);
 
 
-        verify(mailWrapper, never()).sendReportEmail(eq("test@gmail.com"),
+        verify(holder.mailWrapper, never()).sendReportEmail(eq("test@gmail.com"),
                 any(),
                 any(),
                 any());
@@ -2151,7 +2151,7 @@ public class ReportingTest extends BaseTest {
 
         String date = LocalDate.now(report.tzName).toString();
         String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
-        verify(mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
+        verify(holder.mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
                 eq("http://127.0.0.1:18080/" + filename),
                 any());

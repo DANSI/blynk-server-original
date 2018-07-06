@@ -2,7 +2,6 @@ package cc.blynk.integration;
 
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.SlackWrapper;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
@@ -12,7 +11,6 @@ import cc.blynk.utils.properties.ServerProperties;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.mockito.Mock;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -23,6 +21,8 @@ import java.net.URL;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.zip.InflaterInputStream;
+
+import static org.mockito.Mockito.mock;
 
 /**
  * The Blynk Project.
@@ -37,19 +37,18 @@ public abstract class BaseTest extends CounterBase {
     public static int tcpHardPort;
 
     public Holder holder;
-    @Mock
-    public BlockingIOProcessor blockingIOProcessor;
-    @Mock
-    public TwitterWrapper twitterWrapper;
-    @Mock
-    public MailWrapper mailWrapper;
-    @Mock
-    public GCMWrapper gcmWrapper;
-    @Mock
-    public SMSWrapper smsWrapper;
-    @Mock
-    public SlackWrapper slackWrapper;
 
+    @Before
+    public void initHolderAndDataFolder() {
+        properties.setProperty("data.folder", getDataFolder());
+
+        this.holder = new Holder(properties,
+                mock(TwitterWrapper.class),
+                mock(MailWrapper.class), mock(GCMWrapper.class),
+                mock(SMSWrapper.class), mock(SlackWrapper.class),
+                "no-db.properties");
+
+    }
 
     @BeforeClass
     public static void initProps() {
@@ -104,16 +103,6 @@ public abstract class BaseTest extends CounterBase {
 
     public static ClientPair initAppAndHardPair(ServerProperties properties) throws Exception {
         return TestUtil.initAppAndHardPair("localhost", properties.getHttpsPort(), properties.getHttpPort(), getUserName(), "1", "user_profile_json.txt", properties, 10000);
-    }
-
-    @Before
-    public void initHolderAndDataFolder() {
-        properties.setProperty("data.folder", getDataFolder());
-
-        this.holder = new Holder(properties,
-                twitterWrapper, mailWrapper,
-                gcmWrapper, smsWrapper, slackWrapper, "no-db.properties");
-
     }
 
 }
