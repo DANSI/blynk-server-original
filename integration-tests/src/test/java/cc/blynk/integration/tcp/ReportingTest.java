@@ -1470,7 +1470,7 @@ public class ReportingTest extends BaseTest {
 
         report = clientPair.appClient.parseReportFromResponse(2);
         assertNotNull(report);
-        assertEquals(System.currentTimeMillis(), report.nextReportAt, 2500);
+        assertEquals(System.currentTimeMillis(), report.nextReportAt, 3000);
 
         String date = LocalDate.now(report.tzName).toString();
         String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
@@ -2147,7 +2147,7 @@ public class ReportingTest extends BaseTest {
 
         report = clientPair.appClient.parseReportFromResponse(2);
         assertNotNull(report);
-        assertEquals(System.currentTimeMillis(), report.nextReportAt, 2000);
+        assertEquals(System.currentTimeMillis(), report.nextReportAt, 3000);
 
         String date = LocalDate.now(report.tzName).toString();
         String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
