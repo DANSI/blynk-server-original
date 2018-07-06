@@ -59,7 +59,6 @@ import static org.mockito.Mockito.verify;
 
 public final class TestUtil {
 
-    public static final String DEFAULT_TEST_USER = "dima@mail.ua";
     private static final ObjectReader profileReader = JsonParser.init().readerFor(Profile.class);
 
     private TestUtil() {

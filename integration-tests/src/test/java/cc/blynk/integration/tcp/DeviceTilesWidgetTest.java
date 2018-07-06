@@ -53,7 +53,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
 import static cc.blynk.integration.TestUtil.appSync;
 import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.createDevice;
@@ -1084,7 +1083,7 @@ public class DeviceTilesWidgetTest extends BaseTest {
         clientPair.appClient.send("export 1 432");
         clientPair.appClient.verifyResult(new ResponseMessage(3, NO_DATA));
 
-        Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", DEFAULT_TEST_USER);
+        Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", getUserName());
         Files.createDirectories(userReportDirectory);
         Path userReportFile = Paths.get(userReportDirectory.toString(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphGranularityType.MINUTE));
@@ -1093,7 +1092,7 @@ public class DeviceTilesWidgetTest extends BaseTest {
 
         clientPair.appClient.send("export 1 432");
         clientPair.appClient.verifyResult(ok(4));
-        verify(mailWrapper, timeout(1000)).sendHtml(eq(DEFAULT_TEST_USER), eq("History graph data for project My Dashboard"), contains("/" + DEFAULT_TEST_USER + "_1_0_v88_"));
+        verify(mailWrapper, timeout(1000)).sendHtml(eq(getUserName()), eq("History graph data for project My Dashboard"), contains("/" + getUserName() + "_1_0_v88_"));
 
         clientPair.appClient.send("deleteEnhancedData 1\0" + "432");
         clientPair.appClient.verifyResult(ok(5));
@@ -1293,7 +1292,7 @@ public class DeviceTilesWidgetTest extends BaseTest {
                         .replace("{template_name}", "My New Template")
                         .replace("{template_id}", "TMPL123");
 
-        verify(mailWrapper, timeout(1000)).sendHtml(eq(DEFAULT_TEST_USER), eq("Template ID for My New Template"), eq(expectedBody));
+        verify(mailWrapper, timeout(1000)).sendHtml(eq(getUserName()), eq("Template ID for My New Template"), eq(expectedBody));
 
     }
 

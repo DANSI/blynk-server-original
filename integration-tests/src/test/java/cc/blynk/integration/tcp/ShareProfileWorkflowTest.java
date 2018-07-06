@@ -36,7 +36,6 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.zip.DeflaterOutputStream;
 
-import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
 import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.hardware;
 import static cc.blynk.integration.TestUtil.notAllowed;
@@ -121,7 +120,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
         TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
 
-        appClient2.send("shareLogin " + DEFAULT_TEST_USER + " " + token + " Android 24");
+        appClient2.send("shareLogin " + getUserName() + " " + token + " Android 24");
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         appClient2.send("loadProfileGzipped");
@@ -168,7 +167,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
 
         TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
-        appClient2.send("shareLogin " + DEFAULT_TEST_USER + " " + token + " Android 24");
+        appClient2.send("shareLogin " + getUserName() + " " + token + " Android 24");
 
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
@@ -233,12 +232,12 @@ public class ShareProfileWorkflowTest extends BaseTest {
 
         TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
-        appClient2.send("shareLogin " + DEFAULT_TEST_USER + " " + token1 + " Android 24");
+        appClient2.send("shareLogin " + getUserName() + " " + token1 + " Android 24");
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         TestAppClient appClient3 = new TestAppClient(properties);
         appClient3.start();
-        appClient3.send("shareLogin " + DEFAULT_TEST_USER + " " + token2 + " Android 24");
+        appClient3.send("shareLogin " + getUserName() + " " + token2 + " Android 24");
         verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("hardware 1 vw 1 1");
@@ -323,7 +322,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
 
         TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
-        appClient2.send("shareLogin " + DEFAULT_TEST_USER + " " + token + " Android 24");
+        appClient2.send("shareLogin " + getUserName() + " " + token + " Android 24");
         appClient2.verifyResult(ok(1));
 
         clientPair.appClient.send("hardware 1 vw 1 1");
@@ -385,7 +384,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
 
         TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
-        appClient2.send("shareLogin " + DEFAULT_TEST_USER + " " + token + " Android 24");
+        appClient2.send("shareLogin " + getUserName() + " " + token + " Android 24");
         appClient2.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("setProperty 1 color 123");
@@ -403,7 +402,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
 
         TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
-        appClient2.send("shareLogin " + DEFAULT_TEST_USER + " " + token + " Android 24");
+        appClient2.send("shareLogin " + getUserName() + " " + token + " Android 24");
 
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
@@ -423,13 +422,13 @@ public class ShareProfileWorkflowTest extends BaseTest {
 
         TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
-        appClient2.send("shareLogin " + DEFAULT_TEST_USER + " " + token + " Android 24");
+        appClient2.send("shareLogin " + getUserName() + " " + token + " Android 24");
 
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         TestAppClient appClient3 = new TestAppClient(properties);
         appClient3.start();
-        appClient3.send("shareLogin " + DEFAULT_TEST_USER + " " + token + " Android 24");
+        appClient3.send("shareLogin " + getUserName() + " " + token + " Android 24");
 
         verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
@@ -450,13 +449,13 @@ public class ShareProfileWorkflowTest extends BaseTest {
 
         TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
-        appClient2.send("shareLogin " + DEFAULT_TEST_USER + " " + token + " Android 24");
+        appClient2.send("shareLogin " + getUserName() + " " + token + " Android 24");
 
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         TestAppClient appClient3 = new TestAppClient(properties);
         appClient3.start();
-        appClient3.login(DEFAULT_TEST_USER, "1", "Android", "1.10.4");
+        appClient3.login(getUserName(), "1", "Android", "1.10.4");
 
         verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
@@ -490,7 +489,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
 
         TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
-        appClient2.send("shareLogin " + DEFAULT_TEST_USER + " " + token + " Android 24");
+        appClient2.send("shareLogin " + getUserName() + " " + token + " Android 24");
 
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
@@ -514,7 +513,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
 
         TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
-        appClient2.send("shareLogin " + DEFAULT_TEST_USER + " " + token + " Android 24");
+        appClient2.send("shareLogin " + getUserName() + " " + token + " Android 24");
 
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
@@ -547,7 +546,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
 
         TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
-        appClient2.send("shareLogin " + DEFAULT_TEST_USER + " " + token+"a" + " Android 24");
+        appClient2.send("shareLogin " + getUserName() + " " + token+"a" + " Android 24");
 
         verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(notAllowed(1)));
     }
@@ -562,7 +561,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
 
         TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
-        appClient2.send("shareLogin " + DEFAULT_TEST_USER + " " + token + " Android 24");
+        appClient2.send("shareLogin " + getUserName() + " " + token + " Android 24");
 
         verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
 
@@ -584,7 +583,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
 
         TestAppClient appClient3 = new TestAppClient(properties);
         appClient3.start();
-        appClient3.send("shareLogin " + DEFAULT_TEST_USER + " " + token + " Android 24");
+        appClient3.send("shareLogin " + getUserName() + " " + token + " Android 24");
 
         verify(appClient3.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
     }
@@ -599,11 +598,11 @@ public class ShareProfileWorkflowTest extends BaseTest {
 
         TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
-        appClient2.send("shareLogin " + DEFAULT_TEST_USER + " " + token + " Android 24");
+        appClient2.send("shareLogin " + getUserName() + " " + token + " Android 24");
 
         TestAppClient appClient3 = new TestAppClient(properties);
         appClient3.start();
-        appClient3.send("shareLogin " + DEFAULT_TEST_USER + " " + token + " Android 24");
+        appClient3.send("shareLogin " + getUserName() + " " + token + " Android 24");
 
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
@@ -631,11 +630,11 @@ public class ShareProfileWorkflowTest extends BaseTest {
 
         TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
-        appClient2.send("shareLogin " + DEFAULT_TEST_USER + " " + token + " Android 24");
+        appClient2.send("shareLogin " + getUserName() + " " + token + " Android 24");
 
         TestAppClient appClient3 = new TestAppClient(properties);
         appClient3.start();
-        appClient3.send("shareLogin " + DEFAULT_TEST_USER + " " + token + " Android 24");
+        appClient3.send("shareLogin " + getUserName() + " " + token + " Android 24");
 
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
@@ -657,7 +656,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
 
         TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
-        appClient2.send("shareLogin " + DEFAULT_TEST_USER + " " + token + " Android 24");
+        appClient2.send("shareLogin " + getUserName() + " " + token + " Android 24");
 
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
@@ -705,7 +704,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
 
         TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
-        appClient2.send("shareLogin " + DEFAULT_TEST_USER + " " + token + " Android 24");
+        appClient2.send("shareLogin " + getUserName() + " " + token + " Android 24");
 
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
@@ -766,7 +765,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
         TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
 
-        appClient2.send("shareLogin " + DEFAULT_TEST_USER + " " + token + " Android 24");
+        appClient2.send("shareLogin " + getUserName() + " " + token + " Android 24");
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         appClient2.send("loadProfileGzipped");
@@ -783,12 +782,12 @@ public class ShareProfileWorkflowTest extends BaseTest {
 
         TestAppClient appClient3 = new TestAppClient(properties);
         appClient3.start();
-        appClient3.send("shareLogin " + DEFAULT_TEST_USER + " " + token + " Android 24");
+        appClient3.send("shareLogin " + getUserName() + " " + token + " Android 24");
         verify(appClient3.responseMock, timeout(500)).channelRead(any(), eq(notAllowed(1)));
 
         TestAppClient appClient4 = new TestAppClient(properties);
         appClient4.start();
-        appClient4.send("shareLogin " + DEFAULT_TEST_USER + " " + refreshedToken + " Android 24");
+        appClient4.send("shareLogin " + getUserName() + " " + refreshedToken + " Android 24");
         verify(appClient4.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         appClient4.send("loadProfileGzipped");
@@ -818,7 +817,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
     public void testMasterMasterSyncWorksWithoutToken() throws Exception {
         TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
-        appClient2.login(DEFAULT_TEST_USER, "1", "Android", "24");
+        appClient2.login(getUserName(), "1", "Android", "24");
 
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
@@ -840,7 +839,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
 
         TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
-        appClient2.send("shareLogin " + DEFAULT_TEST_USER + " " + token + " Android 24");
+        appClient2.send("shareLogin " + getUserName() + " " + token + " Android 24");
 
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
@@ -879,7 +878,7 @@ public class ShareProfileWorkflowTest extends BaseTest {
 
         TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
-        appClient2.send("shareLogin " + DEFAULT_TEST_USER + " " + token + " Android 24");
+        appClient2.send("shareLogin " + getUserName() + " " + token + " Android 24");
 
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 

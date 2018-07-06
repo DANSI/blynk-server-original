@@ -38,7 +38,6 @@ import javax.net.ssl.SSLContext;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
 import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
@@ -290,36 +289,36 @@ public class HttpsAdminServerTest extends BaseTest {
         clientPair.appClient.verifyResult(ok(1));
 
         User user;
-        HttpGet getUserRequest = new HttpGet(httpsAdminServerUrl + "/users/" + DEFAULT_TEST_USER + "-Blynk");
+        HttpGet getUserRequest = new HttpGet(httpsAdminServerUrl + "/users/" + getUserName() + "-Blynk");
         try (CloseableHttpResponse response = httpclient.execute(getUserRequest)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String userProfile = consumeText(response);
             assertNotNull(userProfile);
             user = JsonParser.parseUserFromString(userProfile);
-            assertEquals(DEFAULT_TEST_USER, user.email);
+            assertEquals(getUserName(), user.email);
         }
 
         user.energy = 12333;
 
-        HttpPut changeUserNameRequestCorrect = new HttpPut(httpsAdminServerUrl + "/users/" + DEFAULT_TEST_USER + "-Blynk");
+        HttpPut changeUserNameRequestCorrect = new HttpPut(httpsAdminServerUrl + "/users/" + getUserName() + "-Blynk");
         changeUserNameRequestCorrect.setEntity(new StringEntity(user.toString(), ContentType.APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(changeUserNameRequestCorrect)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        getUserRequest = new HttpGet(httpsAdminServerUrl + "/users/" + DEFAULT_TEST_USER + "-Blynk");
+        getUserRequest = new HttpGet(httpsAdminServerUrl + "/users/" + getUserName() + "-Blynk");
         try (CloseableHttpResponse response = httpclient.execute(getUserRequest)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String userProfile = consumeText(response);
             assertNotNull(userProfile);
             user = JsonParser.parseUserFromString(userProfile);
-            assertEquals(DEFAULT_TEST_USER, user.email);
+            assertEquals(getUserName(), user.email);
             assertEquals(12333, user.energy);
         }
 
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
-        appClient.login(DEFAULT_TEST_USER, "1","iOS", "1.10.2");
+        appClient.login(getUserName(), "1","iOS", "1.10.2");
         appClient.verifyResult(ok(1));
 
         appClient.activate(1);

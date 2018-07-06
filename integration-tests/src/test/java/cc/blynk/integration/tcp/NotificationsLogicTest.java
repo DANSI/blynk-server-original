@@ -22,7 +22,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Map;
 
-import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
 import static cc.blynk.integration.TestUtil.createDevice;
 import static cc.blynk.integration.TestUtil.deviceOffline;
 import static cc.blynk.integration.TestUtil.hardwareConnected;
@@ -140,7 +139,7 @@ public class NotificationsLogicTest extends BaseTest {
 
         appClient.start();
 
-        appClient.login(DEFAULT_TEST_USER, "1", "iOS", "1.10.2");
+        appClient.login(getUserName(), "1", "iOS", "1.10.2");
         appClient.verifyResult(ok(1));
 
         appClient.send("addPushToken 1\0uid2\0token2");
@@ -322,7 +321,7 @@ public class NotificationsLogicTest extends BaseTest {
 
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
-        appClient.login(DEFAULT_TEST_USER, "1", "Android", "1.10.4");
+        appClient.login(getUserName(), "1", "Android", "1.10.4");
         appClient.verifyResult(ok(1));
 
         TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
@@ -358,7 +357,7 @@ public class NotificationsLogicTest extends BaseTest {
 
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
-        appClient.login(DEFAULT_TEST_USER, "1", "Android", "1.10.4");
+        appClient.login(getUserName(), "1", "Android", "1.10.4");
         appClient.verifyResult(ok(1));
 
         appClient.send("addPushToken 1\0uid2\0token2");
@@ -391,7 +390,7 @@ public class NotificationsLogicTest extends BaseTest {
 
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
-        appClient.login(DEFAULT_TEST_USER, "1", "Android", "1.10.4");
+        appClient.login(getUserName(), "1", "Android", "1.10.4");
         appClient.verifyResult(ok(1));
 
         appClient.send("addPushToken 1\0uid2\0token2");
@@ -422,7 +421,7 @@ public class NotificationsLogicTest extends BaseTest {
 
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
-        appClient.send("shareLogin " + DEFAULT_TEST_USER + " " + token + " Android 24");
+        appClient.send("shareLogin " + getUserName() + " " + token + " Android 24");
 
         appClient.send("addPushToken 1\0uid2\0token2");
         appClient.verifyResult(ok(2));
@@ -553,7 +552,7 @@ public class NotificationsLogicTest extends BaseTest {
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
 
-        appClient.login(DEFAULT_TEST_USER, "1", "iOS", "1.10.2");
+        appClient.login(getUserName(), "1", "iOS", "1.10.2");
         appClient.verifyResult(ok(1));
 
         clientPair.appClient.deleteWidget(1, 9);

@@ -30,7 +30,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
 import static cc.blynk.integration.TestUtil.appSync;
 import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.createDevice;
@@ -190,7 +189,7 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         //login with shared app
         TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
-        appClient2.send("shareLogin " + DEFAULT_TEST_USER + " " + sharedToken + " Android 24");
+        appClient2.send("shareLogin " + getUserName() + " " + sharedToken + " Android 24");
         verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         appClient2.send("hardware 1-200000 vw 88 1");
@@ -265,14 +264,14 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
 
         String tempDir = holder.props.getProperty("data.folder");
 
-        final Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        final Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
 
-        Path pinReportingDataPath = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
-        Path pinReportingDataPath2 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath2 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
 
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);

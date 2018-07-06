@@ -24,7 +24,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
 import static cc.blynk.integration.TestUtil.appSync;
 import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.createDevice;
@@ -201,7 +200,7 @@ public class AppSyncWorkflowTest extends BaseTest {
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
 
-        appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.26.0");
+        appClient.login(getUserName(), "1", "Android", "2.26.0");
         appClient.verifyResult(ok(1));
 
         appClient.send("loadProfileGzipped");
@@ -239,7 +238,7 @@ public class AppSyncWorkflowTest extends BaseTest {
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
 
-        appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.26.0");
+        appClient.login(getUserName(), "1", "Android", "2.26.0");
         appClient.verifyResult(ok(1));
 
         appClient.send("loadProfileGzipped");
@@ -289,7 +288,7 @@ public class AppSyncWorkflowTest extends BaseTest {
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
 
-        appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.26.0");
+        appClient.login(getUserName(), "1", "Android", "2.26.0");
         appClient.verifyResult(ok(1));
 
         appClient.send("loadProfileGzipped");
@@ -348,7 +347,7 @@ public class AppSyncWorkflowTest extends BaseTest {
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
 
-        appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.26.0");
+        appClient.login(getUserName(), "1", "Android", "2.26.0");
         appClient.verifyResult(ok(1));
 
         appClient.send("loadProfileGzipped");
@@ -407,7 +406,7 @@ public class AppSyncWorkflowTest extends BaseTest {
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
 
-        appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.25.0");
+        appClient.login(getUserName(), "1", "Android", "2.25.0");
         appClient.verifyResult(ok(1));
 
         appClient.send("loadProfileGzipped");
@@ -467,7 +466,7 @@ public class AppSyncWorkflowTest extends BaseTest {
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
 
-        appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.26.0");
+        appClient.login(getUserName(), "1", "Android", "2.26.0");
         appClient.verifyResult(ok(1));
 
         appClient.send("loadProfileGzipped");
@@ -531,7 +530,7 @@ public class AppSyncWorkflowTest extends BaseTest {
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
 
-        appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.26.0");
+        appClient.login(getUserName(), "1", "Android", "2.26.0");
         appClient.verifyResult(ok(1));
 
         appClient.send("loadProfileGzipped");
@@ -616,7 +615,7 @@ public class AppSyncWorkflowTest extends BaseTest {
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
 
-        appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.26.0");
+        appClient.login(getUserName(), "1", "Android", "2.26.0");
         appClient.verifyResult(ok(1));
 
         appClient.send("loadProfileGzipped");
@@ -663,7 +662,7 @@ public class AppSyncWorkflowTest extends BaseTest {
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
 
-        appClient.login(DEFAULT_TEST_USER, "1", "Android", "2.26.0");
+        appClient.login(getUserName(), "1", "Android", "2.26.0");
         appClient.verifyResult(ok(1));
 
         appClient.send("loadProfileGzipped");

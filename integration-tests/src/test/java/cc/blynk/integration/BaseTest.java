@@ -39,8 +39,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.zip.InflaterInputStream;
 
-import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
-
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -48,7 +46,8 @@ import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
  */
 public abstract class BaseTest {
 
-    public static final String blynkTempDir;
+    protected static final String blynkTempDir;
+    protected static final String DEFAULT_TEST_USER = "dima@mail.ua";
 
     static {
         Security.addProvider(new BouncyCastleProvider());
@@ -159,13 +158,8 @@ public abstract class BaseTest {
         return context;
     }
 
-    @Before
-    public void initHolderAndDataFolder() {
-        properties.setProperty("data.folder", getDataFolder());
-
-        this.holder = new Holder(properties,
-                twitterWrapper, mailWrapper,
-                gcmWrapper, smsWrapper, slackWrapper, "no-db.properties");
+    public static ClientPair initAppAndHardPair() throws Exception {
+        return TestUtil.initAppAndHardPair("localhost", properties.getHttpsPort(), tcpHardPort, getUserName(), "1", null, properties, 10000);
     }
 
     public String getDataFolder() {
@@ -199,24 +193,37 @@ public abstract class BaseTest {
         }
     }
 
-    public static ClientPair initAppAndHardPair() throws Exception {
-        return TestUtil.initAppAndHardPair("localhost", properties.getHttpsPort(), tcpHardPort, DEFAULT_TEST_USER, "1", null, properties, 10000);
-    }
-
     public static ClientPair initAppAndHardPair(int energy) throws Exception {
-        return TestUtil.initAppAndHardPair("localhost", properties.getHttpsPort(), tcpHardPort, DEFAULT_TEST_USER, "1", null, properties, energy);
+        return TestUtil.initAppAndHardPair("localhost", properties.getHttpsPort(), tcpHardPort, getUserName(), "1", null, properties, energy);
     }
 
     public static ClientPair initAppAndHardPair(String jsonProfile) throws Exception {
-        return TestUtil.initAppAndHardPair("localhost", properties.getHttpsPort(), tcpHardPort, DEFAULT_TEST_USER, "1", jsonProfile, properties, 10000);
+        return TestUtil.initAppAndHardPair("localhost", properties.getHttpsPort(), tcpHardPort, getUserName(), "1", jsonProfile, properties, 10000);
     }
 
     public static ClientPair initAppAndHardPair(int tcpAppPort, int tcpHartPort, ServerProperties properties) throws Exception {
-        return TestUtil.initAppAndHardPair("localhost", tcpAppPort, tcpHartPort, DEFAULT_TEST_USER, "1", null, properties, 10000);
+        return TestUtil.initAppAndHardPair("localhost", tcpAppPort, tcpHartPort, getUserName(), "1", null, properties, 10000);
     }
 
     public static ClientPair initAppAndHardPair(ServerProperties properties) throws Exception {
-        return TestUtil.initAppAndHardPair("localhost", properties.getHttpsPort(), properties.getHttpPort(), DEFAULT_TEST_USER, "1", null, properties, 10000);
+        return TestUtil.initAppAndHardPair("localhost", properties.getHttpsPort(), properties.getHttpPort(), getUserName(), "1", null, properties, 10000);
+    }
+
+    //generates unique name of a user, so every test is independent from others
+    //name is unique only within the test
+    public static String getUserName() {
+        return userCounter.get() + DEFAULT_TEST_USER;
+    }
+
+    @Before
+    public void initHolderAndDataFolder() {
+        properties.setProperty("data.folder", getDataFolder());
+
+        this.holder = new Holder(properties,
+                twitterWrapper, mailWrapper,
+                gcmWrapper, smsWrapper, slackWrapper, "no-db.properties");
+
+        userCounter.incrementAndGet();
     }
 
     private static final AtomicLong userCounter = new AtomicLong();

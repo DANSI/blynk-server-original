@@ -45,7 +45,6 @@ import java.nio.file.Paths;
 import java.time.ZoneId;
 import java.util.List;
 
-import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
 import static cc.blynk.integration.TestUtil.appIsOutdated;
 import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.createDevice;
@@ -114,17 +113,18 @@ public class MainWorkflowTest extends BaseTest {
 
     @Test
     public void testResetEmail() throws Exception {
+        String userName = getUserName();
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
 
-        appClient.send("resetPass start " + DEFAULT_TEST_USER + " " + AppNameUtil.BLYNK);
+        appClient.send("resetPass start " + userName + " " + AppNameUtil.BLYNK);
         appClient.verifyResult(ok(1));
 
-        appClient.send("resetPass start " + DEFAULT_TEST_USER + " " + AppNameUtil.BLYNK);
+        appClient.send("resetPass start " + userName + " " + AppNameUtil.BLYNK);
         appClient.verifyResult(notAllowed(2));
 
         String token = holder.tokensPool.getHolder().entrySet().iterator().next().getKey();
-        verify(mailWrapper).sendWithAttachment(eq(DEFAULT_TEST_USER), eq("Password restoration for your Blynk account."), contains("http://blynk-cloud.com/restore?token=" + token), any(QrHolder.class));
+        verify(mailWrapper).sendWithAttachment(eq(userName), eq("Password restoration for your Blynk account."), contains("http://blynk-cloud.com/restore?token=" + token), any(QrHolder.class));
 
         appClient.send("resetPass verify 123");
         appClient.verifyResult(notAllowed(3));
@@ -132,13 +132,13 @@ public class MainWorkflowTest extends BaseTest {
         appClient.send("resetPass verify " + token);
         appClient.verifyResult(ok(4));
 
-        appClient.send("resetPass reset " + token + " " + SHA256Util.makeHash("2", DEFAULT_TEST_USER));
+        appClient.send("resetPass reset " + token + " " + SHA256Util.makeHash("2", userName));
         appClient.verifyResult(ok(5));
 
-        appClient.login(DEFAULT_TEST_USER, "1");
+        appClient.login(userName, "1");
         appClient.verifyResult(new ResponseMessage(6, USER_NOT_AUTHENTICATED));
 
-        appClient.login(DEFAULT_TEST_USER, "2");
+        appClient.login(userName, "2");
         appClient.verifyResult(ok(7));
     }
 
@@ -358,7 +358,7 @@ public class MainWorkflowTest extends BaseTest {
 
     @Test
     public void testDoubleLogin() throws Exception {
-        clientPair.hardwareClient.login(DEFAULT_TEST_USER + " 1");
+        clientPair.hardwareClient.login(getUserName() + " 1");
         clientPair.hardwareClient.verifyResult(new ResponseMessage(1, USER_ALREADY_REGISTERED));
     }
 
@@ -658,19 +658,20 @@ public class MainWorkflowTest extends BaseTest {
 
     @Test
     public void testHardwareChannelClosedOnDashRemoval() throws Exception {
+        String username = getUserName();
         String tempDir = holder.props.getProperty("data.folder");
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", username);
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
 
-        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", username,
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
-        Path pinReportingDataPath11 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath11 = Paths.get(tempDir, "data", username,
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
-        Path pinReportingDataPath12 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath12 = Paths.get(tempDir, "data", username,
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.DAILY));
-        Path pinReportingDataPath13 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath13 = Paths.get(tempDir, "data", username,
                 ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 9, GraphGranularityType.DAILY));
 
         FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
@@ -742,7 +743,7 @@ public class MainWorkflowTest extends BaseTest {
 
         TestAppClient newAppClient = new TestAppClient(properties);
         newAppClient.start();
-        newAppClient.send("shareLogin " + DEFAULT_TEST_USER + " " + sharedToken + " Android 24");
+        newAppClient.send("shareLogin " + getUserName() + " " + sharedToken + " Android 24");
 
         newAppClient.verifyResult(notAllowed(1));
     }
@@ -1221,7 +1222,7 @@ public class MainWorkflowTest extends BaseTest {
         verify(appClient2.responseMock, after(600).never()).channelRead(any(), any());
         assertTrue(appClient2.isClosed());
 
-        appClient2.login(DEFAULT_TEST_USER, "1", "Android", "1RC7");
+        appClient2.login(getUserName(), "1", "Android", "1RC7");
         verify(appClient2.responseMock, after(200).never()).channelRead(any(), any());
     }
 
@@ -1454,7 +1455,7 @@ public class MainWorkflowTest extends BaseTest {
     public void testOutdatedAppNotificationAlertWorks() throws Exception {
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
-        appClient.login(DEFAULT_TEST_USER, "1", "Android", "1.1.1");
+        appClient.login(getUserName(), "1", "Android", "1.1.1");
         appClient.verifyResult(ok(1));
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(
                 appIsOutdated(1,
@@ -1466,7 +1467,7 @@ public class MainWorkflowTest extends BaseTest {
     public void testOutdatedAppNotificationNotTriggered() throws Exception {
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
-        appClient.login(DEFAULT_TEST_USER, "1", "Android", "1.1.2");
+        appClient.login(getUserName(), "1", "Android", "1.1.2");
         appClient.verifyResult(ok(1));
         verify(appClient.responseMock, never()).channelRead(any(), eq(
                 appIsOutdated(1,

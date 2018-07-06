@@ -16,7 +16,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
 import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.hardware;
 import static cc.blynk.integration.TestUtil.internal;
@@ -103,7 +102,7 @@ public class BlynkInternalTest extends BaseTest {
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
 
-        appClient.login(DEFAULT_TEST_USER, "1", "Android", "1.13.3");
+        appClient.login(getUserName(), "1", "Android", "1.13.3");
         appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.verifyResult(internal(7777, "acon"));

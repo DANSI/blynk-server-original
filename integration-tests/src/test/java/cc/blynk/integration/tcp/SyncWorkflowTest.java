@@ -29,7 +29,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 
-import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
 import static cc.blynk.integration.TestUtil.appSync;
 import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.createDevice;
@@ -365,7 +364,7 @@ public class SyncWorkflowTest extends BaseTest {
 
     @Test
     public void testSyncForTimer() throws Exception {
-        User user = holder.userDao.users.get(new UserKey(DEFAULT_TEST_USER, "Blynk"));
+        User user = holder.userDao.users.get(new UserKey(getUserName(), "Blynk"));
         Widget widget = user.profile.dashBoards[0].findWidgetByPin(0, (byte) 5, PinType.DIGITAL);
         Timer timer = (Timer) widget;
         timer.value = "100500";

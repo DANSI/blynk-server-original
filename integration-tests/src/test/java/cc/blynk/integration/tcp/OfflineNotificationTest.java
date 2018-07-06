@@ -20,7 +20,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
 import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.createDevice;
 import static cc.blynk.integration.TestUtil.deviceOffline;
@@ -250,7 +249,7 @@ public class OfflineNotificationTest extends BaseTest {
 
         TestAppClient testAppClient = new TestAppClient(properties);
         testAppClient.start();
-        testAppClient.login(DEFAULT_TEST_USER, "1");
+        testAppClient.login(getUserName(), "1");
         testAppClient.verifyResult(ok(1));
 
         testAppClient.send("getDevices 1");

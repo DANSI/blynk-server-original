@@ -24,7 +24,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
 
-import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
 import static cc.blynk.integration.TestUtil.connectRedirect;
 import static cc.blynk.integration.TestUtil.createDevice;
 import static cc.blynk.integration.TestUtil.getServer;
@@ -265,7 +264,7 @@ public class LoadBalancingIntegrationTest extends BaseTest {
         String token = "12345678901234567890123456789012";
 
         assertTrue(holder.dbManager.forwardingTokenDBDao.insertTokenHost(
-                token, "test_host", DEFAULT_TEST_USER, 0, 0));
+                token, "test_host", getUserName(), 0, 0));
 
         TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
         hardClient.start();
@@ -279,7 +278,7 @@ public class LoadBalancingIntegrationTest extends BaseTest {
         String token = "12345678901234567890123456789013";
 
         assertTrue(holder.dbManager.forwardingTokenDBDao.insertTokenHost(
-                token, "test_host", DEFAULT_TEST_USER, 0, 0));
+                token, "test_host", getUserName(), 0, 0));
 
         TestHardClient hardClient = new TestHardClient("localhost", plainHardPort2);
         hardClient.start();
@@ -293,7 +292,7 @@ public class LoadBalancingIntegrationTest extends BaseTest {
         String token = "1234567890123456789012345678901";
 
         assertTrue(holder.dbManager.forwardingTokenDBDao.insertTokenHost(
-                token, "test_host", DEFAULT_TEST_USER, 0, 0));
+                token, "test_host", getUserName(), 0, 0));
 
         TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
         hardClient.start();
@@ -307,7 +306,7 @@ public class LoadBalancingIntegrationTest extends BaseTest {
         String token = "12345678901234567890123456789013";
 
         assertTrue(holder.dbManager.forwardingTokenDBDao.insertTokenHost(
-                token, "test_host", DEFAULT_TEST_USER, 0, 0));
+                token, "test_host", getUserName(), 0, 0));
 
         TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
         hardClient.start();
@@ -326,7 +325,7 @@ public class LoadBalancingIntegrationTest extends BaseTest {
         String token = "12345678901234567890123456789012";
 
         assertTrue(holder.dbManager.forwardingTokenDBDao.insertTokenHost(
-                token, "test_host", DEFAULT_TEST_USER, 0, 0));
+                token, "test_host", getUserName(), 0, 0));
 
         TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
         hardClient.start();
@@ -345,7 +344,7 @@ public class LoadBalancingIntegrationTest extends BaseTest {
         hardClient.verifyResult(invalidToken(3));
 
         assertTrue(holder.dbManager.forwardingTokenDBDao.insertTokenHost(
-                token, "test_host_2", DEFAULT_TEST_USER, 0, 0));
+                token, "test_host_2", getUserName(), 0, 0));
 
         LRUCache.LOGIN_TOKENS_CACHE.clear();
 

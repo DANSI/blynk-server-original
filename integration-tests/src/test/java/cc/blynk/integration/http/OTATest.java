@@ -38,7 +38,6 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Base64;
 
-import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
 import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.internal;
 import static cc.blynk.integration.TestUtil.ok;
@@ -551,7 +550,7 @@ public class OTATest extends BaseTest {
 
     @Test
     public void basicOTAForSingleUser() throws Exception {
-        HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start?user=" + DEFAULT_TEST_USER);
+        HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start?user=" + getUserName());
         post.setHeader(HttpHeaderNames.AUTHORIZATION.toString(), "Basic " + Base64.getEncoder().encodeToString(auth));
 
         String fileName = "test.bin";
@@ -595,7 +594,7 @@ public class OTATest extends BaseTest {
 
     @Test
     public void basicOTAForSingleUserAndNonExistingProject() throws Exception {
-        HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start?user=" + DEFAULT_TEST_USER + "&project=123");
+        HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start?user=" + getUserName() + "&project=123");
         post.setHeader(HttpHeaderNames.AUTHORIZATION.toString(), "Basic " + Base64.getEncoder().encodeToString(auth));
 
         String fileName = "test.bin";
@@ -639,7 +638,7 @@ public class OTATest extends BaseTest {
 
     @Test
     public void basicOTAForSingleUserAndExistingProject() throws Exception {
-        HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start?user=" + DEFAULT_TEST_USER + "&project=My%20Dashboard");
+        HttpPost post = new HttpPost(httpsAdminServerUrl + "/ota/start?user=" + getUserName() + "&project=My%20Dashboard");
         post.setHeader(HttpHeaderNames.AUTHORIZATION.toString(), "Basic " + Base64.getEncoder().encodeToString(auth));
 
         String fileName = "test.bin";

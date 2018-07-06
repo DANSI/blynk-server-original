@@ -14,7 +14,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
 import static cc.blynk.integration.TestUtil.createDevice;
 import static cc.blynk.integration.TestUtil.illegalCommand;
 import static cc.blynk.integration.TestUtil.notAllowed;
@@ -61,29 +60,29 @@ public class AppMailTest extends BaseTest {
     public void testSendEmail() throws Exception {
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
-        appClient.login(DEFAULT_TEST_USER, "1");
+        appClient.login(getUserName(), "1");
         appClient.verifyResult(ok(1));
 
         appClient.send("email 1");
-        verify(mailWrapper, timeout(1000)).sendText(eq(DEFAULT_TEST_USER), eq("Auth Token for My Dashboard project and device My Device"), startsWith("Auth Token : "));
+        verify(mailWrapper, timeout(1000)).sendText(eq(getUserName()), eq("Auth Token for My Dashboard project and device My Device"), startsWith("Auth Token : "));
     }
 
     @Test
     public void testSendEmailForDevice() throws Exception {
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
-        appClient.login(DEFAULT_TEST_USER, "1");
+        appClient.login(getUserName(), "1");
         appClient.verifyResult(ok(1));
 
         appClient.send("email 1 0");
-        verify(mailWrapper, timeout(1000)).sendText(eq(DEFAULT_TEST_USER), eq("Auth Token for My Dashboard project and device My Device"), startsWith("Auth Token : "));
+        verify(mailWrapper, timeout(1000)).sendText(eq(getUserName()), eq("Auth Token for My Dashboard project and device My Device"), startsWith("Auth Token : "));
     }
 
     @Test
     public void testSendEmailForSingleDevice() throws Exception {
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
-        appClient.login(DEFAULT_TEST_USER, "1");
+        appClient.login(getUserName(), "1");
         appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("getDevices 1");
@@ -108,14 +107,14 @@ public class AppMailTest extends BaseTest {
                 "twitter.com/blynk_app\n" +
                 "www.facebook.com/blynkapp\n", devices[0].token);
 
-        verify(mailWrapper, timeout(1000)).sendText(eq(DEFAULT_TEST_USER), eq("Auth Token for My Dashboard project and device My Device"), eq(expectedBody));
+        verify(mailWrapper, timeout(1000)).sendText(eq(getUserName()), eq("Auth Token for My Dashboard project and device My Device"), eq(expectedBody));
     }
 
     @Test
     public void testSendEmailForMultiDevices() throws Exception {
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
-        appClient.login(DEFAULT_TEST_USER, "1");
+        appClient.login(getUserName(), "1");
         appClient.verifyResult(ok(1));
 
         Device device1 = new Device(1, "My Device2", "ESP8266");
@@ -148,7 +147,7 @@ public class AppMailTest extends BaseTest {
                 "twitter.com/blynk_app\n" +
                 "www.facebook.com/blynkapp\n", devices[0].token, devices[1].token);
 
-        verify(mailWrapper, timeout(1000)).sendText(eq(DEFAULT_TEST_USER), eq("Auth Tokens for My Dashboard project and 2 devices"), eq(expectedBody));
+        verify(mailWrapper, timeout(1000)).sendText(eq(getUserName()), eq("Auth Tokens for My Dashboard project and 2 devices"), eq(expectedBody));
     }
 
     @Test
@@ -232,7 +231,7 @@ public class AppMailTest extends BaseTest {
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("email {DEVICE_OWNER_EMAIL} SUBJ_{DEVICE_OWNER_EMAIL} BODY_{DEVICE_OWNER_EMAIL}");
-        verify(mailWrapper, timeout(500)).sendText(eq(DEFAULT_TEST_USER), eq("SUBJ_" + DEFAULT_TEST_USER), eq("BODY_" + DEFAULT_TEST_USER));
+        verify(mailWrapper, timeout(500)).sendText(eq(getUserName()), eq("SUBJ_" + getUserName()), eq("BODY_" + getUserName()));
         clientPair.hardwareClient.verifyResult(ok(1));
     }
 
@@ -258,7 +257,7 @@ public class AppMailTest extends BaseTest {
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("email subj body");
-        verify(mailWrapper, timeout(500)).sendHtml(eq(DEFAULT_TEST_USER), eq("subj"), eq("body"));
+        verify(mailWrapper, timeout(500)).sendHtml(eq(getUserName()), eq("subj"), eq("body"));
         clientPair.hardwareClient.verifyResult(ok(1));
     }
 
