@@ -1,7 +1,7 @@
 package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.BaseTest;
-import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.StaticServerBase;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.dao.ReportingDiskDao;
@@ -15,12 +15,8 @@ import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.model.widgets.ui.table.Table;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
-import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
-import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.FileUtils;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -53,11 +49,14 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class DeviceSelectorWorkflowTest extends BaseTest {
+public class DeviceSelectorWorkflowTest extends StaticServerBase {
 
-    private BaseServer appServer;
-    private BaseServer hardwareServer;
-    private ClientPair clientPair;
+    private static int tcpHardPort;
+
+    @BeforeClass
+    public static void initPort() {
+        tcpHardPort = properties.getHttpPort();
+    }
 
     private static void assertEqualDevice(Device expected, Device real) {
         assertEquals(expected.id, real.id);
@@ -65,21 +64,6 @@ public class DeviceSelectorWorkflowTest extends BaseTest {
         assertEquals(expected.boardType, real.boardType);
         assertNotNull(real.token);
         assertEquals(expected.status, real.status);
-    }
-
-    @Before
-    public void init() throws Exception {
-        this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
-        this.appServer = new AppAndHttpsServer(holder).start();
-
-        this.clientPair = initAppAndHardPair();
-    }
-
-    @After
-    public void shutdown() {
-        this.appServer.close();
-        this.hardwareServer.close();
-        this.clientPair.stop();
     }
 
     @Test

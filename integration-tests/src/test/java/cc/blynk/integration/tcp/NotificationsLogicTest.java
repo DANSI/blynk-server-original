@@ -1,7 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.BaseTest;
-import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.StaticServerBase;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.model.Profile;
@@ -9,12 +8,8 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.enums.Priority;
-import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
-import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import io.netty.channel.ChannelFuture;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -45,25 +40,13 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class NotificationsLogicTest extends BaseTest {
+public class NotificationsLogicTest extends StaticServerBase {
 
-    private BaseServer appServer;
-    private BaseServer hardwareServer;
-    private ClientPair clientPair;
+    private static int tcpHardPort;
 
-    @Before
-    public void init() throws Exception {
-        this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
-        this.appServer = new AppAndHttpsServer(holder).start();
-
-        this.clientPair = initAppAndHardPair();
-    }
-
-    @After
-    public void shutdown() {
-        this.appServer.close();
-        this.hardwareServer.close();
-        this.clientPair.stop();
+    @BeforeClass
+    public static void initPort() {
+        tcpHardPort = properties.getHttpPort();
     }
 
     @Test
@@ -181,12 +164,9 @@ public class NotificationsLogicTest extends BaseTest {
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getToken(1);
-        String token = clientPair.appClient.getBody();
-
         TestHardClient newHardClient = new TestHardClient("localhost", tcpHardPort);
         newHardClient.start();
-        newHardClient.login(token);
+        newHardClient.login(clientPair.token);
         verify(newHardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         newHardClient.stop();
@@ -236,7 +216,7 @@ public class NotificationsLogicTest extends BaseTest {
         channelFuture.await();
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
-        verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
+        verify(holder.gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
         AndroidGCMMessage message = objectArgumentCaptor.getValue();
 
         String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Your My Device went offline.", 1).toJson();
@@ -257,7 +237,7 @@ public class NotificationsLogicTest extends BaseTest {
         ChannelFuture channelFuture = clientPair.hardwareClient.stop();
         channelFuture.await();
 
-        verify(gcmWrapper, after(500).never()).send(any(), any(), any());
+        verify(holder.gcmWrapper, after(500).never()).send(any(), any(), any());
 
         clientPair.appClient.send("logout");
         verify(clientPair.appClient.responseMock, after(500).never()).channelRead(any(), eq(ok(3)));
@@ -277,7 +257,7 @@ public class NotificationsLogicTest extends BaseTest {
         ChannelFuture channelFuture = clientPair.hardwareClient.stop();
         channelFuture.await();
 
-        verify(gcmWrapper, after(500).never()).send(any(), any(), any());
+        verify(holder.gcmWrapper, after(500).never()).send(any(), any(), any());
 
         clientPair.appClient.send("logout");
         verify(clientPair.appClient.responseMock, after(500).never()).channelRead(any(), eq(ok(3)));
@@ -297,7 +277,7 @@ public class NotificationsLogicTest extends BaseTest {
         ChannelFuture channelFuture = clientPair.hardwareClient.stop();
         channelFuture.await();
 
-        verify(gcmWrapper, timeout(500)).send(any(), any(), eq("uid"));
+        verify(holder.gcmWrapper, timeout(500)).send(any(), any(), eq("uid"));
     }
 
     @Test
@@ -317,7 +297,7 @@ public class NotificationsLogicTest extends BaseTest {
 
         clientPair.hardwareClient.stop().await();
 
-        verify(gcmWrapper, after(500).never()).send(any(), any(), any());
+        verify(holder.gcmWrapper, after(500).never()).send(any(), any(), any());
 
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
@@ -336,7 +316,7 @@ public class NotificationsLogicTest extends BaseTest {
         hardClient.stop().await();
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
-        verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), eq("uid"));
+        verify(holder.gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), eq("uid"));
         AndroidGCMMessage message = objectArgumentCaptor.getValue();
 
         String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Your My Device went offline.", 1).toJson();
@@ -369,7 +349,7 @@ public class NotificationsLogicTest extends BaseTest {
         clientPair.hardwareClient.stop().await();
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
-        verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), eq("uid2"));
+        verify(holder.gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), eq("uid2"));
         AndroidGCMMessage message = objectArgumentCaptor.getValue();
 
         String expectedJson = new AndroidGCMMessage("token2", Priority.normal, "Your My Device went offline.", 1).toJson();
@@ -402,7 +382,7 @@ public class NotificationsLogicTest extends BaseTest {
         clientPair.hardwareClient.stop().await();
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
-        verify(gcmWrapper, after(500).never()).send(objectArgumentCaptor.capture(), any(), eq("uid2"));
+        verify(holder.gcmWrapper, after(500).never()).send(objectArgumentCaptor.capture(), any(), eq("uid2"));
     }
 
     @Test
@@ -432,7 +412,7 @@ public class NotificationsLogicTest extends BaseTest {
         clientPair.hardwareClient.stop().await();
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
-        verify(gcmWrapper, after(500).never()).send(objectArgumentCaptor.capture(), any(), eq("uid2"));
+        verify(holder.gcmWrapper, after(500).never()).send(objectArgumentCaptor.capture(), any(), eq("uid2"));
     }
 
     @Test
@@ -451,7 +431,7 @@ public class NotificationsLogicTest extends BaseTest {
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
 
-        verify(gcmWrapper, timeout(2000).times(1)).send(objectArgumentCaptor.capture(), any(), any());
+        verify(holder.gcmWrapper, timeout(2000).times(1)).send(objectArgumentCaptor.capture(), any(), any());
         AndroidGCMMessage message = objectArgumentCaptor.getValue();
         assertTrue(System.currentTimeMillis() - now > notification.notifyWhenOfflineIgnorePeriod );
 
@@ -482,7 +462,7 @@ public class NotificationsLogicTest extends BaseTest {
         newHardClient.verifyResult(ok(1));
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
-        verify(gcmWrapper, after(1500).never()).send(objectArgumentCaptor.capture(), any(), any());
+        verify(holder.gcmWrapper, after(1500).never()).send(objectArgumentCaptor.capture(), any(), any());
     }
 
     @Test
@@ -503,7 +483,7 @@ public class NotificationsLogicTest extends BaseTest {
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
 
-        verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
+        verify(holder.gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
         AndroidGCMMessage message = objectArgumentCaptor.getValue();
 
         String expectedJson = new AndroidGCMMessage("token1", Priority.high, "123", 1).toJson();
@@ -516,7 +496,7 @@ public class NotificationsLogicTest extends BaseTest {
         channelFuture.await();
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
-        verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
+        verify(holder.gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
         AndroidGCMMessage message = objectArgumentCaptor.getValue();
 
         String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Your My Device went offline.", 1).toJson();
@@ -528,7 +508,7 @@ public class NotificationsLogicTest extends BaseTest {
         clientPair.hardwareClient.send("push Yo!");
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
-        verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
+        verify(holder.gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
         AndroidGCMMessage message = objectArgumentCaptor.getValue();
 
         String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Yo!", 1).toJson();
@@ -540,7 +520,7 @@ public class NotificationsLogicTest extends BaseTest {
         clientPair.hardwareClient.send("push Yo {DEVICE_NAME}!");
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
-        verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
+        verify(holder.gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
         AndroidGCMMessage message = objectArgumentCaptor.getValue();
 
         String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Yo My Device!", 1).toJson();

@@ -1,7 +1,7 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.BaseTest;
-import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.StaticServerBase;
+import cc.blynk.integration.TestUtil;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.model.DashBoard;
@@ -11,11 +11,7 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.enums.Theme;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
-import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -35,25 +31,18 @@ import static org.junit.Assert.assertTrue;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class OfflineNotificationTest extends BaseTest {
+public class OfflineNotificationTest extends StaticServerBase {
 
-    private BaseServer appServer;
-    private BaseServer hardwareServer;
-    private ClientPair clientPair;
+    private static int tcpHardPort;
 
-    @Before
-    public void init() throws Exception {
-        this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
-        this.appServer = new AppAndHttpsServer(holder).start();
-
-        this.clientPair = initAppAndHardPair("user_profile_json_empty_dash.txt");
+    @BeforeClass
+    public static void initPort() {
+        tcpHardPort = properties.getHttpPort();
     }
 
-    @After
-    public void shutdown() {
-        this.appServer.close();
-        this.hardwareServer.close();
-        this.clientPair.stop();
+    @Override
+    protected String changeProfileTo() {
+        return "user_profile_json_empty_dash.txt";
     }
 
     @Test
@@ -220,7 +209,7 @@ public class OfflineNotificationTest extends BaseTest {
         hardClient2.verifyResult(ok(2));
 
         //just waiting 2.5 secs so server trigger idle event
-        sleep(2500);
+        TestUtil.sleep(2500);
 
         clientPair.appClient.verifyResult(deviceOffline(0, b("1-1")));
     }

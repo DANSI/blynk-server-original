@@ -1,6 +1,7 @@
 package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.BaseTest;
+import cc.blynk.integration.TestUtil;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
@@ -117,7 +118,7 @@ public class LoadBalancingIntegrationTest extends BaseTest {
         workflowForUser(appClient1, email, pass, appName);
         profileSaverWorker.run();
         //waiting for DB update
-        sleep(500);
+        TestUtil.sleep(500);
 
         assertEquals("127.0.0.1", holder.dbManager.getUserServerIp(email, AppNameUtil.BLYNK));
 
@@ -139,7 +140,7 @@ public class LoadBalancingIntegrationTest extends BaseTest {
         //waiting for channel to be closed.
         //but only limited amount if time
         while ((host = holder2.dbManager.getUserServerIp(username2, AppNameUtil.BLYNK)) == null && tries < 100) {
-            sleep(10);
+            TestUtil.sleep(10);
             tries++;
         }
 
@@ -174,7 +175,7 @@ public class LoadBalancingIntegrationTest extends BaseTest {
         workflowForUser(appClient1, email, pass, appName);
         profileSaverWorker.run();
         //waiting for DB update
-        sleep(500);
+        TestUtil.sleep(500);
 
         assertEquals("127.0.0.1", holder.dbManager.getUserServerIp(email, AppNameUtil.BLYNK));
 

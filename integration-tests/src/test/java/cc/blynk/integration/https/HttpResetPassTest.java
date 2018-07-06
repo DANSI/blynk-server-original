@@ -1,6 +1,7 @@
 package cc.blynk.integration.https;
 
 import cc.blynk.integration.BaseTest;
+import cc.blynk.integration.TestUtil;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.AppNameUtil;
@@ -70,7 +71,7 @@ public class HttpResetPassTest extends BaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(resetPassRequest)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            String data = consumeText(response);
+            String data = TestUtil.consumeText(response);
             assertNotNull(data);
             assertEquals("Email was sent.", data);
         }

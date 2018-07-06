@@ -1,17 +1,11 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.BaseTest;
-import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.StaticServerBase;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.device.HardwareInfo;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
-import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -30,26 +24,7 @@ import static org.junit.Assert.assertNotNull;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class BlynkInternalTest extends BaseTest {
-
-    private BaseServer appServer;
-    private BaseServer hardwareServer;
-    private ClientPair clientPair;
-
-    @Before
-    public void init() throws Exception {
-        this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
-        this.appServer = new AppAndHttpsServer(holder).start();
-
-        this.clientPair = initAppAndHardPair();
-    }
-
-    @After
-    public void shutdown() {
-        this.appServer.close();
-        this.hardwareServer.close();
-        this.clientPair.stop();
-    }
+public class BlynkInternalTest extends StaticServerBase {
 
     @Test
     public void testGetRTC() throws Exception {
@@ -69,12 +44,10 @@ public class BlynkInternalTest extends BaseTest {
 
     @Test
     public void testHardwareLoginWithInfo() throws Exception {
-        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
+        TestHardClient hardClient2 = new TestHardClient("localhost", properties.getHttpPort());
         hardClient2.start();
 
-        clientPair.appClient.getToken(1);
-        String token2 = clientPair.appClient.getBody();
-        hardClient2.login(token2);
+        hardClient2.login(clientPair.token);
         hardClient2.verifyResult(ok(1));
 
         hardClient2.send("internal " + b("ver 0.3.1 fw 3.3.3 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 tmpl tmpl00123"));

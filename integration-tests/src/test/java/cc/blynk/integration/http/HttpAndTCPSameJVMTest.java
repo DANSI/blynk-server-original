@@ -1,9 +1,12 @@
 package cc.blynk.integration.http;
 
-import cc.blynk.integration.BaseTest;
-import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.StaticServerBase;
+import cc.blynk.integration.TestUtil;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.integration.tcp.EventorTest;
+import cc.blynk.server.Holder;
+import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.SlackWrapper;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.Device;
@@ -20,10 +23,14 @@ import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.model.widgets.outputs.HistoryGraph;
 import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
 import cc.blynk.server.core.model.widgets.ui.table.Table;
-import cc.blynk.server.servers.BaseServer;
+import cc.blynk.server.notifications.mail.MailWrapper;
+import cc.blynk.server.notifications.push.GCMWrapper;
+import cc.blynk.server.notifications.sms.SMSWrapper;
+import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.DateTimeUtils;
+import cc.blynk.utils.properties.ServerProperties;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.LuminanceSource;
 import com.google.zxing.Result;
@@ -38,8 +45,8 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -49,11 +56,14 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import static cc.blynk.integration.BaseTest.getRelativeDataFolder;
 import static cc.blynk.integration.TestUtil.b;
+import static cc.blynk.integration.TestUtil.consumeText;
 import static cc.blynk.integration.TestUtil.createDevice;
 import static cc.blynk.integration.TestUtil.hardware;
 import static cc.blynk.integration.TestUtil.ok;
@@ -67,6 +77,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.after;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
@@ -77,33 +88,35 @@ import static org.mockito.Mockito.verify;
  * Created on 07.01.16.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class HttpAndTCPSameJVMTest extends BaseTest {
+public class HttpAndTCPSameJVMTest extends StaticServerBase {
 
-    private BaseServer httpServer;
-    private BaseServer appServer;
+    private static CloseableHttpClient httpclient;
+    private static String httpServerUrl;
 
-    private CloseableHttpClient httpclient;
-    private String httpServerUrl;
-
-    private ClientPair clientPair;
-
-    @After
-    public void shutdown() throws Exception {
+    @AfterClass
+    public static void closeHttp() throws Exception {
         httpclient.close();
-        httpServer.close();
-        appServer.close();
-        clientPair.stop();
     }
 
-    @Before
-    public void init() throws Exception {
-        httpServer = new HardwareAndHttpAPIServer(holder).start();
+    @BeforeClass
+    //shadow parent method by purpose
+    public static void init() throws Exception {
+        properties = new ServerProperties(Collections.emptyMap());
+        properties.setProperty("data.folder", getRelativeDataFolder("/profiles"));
+        BlockingIOProcessor blockingIOProcessor = new BlockingIOProcessor(
+                properties.getIntProperty("blocking.processor.thread.pool.limit", 1),
+                properties.getIntProperty("notifications.queue.limit", 100)
+        );
+        holder = new Holder(properties, mock(TwitterWrapper.class),
+                mock(MailWrapper.class), mock(GCMWrapper.class),
+                mock(SMSWrapper.class), mock(SlackWrapper.class),
+                blockingIOProcessor,
+                "no-db.properties");
+        hardwareServer = new HardwareAndHttpAPIServer(holder).start();
         appServer = new AppAndHttpsServer(holder).start();
+
         httpServerUrl = String.format("http://localhost:%s/", properties.getHttpPort());
         httpclient = HttpClients.createDefault();
-        clientPair = initAppAndHardPair(properties);
-        clientPair.hardwareClient.reset();
-        clientPair.appClient.reset();
     }
 
     @Test
@@ -113,24 +126,21 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
 
         reset(clientPair.appClient.responseMock);
 
-        clientPair.appClient.getToken(1);
-        String token = clientPair.appClient.getBody();
-
-        HttpGet request = new HttpGet(httpServerUrl + token + "/get/v10");
+        HttpGet request = new HttpGet(httpServerUrl + clientPair.token + "/get/v10");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            List<String> values = consumeJsonPinValues(response);
+            List<String> values = TestUtil.consumeJsonPinValues(response);
             assertEquals(1, values.size());
             assertEquals("200", values.get(0));
         }
 
         clientPair.appClient.send("hardware 1 vw 10 201");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 10 201"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("vw 10 201"))));
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            List<String> values = consumeJsonPinValues(response);
+            List<String> values = TestUtil.consumeJsonPinValues(response);
             assertEquals(1, values.size());
             assertEquals("201", values.get(0));
         }
@@ -143,24 +153,21 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
 
         reset(clientPair.appClient.responseMock);
 
-        clientPair.appClient.getToken(1);
-        String token = clientPair.appClient.getBody();
-
-        HttpGet request = new HttpGet(httpServerUrl + token + "/get/v4");
+        HttpGet request = new HttpGet(httpServerUrl + clientPair.token + "/get/v4");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            List<String> values = consumeJsonPinValues(response);
+            List<String> values = TestUtil.consumeJsonPinValues(response);
             assertEquals(1, values.size());
             assertEquals("200", values.get(0));
         }
 
         clientPair.appClient.send("hardware 1 vw 4 201");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 4 201"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("vw 4 201"))));
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            List<String> values = consumeJsonPinValues(response);
+            List<String> values = TestUtil.consumeJsonPinValues(response);
             assertEquals(1, values.size());
             assertEquals("201", values.get(0));
         }
@@ -178,14 +185,11 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
 
         reset(clientPair.appClient.responseMock);
 
-        clientPair.appClient.getToken(1);
-        String token = clientPair.appClient.getBody();
-
-        HttpGet request = new HttpGet(httpServerUrl + token + "/rtc");
+        HttpGet request = new HttpGet(httpServerUrl + clientPair.token + "/rtc");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            List<String> values = consumeJsonPinValues(response);
+            List<String> values = TestUtil.consumeJsonPinValues(response);
             assertEquals(1, values.size());
         }
     }
@@ -201,10 +205,7 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
 
         reset(clientPair.appClient.responseMock);
 
-        clientPair.appClient.getToken(1);
-        String token = clientPair.appClient.getBody();
-
-        HttpPut request = new HttpPut(httpServerUrl + token + "/update/v100");
+        HttpPut request = new HttpPut(httpServerUrl + clientPair.token + "/update/v100");
         request.setEntity(new StringEntity("[\"37\"]", ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -245,14 +246,11 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
 
 
         clientPair.appClient.reset();
-        clientPair.appClient.getToken(1);
-        String token = clientPair.appClient.getBody();
-
-        HttpGet requestGET = new HttpGet(httpServerUrl + token + "/get/v4");
+        HttpGet requestGET = new HttpGet(httpServerUrl + clientPair.token + "/get/v4");
 
         try (CloseableHttpResponse response = httpclient.execute(requestGET)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            List<String> values = consumeJsonPinValues(response);
+            List<String> values = TestUtil.consumeJsonPinValues(response);
             assertEquals(1, values.size());
             assertEquals("1", values.get(0));
         }
@@ -288,14 +286,11 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7777, HARDWARE, b("1-0 vw 4 0"))));
 
         clientPair.appClient.reset();
-        clientPair.appClient.getToken(1);
-        String token = clientPair.appClient.getBody();
-
-        HttpGet requestGET = new HttpGet(httpServerUrl + token + "/get/v4");
+        HttpGet requestGET = new HttpGet(httpServerUrl + clientPair.token + "/get/v4");
 
         try (CloseableHttpResponse response = httpclient.execute(requestGET)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            List<String> values = consumeJsonPinValues(response);
+            List<String> values = TestUtil.consumeJsonPinValues(response);
             assertEquals(1, values.size());
             //todo order is not guarateed here!!! Known issue
             String res = values.get(0);
@@ -309,19 +304,16 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.reset();
-        clientPair.appClient.getToken(1);
-        String token = clientPair.appClient.getBody();
-
-        HttpGet requestGET = new HttpGet(httpServerUrl + token + "/get/d18");
+        HttpGet requestGET = new HttpGet(httpServerUrl + clientPair.token + "/get/d18");
 
         try (CloseableHttpResponse response = httpclient.execute(requestGET)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            List<String> values = consumeJsonPinValues(response);
+            List<String> values = TestUtil.consumeJsonPinValues(response);
             assertEquals(1, values.size());
             assertEquals("1", values.get(0));
         }
 
-        HttpPut requestPUT = new HttpPut(httpServerUrl + token + "/update/d18");
+        HttpPut requestPUT = new HttpPut(httpServerUrl + clientPair.token + "/update/d18");
         requestPUT.setEntity(new StringEntity("[\"0\"]", ContentType.APPLICATION_JSON));
 
         try (CloseableHttpResponse response = httpclient.execute(requestPUT)) {
@@ -334,11 +326,8 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
 
     @Test
     public void testChangePinValueViaHttpAPI() throws Exception {
-        clientPair.appClient.getToken(1);
-        String token = clientPair.appClient.getBody();
-
-        HttpPut request = new HttpPut(httpServerUrl + token + "/update/v4");
-        HttpGet getRequest = new HttpGet(httpServerUrl + token + "/get/v4");
+        HttpPut request = new HttpPut(httpServerUrl + clientPair.token + "/update/v4");
+        HttpGet getRequest = new HttpGet(httpServerUrl + clientPair.token + "/get/v4");
 
         for (int i = 0; i < 50; i++) {
             request.setEntity(new StringEntity("[\"" + i + "\"]", ContentType.APPLICATION_JSON));
@@ -351,7 +340,7 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
 
             try (CloseableHttpResponse response = httpclient.execute(getRequest)) {
                 assertEquals(200, response.getStatusLine().getStatusCode());
-                List<String> values = consumeJsonPinValues(response);
+                List<String> values = TestUtil.consumeJsonPinValues(response);
                 assertEquals(1, values.size());
                 assertEquals(i, Integer.valueOf(values.get(0)).intValue());
             }
@@ -360,10 +349,7 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
 
     @Test
     public void testQRWorks() throws Exception {
-        clientPair.appClient.getToken(1);
-        String token = clientPair.appClient.getBody();
-
-        HttpGet getRequest = new HttpGet(httpServerUrl + token + "/qr");
+        HttpGet getRequest = new HttpGet(httpServerUrl + clientPair.token + "/qr");
         String cloneToken;
         try (CloseableHttpResponse response = httpclient.execute(getRequest)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -389,16 +375,13 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
         }
 
         clientPair.appClient.send("getProjectByCloneCode " + cloneToken);
-        DashBoard dashBoard = clientPair.appClient.parseDash(2);
+        DashBoard dashBoard = clientPair.appClient.parseDash(1);
         assertEquals("My Dashboard", dashBoard.name);
     }
 
     @Test
     public void testIsHardwareAndAppConnected() throws Exception {
-        clientPair.appClient.getToken(1);
-        String token = clientPair.appClient.getBody();
-
-        HttpGet request = new HttpGet(httpServerUrl + token + "/isHardwareConnected");
+        HttpGet request = new HttpGet(httpServerUrl + clientPair.token + "/isHardwareConnected");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -407,7 +390,7 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
             assertEquals("true", value);
         }
 
-        request = new HttpGet(httpServerUrl + token + "/isAppConnected");
+        request = new HttpGet(httpServerUrl + clientPair.token + "/isAppConnected");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -419,12 +402,9 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
 
     @Test
     public void testIsHardwareAndAppDisconnected() throws Exception {
-        clientPair.appClient.getToken(1);
-        String token = clientPair.appClient.getBody();
-
         clientPair.stop();
 
-        HttpGet request = new HttpGet(httpServerUrl + token + "/isHardwareConnected");
+        HttpGet request = new HttpGet(httpServerUrl + clientPair.token + "/isHardwareConnected");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -433,7 +413,7 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
             assertEquals("false", value);
         }
 
-        request = new HttpGet(httpServerUrl + token + "/isAppConnected");
+        request = new HttpGet(httpServerUrl + clientPair.token + "/isAppConnected");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -441,16 +421,11 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
             assertNotNull(value);
             assertEquals("false", value);
         }
-
-        clientPair = initAppAndHardPair(properties);
     }
 
     @Test
     public void testIsHardwareConnecteedWithMultiDevices() throws Exception {
-        clientPair.appClient.getToken(1);
-        String token = clientPair.appClient.getBody();
-
-        HttpGet request = new HttpGet(httpServerUrl + token + "/isHardwareConnected");
+        HttpGet request = new HttpGet(httpServerUrl + clientPair.token + "/isHardwareConnected");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -459,7 +434,7 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
             assertEquals("true", value);
         }
 
-        request = new HttpGet(httpServerUrl + token + "/isAppConnected");
+        request = new HttpGet(httpServerUrl + clientPair.token + "/isAppConnected");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -471,10 +446,10 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.parseDevice(2);
+        Device device = clientPair.appClient.parseDevice(1);
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(2, device)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createDevice(1, device)));
 
         clientPair.appClient.reset();
 
@@ -484,7 +459,7 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
         assertNotNull(devices);
         assertEquals(2, devices.length);
 
-        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
+        TestHardClient hardClient2 = new TestHardClient("localhost", properties.getHttpPort());
         hardClient2.start();
 
         hardClient2.login(devices[1].token);
@@ -492,7 +467,7 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
 
         clientPair.stop();
 
-        request = new HttpGet(httpServerUrl + token + "/isHardwareConnected");
+        request = new HttpGet(httpServerUrl + clientPair.token + "/isHardwareConnected");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -501,7 +476,7 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
             assertEquals("false", value);
         }
 
-        request = new HttpGet(httpServerUrl + token + "/isAppConnected");
+        request = new HttpGet(httpServerUrl + clientPair.token + "/isAppConnected");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
@@ -522,14 +497,10 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
 
     @Test
     public void testChangePinValueViaHttpAPIAndNoActiveProject() throws Exception {
-        clientPair.appClient.getToken(1);
-        String token = clientPair.appClient.getBody();
-        clientPair.appClient.reset();
-
         clientPair.appClient.deactivate(1);
         clientPair.appClient.verifyResult(ok(1));
 
-        HttpPut request = new HttpPut(httpServerUrl + token + "/update/v31");
+        HttpPut request = new HttpPut(httpServerUrl + clientPair.token + "/update/v31");
 
         request.setEntity(new StringEntity("[\"100\"]", ContentType.APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -545,10 +516,7 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
 
     @Test
     public void testChangeLCDPinValueViaHttpAPIAndValueChanged() throws Exception {
-        clientPair.appClient.getToken(1);
-        String token = clientPair.appClient.getBody();
-
-        HttpPut request = new HttpPut(httpServerUrl + token + "/update/v0");
+        HttpPut request = new HttpPut(httpServerUrl + clientPair.token + "/update/v0");
 
         request.setEntity(new StringEntity("[\"100\"]", ContentType.APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -558,7 +526,7 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("vw 0 100"))));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(111, HARDWARE, b("1-0 vw 0 100"))));
 
-        request = new HttpPut(httpServerUrl + token + "/update/v1");
+        request = new HttpPut(httpServerUrl + clientPair.token + "/update/v1");
 
         request.setEntity(new StringEntity("[\"101\"]", ContentType.APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -571,10 +539,7 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
 
     @Test
     public void testChangePinValueViaHttpAPIAndNoWidgetSinglePinValue() throws Exception {
-        clientPair.appClient.getToken(1);
-        String token = clientPair.appClient.getBody();
-
-        HttpPut request = new HttpPut(httpServerUrl + token + "/update/v31");
+        HttpPut request = new HttpPut(httpServerUrl + clientPair.token + "/update/v31");
 
         request.setEntity(new StringEntity("[\"100\"]", ContentType.APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -587,13 +552,10 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
 
     @Test
     public void testChangePinValueViaHttpAPIAndForTerminal() throws Exception {
-        clientPair.appClient.getToken(1);
-        String token = clientPair.appClient.getBody();
-
         clientPair.appClient.createWidget(1, "{\"id\":222, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"TERMINAL\", \"pinType\":\"VIRTUAL\", \"pin\":100}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
-        HttpPut request = new HttpPut(httpServerUrl + token + "/update/V100");
+        HttpPut request = new HttpPut(httpServerUrl + clientPair.token + "/update/V100");
 
         request.setEntity(new StringEntity("[\"100\"]", ContentType.APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -606,10 +568,7 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
 
     @Test
     public void testChangePinValueViaHttpAPIAndNoWidgetMultiPinValue() throws Exception {
-        clientPair.appClient.getToken(1);
-        String token = clientPair.appClient.getBody();
-
-        HttpPut request = new HttpPut(httpServerUrl + token + "/update/v31");
+        HttpPut request = new HttpPut(httpServerUrl + clientPair.token + "/update/v31");
 
         request.setEntity(new StringEntity("[\"100\",\"101\",\"102\"]", ContentType.APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(request)) {
@@ -632,9 +591,7 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
         clientPair.appClient.createWidget(1, table);
         clientPair.appClient.verifyResult(ok(1));
 
-        clientPair.appClient.getToken(1);
-        String token = clientPair.appClient.getBody(2);
-        HttpGet updateTableRow = new HttpGet(httpServerUrl + token + "/update/v123?value=add&value=2&value=Martes&value=120Kwh");
+        HttpGet updateTableRow = new HttpGet(httpServerUrl + clientPair.token + "/update/v123?value=add&value=2&value=Martes&value=120Kwh");
         try (CloseableHttpResponse response = httpclient.execute(updateTableRow)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
@@ -642,10 +599,7 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
 
     @Test
     public void sendMultiValueToAppViaHttpApi() throws Exception {
-        clientPair.appClient.getToken(1);
-        String token = clientPair.appClient.getBody();
-
-        HttpGet updateTableRow = new HttpGet(httpServerUrl + token + "/update/V1?value=110&value=230&value=330");
+        HttpGet updateTableRow = new HttpGet(httpServerUrl + clientPair.token + "/update/V1?value=110&value=230&value=330");
         try (CloseableHttpResponse response = httpclient.execute(updateTableRow)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
@@ -667,10 +621,7 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
         clientPair.appClient.createWidget(1, rgb);
         clientPair.appClient.verifyResult(ok(1));
 
-        clientPair.appClient.getToken(1);
-        String token = clientPair.appClient.getBody(2);
-
-        HttpGet updateTableRow = new HttpGet(httpServerUrl + token + "/update/V101?value=110&value=230&value=330");
+        HttpGet updateTableRow = new HttpGet(httpServerUrl + clientPair.token + "/update/V101?value=110&value=230&value=330");
         try (CloseableHttpResponse response = httpclient.execute(updateTableRow)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
@@ -694,10 +645,7 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
         clientPair.appClient.createWidget(1, rgb);
         clientPair.appClient.verifyResult(ok(1));
 
-        clientPair.appClient.getToken(1);
-        String token = clientPair.appClient.getBody(2);
-
-        HttpGet updateTableRow = new HttpGet(httpServerUrl + token + "/update/V101?value=110&value=230&value=330");
+        HttpGet updateTableRow = new HttpGet(httpServerUrl + clientPair.token + "/update/V101?value=110&value=230&value=330");
         try (CloseableHttpResponse response = httpclient.execute(updateTableRow)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
@@ -740,18 +688,15 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
         clientPair.appClient.createWidget(1, valueDisplay2);
         clientPair.appClient.verifyResult(ok(3));
 
-        clientPair.appClient.getToken(1);
-        String token = clientPair.appClient.getBody(4);
-
         clientPair.hardwareClient.send("hardware vw 44 123");
         clientPair.hardwareClient.send("hardware vw 45 124");
 
 
-        HttpGet request = new HttpGet(httpServerUrl + token + "/get/v45");
+        HttpGet request = new HttpGet(httpServerUrl + clientPair.token + "/get/v45");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            List<String> values = consumeJsonPinValues(response);
+            List<String> values = TestUtil.consumeJsonPinValues(response);
             assertEquals(1, values.size());
             assertEquals("124", values.get(0));
         }
@@ -779,16 +724,13 @@ public class HttpAndTCPSameJVMTest extends BaseTest {
         clientPair.appClient.createWidget(1, valueDisplay);
         clientPair.appClient.verifyResult(ok(2));
 
-        clientPair.appClient.getToken(1);
-        String token = clientPair.appClient.getBody(3);
-
         clientPair.hardwareClient.send("hardware vw 44 123");
 
-        HttpGet request = new HttpGet(httpServerUrl + token + "/get/v44");
+        HttpGet request = new HttpGet(httpServerUrl + clientPair.token + "/get/v44");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            List<String> values = consumeJsonPinValues(response);
+            List<String> values = TestUtil.consumeJsonPinValues(response);
             assertEquals(1, values.size());
             assertEquals("123", values.get(0));
         }

@@ -1,7 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.BaseTest;
-import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.StaticServerBase;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DashboardSettings;
@@ -21,11 +20,6 @@ import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinActionType;
 import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.GreaterThan;
-import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
-import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -71,11 +65,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ShareProfileWorkflowTest extends BaseTest {
-
-    private BaseServer appServer;
-    private BaseServer hardwareServer;
-    private ClientPair clientPair;
+public class ShareProfileWorkflowTest extends StaticServerBase {
 
     private static OnePinWidget getWidgetByPin(Profile profile, int pin) {
         for (Widget widget : profile.dashBoards[0].widgets) {
@@ -87,20 +77,6 @@ public class ShareProfileWorkflowTest extends BaseTest {
             }
         }
         return null;
-    }
-
-    @Before
-    public void init() throws Exception {
-        this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
-        this.appServer = new AppAndHttpsServer(holder).start();
-        this.clientPair = initAppAndHardPair();
-    }
-
-    @After
-    public void shutdown() {
-        this.appServer.close();
-        this.hardwareServer.close();
-        this.clientPair.stop();
     }
 
     @Test

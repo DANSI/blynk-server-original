@@ -1,6 +1,7 @@
 package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.BaseTest;
+import cc.blynk.integration.TestUtil;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.Holder;
 import cc.blynk.server.servers.BaseServer;
@@ -51,7 +52,7 @@ public class AppOfflineTest extends BaseTest {
         clientPair.appClient.updateDash("{\"id\":1, \"name\":\"test board\", \"isAppConnectedOn\":true}");
         clientPair.appClient.verifyResult(ok(1));
 
-        sleep(1500);
+        TestUtil.sleep(1500);
 
         clientPair.hardwareClient.verifyResult(internal(7777, "adis"));
     }

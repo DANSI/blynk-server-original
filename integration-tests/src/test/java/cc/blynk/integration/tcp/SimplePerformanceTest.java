@@ -1,17 +1,13 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.BaseTest;
+import cc.blynk.integration.StaticServerBase;
 import cc.blynk.integration.TestUtil;
 import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
-import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
-import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.properties.ServerProperties;
 import io.netty.channel.nio.NioEventLoopGroup;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -33,25 +29,13 @@ import static org.junit.Assert.assertEquals;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class SimplePerformanceTest extends BaseTest {
+public class SimplePerformanceTest extends StaticServerBase {
 
     private NioEventLoopGroup sharedNioEventLoopGroup;
 
-    private BaseServer appServer;
-    private BaseServer hardwareServer;
-
     @Before
-    public void init() throws Exception {
+    public void initTP()  {
         this.sharedNioEventLoopGroup = new NioEventLoopGroup();
-        this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
-        this.appServer = new AppAndHttpsServer(holder).start();
-    }
-
-
-    @After
-    public void shutdown() {
-        this.appServer.close();
-        this.hardwareServer.close();
     }
 
     @Test
@@ -68,7 +52,9 @@ public class SimplePerformanceTest extends BaseTest {
             String email = "dima" + i +  "@mail.ua";
 
             Future<ClientPair> future = executorService.submit(
-                    () -> initClientsWithSharedNio("localhost", properties.getHttpsPort(), tcpHardPort, email, "1", null, properties)
+                    () -> initClientsWithSharedNio("localhost",
+                            properties.getHttpsPort(), properties.getHttpPort(),
+                            email, "1", null, properties)
             );
             futures.add(future);
         }
@@ -86,8 +72,7 @@ public class SimplePerformanceTest extends BaseTest {
         assertEquals(clientNumber, counter);
     }
 
-
-    ClientPair initClientsWithSharedNio(String host, int appPort, int hardPort, String user, String pass, String jsonProfile,
+    private ClientPair initClientsWithSharedNio(String host, int appPort, int hardPort, String user, String pass, String jsonProfile,
                                         ServerProperties properties) throws Exception {
 
         TestAppClient appClient = new TestAppClient(host, appPort, properties, sharedNioEventLoopGroup);

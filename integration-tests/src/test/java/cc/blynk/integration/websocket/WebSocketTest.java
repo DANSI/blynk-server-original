@@ -84,17 +84,15 @@ public class WebSocketTest extends BaseTest {
     public void testSyncBetweenWebSocketsAndAppWorks() throws Exception {
         clientPair.appClient.reset();
         clientPair.hardwareClient.reset();
-        clientPair.appClient.getToken(1);
-        String token = clientPair.appClient.getBody();
 
         WebSocketClient webSocketClient = new WebSocketClient("localhost", tcpWebSocketPort, StringUtils.WEBSOCKET_PATH, false);
         webSocketClient.start();
-        webSocketClient.send("login " + token);
+        webSocketClient.send("login " + clientPair.token);
         verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("hardware 1-0 vw 4 1");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 4 1"))));
-        verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 4 1"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("vw 4 1"))));
+        verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("vw 4 1"))));
 
         webSocketClient.send("hardware vw 4 2");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("1-0 vw 4 2"))));
@@ -105,7 +103,7 @@ public class WebSocketTest extends BaseTest {
         clientPair.appClient.reset();
         WebSocketClient webSocketClient2 = new WebSocketClient("localhost", tcpWebSocketPort, StringUtils.WEBSOCKET_PATH, false);
         webSocketClient2.start();
-        webSocketClient2.send("login " + token);
+        webSocketClient2.send("login " + clientPair.token);
         verify(webSocketClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(webSocketClient2.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("pm 1 out 2 out 3 out 5 out 6 in 7 in 30 in 8 in"))));
         webSocketClient2.msgId = 1000;

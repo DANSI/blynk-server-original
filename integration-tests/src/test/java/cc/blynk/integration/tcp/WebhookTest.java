@@ -1,32 +1,39 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.BaseTest;
-import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.StaticServerBase;
+import cc.blynk.server.Holder;
+import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.SlackWrapper;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.others.webhook.Header;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
-import cc.blynk.server.servers.BaseServer;
+import cc.blynk.server.notifications.mail.MailWrapper;
+import cc.blynk.server.notifications.push.GCMWrapper;
+import cc.blynk.server.notifications.sms.SMSWrapper;
+import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.StringUtils;
+import cc.blynk.utils.properties.ServerProperties;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.asynchttpclient.Response;
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Future;
 
+import static cc.blynk.integration.BaseTest.getRelativeDataFolder;
 import static cc.blynk.integration.TestUtil.b;
+import static cc.blynk.integration.TestUtil.consumeJsonPinValues;
 import static cc.blynk.integration.TestUtil.hardware;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.server.core.model.widgets.others.webhook.SupportedWebhookMethod.GET;
@@ -38,6 +45,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.after;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 
@@ -48,17 +56,25 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class WebhookTest extends BaseTest {
-
-    private BaseServer httpServer;
-    private BaseServer appServer;
-    private ClientPair clientPair;
+public class WebhookTest extends StaticServerBase {
 
     private static AsyncHttpClient httpclient;
     private static String httpServerUrl;
 
     @BeforeClass
-    public static void initHttpClient() {
+    //shadow parent method by purpose
+    public static void init() throws Exception {
+        properties = new ServerProperties(Collections.emptyMap());
+        properties.setProperty("data.folder", getRelativeDataFolder("/profiles"));
+
+        holder = new Holder(properties, mock(TwitterWrapper.class),
+                mock(MailWrapper.class), mock(GCMWrapper.class),
+                mock(SMSWrapper.class), mock(SlackWrapper.class),
+                mock(BlockingIOProcessor.class),
+                "no-db.properties");
+        hardwareServer = new HardwareAndHttpAPIServer(holder).start();
+        appServer = new AppAndHttpsServer(holder).start();
+
         httpServerUrl = String.format("http://localhost:%s/", properties.getHttpPort());
         httpclient = new DefaultAsyncHttpClient(
                 new DefaultAsyncHttpClientConfig.Builder()
@@ -70,31 +86,6 @@ public class WebhookTest extends BaseTest {
     @AfterClass
     public static void closeHttpClient() throws Exception {
         httpclient.close();
-    }
-
-    @Before
-    public void init() throws Exception {
-        httpServer = new HardwareAndHttpAPIServer(holder).start();
-        appServer = new AppAndHttpsServer(holder).start();
-
-
-        if (clientPair == null) {
-            clientPair = initAppAndHardPair(properties);
-        }
-        clientPair.hardwareClient.reset();
-        clientPair.appClient.reset();
-    }
-
-    @After
-    public void shutdown() {
-        httpServer.close();
-        appServer.close();
-        clientPair.stop();
-    }
-
-    @Override
-    public String getDataFolder() {
-        return getRelativeDataFolder("/profiles");
     }
 
     @Test
@@ -208,7 +199,7 @@ public class WebhookTest extends BaseTest {
     @Test
     public void testWebhookWorksWithBlynkHttpApiPlaceHolderAndTextPlain() throws Exception {
         WebHook webHook = new WebHook();
-        webHook.url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/V124";
+        webHook.url = httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/V125";
         webHook.method = PUT;
         webHook.headers = new Header[] {new Header("Content-Type", "text/plain")};
         webHook.body = "[\"/pin/\"]";
@@ -223,7 +214,7 @@ public class WebhookTest extends BaseTest {
         clientPair.hardwareClient.send("hardware vw 123 10");
         verify(clientPair.hardwareClient.responseMock, after(1000).times(0)).channelRead(any(), any());
 
-        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124").execute();
+        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V125").execute();
         Response response = f.get();
 
         assertEquals(400, response.getStatusCode());
@@ -629,7 +620,7 @@ public class WebhookTest extends BaseTest {
     @Test
     public void testWebhookWorksWithUrlPlaceholder2() throws Exception {
         WebHook webHook = new WebHook();
-        webHook.url = "http://";
+        webHook.url = "/pin/";
         webHook.method = PUT;
         webHook.headers = new Header[] {new Header("Content-Type", "application/json")};
         webHook.pin = 123;
@@ -641,10 +632,9 @@ public class WebhookTest extends BaseTest {
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("hardware 1 vw 123 1");
-        verify(clientPair.hardwareClient.responseMock, after(500).times(1)).channelRead(any(), eq(
-                new HardwareMessage(2, b("vw 123 1"))));
+        clientPair.hardwareClient.verifyResult(hardware(2, "vw 123 1"));
 
-        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V124").execute();
+        Future<Response> f = httpclient.prepareGet(httpServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/V126").execute();
         Response response = f.get();
 
         assertEquals(400, response.getStatusCode());

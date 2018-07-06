@@ -1,7 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.BaseTest;
-import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.StaticServerBase;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.model.DashBoard;
@@ -30,16 +29,11 @@ import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.model.widgets.ui.tiles.templates.ButtonTileTemplate;
 import cc.blynk.server.core.model.widgets.ui.tiles.templates.PageTileTemplate;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
-import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
-import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.FileUtils;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.asynchttpclient.Response;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -82,30 +76,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class DeviceTilesWidgetTest extends BaseTest {
-
-    private BaseServer appServer;
-    private BaseServer hardwareServer;
-    private ClientPair clientPair;
-
-    @Before
-    public void init() throws Exception {
-        hardwareServer = new HardwareAndHttpAPIServer(holder).start();
-        appServer = new AppAndHttpsServer(holder).start();
-
-        if (clientPair == null) {
-            clientPair = initAppAndHardPair(properties);
-        }
-        clientPair.hardwareClient.reset();
-        clientPair.appClient.reset();
-    }
-
-    @After
-    public void shutdown() {
-        appServer.close();
-        hardwareServer.close();
-        clientPair.stop();
-    }
+public class DeviceTilesWidgetTest extends StaticServerBase {
 
     @Test
     public void createPageTemplate() throws Exception {
@@ -709,7 +680,7 @@ public class DeviceTilesWidgetTest extends BaseTest {
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
 
-        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
+        TestHardClient hardClient2 = new TestHardClient("localhost", properties.getHttpPort());
         hardClient2.start();
         hardClient2.login(device.token);
         hardClient2.verifyResult(ok(1));
@@ -1092,7 +1063,7 @@ public class DeviceTilesWidgetTest extends BaseTest {
 
         clientPair.appClient.send("export 1 432");
         clientPair.appClient.verifyResult(ok(4));
-        verify(mailWrapper, timeout(1000)).sendHtml(eq(getUserName()), eq("History graph data for project My Dashboard"), contains("/" + getUserName() + "_1_0_v88_"));
+        verify(holder.mailWrapper, timeout(1000)).sendHtml(eq(getUserName()), eq("History graph data for project My Dashboard"), contains("/" + getUserName() + "_1_0_v88_"));
 
         clientPair.appClient.send("deleteEnhancedData 1\0" + "432");
         clientPair.appClient.verifyResult(ok(5));
@@ -1292,7 +1263,7 @@ public class DeviceTilesWidgetTest extends BaseTest {
                         .replace("{template_name}", "My New Template")
                         .replace("{template_id}", "TMPL123");
 
-        verify(mailWrapper, timeout(1000)).sendHtml(eq(getUserName()), eq("Template ID for My New Template"), eq(expectedBody));
+        verify(holder.mailWrapper, timeout(1000)).sendHtml(eq(getUserName()), eq("Template ID for My New Template"), eq(expectedBody));
 
     }
 
