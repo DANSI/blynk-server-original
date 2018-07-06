@@ -2,17 +2,10 @@ package cc.blynk.integration.http;
 
 import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.TestUtil;
-import cc.blynk.server.Holder;
-import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.SlackWrapper;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Button;
-import cc.blynk.server.notifications.mail.MailWrapper;
-import cc.blynk.server.notifications.push.GCMWrapper;
-import cc.blynk.server.notifications.sms.SMSWrapper;
-import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.FileUtils;
@@ -35,6 +28,7 @@ import java.util.List;
 import java.util.concurrent.Future;
 
 import static cc.blynk.integration.BaseTest.getRelativeDataFolder;
+import static cc.blynk.integration.TestUtil.createHolderWithIOMock;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.setProperty;
 import static io.netty.handler.codec.http.HttpHeaderNames.ACCESS_CONTROL_ALLOW_ORIGIN;
@@ -46,7 +40,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 
@@ -70,11 +63,7 @@ public class HttpAPIPinsAsyncClientTest extends SingleServerInstancePerTest {
     public static void init() throws Exception {
         properties = new ServerProperties(Collections.emptyMap());
         properties.setProperty("data.folder", getRelativeDataFolder("/profiles"));
-        holder = new Holder(properties, mock(TwitterWrapper.class),
-                mock(MailWrapper.class), mock(GCMWrapper.class),
-                mock(SMSWrapper.class), mock(SlackWrapper.class),
-                mock(BlockingIOProcessor.class),
-                "no-db.properties");
+        holder = createHolderWithIOMock(properties, "no-db.properties");
         hardwareServer = new HardwareAndHttpAPIServer(holder).start();
         appServer = new AppAndHttpsServer(holder).start();
         httpsServerUrl = String.format("http://localhost:%s/", properties.getHttpPort());

@@ -5,11 +5,6 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.SslContextHolder;
 import cc.blynk.server.acme.AcmeClient;
 import cc.blynk.server.acme.ContentHolder;
-import cc.blynk.server.core.SlackWrapper;
-import cc.blynk.server.notifications.mail.MailWrapper;
-import cc.blynk.server.notifications.push.GCMWrapper;
-import cc.blynk.server.notifications.sms.SMSWrapper;
-import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.server.workers.CertificateRenewalWorker;
@@ -24,9 +19,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
 
+import static cc.blynk.integration.TestUtil.createDefaultHolder;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -49,10 +44,7 @@ public class AcmeTest extends BaseTest {
     @Before
     public void init() throws Exception {
         ServerProperties properties2 = new ServerProperties(Collections.emptyMap(), "no_certs.properties");
-        this.holder2 = new Holder(properties2, mock(TwitterWrapper.class),
-                mock(MailWrapper.class), mock(GCMWrapper.class),
-                mock(SMSWrapper.class), mock(SlackWrapper.class),
-                "no-db.properties");
+        this.holder2 = createDefaultHolder(properties2, "no-db.properties");
         httpServer = new HardwareAndHttpAPIServer(holder2).start();
     }
 

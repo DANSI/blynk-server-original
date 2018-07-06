@@ -6,15 +6,10 @@ import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.SlackWrapper;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
-import cc.blynk.server.notifications.mail.MailWrapper;
-import cc.blynk.server.notifications.push.GCMWrapper;
-import cc.blynk.server.notifications.sms.SMSWrapper;
-import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
@@ -31,6 +26,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Collections;
 
 import static cc.blynk.integration.TestUtil.connectRedirect;
+import static cc.blynk.integration.TestUtil.createDefaultHolder;
 import static cc.blynk.integration.TestUtil.createDevice;
 import static cc.blynk.integration.TestUtil.getServer;
 import static cc.blynk.integration.TestUtil.illegalCommand;
@@ -43,7 +39,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 
@@ -70,20 +65,14 @@ public class LoadBalancingIntegrationTest extends BaseTest {
 
     @Before
     public void init() throws Exception {
-        holder = new Holder(properties, mock(TwitterWrapper.class),
-                mock(MailWrapper.class), mock(GCMWrapper.class),
-                mock(SMSWrapper.class), mock(SlackWrapper.class),
-                "db-test.properties");
+        holder = createDefaultHolder(properties, "db-test.properties");;
         hardwareServer1 = new HardwareAndHttpAPIServer(holder).start();
         appServer1 = new AppAndHttpsServer(holder).start();
 
         properties2 = new ServerProperties(Collections.emptyMap(), "server2.properties");
         properties2.setProperty("data.folder", getDataFolder());
 
-        this.holder2 = new Holder(properties2, mock(TwitterWrapper.class),
-                mock(MailWrapper.class), mock(GCMWrapper.class),
-                mock(SMSWrapper.class), mock(SlackWrapper.class),
-                "db-test.properties");
+        this.holder2 = createDefaultHolder(properties2, "db-test.properties");;
         hardwareServer2 = new HardwareAndHttpAPIServer(holder2).start();
         appServer2 = new AppAndHttpsServer(holder2).start();
         plainHardPort2 = properties2.getIntProperty("http.port");

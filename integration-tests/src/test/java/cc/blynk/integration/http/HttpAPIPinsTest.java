@@ -2,16 +2,9 @@ package cc.blynk.integration.http;
 
 import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.TestUtil;
-import cc.blynk.server.Holder;
 import cc.blynk.server.api.http.pojo.EmailPojo;
 import cc.blynk.server.api.http.pojo.PushMessagePojo;
-import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.SlackWrapper;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.notifications.mail.MailWrapper;
-import cc.blynk.server.notifications.push.GCMWrapper;
-import cc.blynk.server.notifications.sms.SMSWrapper;
-import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.properties.ServerProperties;
@@ -34,8 +27,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static cc.blynk.integration.BaseTest.getRelativeDataFolder;
+import static cc.blynk.integration.TestUtil.createHolderWithIOMock;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 
 /**
  * The Blynk Project.
@@ -53,11 +46,7 @@ public class HttpAPIPinsTest extends SingleServerInstancePerTest {
     public static void init() throws Exception {
         properties = new ServerProperties(Collections.emptyMap());
         properties.setProperty("data.folder", getRelativeDataFolder("/profiles"));
-        holder = new Holder(properties, mock(TwitterWrapper.class),
-                mock(MailWrapper.class), mock(GCMWrapper.class),
-                mock(SMSWrapper.class), mock(SlackWrapper.class),
-                mock(BlockingIOProcessor.class),
-                "no-db.properties");
+        holder = createHolderWithIOMock(properties, "no-db.properties");
         appServer = new AppAndHttpsServer(holder).start();
         hardwareServer = new HardwareAndHttpAPIServer(holder).start();
         httpsServerUrl = String.format("http://localhost:%s/", properties.getHttpPort());

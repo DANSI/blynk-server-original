@@ -4,9 +4,6 @@ import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.TestUtil;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.integration.tcp.EventorTest;
-import cc.blynk.server.Holder;
-import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.SlackWrapper;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.Device;
@@ -23,10 +20,6 @@ import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.model.widgets.outputs.HistoryGraph;
 import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
 import cc.blynk.server.core.model.widgets.ui.table.Table;
-import cc.blynk.server.notifications.mail.MailWrapper;
-import cc.blynk.server.notifications.push.GCMWrapper;
-import cc.blynk.server.notifications.sms.SMSWrapper;
-import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.DateTimeUtils;
@@ -64,6 +57,7 @@ import java.util.concurrent.TimeUnit;
 import static cc.blynk.integration.BaseTest.getRelativeDataFolder;
 import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.consumeText;
+import static cc.blynk.integration.TestUtil.createDefaultHolder;
 import static cc.blynk.integration.TestUtil.createDevice;
 import static cc.blynk.integration.TestUtil.hardware;
 import static cc.blynk.integration.TestUtil.ok;
@@ -77,7 +71,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.after;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
@@ -103,15 +96,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
     public static void init() throws Exception {
         properties = new ServerProperties(Collections.emptyMap());
         properties.setProperty("data.folder", getRelativeDataFolder("/profiles"));
-        BlockingIOProcessor blockingIOProcessor = new BlockingIOProcessor(
-                properties.getIntProperty("blocking.processor.thread.pool.limit", 1),
-                properties.getIntProperty("notifications.queue.limit", 100)
-        );
-        holder = new Holder(properties, mock(TwitterWrapper.class),
-                mock(MailWrapper.class), mock(GCMWrapper.class),
-                mock(SMSWrapper.class), mock(SlackWrapper.class),
-                blockingIOProcessor,
-                "no-db.properties");
+        holder = createDefaultHolder(properties, "no-db.properties");
         hardwareServer = new HardwareAndHttpAPIServer(holder).start();
         appServer = new AppAndHttpsServer(holder).start();
 

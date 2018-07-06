@@ -221,19 +221,6 @@ public class Holder {
 
     }
 
-    //for tests only
-    public Holder(ServerProperties serverProperties, TwitterWrapper twitterWrapper,
-                  MailWrapper mailWrapper,
-                  GCMWrapper gcmWrapper, SMSWrapper smsWrapper,
-                  SlackWrapper slackWrapper,
-                  String dbFileName) {
-        this(serverProperties, twitterWrapper, mailWrapper, gcmWrapper,
-                smsWrapper, slackWrapper, new BlockingIOProcessor(
-                        serverProperties.getIntProperty("blocking.processor.thread.pool.limit", 5),
-                        serverProperties.getIntProperty("notifications.queue.limit", 2000)
-                ), dbFileName);
-    }
-
     private static void disableNettyLeakDetector() {
         String leakProperty = SystemPropertyUtil.get("io.netty.leakDetection.level");
         //we do not pass any with JVM option

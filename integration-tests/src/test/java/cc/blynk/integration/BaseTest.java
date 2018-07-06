@@ -2,11 +2,6 @@ package cc.blynk.integration;
 
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.SlackWrapper;
-import cc.blynk.server.notifications.mail.MailWrapper;
-import cc.blynk.server.notifications.push.GCMWrapper;
-import cc.blynk.server.notifications.sms.SMSWrapper;
-import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.utils.properties.ServerProperties;
 import org.junit.After;
 import org.junit.Before;
@@ -22,7 +17,7 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.zip.InflaterInputStream;
 
-import static org.mockito.Mockito.mock;
+import static cc.blynk.integration.TestUtil.createDefaultHolder;
 
 /**
  * The Blynk Project.
@@ -41,13 +36,7 @@ public abstract class BaseTest extends CounterBase {
     @Before
     public void initHolderAndDataFolder() {
         properties.setProperty("data.folder", getDataFolder());
-
-        this.holder = new Holder(properties,
-                mock(TwitterWrapper.class),
-                mock(MailWrapper.class), mock(GCMWrapper.class),
-                mock(SMSWrapper.class), mock(SlackWrapper.class),
-                "no-db.properties");
-
+        this.holder = createDefaultHolder(properties, "no-db.properties");
     }
 
     @BeforeClass

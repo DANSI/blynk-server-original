@@ -4,6 +4,9 @@ import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
+import cc.blynk.server.Holder;
+import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.core.SlackWrapper;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.Profile;
@@ -19,6 +22,10 @@ import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetServerMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
+import cc.blynk.server.notifications.mail.MailWrapper;
+import cc.blynk.server.notifications.push.GCMWrapper;
+import cc.blynk.server.notifications.sms.SMSWrapper;
+import cc.blynk.server.notifications.twitter.TwitterWrapper;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.properties.ServerProperties;
 import com.fasterxml.jackson.databind.ObjectReader;
@@ -61,6 +68,7 @@ import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.enums.Response.SERVER_ERROR;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 
@@ -342,5 +350,31 @@ public final class TestUtil {
         context.init(null, new TrustManager[]{ tm }, null);
 
         return context;
+    }
+
+    public static Holder createHolderWithIOMock(ServerProperties serverProperties,
+                                                String dbFileName) {
+        return new Holder(serverProperties,
+                mock(TwitterWrapper.class),
+                mock(MailWrapper.class),
+                mock(GCMWrapper.class),
+                mock(SMSWrapper.class),
+                mock(SlackWrapper.class),
+                mock(BlockingIOProcessor.class),
+                dbFileName);
+    }
+
+    public static Holder createDefaultHolder(ServerProperties serverProperties,
+                                             String dbFileName) {
+        return new Holder(serverProperties,
+                mock(TwitterWrapper.class),
+                mock(MailWrapper.class),
+                mock(GCMWrapper.class),
+                mock(SMSWrapper.class),
+                mock(SlackWrapper.class),
+                new BlockingIOProcessor(
+                        serverProperties.getIntProperty("blocking.processor.thread.pool.limit", 1),
+                        serverProperties.getIntProperty("notifications.queue.limit", 100)
+                ), dbFileName);
     }
 }
