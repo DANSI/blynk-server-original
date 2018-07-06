@@ -1,6 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.StaticServerBase;
+import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.model.device.Device;
 import org.junit.After;
@@ -34,7 +34,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ReadingWorkflowTest extends StaticServerBase {
+public class ReadingWorkflowTest extends SingleServerInstancePerTest {
 
     private static int tcpHardPort;
     private ScheduledExecutorService ses;

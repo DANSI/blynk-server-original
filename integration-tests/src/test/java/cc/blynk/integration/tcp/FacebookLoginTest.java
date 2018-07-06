@@ -1,6 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.StaticServerBase;
+import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.TestUtil;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
@@ -34,7 +34,7 @@ import static org.mockito.Mockito.verify;
  */
 @RunWith(MockitoJUnitRunner.class)
 @Ignore("ignored cause requires token to work properly")
-public class FacebookLoginTest extends StaticServerBase {
+public class FacebookLoginTest extends SingleServerInstancePerTest {
 
     private final String facebookAuthToken = "";
 

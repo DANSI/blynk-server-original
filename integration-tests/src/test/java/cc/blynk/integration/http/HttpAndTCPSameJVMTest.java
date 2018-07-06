@@ -1,6 +1,6 @@
 package cc.blynk.integration.http;
 
-import cc.blynk.integration.StaticServerBase;
+import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.TestUtil;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.integration.tcp.EventorTest;
@@ -88,7 +88,7 @@ import static org.mockito.Mockito.verify;
  * Created on 07.01.16.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class HttpAndTCPSameJVMTest extends StaticServerBase {
+public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
 
     private static CloseableHttpClient httpclient;
     private static String httpServerUrl;

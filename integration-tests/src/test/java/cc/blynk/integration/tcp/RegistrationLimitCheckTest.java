@@ -1,13 +1,13 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.StaticServerBase;
+import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import org.junit.Test;
 
 import static cc.blynk.integration.TestUtil.notAllowed;
 import static cc.blynk.integration.TestUtil.ok;
 
-public class RegistrationLimitCheckTest extends StaticServerBase {
+public class RegistrationLimitCheckTest extends SingleServerInstancePerTest {
 
     @Test
     public void registrationLimitCheck() throws Exception {

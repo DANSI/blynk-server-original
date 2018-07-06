@@ -1,6 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.StaticServerBase;
+import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DashboardSettings;
@@ -65,7 +65,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ShareProfileWorkflowTest extends StaticServerBase {
+public class ShareProfileWorkflowTest extends SingleServerInstancePerTest {
 
     private static OnePinWidget getWidgetByPin(Profile profile, int pin) {
         for (Widget widget : profile.dashBoards[0].widgets) {

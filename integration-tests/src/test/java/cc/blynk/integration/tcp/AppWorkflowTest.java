@@ -1,6 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.StaticServerBase;
+import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.enums.ProvisionType;
@@ -27,7 +27,7 @@ import static org.junit.Assert.assertTrue;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class AppWorkflowTest extends StaticServerBase {
+public class AppWorkflowTest extends SingleServerInstancePerTest {
 
     @Before
     public void deleteFolder() throws Exception {

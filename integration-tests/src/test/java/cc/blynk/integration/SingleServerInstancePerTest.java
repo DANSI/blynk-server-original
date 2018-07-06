@@ -25,7 +25,7 @@ import static org.mockito.Mockito.reset;
 /**
  * use when you need only 1 server instance per test class and not per test method
  */
-public abstract class StaticServerBase extends CounterBase {
+public abstract class SingleServerInstancePerTest extends CounterBase {
 
     protected static ServerProperties properties;
     protected static BaseServer appServer;

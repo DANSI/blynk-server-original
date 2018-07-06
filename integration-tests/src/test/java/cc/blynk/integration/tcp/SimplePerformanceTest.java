@@ -1,6 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.StaticServerBase;
+import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.TestUtil;
 import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.integration.model.tcp.ClientPair;
@@ -29,7 +29,7 @@ import static org.junit.Assert.assertEquals;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class SimplePerformanceTest extends StaticServerBase {
+public class SimplePerformanceTest extends SingleServerInstancePerTest {
 
     private NioEventLoopGroup sharedNioEventLoopGroup;
 

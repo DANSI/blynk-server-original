@@ -1,6 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.StaticServerBase;
+import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.TestUtil;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class EnergyWorkflowTest extends StaticServerBase {
+public class EnergyWorkflowTest extends SingleServerInstancePerTest {
 
     @Override
     protected ClientPair initClientPair() throws Exception {

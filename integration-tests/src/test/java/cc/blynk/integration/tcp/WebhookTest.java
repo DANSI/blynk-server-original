@@ -1,6 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.StaticServerBase;
+import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.SlackWrapper;
@@ -56,7 +56,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class WebhookTest extends StaticServerBase {
+public class WebhookTest extends SingleServerInstancePerTest {
 
     private static AsyncHttpClient httpclient;
     private static String httpServerUrl;

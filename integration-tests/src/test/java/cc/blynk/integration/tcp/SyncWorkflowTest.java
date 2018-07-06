@@ -1,6 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.StaticServerBase;
+import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.Profile;
@@ -48,7 +48,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class SyncWorkflowTest extends StaticServerBase {
+public class SyncWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testHardSyncReturnHardwareCommands() throws Exception {

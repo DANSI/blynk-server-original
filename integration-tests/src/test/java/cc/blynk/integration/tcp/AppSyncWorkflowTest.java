@@ -1,6 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.StaticServerBase;
+import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.Profile;
@@ -41,7 +41,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class AppSyncWorkflowTest extends StaticServerBase {
+public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testLCDOnActivateSendsCorrectBodySimpleMode() throws Exception {

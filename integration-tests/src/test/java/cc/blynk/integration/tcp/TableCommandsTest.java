@@ -1,6 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.StaticServerBase;
+import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.ui.table.Row;
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class TableCommandsTest extends StaticServerBase {
+public class TableCommandsTest extends SingleServerInstancePerTest {
 
     @Test
     public void testAllTableCommands() throws Exception {

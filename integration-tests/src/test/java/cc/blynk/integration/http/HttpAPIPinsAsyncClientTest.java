@@ -1,6 +1,6 @@
 package cc.blynk.integration.http;
 
-import cc.blynk.integration.StaticServerBase;
+import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.TestUtil;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
@@ -56,7 +56,7 @@ import static org.mockito.Mockito.verify;
  * Created on 24.12.15.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class HttpAPIPinsAsyncClientTest extends StaticServerBase {
+public class HttpAPIPinsAsyncClientTest extends SingleServerInstancePerTest {
 
     private static AsyncHttpClient httpclient;
     private static String httpsServerUrl;

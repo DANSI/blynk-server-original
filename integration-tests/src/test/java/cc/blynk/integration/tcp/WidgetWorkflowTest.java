@@ -1,6 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.StaticServerBase;
+import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
@@ -33,7 +33,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class WidgetWorkflowTest extends StaticServerBase {
+public class WidgetWorkflowTest extends SingleServerInstancePerTest {
 
     @Before
     public void deleteFolder() throws Exception {
