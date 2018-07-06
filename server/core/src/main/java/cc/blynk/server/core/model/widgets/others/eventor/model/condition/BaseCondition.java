@@ -31,6 +31,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = NotEqual.class, name = "NEQ"),
         @JsonSubTypes.Type(value = Between.class, name = "BETWEEN"),
         @JsonSubTypes.Type(value = NotBetween.class, name = "NOT_BETWEEN"),
+        @JsonSubTypes.Type(value = ValueChanged.class, name = "CHANGED"),
 
         @JsonSubTypes.Type(value = StringEqual.class, name = "STR_EQUAL"),
         @JsonSubTypes.Type(value = StringNotEqual.class, name = "STR_NOT_EQUAL")

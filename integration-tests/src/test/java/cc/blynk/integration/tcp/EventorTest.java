@@ -16,6 +16,7 @@ import cc.blynk.server.core.model.widgets.others.eventor.model.action.notificati
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.NotifyAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.TwitAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.condition.BaseCondition;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.ValueChanged;
 import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.Between;
 import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.Equal;
 import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.GreaterThan;
@@ -592,6 +593,33 @@ public class EventorTest extends BaseTest {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1-0 vw 1 abc"))));
         clientPair.hardwareClient.verifyResult(hardware(888, "vw 2 123"));
         clientPair.appClient.verifyResult(hardware(888, "1-0 vw 2 123"));
+    }
+
+    @Test
+    public void testValueChangedRule() throws Exception {
+        DataStream triggerStream = new DataStream((byte) 1, PinType.VIRTUAL);
+        SetPinAction setPinAction = new SetPinAction(new DataStream((byte) 2, PinType.VIRTUAL),
+                "123", SetPinActionType.CUSTOM);
+
+        Eventor eventor = new Eventor(new Rule[] {
+                new Rule(triggerStream, null, new ValueChanged("abc"), new BaseAction[] {setPinAction}, true)
+        });
+
+        clientPair.appClient.createWidget(1, eventor);
+        clientPair.appClient.verifyResult(ok(1));
+
+        clientPair.hardwareClient.send("hardware vw 1 changed");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1-0 vw 1 changed"))));
+        clientPair.hardwareClient.verifyResult(hardware(888, "vw 2 123"));
+        clientPair.appClient.verifyResult(hardware(888, "1-0 vw 2 123"));
+
+        clientPair.hardwareClient.reset();
+        clientPair.appClient.reset();
+
+        clientPair.hardwareClient.send("hardware vw 1 changed");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1-0 vw 1 changed"))));
+        clientPair.hardwareClient.never(hardware(888, "vw 2 123"));
+        clientPair.appClient.never(hardware(888, "1-0 vw 2 123"));
     }
 
     @Test
