@@ -1,7 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.BaseTest;
-import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.SingleServerInstancePerTestWithDB;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.model.DashBoard;
@@ -22,13 +21,9 @@ import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.model.widgets.ui.tiles.templates.PageTileTemplate;
 import cc.blynk.server.db.model.FlashedToken;
 import cc.blynk.server.notifications.mail.QrHolder;
-import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
-import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.AppNameUtil;
 import net.glxn.qrgen.core.image.ImageType;
 import net.glxn.qrgen.javase.QRCode;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,7 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static cc.blynk.integration.TestUtil.b;
-import static cc.blynk.integration.TestUtil.createDefaultHolder;
 import static cc.blynk.integration.TestUtil.createDevice;
 import static cc.blynk.integration.TestUtil.hardware;
 import static cc.blynk.integration.TestUtil.hardwareConnected;
@@ -69,30 +63,11 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class PublishingPreviewFlow extends BaseTest {
-
-    private BaseServer appServer;
-    private BaseServer hardwareServer;
-    private ClientPair clientPair;
+public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
 
     @Before
-    public void init() throws Exception {
-        holder = createDefaultHolder(properties, "db-test.properties");;
-
-        assertNotNull(holder.dbManager.getConnection());
-
-        this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
-        this.appServer = new AppAndHttpsServer(holder).start();
-
-        this.clientPair = initAppAndHardPair();
+    public void deleteTable() throws Exception {
         holder.dbManager.executeSQL("DELETE FROM flashed_tokens");
-    }
-
-    @After
-    public void shutdown() {
-        this.appServer.close();
-        this.hardwareServer.close();
-        this.clientPair.stop();
     }
 
     @Test
@@ -845,7 +820,7 @@ public class PublishingPreviewFlow extends BaseTest {
         assertNotNull(device);
         assertNotNull(device.token);
 
-        TestHardClient hardClient1 = new TestHardClient("localhost", tcpHardPort);
+        TestHardClient hardClient1 = new TestHardClient("localhost", properties.getHttpPort());
         hardClient1.start();
 
         hardClient1.login(device.token);
@@ -915,7 +890,7 @@ public class PublishingPreviewFlow extends BaseTest {
         appClient2.getToken(1, device.id);
         String token = appClient2.getBody();
 
-        TestHardClient hardClient1 = new TestHardClient("localhost", tcpHardPort);
+        TestHardClient hardClient1 = new TestHardClient("localhost", properties.getHttpPort());
         hardClient1.start();
 
         hardClient1.login(token);

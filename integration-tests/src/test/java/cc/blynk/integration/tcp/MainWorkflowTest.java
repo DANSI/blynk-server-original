@@ -87,6 +87,20 @@ import static org.mockito.Mockito.verify;
 public class MainWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
+    public void testCloneForLocalServerWithNoDB() throws Exception  {
+        assertFalse(holder.dbManager.isDBEnabled());
+
+        clientPair.appClient.send("getCloneCode 1");
+        String token = clientPair.appClient.getBody();
+        assertNotNull(token);
+        assertEquals(32, token.length());
+
+        clientPair.appClient.send("getProjectByCloneCode " + token);
+        DashBoard dashBoard = clientPair.appClient.parseDash(2);
+        assertEquals("My Dashboard", dashBoard.name);
+    }
+
+    @Test
     public void testResetEmail() throws Exception {
         String userName = getUserName();
         TestAppClient appClient = new TestAppClient(properties);
