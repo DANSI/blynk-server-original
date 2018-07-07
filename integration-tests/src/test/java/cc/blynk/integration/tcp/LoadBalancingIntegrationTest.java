@@ -1,6 +1,7 @@
 package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.BaseTest;
+import cc.blynk.integration.TestUtil;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
@@ -24,8 +25,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
 
-import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
 import static cc.blynk.integration.TestUtil.connectRedirect;
+import static cc.blynk.integration.TestUtil.createDefaultHolder;
 import static cc.blynk.integration.TestUtil.createDevice;
 import static cc.blynk.integration.TestUtil.getServer;
 import static cc.blynk.integration.TestUtil.illegalCommand;
@@ -64,16 +65,14 @@ public class LoadBalancingIntegrationTest extends BaseTest {
 
     @Before
     public void init() throws Exception {
-        holder = new Holder(properties, twitterWrapper, mailWrapper,
-                gcmWrapper, smsWrapper, slackWrapper, "db-test.properties");
+        holder = createDefaultHolder(properties, "db-test.properties");;
         hardwareServer1 = new HardwareAndHttpAPIServer(holder).start();
         appServer1 = new AppAndHttpsServer(holder).start();
 
         properties2 = new ServerProperties(Collections.emptyMap(), "server2.properties");
         properties2.setProperty("data.folder", getDataFolder());
 
-        this.holder2 = new Holder(properties2, twitterWrapper, mailWrapper,
-                gcmWrapper, smsWrapper, slackWrapper, "db-test.properties");
+        this.holder2 = createDefaultHolder(properties2, "db-test.properties");;
         hardwareServer2 = new HardwareAndHttpAPIServer(holder2).start();
         appServer2 = new AppAndHttpsServer(holder2).start();
         plainHardPort2 = properties2.getIntProperty("http.port");
@@ -118,7 +117,7 @@ public class LoadBalancingIntegrationTest extends BaseTest {
         workflowForUser(appClient1, email, pass, appName);
         profileSaverWorker.run();
         //waiting for DB update
-        sleep(500);
+        TestUtil.sleep(500);
 
         assertEquals("127.0.0.1", holder.dbManager.getUserServerIp(email, AppNameUtil.BLYNK));
 
@@ -140,7 +139,7 @@ public class LoadBalancingIntegrationTest extends BaseTest {
         //waiting for channel to be closed.
         //but only limited amount if time
         while ((host = holder2.dbManager.getUserServerIp(username2, AppNameUtil.BLYNK)) == null && tries < 100) {
-            sleep(10);
+            TestUtil.sleep(10);
             tries++;
         }
 
@@ -175,7 +174,7 @@ public class LoadBalancingIntegrationTest extends BaseTest {
         workflowForUser(appClient1, email, pass, appName);
         profileSaverWorker.run();
         //waiting for DB update
-        sleep(500);
+        TestUtil.sleep(500);
 
         assertEquals("127.0.0.1", holder.dbManager.getUserServerIp(email, AppNameUtil.BLYNK));
 
@@ -265,7 +264,7 @@ public class LoadBalancingIntegrationTest extends BaseTest {
         String token = "12345678901234567890123456789012";
 
         assertTrue(holder.dbManager.forwardingTokenDBDao.insertTokenHost(
-                token, "test_host", DEFAULT_TEST_USER, 0, 0));
+                token, "test_host", getUserName(), 0, 0));
 
         TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
         hardClient.start();
@@ -279,7 +278,7 @@ public class LoadBalancingIntegrationTest extends BaseTest {
         String token = "12345678901234567890123456789013";
 
         assertTrue(holder.dbManager.forwardingTokenDBDao.insertTokenHost(
-                token, "test_host", DEFAULT_TEST_USER, 0, 0));
+                token, "test_host", getUserName(), 0, 0));
 
         TestHardClient hardClient = new TestHardClient("localhost", plainHardPort2);
         hardClient.start();
@@ -293,7 +292,7 @@ public class LoadBalancingIntegrationTest extends BaseTest {
         String token = "1234567890123456789012345678901";
 
         assertTrue(holder.dbManager.forwardingTokenDBDao.insertTokenHost(
-                token, "test_host", DEFAULT_TEST_USER, 0, 0));
+                token, "test_host", getUserName(), 0, 0));
 
         TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
         hardClient.start();
@@ -307,7 +306,7 @@ public class LoadBalancingIntegrationTest extends BaseTest {
         String token = "12345678901234567890123456789013";
 
         assertTrue(holder.dbManager.forwardingTokenDBDao.insertTokenHost(
-                token, "test_host", DEFAULT_TEST_USER, 0, 0));
+                token, "test_host", getUserName(), 0, 0));
 
         TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
         hardClient.start();
@@ -326,7 +325,7 @@ public class LoadBalancingIntegrationTest extends BaseTest {
         String token = "12345678901234567890123456789012";
 
         assertTrue(holder.dbManager.forwardingTokenDBDao.insertTokenHost(
-                token, "test_host", DEFAULT_TEST_USER, 0, 0));
+                token, "test_host", getUserName(), 0, 0));
 
         TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
         hardClient.start();
@@ -345,7 +344,7 @@ public class LoadBalancingIntegrationTest extends BaseTest {
         hardClient.verifyResult(invalidToken(3));
 
         assertTrue(holder.dbManager.forwardingTokenDBDao.insertTokenHost(
-                token, "test_host_2", DEFAULT_TEST_USER, 0, 0));
+                token, "test_host_2", getUserName(), 0, 0));
 
         LRUCache.LOGIN_TOKENS_CACHE.clear();
 

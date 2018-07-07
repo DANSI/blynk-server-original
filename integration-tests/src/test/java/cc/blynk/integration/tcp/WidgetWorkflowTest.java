@@ -1,16 +1,11 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.BaseTest;
-import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
-import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
-import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,28 +33,12 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class WidgetWorkflowTest extends BaseTest {
-
-    private BaseServer appServer;
-    private BaseServer hardwareServer;
-    private ClientPair clientPair;
+public class WidgetWorkflowTest extends SingleServerInstancePerTest {
 
     @Before
-    public void init() throws Exception {
-        this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
-        this.appServer = new AppAndHttpsServer(holder).start();
-
-        this.clientPair = initAppAndHardPair();
+    public void deleteFolder() throws Exception {
         Files.deleteIfExists(Paths.get(getDataFolder(), "blynk", "userProfiles"));
     }
-
-    @After
-    public void shutdown() {
-        this.appServer.close();
-        this.hardwareServer.close();
-        this.clientPair.stop();
-    }
-
 
     @Test
     public void testCorrectBehaviourOnWrongInput() throws Exception {

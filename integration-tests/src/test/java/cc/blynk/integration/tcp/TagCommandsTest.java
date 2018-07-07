@@ -1,18 +1,12 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.BaseTest;
-import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
-import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
-import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -38,26 +32,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class TagCommandsTest extends BaseTest {
-
-    private BaseServer appServer;
-    private BaseServer hardwareServer;
-    private ClientPair clientPair;
-
-    @Before
-    public void init() throws Exception {
-        this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
-        this.appServer = new AppAndHttpsServer(holder).start();
-
-        this.clientPair = initAppAndHardPair();
-    }
-
-    @After
-    public void shutdown() {
-        this.appServer.close();
-        this.hardwareServer.close();
-        this.clientPair.stop();
-    }
+public class TagCommandsTest extends SingleServerInstancePerTest {
 
     @Test
     public void testAddNewTag() throws Exception {
@@ -187,7 +162,7 @@ public class TagCommandsTest extends BaseTest {
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
 
-        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
+        TestHardClient hardClient2 = new TestHardClient("localhost", properties.getHttpPort());
         hardClient2.start();
 
         hardClient2.login(device.token);

@@ -2,6 +2,7 @@ package cc.blynk.integration.http;
 
 
 import cc.blynk.integration.BaseTest;
+import cc.blynk.integration.TestUtil;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import org.apache.http.HttpEntity;
@@ -83,7 +84,7 @@ public class UploadAPITest extends BaseTest {
         String staticPath;
         try (CloseableHttpResponse response = httpclient.execute(post)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            staticPath = consumeText(response);
+            staticPath = TestUtil.consumeText(response);
 
             assertNotNull(staticPath);
             assertTrue(staticPath.startsWith("/static"));

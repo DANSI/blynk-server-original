@@ -126,10 +126,6 @@ public class Holder {
         this.reportingDiskDao = new ReportingDiskDao(serverProperties.getReportingFolder(),
                 serverProperties.isRawDBEnabled() && reportingDBManager.isDBEnabled());
 
-        if (serverProperties.renameOldReportingFiles()) {
-            reportingDiskDao.renameOldReportingFiles();
-        }
-
         this.transportTypeHolder = new TransportTypeHolder(serverProperties);
 
         this.asyncHttpClient = new DefaultAsyncHttpClient(new DefaultAsyncHttpClientConfig.Builder()
@@ -170,7 +166,7 @@ public class Holder {
     public Holder(ServerProperties serverProperties, TwitterWrapper twitterWrapper,
                   MailWrapper mailWrapper,
                   GCMWrapper gcmWrapper, SMSWrapper smsWrapper,
-                  SlackWrapper slackWrapper,
+                  SlackWrapper slackWrapper, BlockingIOProcessor blockingIOProcessor,
                   String dbFileName) {
         disableNettyLeakDetector();
         this.props = serverProperties;
@@ -178,10 +174,7 @@ public class Holder {
         this.fileManager = new FileManager(serverProperties.getDataFolder(), serverProperties.host);
         this.sessionDao = new SessionDao();
         this.userDao = new UserDao(fileManager.deserializeUsers(), serverProperties.region, serverProperties.host);
-        this.blockingIOProcessor = new BlockingIOProcessor(
-                serverProperties.getIntProperty("blocking.processor.thread.pool.limit", 5),
-                serverProperties.getIntProperty("notifications.queue.limit", 2000)
-        );
+        this.blockingIOProcessor = blockingIOProcessor;
 
         boolean enableDB = serverProperties.isDBEnabled();
         this.dbManager = new DBManager(dbFileName, blockingIOProcessor, enableDB);
@@ -225,6 +218,7 @@ public class Holder {
 
         this.sslContextHolder = new SslContextHolder(props, "test@blynk.cc");
         this.tokensPool = new TokensPool(TimeUnit.MINUTES.toMillis(60));
+
     }
 
     private static void disableNettyLeakDetector() {

@@ -1,7 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.BaseTest;
-import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.Profile;
@@ -16,6 +15,7 @@ import cc.blynk.server.core.model.widgets.others.eventor.model.action.notificati
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.NotifyAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.TwitAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.condition.BaseCondition;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.ValueChanged;
 import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.Between;
 import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.Equal;
 import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.GreaterThan;
@@ -28,11 +28,6 @@ import cc.blynk.server.core.model.widgets.others.eventor.model.condition.string.
 import cc.blynk.server.core.model.widgets.others.eventor.model.condition.string.StringNotEqual;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.enums.Priority;
-import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
-import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -59,11 +54,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class EventorTest extends BaseTest {
-
-    private BaseServer appServer;
-    private BaseServer hardwareServer;
-    private ClientPair clientPair;
+public class EventorTest extends SingleServerInstancePerTest {
 
     private static Rule buildRule(String s, boolean isActive) {
         //example "if V1 > 37 then setpin V2 123"
@@ -140,20 +131,6 @@ public class EventorTest extends BaseTest {
     public static Eventor oneRuleEventor(String ruleString) {
         Rule rule = buildRule(ruleString, true);
         return new Eventor(new Rule[] {rule});
-    }
-
-    @Before
-    public void init() throws Exception {
-        this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
-        this.appServer = new AppAndHttpsServer(holder).start();
-        this.clientPair = initAppAndHardPair("user_profile_json.txt");
-    }
-
-    @After
-    public void shutdown() {
-        this.appServer.close();
-        this.hardwareServer.close();
-        this.clientPair.stop();
     }
 
     @Test
@@ -315,7 +292,7 @@ public class EventorTest extends BaseTest {
         clientPair.appClient.verifyResult(hardware(1, "1-0 vw 1 37"));
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
-        verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
+        verify(holder.gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
         AndroidGCMMessage message = objectArgumentCaptor.getValue();
 
         String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Yo!!!!!", 1).toJson();
@@ -333,7 +310,7 @@ public class EventorTest extends BaseTest {
         clientPair.appClient.verifyResult(hardware(1, "1-0 vw 1 37"));
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
-        verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
+        verify(holder.gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
         AndroidGCMMessage message = objectArgumentCaptor.getValue();
 
         String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Temperatureis:37.", 1).toJson();
@@ -350,7 +327,7 @@ public class EventorTest extends BaseTest {
         clientPair.hardwareClient.send("hardware vw 1 37");
         clientPair.appClient.verifyResult(hardware(1, "1-0 vw 1 37"));
 
-        verify(twitterWrapper, timeout(500)).send(eq("token"), eq("secret"), eq("Yo!!!!!"), any());
+        verify(holder.twitterWrapper, timeout(500)).send(eq("token"), eq("secret"), eq("Yo!!!!!"), any());
     }
 
     @Test
@@ -367,7 +344,7 @@ public class EventorTest extends BaseTest {
         clientPair.appClient.verifyResult(hardware(1, "1-0 vw 1 37"));
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
-        verify(mailWrapper, timeout(500).times(1)).sendText(eq("dima@mail.ua"), eq("Subj"), eq("Yo!!!!!"));
+        verify(holder.mailWrapper, timeout(500).times(1)).sendText(eq(getUserName()), eq("Subj"), eq("Yo!!!!!"));
     }
 
     @Test
@@ -384,7 +361,7 @@ public class EventorTest extends BaseTest {
         clientPair.appClient.verifyResult(hardware(1, "1-0 vw 1 37"));
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
-        verify(mailWrapper, timeout(500).times(1)).sendText(eq("dima@mail.ua"), eq("Subj"), eq("Yo37!!!!!"));
+        verify(holder.mailWrapper, timeout(500).times(1)).sendText(eq(getUserName()), eq("Subj"), eq("Yo37!!!!!"));
     }
 
     @Test
@@ -473,12 +450,10 @@ public class EventorTest extends BaseTest {
 
     @Test
     public void testEventorWorksForMultipleHardware() throws Exception {
-        TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
+        TestHardClient hardClient = new TestHardClient("localhost", properties.getHttpPort());
         hardClient.start();
 
-        clientPair.appClient.getToken(1);
-        String token = clientPair.appClient.getBody();
-        hardClient.login(token);
+        hardClient.login(clientPair.token);
         hardClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
@@ -591,6 +566,33 @@ public class EventorTest extends BaseTest {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1-0 vw 1 abc"))));
         clientPair.hardwareClient.verifyResult(hardware(888, "vw 2 123"));
         clientPair.appClient.verifyResult(hardware(888, "1-0 vw 2 123"));
+    }
+
+    @Test
+    public void testValueChangedRule() throws Exception {
+        DataStream triggerStream = new DataStream((byte) 1, PinType.VIRTUAL);
+        SetPinAction setPinAction = new SetPinAction(new DataStream((byte) 2, PinType.VIRTUAL),
+                "123", SetPinActionType.CUSTOM);
+
+        Eventor eventor = new Eventor(new Rule[] {
+                new Rule(triggerStream, null, new ValueChanged("abc"), new BaseAction[] {setPinAction}, true)
+        });
+
+        clientPair.appClient.createWidget(1, eventor);
+        clientPair.appClient.verifyResult(ok(1));
+
+        clientPair.hardwareClient.send("hardware vw 1 changed");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1-0 vw 1 changed"))));
+        clientPair.hardwareClient.verifyResult(hardware(888, "vw 2 123"));
+        clientPair.appClient.verifyResult(hardware(888, "1-0 vw 2 123"));
+
+        clientPair.hardwareClient.reset();
+        clientPair.appClient.reset();
+
+        clientPair.hardwareClient.send("hardware vw 1 changed");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1-0 vw 1 changed"))));
+        clientPair.hardwareClient.never(hardware(888, "vw 2 123"));
+        clientPair.appClient.never(hardware(888, "1-0 vw 2 123"));
     }
 
     @Test

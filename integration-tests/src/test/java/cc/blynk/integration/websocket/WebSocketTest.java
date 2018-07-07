@@ -2,6 +2,7 @@ package cc.blynk.integration.websocket;
 
 import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.model.websocket.AppWebSocketClient;
 import cc.blynk.integration.model.websocket.WebSocketClient;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.servers.BaseServer;
@@ -18,6 +19,7 @@ import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
+import static cc.blynk.utils.StringUtils.WEBSOCKET_WEB_PATH;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.timeout;
@@ -37,10 +39,10 @@ public class WebSocketTest extends BaseTest {
     //private static Holder localHolder;
 
     //web socket ports
-    public static int tcpWebSocketPort;
+    private static int tcpWebSocketPort;
 
     @After
-    public void shutdown() throws Exception {
+    public void shutdown() {
         webSocketServer.close();
         appServer.close();
         clientPair.stop();
@@ -58,6 +60,17 @@ public class WebSocketTest extends BaseTest {
     @Override
     public String getDataFolder() {
         return getRelativeDataFolder("/profiles");
+    }
+
+    @Test
+    public void testAppWebDashSocketLogin() throws Exception{
+        AppWebSocketClient appWebSocketClient = new AppWebSocketClient("localhost", properties.getHttpsPort(), WEBSOCKET_WEB_PATH);
+        appWebSocketClient.start();
+        appWebSocketClient.login(getUserName(), "1");
+
+        appWebSocketClient.verifyResult(ok(1));
+        appWebSocketClient.send("ping");
+        appWebSocketClient.verifyResult(ok(2));
     }
 
     @Test
@@ -81,20 +94,28 @@ public class WebSocketTest extends BaseTest {
     }
 
     @Test
+    public void testSslBasicWebSocketCommandsOk() throws Exception{
+        WebSocketClient webSocketClient = new WebSocketClient("localhost", properties.getHttpsPort(), StringUtils.WEBSOCKET_PATH, true);
+        webSocketClient.start();
+        webSocketClient.send("login 4ae3851817194e2596cf1b7103603ef8");
+        verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        webSocketClient.send("ping");
+        verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+    }
+
+    @Test
     public void testSyncBetweenWebSocketsAndAppWorks() throws Exception {
         clientPair.appClient.reset();
         clientPair.hardwareClient.reset();
-        clientPair.appClient.getToken(1);
-        String token = clientPair.appClient.getBody();
 
         WebSocketClient webSocketClient = new WebSocketClient("localhost", tcpWebSocketPort, StringUtils.WEBSOCKET_PATH, false);
         webSocketClient.start();
-        webSocketClient.send("login " + token);
+        webSocketClient.send("login " + clientPair.token);
         verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
 
         clientPair.appClient.send("hardware 1-0 vw 4 1");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 4 1"))));
-        verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 4 1"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("vw 4 1"))));
+        verify(webSocketClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("vw 4 1"))));
 
         webSocketClient.send("hardware vw 4 2");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("1-0 vw 4 2"))));
@@ -105,7 +126,7 @@ public class WebSocketTest extends BaseTest {
         clientPair.appClient.reset();
         WebSocketClient webSocketClient2 = new WebSocketClient("localhost", tcpWebSocketPort, StringUtils.WEBSOCKET_PATH, false);
         webSocketClient2.start();
-        webSocketClient2.send("login " + token);
+        webSocketClient2.send("login " + clientPair.token);
         verify(webSocketClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
         verify(webSocketClient2.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("pm 1 out 2 out 3 out 5 out 6 in 7 in 30 in 8 in"))));
         webSocketClient2.msgId = 1000;
@@ -126,6 +147,5 @@ public class WebSocketTest extends BaseTest {
             testSyncBetweenWebSocketsAndAppWorks();
         }
     }
-
 
 }

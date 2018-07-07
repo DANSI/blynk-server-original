@@ -1,16 +1,11 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.BaseTest;
-import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.enums.ProvisionType;
 import cc.blynk.server.core.model.enums.Theme;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
-import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,26 +27,11 @@ import static org.junit.Assert.assertTrue;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class AppWorkflowTest extends BaseTest {
-
-    private BaseServer appServer;
-    private BaseServer hardwareServer;
-    private ClientPair clientPair;
+public class AppWorkflowTest extends SingleServerInstancePerTest {
 
     @Before
-    public void init() throws Exception {
-        this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
-        this.appServer = new AppAndHttpsServer(holder).start();
-
-        this.clientPair = initAppAndHardPair();
+    public void deleteFolder() throws Exception {
         Files.deleteIfExists(Paths.get(getDataFolder(), "blynk", "userProfiles"));
-    }
-
-    @After
-    public void shutdown() {
-        this.appServer.close();
-        this.hardwareServer.close();
-        this.clientPair.stop();
     }
 
     @Test

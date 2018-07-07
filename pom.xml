@@ -19,7 +19,7 @@
 
     <groupId>cc.blynk</groupId>
     <artifactId>blynk</artifactId>
-    <version>0.38.5-SNAPSHOT</version>
+    <version>0.38.6-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <scm>
@@ -176,7 +176,7 @@
         <junit.version>4.12</junit.version>
         <mockito-core.version>2.18.3</mockito-core.version>
         <commons-io.version>2.5</commons-io.version>
-        <commons-lang.version>2.6</commons-lang.version>
+        <commons-lang.version>3.7</commons-lang.version>
         <jmh-core.version>1.19</jmh-core.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -12,7 +12,6 @@ import java.lang.annotation.Target;
  *
  * @author Paul Sandoz
  * @author Marc Hadley
- * @see javax.ws.rs.ext.Providers
  * @since 1.0
  */
 @Target({ElementType.PARAMETER, ElementType.METHOD, ElementType.FIELD})

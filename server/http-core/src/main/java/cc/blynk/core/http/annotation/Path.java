@@ -36,12 +36,11 @@ import java.lang.annotation.Target;
  * {@code getWidget} classMethod. The same would apply if the value of either
  * {@code @Path} annotation started with '/'.</p>
  *
- * <p>Classes and methods may also be annotated with {@link javax.ws.rs.Consumes} and
+ * <p>Classes and methods may also be annotated with javax.ws.rs.Consumes and
  * to filter the requests they will receive.</p>
  *
  * @author Paul Sandoz
  * @author Marc Hadley
- * @see javax.ws.rs.Consumes
  * @since 1.0
  */
 @Target({ElementType.TYPE, ElementType.METHOD})

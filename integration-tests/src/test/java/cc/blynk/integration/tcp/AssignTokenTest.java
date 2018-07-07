@@ -1,18 +1,11 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.BaseTest;
-import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.SingleServerInstancePerTestWithDB;
 import cc.blynk.integration.model.tcp.TestHardClient;
-import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
-import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.FlashedToken;
-import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
-import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.AppNameUtil;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,32 +25,11 @@ import static org.junit.Assert.assertNotNull;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class AssignTokenTest extends BaseTest {
-
-    private DBManager dbManager;
-    private BaseServer appServer;
-    private BaseServer hardwareServer;
-    private ClientPair clientPair;
+public class AssignTokenTest extends SingleServerInstancePerTestWithDB {
 
     @Before
-    public void init() throws Exception {
-        Holder holder = new Holder(properties, twitterWrapper, mailWrapper,
-                gcmWrapper, smsWrapper, slackWrapper, "db-test.properties");
-        hardwareServer = new HardwareAndHttpAPIServer(holder).start();
-        appServer = new AppAndHttpsServer(holder).start();
-        dbManager = holder.dbManager;
-
-        this.clientPair = initAppAndHardPair();
-        assertNotNull(dbManager.getConnection());
-        dbManager.executeSQL("DELETE FROM flashed_tokens");
-    }
-
-    @After
-    public void shutdown() {
-        this.appServer.close();
-        this.hardwareServer.close();
-        this.clientPair.stop();
-        dbManager.close();
+    public void cleanTable() throws Exception {
+        holder.dbManager.executeSQL("DELETE FROM flashed_tokens");
     }
 
     @Test
@@ -72,7 +44,7 @@ public class AssignTokenTest extends BaseTest {
         String token = UUID.randomUUID().toString().replace("-", "");
         FlashedToken flashedToken = new FlashedToken("test@blynk.cc", token, AppNameUtil.BLYNK, 1, 0);
         list[0] = flashedToken;
-        dbManager.insertFlashedTokens(list);
+        holder.dbManager.insertFlashedTokens(list);
 
         clientPair.appClient.send("assignToken 1\0" + flashedToken.token);
         clientPair.appClient.verifyResult(ok(1));
@@ -87,12 +59,12 @@ public class AssignTokenTest extends BaseTest {
         String token = UUID.randomUUID().toString().replace("-", "");
         FlashedToken flashedToken = new FlashedToken("test@blynk.cc", token, AppNameUtil.BLYNK, 1, 0);
         list[0] = flashedToken;
-        dbManager.insertFlashedTokens(list);
+        holder.dbManager.insertFlashedTokens(list);
 
         clientPair.appClient.send("assignToken 1\0" + flashedToken.token);
         clientPair.appClient.verifyResult(ok(1));
 
-        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
+        TestHardClient hardClient2 = new TestHardClient("localhost", properties.getHttpPort());
         hardClient2.start();
 
         hardClient2.login(flashedToken.token);

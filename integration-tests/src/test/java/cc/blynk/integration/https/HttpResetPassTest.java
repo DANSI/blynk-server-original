@@ -1,6 +1,7 @@
 package cc.blynk.integration.https;
 
 import cc.blynk.integration.BaseTest;
+import cc.blynk.integration.TestUtil;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.AppNameUtil;
@@ -70,21 +71,21 @@ public class HttpResetPassTest extends BaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(resetPassRequest)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            String data = consumeText(response);
+            String data = TestUtil.consumeText(response);
             assertNotNull(data);
             assertEquals("Email was sent.", data);
         }
 
         String productName = properties.productName;
-        verify(mailWrapper).sendHtml(eq(email),
+        verify(holder.mailWrapper).sendHtml(eq(email),
                 eq("Password reset request for the " + productName + " app."),
                 contains("/landing?token="));
 
-        verify(mailWrapper).sendHtml(eq(email),
+        verify(holder.mailWrapper).sendHtml(eq(email),
                 eq("Password reset request for the " + productName + " app."),
                 contains("You recently made a request to reset your password for the " + productName + " app. To complete the process, click the link below."));
 
-        verify(mailWrapper).sendHtml(eq(email),
+        verify(holder.mailWrapper).sendHtml(eq(email),
                 eq("Password reset request for the " + productName + " app."),
                 contains("If you did not request a password reset from " + productName + ", please ignore this message."));
     }

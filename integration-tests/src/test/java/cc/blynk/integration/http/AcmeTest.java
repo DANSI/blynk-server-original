@@ -19,6 +19,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Collections;
 
+import static cc.blynk.integration.TestUtil.createDefaultHolder;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.times;
@@ -43,8 +44,7 @@ public class AcmeTest extends BaseTest {
     @Before
     public void init() throws Exception {
         ServerProperties properties2 = new ServerProperties(Collections.emptyMap(), "no_certs.properties");
-        this.holder2 = new Holder(properties2, twitterWrapper, mailWrapper,
-                gcmWrapper, smsWrapper, slackWrapper, "no-db.properties");
+        this.holder2 = createDefaultHolder(properties2, "no-db.properties");
         httpServer = new HardwareAndHttpAPIServer(holder2).start();
     }
 

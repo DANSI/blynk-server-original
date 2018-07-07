@@ -262,8 +262,9 @@ public abstract class BaseReportTask implements Runnable {
                                     if (onePinDataCsv.length() > 0) {
                                         String onePinFileName =
                                                 deviceAndPinFileName(deviceName, deviceId, reportDataStream);
-                                        atLeastOne = addZipEntryAndWrite(zipStream,
-                                                onePinFileName, onePinDataCsv.getBytes(REPORT_ENCODING));
+                                        addZipEntryAndWrite(zipStream, onePinFileName,
+                                                onePinDataCsv.getBytes(REPORT_ENCODING));
+                                        atLeastOne = true;
                                     }
                                 }
                             }
@@ -275,19 +276,17 @@ public abstract class BaseReportTask implements Runnable {
         return atLeastOne;
     }
 
-    private boolean addZipEntryAndWrite(ZipOutputStream zipStream,
+    private void addZipEntryAndWrite(ZipOutputStream zipStream,
                                         String onePinFileName, byte[] onePinDataCsv) throws IOException {
         ZipEntry zipEntry = new ZipEntry(onePinFileName);
         try {
             zipStream.putNextEntry(zipEntry);
             zipStream.write(onePinDataCsv);
             zipStream.closeEntry();
-            return true;
         } catch (ZipException zipException) {
             String message = zipException.getMessage();
             if (message != null && message.contains("duplicate")) {
                 log.warn("Duplicate zip entry {}. Wrong report configuration.", onePinFileName);
-                return true;
             } else {
                 log.error("Error compressing report file.", message);
                 throw zipException;

@@ -1,7 +1,7 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.BaseTest;
-import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.SingleServerInstancePerTest;
+import cc.blynk.integration.TestUtil;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.dao.ReportingDiskDao;
@@ -25,15 +25,10 @@ import cc.blynk.server.core.model.widgets.ui.TimeInput;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.notifications.mail.QrHolder;
-import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
-import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.SHA256Util;
 import io.netty.channel.ChannelFuture;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -45,7 +40,6 @@ import java.nio.file.Paths;
 import java.time.ZoneId;
 import java.util.List;
 
-import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
 import static cc.blynk.integration.TestUtil.appIsOutdated;
 import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.createDevice;
@@ -79,7 +73,6 @@ import static org.mockito.Mockito.after;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -91,40 +84,36 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class MainWorkflowTest extends BaseTest {
+public class MainWorkflowTest extends SingleServerInstancePerTest {
 
-    private BaseServer appServer;
-    private BaseServer hardwareServer;
-    private ClientPair clientPair;
+    @Test
+    public void testCloneForLocalServerWithNoDB() throws Exception  {
+        assertFalse(holder.dbManager.isDBEnabled());
 
-    @Before
-    public void init() throws Exception {
-        this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
-        this.appServer = new AppAndHttpsServer(holder).start();
+        clientPair.appClient.send("getCloneCode 1");
+        String token = clientPair.appClient.getBody();
+        assertNotNull(token);
+        assertEquals(32, token.length());
 
-        this.clientPair = initAppAndHardPair();
-    }
-
-    @After
-    public void shutdown() {
-        this.appServer.close();
-        this.hardwareServer.close();
-        this.clientPair.stop();
+        clientPair.appClient.send("getProjectByCloneCode " + token);
+        DashBoard dashBoard = clientPair.appClient.parseDash(2);
+        assertEquals("My Dashboard", dashBoard.name);
     }
 
     @Test
     public void testResetEmail() throws Exception {
+        String userName = getUserName();
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
 
-        appClient.send("resetPass start dima@mail.ua" + " " + AppNameUtil.BLYNK);
+        appClient.send("resetPass start " + userName + " " + AppNameUtil.BLYNK);
         appClient.verifyResult(ok(1));
 
-        appClient.send("resetPass start dima@mail.ua" + " " + AppNameUtil.BLYNK);
+        appClient.send("resetPass start " + userName + " " + AppNameUtil.BLYNK);
         appClient.verifyResult(notAllowed(2));
 
         String token = holder.tokensPool.getHolder().entrySet().iterator().next().getKey();
-        verify(mailWrapper).sendWithAttachment(eq("dima@mail.ua"), eq("Password restoration for your Blynk account."), contains("http://blynk-cloud.com/restore?token=" + token), any(QrHolder.class));
+        verify(holder.mailWrapper).sendWithAttachment(eq(userName), eq("Password restoration for your Blynk account."), contains("http://blynk-cloud.com/restore?token=" + token), any(QrHolder.class));
 
         appClient.send("resetPass verify 123");
         appClient.verifyResult(notAllowed(3));
@@ -132,13 +121,13 @@ public class MainWorkflowTest extends BaseTest {
         appClient.send("resetPass verify " + token);
         appClient.verifyResult(ok(4));
 
-        appClient.send("resetPass reset " + token + " " + SHA256Util.makeHash("2", "dima@mail.ua"));
+        appClient.send("resetPass reset " + token + " " + SHA256Util.makeHash("2", userName));
         appClient.verifyResult(ok(5));
 
-        appClient.login("dima@mail.ua", "1");
+        appClient.login(userName, "1");
         appClient.verifyResult(new ResponseMessage(6, USER_NOT_AUTHENTICATED));
 
-        appClient.login("dima@mail.ua", "2");
+        appClient.login(userName, "2");
         appClient.verifyResult(ok(7));
     }
 
@@ -158,31 +147,17 @@ public class MainWorkflowTest extends BaseTest {
     }
 
     @Test
-    public void registrationLimitCheck() throws Exception {
-        for (int i = 0; i < 10; i++) {
-            TestAppClient appClient = new TestAppClient(properties);
-            appClient.start();
-            appClient.register("test" + i + "@test.com", "1");
-            appClient.verifyResult(ok(1));
-            appClient.stop();
-        }
-
-        TestAppClient appClient = new TestAppClient(properties);
-        appClient.start();
-        appClient.register("test" + 11 + "@test.com", "1");
-        appClient.verifyResult(notAllowed(1));
-    }
-
-    @Test
     public void createBasicProfile() throws Exception {
         TestAppClient appClient = new TestAppClient(properties);
 
         appClient.start();
 
-        appClient.register("test@test.com", "1");
+        String username = incrementAndGetUserName();
+
+        appClient.register(username, "1");
         appClient.verifyResult(ok(1));
 
-        appClient.login("test@test.com", "1", "Android", "RC13");
+        appClient.login(username, "1", "Android", "RC13");
         appClient.verifyResult(ok(2));
 
         appClient.createDash("{\"id\":1, \"createdAt\":1, \"name\":\"test board\"}");
@@ -242,10 +217,12 @@ public class MainWorkflowTest extends BaseTest {
 
         appClient.start();
 
-        appClient.register("test@test.com", "1");
+        String username = incrementAndGetUserName();
+
+        appClient.register(username, "1");
         appClient.verifyResult(ok(1));
 
-        appClient.login("test@test.com", "1", "Android", "RC13");
+        appClient.login(username, "1", "Android", "RC13");
         appClient.verifyResult(ok(2));
 
         appClient.createDash("{\"id\":1, \"createdAt\":1, \"name\":\"test board\"}");
@@ -268,7 +245,7 @@ public class MainWorkflowTest extends BaseTest {
         appClient.activate(1);
         appClient.verifyResult(new ResponseMessage(6, DEVICE_NOT_IN_NETWORK));
 
-        TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
+        TestHardClient hardClient = new TestHardClient("localhost", properties.getHttpPort());
         hardClient.start();
 
         hardClient.login(device.token);
@@ -325,20 +302,15 @@ public class MainWorkflowTest extends BaseTest {
     }
 
     @Test
-    public void testConnectAppAndHardware() throws Exception {
-        // we just test that app and hardware can actually connect
-    }
-
-    @Test
     public void testRegisterWithAnotherApp() throws Exception {
         TestAppClient appClient = new TestAppClient(properties);
 
         appClient.start();
 
-        appClient.register("test@test.com", "1", "MyApp");
+        appClient.register(getUserName(), "1", "MyApp");
         appClient.verifyResult(ok(1));
 
-        appClient.login("test@test.com", "1", "Android", "1.13.3", "MyApp");
+        appClient.login(getUserName(), "1", "Android", "1.13.3", "MyApp");
         appClient.verifyResult(ok(2));
 
         appClient.createDash("{\"id\":1, \"createdAt\":1, \"name\":\"test board\"}");
@@ -358,32 +330,29 @@ public class MainWorkflowTest extends BaseTest {
 
     @Test
     public void testDoubleLogin() throws Exception {
-        clientPair.hardwareClient.login(DEFAULT_TEST_USER + " 1");
+        clientPair.hardwareClient.login(getUserName() + " 1");
         clientPair.hardwareClient.verifyResult(new ResponseMessage(1, USER_ALREADY_REGISTERED));
     }
 
     @Test
     public void testDoubleLogin2() throws Exception {
-        clientPair.appClient.getToken(1);
-        String token = clientPair.appClient.getBody();
-
-        TestHardClient newHardwareClient = new TestHardClient("localhost", tcpHardPort);
+        TestHardClient newHardwareClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardwareClient.start();
-        newHardwareClient.login(token);
-        newHardwareClient.login(token);
+        newHardwareClient.login(clientPair.token);
+        newHardwareClient.login(clientPair.token);
         newHardwareClient.verifyResult(ok(1));
         newHardwareClient.verifyResult(new ResponseMessage(2, USER_ALREADY_REGISTERED));
     }
 
     @Test
-    public void sendCommandBeforeLogin() throws Exception {
-        TestHardClient newHardwareClient = new TestHardClient("localhost", tcpHardPort);
+    public void sendCommandBeforeLogin() {
+        TestHardClient newHardwareClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardwareClient.start();
         newHardwareClient.send("hardware vw 1 1");
 
         long tries = 0;
         while(!newHardwareClient.isClosed() && tries < 10) {
-            sleep(100);
+            TestUtil.sleep(100);
             tries++;
         }
         assertTrue(newHardwareClient.isClosed());
@@ -658,19 +627,20 @@ public class MainWorkflowTest extends BaseTest {
 
     @Test
     public void testHardwareChannelClosedOnDashRemoval() throws Exception {
+        String username = getUserName();
         String tempDir = holder.props.getProperty("data.folder");
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", username);
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
 
-        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", username,
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
-        Path pinReportingDataPath11 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath11 = Paths.get(tempDir, "data", username,
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
-        Path pinReportingDataPath12 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath12 = Paths.get(tempDir, "data", username,
                 ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.DAILY));
-        Path pinReportingDataPath13 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath13 = Paths.get(tempDir, "data", username,
                 ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 9, GraphGranularityType.DAILY));
 
         FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
@@ -735,14 +705,14 @@ public class MainWorkflowTest extends BaseTest {
         clientPair.appClient.verifyResult(ok(2));
 
         //todo on delete also close existing connections?
-        TestHardClient newHardClient = new TestHardClient("localhost", tcpHardPort);
+        TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
         newHardClient.login(token);
         newHardClient.verifyResult(new ResponseMessage(1, INVALID_TOKEN));
 
         TestAppClient newAppClient = new TestAppClient(properties);
         newAppClient.start();
-        newAppClient.send("shareLogin " + "dima@mail.ua " + sharedToken + " Android 24");
+        newAppClient.send("shareLogin " + getUserName() + " " + sharedToken + " Android 24");
 
         newAppClient.verifyResult(notAllowed(1));
     }
@@ -847,7 +817,7 @@ public class MainWorkflowTest extends BaseTest {
 
     @Test
     public void testActive2AndDeactivate1() throws Exception {
-        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
+        TestHardClient hardClient2 = new TestHardClient("localhost", properties.getHttpPort());
         hardClient2.start();
 
         Profile newProfile = parseProfile(readTestUserProfile("user_profile_json_3_dashes.txt"));
@@ -905,8 +875,6 @@ public class MainWorkflowTest extends BaseTest {
 
     @Test
     public void testTweetNotWorks() throws Exception {
-        reset(blockingIOProcessor);
-
         clientPair.hardwareClient.send("tweet");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NOTIFICATION_INVALID_BODY)));
 
@@ -930,8 +898,6 @@ public class MainWorkflowTest extends BaseTest {
 
     @Test
     public void testSmsWorks() throws Exception {
-        reset(blockingIOProcessor);
-
         clientPair.hardwareClient.send("sms");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NOTIFICATION_INVALID_BODY)));
 
@@ -944,7 +910,7 @@ public class MainWorkflowTest extends BaseTest {
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("sms yo");
-        verify(smsWrapper, timeout(500)).send(eq("3809683423423"), eq("yo"));
+        verify(holder.smsWrapper, timeout(500)).send(eq("3809683423423"), eq("yo"));
         clientPair.hardwareClient.verifyResult(ok(3));
 
         clientPair.hardwareClient.send("sms yo");
@@ -953,16 +919,12 @@ public class MainWorkflowTest extends BaseTest {
 
     @Test
     public void testTweetWorks() throws Exception {
-        reset(blockingIOProcessor);
-
         clientPair.hardwareClient.send("tweet yo");
-        verify(twitterWrapper, timeout(500)).send(eq("token"), eq("secret"), eq("yo"), any());
+        verify(holder.twitterWrapper, timeout(500)).send(eq("token"), eq("secret"), eq("yo"), any());
 
         clientPair.hardwareClient.send("tweet yo");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, QUOTA_LIMIT)));
     }
-
-
 
     @Test
     public void testPlayerUpdateWorksAsExpected() throws Exception {
@@ -1221,7 +1183,7 @@ public class MainWorkflowTest extends BaseTest {
         verify(appClient2.responseMock, after(600).never()).channelRead(any(), any());
         assertTrue(appClient2.isClosed());
 
-        appClient2.login("dima@mail.ua", "1", "Android", "1RC7");
+        appClient2.login(getUserName(), "1", "Android", "1RC7");
         verify(appClient2.responseMock, after(200).never()).channelRead(any(), any());
     }
 
@@ -1233,7 +1195,7 @@ public class MainWorkflowTest extends BaseTest {
         assertEquals(32, newToken.length());
         assertTrue(clientPair.hardwareClient.isClosed());
 
-        TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
+        TestHardClient hardClient = new TestHardClient("localhost", properties.getHttpPort());
         hardClient.start();
         hardClient.login(newToken);
         verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
@@ -1250,7 +1212,7 @@ public class MainWorkflowTest extends BaseTest {
         clientPair.appClient.send("hardware 1 " + body);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, DEVICE_NOT_IN_NETWORK)));
 
-        TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
+        TestHardClient hardClient = new TestHardClient("localhost", properties.getHttpPort());
         hardClient.start();
         hardClient.login(clientPair.token);
         verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
@@ -1270,7 +1232,7 @@ public class MainWorkflowTest extends BaseTest {
         clientPair.appClient.send("hardware 1 vw 1 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, DEVICE_NOT_IN_NETWORK)));
 
-        TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
+        TestHardClient hardClient = new TestHardClient("localhost", properties.getHttpPort());
         hardClient.start();
         hardClient.login(clientPair.token);
         verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
@@ -1294,7 +1256,7 @@ public class MainWorkflowTest extends BaseTest {
         clientPair.appClient.reset();
 
         //connecting separate hardware to non active dashboard
-        TestHardClient nonActiveDashHardClient = new TestHardClient("localhost", tcpHardPort);
+        TestHardClient nonActiveDashHardClient = new TestHardClient("localhost", properties.getHttpPort());
         nonActiveDashHardClient.start();
         nonActiveDashHardClient.login(token);
         verify(nonActiveDashHardClient.responseMock, timeout(2000)).channelRead(any(), eq(ok(1)));
@@ -1329,7 +1291,7 @@ public class MainWorkflowTest extends BaseTest {
         //within 1 second sending more messages than default limit 100.
         for (int i = 0; i < 200; i++) {
             clientPair.hardwareClient.send("hardware " + body);
-            sleep(5);
+            TestUtil.sleep(5);
         }
 
         ArgumentCaptor<ResponseMessage> objectArgumentCaptor = ArgumentCaptor.forClass(ResponseMessage.class);
@@ -1349,7 +1311,7 @@ public class MainWorkflowTest extends BaseTest {
         //check no more accepted
         for (int i = 0; i < 10; i++) {
             clientPair.hardwareClient.send("hardware " + body);
-            sleep(9);
+            TestUtil.sleep(9);
         }
 
         verify(clientPair.hardwareClient.responseMock, never()).channelRead(any(), eq(new ResponseMessage(1, QUOTA_LIMIT)));
@@ -1454,7 +1416,7 @@ public class MainWorkflowTest extends BaseTest {
     public void testOutdatedAppNotificationAlertWorks() throws Exception {
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
-        appClient.login("dima@mail.ua", "1", "Android", "1.1.1");
+        appClient.login(getUserName(), "1", "Android", "1.1.1");
         appClient.verifyResult(ok(1));
         verify(appClient.responseMock, timeout(500)).channelRead(any(), eq(
                 appIsOutdated(1,
@@ -1466,7 +1428,7 @@ public class MainWorkflowTest extends BaseTest {
     public void testOutdatedAppNotificationNotTriggered() throws Exception {
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
-        appClient.login("dima@mail.ua", "1", "Android", "1.1.2");
+        appClient.login(getUserName(), "1", "Android", "1.1.2");
         appClient.verifyResult(ok(1));
         verify(appClient.responseMock, never()).channelRead(any(), eq(
                 appIsOutdated(1,
@@ -1485,7 +1447,7 @@ public class MainWorkflowTest extends BaseTest {
         User user = holder.userDao.getByName("test@blynk.cc", "Blynk");
         assertNull(user.lastLoggedIP);
 
-        verify(mailWrapper).sendWelcomeEmailForNewUser(eq("test@blynk.cc"));
+        verify(holder.mailWrapper).sendWelcomeEmailForNewUser(eq("test@blynk.cc"));
 
         appClient1.login("test@blynk.cc", "a");
         appClient1.verifyResult(ok(2));

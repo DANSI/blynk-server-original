@@ -1,6 +1,8 @@
 package cc.blynk.integration.https;
 
 import cc.blynk.integration.BaseTest;
+import cc.blynk.integration.MyHostVerifier;
+import cc.blynk.integration.TestUtil;
 import cc.blynk.integration.model.http.ResponseUserEntity;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
@@ -38,7 +40,6 @@ import javax.net.ssl.SSLContext;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
 import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
@@ -84,7 +85,7 @@ public class HttpsAdminServerTest extends BaseTest {
         httpsAdminServerUrl = String.format("https://localhost:%s/admin", properties.getHttpsPort());
         httpServerUrl = String.format("http://localhost:%s/", properties.getHttpPort());
 
-        SSLContext sslcontext = initUnsecuredSSLContext();
+        SSLContext sslcontext = TestUtil.initUnsecuredSSLContext();
 
         // Allow TLSv1 protocol only
         SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext, new MyHostVerifier());
@@ -135,7 +136,7 @@ public class HttpsAdminServerTest extends BaseTest {
         HttpGet loadLoginPageRequest = new HttpGet(httpsAdminServerUrl);
         try (CloseableHttpResponse response = httpclient.execute(loadLoginPageRequest)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            String loginPage = consumeText(response);
+            String loginPage = TestUtil.consumeText(response);
             //todo add full page match?
             assertTrue(loginPage.contains("Use your Admin account to log in"));
         }
@@ -145,7 +146,7 @@ public class HttpsAdminServerTest extends BaseTest {
         HttpGet loadAdminPage = new HttpGet(httpsAdminServerUrl);
         try (CloseableHttpResponse response = httpclient.execute(loadAdminPage)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            String adminPage = consumeText(response);
+            String adminPage = TestUtil.consumeText(response);
             //todo add full page match?
             assertTrue(adminPage.contains("Blynk Administration"));
             assertTrue(adminPage.contains("admin.js"));
@@ -208,7 +209,7 @@ public class HttpsAdminServerTest extends BaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            String jsonProfile = consumeText(response);
+            String jsonProfile = TestUtil.consumeText(response);
             assertNotNull(jsonProfile);
             User user = JsonParser.readAny(jsonProfile, User.class);
             assertNotNull(user);
@@ -244,7 +245,7 @@ public class HttpsAdminServerTest extends BaseTest {
         HttpGet getUserRequest = new HttpGet(httpsAdminServerUrl + "/users/admin@blynk.cc-Blynk");
         try (CloseableHttpResponse response = httpclient.execute(getUserRequest)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            String userProfile = consumeText(response);
+            String userProfile = TestUtil.consumeText(response);
             assertNotNull(userProfile);
             user = JsonParser.parseUserFromString(userProfile);
             assertEquals(admin.email, user.email);
@@ -274,7 +275,7 @@ public class HttpsAdminServerTest extends BaseTest {
         HttpGet getUserRequest2 = new HttpGet(httpsAdminServerUrl + "/users/123@blynk.cc-Blynk");
         try (CloseableHttpResponse response = httpclient.execute(getUserRequest2)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            String userProfile = consumeText(response);
+            String userProfile = TestUtil.consumeText(response);
             assertNotNull(userProfile);
             user = JsonParser.parseUserFromString(userProfile);
             assertEquals("123@blynk.cc", user.email);
@@ -290,36 +291,36 @@ public class HttpsAdminServerTest extends BaseTest {
         clientPair.appClient.verifyResult(ok(1));
 
         User user;
-        HttpGet getUserRequest = new HttpGet(httpsAdminServerUrl + "/users/" + DEFAULT_TEST_USER + "-Blynk");
+        HttpGet getUserRequest = new HttpGet(httpsAdminServerUrl + "/users/" + getUserName() + "-Blynk");
         try (CloseableHttpResponse response = httpclient.execute(getUserRequest)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            String userProfile = consumeText(response);
+            String userProfile = TestUtil.consumeText(response);
             assertNotNull(userProfile);
             user = JsonParser.parseUserFromString(userProfile);
-            assertEquals(DEFAULT_TEST_USER, user.email);
+            assertEquals(getUserName(), user.email);
         }
 
         user.energy = 12333;
 
-        HttpPut changeUserNameRequestCorrect = new HttpPut(httpsAdminServerUrl + "/users/" + DEFAULT_TEST_USER + "-Blynk");
+        HttpPut changeUserNameRequestCorrect = new HttpPut(httpsAdminServerUrl + "/users/" + getUserName() + "-Blynk");
         changeUserNameRequestCorrect.setEntity(new StringEntity(user.toString(), ContentType.APPLICATION_JSON));
         try (CloseableHttpResponse response = httpclient.execute(changeUserNameRequestCorrect)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
 
-        getUserRequest = new HttpGet(httpsAdminServerUrl + "/users/" + DEFAULT_TEST_USER + "-Blynk");
+        getUserRequest = new HttpGet(httpsAdminServerUrl + "/users/" + getUserName() + "-Blynk");
         try (CloseableHttpResponse response = httpclient.execute(getUserRequest)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            String userProfile = consumeText(response);
+            String userProfile = TestUtil.consumeText(response);
             assertNotNull(userProfile);
             user = JsonParser.parseUserFromString(userProfile);
-            assertEquals(DEFAULT_TEST_USER, user.email);
+            assertEquals(getUserName(), user.email);
             assertEquals(12333, user.energy);
         }
 
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
-        appClient.login(DEFAULT_TEST_USER, "1","iOS", "1.10.2");
+        appClient.login(getUserName(), "1","iOS", "1.10.2");
         appClient.verifyResult(ok(1));
 
         appClient.activate(1);
@@ -413,7 +414,7 @@ public class HttpsAdminServerTest extends BaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(get)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            List<String> values = consumeJsonPinValues(response);
+            List<String> values = TestUtil.consumeJsonPinValues(response);
             assertEquals(1, values.size());
             assertEquals("100", values.get(0));
         }
@@ -445,7 +446,7 @@ public class HttpsAdminServerTest extends BaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(get)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            List<String> values = consumeJsonPinValues(response);
+            List<String> values = TestUtil.consumeJsonPinValues(response);
             assertEquals(1, values.size());
             assertEquals("100", values.get(0));
         }

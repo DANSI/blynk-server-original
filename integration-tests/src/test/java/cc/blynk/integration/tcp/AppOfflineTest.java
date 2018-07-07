@@ -1,6 +1,7 @@
 package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.BaseTest;
+import cc.blynk.integration.TestUtil;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.Holder;
 import cc.blynk.server.servers.BaseServer;
@@ -12,6 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static cc.blynk.integration.TestUtil.createDefaultHolder;
 import static cc.blynk.integration.TestUtil.internal;
 import static cc.blynk.integration.TestUtil.ok;
 
@@ -31,8 +33,7 @@ public class AppOfflineTest extends BaseTest {
     @Before
     public void init() throws Exception {
         properties.setProperty("app.socket.idle.timeout", "1");
-        Holder holder = new Holder(properties, twitterWrapper, mailWrapper,
-                gcmWrapper, smsWrapper, slackWrapper, "no-db.properties");
+        Holder holder = createDefaultHolder(properties, "no-db.properties");
         this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
         this.appServer = new AppAndHttpsServer(holder).start();
 
@@ -51,7 +52,7 @@ public class AppOfflineTest extends BaseTest {
         clientPair.appClient.updateDash("{\"id\":1, \"name\":\"test board\", \"isAppConnectedOn\":true}");
         clientPair.appClient.verifyResult(ok(1));
 
-        sleep(1500);
+        TestUtil.sleep(1500);
 
         clientPair.hardwareClient.verifyResult(internal(7777, "adis"));
     }

@@ -256,7 +256,7 @@
                   "value":"87"
                },
                {
-                  "type":"GRAPH",
+                  "type":"LOGGER",
                   "id":1036300905,
                   "x":0,
                   "y":2,
@@ -725,7 +725,7 @@
                   "frequency":0
                },
                {
-                  "type":"GRAPH",
+                  "type":"LABELED_VALUE_DISPLAY",
                   "id":5,
                   "x":0,
                   "y":3,

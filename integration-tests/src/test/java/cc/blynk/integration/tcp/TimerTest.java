@@ -1,7 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.BaseTest;
-import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
@@ -23,9 +22,6 @@ import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.model.widgets.ui.tiles.templates.ButtonTileTemplate;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.enums.Priority;
-import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
-import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.DateTimeUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -39,6 +35,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import static cc.blynk.integration.TestUtil.b;
@@ -65,30 +62,24 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class TimerTest extends BaseTest {
+public class TimerTest extends SingleServerInstancePerTest {
 
-    private BaseServer appServer;
-    private BaseServer hardwareServer;
-    private ClientPair clientPair;
+    private ScheduledExecutorService ses;
 
     @Before
-    public void init() throws Exception {
-        this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
-        this.appServer = new AppAndHttpsServer(holder).start();
-
-        this.clientPair = initAppAndHardPair();
+    public void initSES() {
+        ses = Executors.newScheduledThreadPool(1);
     }
 
     @After
-    public void shutdown() {
-        this.appServer.close();
-        this.hardwareServer.close();
-        this.clientPair.stop();
+    public void closeSES() {
+        ses.shutdownNow();
     }
+
 
     @Test
     public void testTimerEvent() throws Exception {
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        ses.scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
 
         TimerTime timerTime = new TimerTime(
                 0,
@@ -116,7 +107,7 @@ public class TimerTest extends BaseTest {
 
     @Test
     public void testTimerEventNotActive() throws Exception {
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        ses.scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
 
         TimerTime timerTime = new TimerTime(
                 0,
@@ -188,7 +179,7 @@ public class TimerTest extends BaseTest {
         clientPair.appClient.createWidget(1, eventor);
         clientPair.appClient.verifyResult(ok(1));
 
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        ses.scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
 
         verify(clientPair.appClient.responseMock, timeout(2100)).channelRead(any(), eq(hardware(TIMER_MSG_ID, "1-0 vw 1 1")));
         verify(clientPair.appClient.responseMock, timeout(2100)).channelRead(any(), eq(hardware(TIMER_MSG_ID, "1-0 vw 2 2")));
@@ -198,7 +189,7 @@ public class TimerTest extends BaseTest {
 
     @Test
     public void testTimerEventWithMultiActions1() throws Exception {
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        ses.scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
 
         TimerTime timerTime = new TimerTime(
                 0,
@@ -221,7 +212,7 @@ public class TimerTest extends BaseTest {
         clientPair.appClient.verifyResult(ok(1));
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
-        verify(gcmWrapper, timeout(2000).times(1)).send(objectArgumentCaptor.capture(), any(), any());
+        verify(holder.gcmWrapper, timeout(2000).times(1)).send(objectArgumentCaptor.capture(), any(), any());
         AndroidGCMMessage message = objectArgumentCaptor.getValue();
 
         String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Hello", 1).toJson();
@@ -241,7 +232,7 @@ public class TimerTest extends BaseTest {
 
     @Test
     public void testTimerEventWithWrongDayDontWork() throws Exception {
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        ses.scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
 
         ZonedDateTime now = ZonedDateTime.now(DateTimeUtils.UTC);
         int currentDayIndex = now.getDayOfWeek().ordinal();
@@ -275,7 +266,7 @@ public class TimerTest extends BaseTest {
 
     @Test
     public void testAddTimerWidgetWithStartTimeTriggered() throws Exception {
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        ses.scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
         Timer timer = new Timer();
         timer.id = 112;
         timer.x = 1;
@@ -298,7 +289,7 @@ public class TimerTest extends BaseTest {
 
     @Test
     public void testAddTimerWidgetWithStopAndStartTimeTriggered() throws Exception {
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        ses.scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
         Timer timer = new Timer();
         timer.id = 112;
         timer.x = 1;
@@ -321,7 +312,7 @@ public class TimerTest extends BaseTest {
 
     @Test
     public void testAddTimerWidgetWithStopTimeTriggered() throws Exception {
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        ses.scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
         Timer timer = new Timer();
         timer.id = 112;
         timer.x = 1;
@@ -348,7 +339,7 @@ public class TimerTest extends BaseTest {
 
     @Test
     public void testAddTimerWidgetWithStopTimeAndRemove() throws Exception {
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        ses.scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
         Timer timer = new Timer();
         timer.id = 112;
         timer.x = 1;
@@ -375,7 +366,7 @@ public class TimerTest extends BaseTest {
 
     @Test
     public void testAddFewTimersWidgetWithStartTimeTriggered() throws Exception {
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        ses.scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
         Timer timer = new Timer();
         timer.id = 112;
         timer.x = 1;
@@ -405,7 +396,7 @@ public class TimerTest extends BaseTest {
 
     @Test
     public void testAddTimerWithSameStartStopTriggered() throws Exception {
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        ses.scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
         Timer timer = new Timer();
         timer.id = 112;
         timer.x = 1;
@@ -431,7 +422,7 @@ public class TimerTest extends BaseTest {
 
     @Test
     public void testUpdateTimerWidgetWithStopTimeTriggered() throws Exception {
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        ses.scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
         Timer timer = new Timer();
         timer.id = 112;
         timer.x = 1;
@@ -463,7 +454,7 @@ public class TimerTest extends BaseTest {
 
     @Test
     public void testDashTimerNotTriggered() throws Exception {
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        ses.scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
         Timer timer = new Timer();
         timer.id = 112;
         timer.x = 1;
@@ -492,10 +483,10 @@ public class TimerTest extends BaseTest {
 
     @Test
     public void testTimerWidgetTriggeredAndSendCommandToCorrectDevice() throws Exception {
-        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
+        TestHardClient hardClient2 = new TestHardClient("localhost", properties.getHttpPort());
         hardClient2.start();
 
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        ses.scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
 
         clientPair.appClient.deactivate(1);
         clientPair.appClient.verifyResult(ok(1));
@@ -545,7 +536,7 @@ public class TimerTest extends BaseTest {
 
     @Test
     public void testTimerWidgetTriggered() throws Exception {
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        ses.scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
 
         clientPair.appClient.deactivate(1);
         clientPair.appClient.verifyResult(ok(1));
@@ -585,12 +576,12 @@ public class TimerTest extends BaseTest {
         Device device1 = new Device(1, "My Device", "ESP8266");
 
         clientPair.appClient.createDevice(1, device1);
-Device device = clientPair.appClient.parseDevice();
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
 
-        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
+        TestHardClient hardClient2 = new TestHardClient("localhost", properties.getHttpPort());
         hardClient2.start();
 
         hardClient2.login(device.token);
@@ -609,7 +600,7 @@ Device device = clientPair.appClient.parseDevice();
         assertEquals(100_000, tag.id);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createTag(1, tag)));
 
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        ses.scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
         Timer timer = new Timer();
         timer.id = 112;
         timer.x = 1;
@@ -634,7 +625,7 @@ Device device = clientPair.appClient.parseDevice();
 
     @Test
     public void testTimerWidgetTriggeredAndSyncWorks() throws Exception {
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        ses.scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
 
         clientPair.appClient.deactivate(1);
         clientPair.appClient.verifyResult(ok(1));
@@ -694,7 +685,7 @@ Device device = clientPair.appClient.parseDevice();
                 + MAPPER.writeValueAsString(tileTemplate));
         clientPair.appClient.verifyResult(ok(2));
 
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        ses.scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
         Timer timer = new Timer();
         timer.id = 112;
         timer.x = 1;

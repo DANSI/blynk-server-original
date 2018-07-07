@@ -1,6 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.BaseTest;
+import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.TestUtil;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
@@ -10,12 +10,7 @@ import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
-import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import io.netty.channel.ChannelFuture;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,30 +34,16 @@ import static org.mockito.Mockito.verify;
  */
 @RunWith(MockitoJUnitRunner.class)
 @Ignore("ignored cause requires token to work properly")
-public class FacebookLoginTest extends BaseTest {
+public class FacebookLoginTest extends SingleServerInstancePerTest {
 
-    private BaseServer appServer;
-    private BaseServer hardwareServer;
     private final String facebookAuthToken = "";
-
-    @Before
-    public void init() throws Exception {
-        this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
-        this.appServer = new AppAndHttpsServer(holder).start();
-    }
-
-    @After
-    public void shutdown() {
-        this.appServer.close();
-        this.hardwareServer.close();
-    }
 
     @Test
     public void testLoginWorksForNewUser() throws Exception {
         String host = "localhost";
         String email = "dima@gmail.com";
 
-        ClientPair clientPair = TestUtil.initAppAndHardPair(host, properties.getHttpsPort(), tcpHardPort, email, "1", null, properties, 10000);
+        ClientPair clientPair = TestUtil.initAppAndHardPair(host, properties.getHttpsPort(), properties.getHttpPort(), email, "1", "user_profile_json.txt", properties, 10000);
 
         ChannelFuture channelFuture = clientPair.appClient.stop();
         channelFuture.await();
@@ -85,7 +66,7 @@ public class FacebookLoginTest extends BaseTest {
 
     @Test
     public void testFacebookLoginWorksForExistingUser() throws Exception {
-        initFacebookAppAndHardPair("localhost", properties.getHttpsPort(), tcpHardPort, "dima@gmail.com", facebookAuthToken);
+        initFacebookAppAndHardPair("localhost", properties.getHttpsPort(), properties.getHttpPort(), "dima@gmail.com", facebookAuthToken);
     }
 
     private ClientPair initFacebookAppAndHardPair(String host, int appPort, int hardPort, String user, String facebookAuthToken) throws Exception {

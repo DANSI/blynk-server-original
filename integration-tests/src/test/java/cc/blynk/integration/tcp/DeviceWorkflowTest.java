@@ -1,7 +1,6 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.BaseTest;
-import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.dao.TemporaryTokenValue;
@@ -20,12 +19,8 @@ import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.enums.Priority;
-import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
-import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.FileUtils;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -35,7 +30,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static cc.blynk.integration.TestUtil.DEFAULT_TEST_USER;
 import static cc.blynk.integration.TestUtil.appSync;
 import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.createDevice;
@@ -43,6 +37,7 @@ import static cc.blynk.integration.TestUtil.createTag;
 import static cc.blynk.integration.TestUtil.hardware;
 import static cc.blynk.integration.TestUtil.hardwareConnected;
 import static cc.blynk.integration.TestUtil.ok;
+import static cc.blynk.integration.TestUtil.sleep;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
@@ -63,25 +58,13 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class DeviceWorkflowTest extends BaseTest {
+public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
-    private BaseServer appServer;
-    private BaseServer hardwareServer;
-    private ClientPair clientPair;
+    private static int tcpHardPort;
 
-    @Before
-    public void init() throws Exception {
-        this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
-        this.appServer = new AppAndHttpsServer(holder).start();
-
-        this.clientPair = initAppAndHardPair();
-    }
-
-    @After
-    public void shutdown() {
-        this.appServer.close();
-        this.hardwareServer.close();
-        this.clientPair.stop();
+    @BeforeClass
+    public static void initPort() {
+        tcpHardPort = properties.getHttpPort();
     }
 
     @Test
@@ -153,7 +136,7 @@ public class DeviceWorkflowTest extends BaseTest {
         hardClient2.stop().await();
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
-        verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
+        verify(holder.gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
         AndroidGCMMessage message = objectArgumentCaptor.getValue();
 
         String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Your My Device went offline.", 1).toJson();
@@ -509,18 +492,18 @@ public class DeviceWorkflowTest extends BaseTest {
         clientPair.appClient.verifyResult(hardwareConnected(1, "1-1"));
 
         String tempDir = holder.props.getProperty("data.folder");
-        Path userReportFolder = Paths.get(tempDir, "data", DEFAULT_TEST_USER);
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
             Files.createDirectories(userReportFolder);
         }
 
-        Path pinReportingDataPath10 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
-        Path pinReportingDataPath11 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath11 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
-        Path pinReportingDataPath12 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.DAILY));
-        Path pinReportingDataPath13 = Paths.get(tempDir, "data", DEFAULT_TEST_USER,
+        Path pinReportingDataPath13 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 9, GraphGranularityType.DAILY));
 
         FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);

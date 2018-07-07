@@ -1,21 +1,15 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.BaseTest;
-import cc.blynk.integration.model.tcp.ClientPair;
-import cc.blynk.server.Holder;
+import cc.blynk.integration.SingleServerInstancePerTestWithDB;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
-import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.StringUtils;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.asynchttpclient.Response;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,51 +29,17 @@ import static org.junit.Assert.assertNull;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class CloneWorkFlowTest extends BaseTest {
-
-    private BaseServer appServer;
-    private BaseServer httpServer;
-    private ClientPair clientPair;
+public class CloneWorkFlowTest extends SingleServerInstancePerTestWithDB {
 
     @Before
-    public void init() throws Exception {
-        holder = new Holder(properties, twitterWrapper, mailWrapper,
-                gcmWrapper, smsWrapper, slackWrapper, "db-test.properties");
-
-        assertNotNull(holder.dbManager.getConnection());
-
-        this.appServer = new AppAndHttpsServer(holder).start();
-        this.httpServer = new HardwareAndHttpAPIServer(holder).start();
-
-        this.clientPair = initAppAndHardPair();
+    public void deleteTable() throws Exception {
         holder.dbManager.executeSQL("DELETE FROM cloned_projects");
-    }
-
-    @After
-    public void shutdown() {
-        this.appServer.close();
-        this.httpServer.close();
-        this.clientPair.stop();
     }
 
     @Test
     public void testGetNonExistingQR() throws Exception  {
         clientPair.appClient.send("getProjectByCloneCode " + 123);
         clientPair.appClient.verifyResult(serverError(1));
-    }
-
-    @Test
-    public void testCloneForLocalServerWithNoDB() throws Exception  {
-        holder.dbManager.close();
-
-        clientPair.appClient.send("getCloneCode 1");
-        String token = clientPair.appClient.getBody();
-        assertNotNull(token);
-        assertEquals(32, token.length());
-
-        clientPair.appClient.send("getProjectByCloneCode " + token);
-        DashBoard dashBoard = clientPair.appClient.parseDash(2);
-        assertEquals("My Dashboard", dashBoard.name);
     }
 
     @Test

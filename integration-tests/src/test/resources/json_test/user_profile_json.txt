@@ -16,7 +16,7 @@
                 {"id":6, "x":1, "y":1, "label":"Some Text", "type":"LED",            "pinType":"ANALOG", "pin":6},
                 {"id":7, "x":1, "y":1, "label":"Some Text", "type":"DIGIT4_DISPLAY", "pinType":"ANALOG", "pin":7, "frequency" : 5000, "value":"3"},
                 {"id":30, "x":1, "y":1, "label":"Some Text", "type":"DIGIT4_DISPLAY", "pinType":"ANALOG", "pin":30, "frequency" : 100, "value":"3"},
-                {"id":8, "x":1, "y":1, "label":"Some Text", "type":"GRAPH",          "pinType":"ANALOG", "pin":8},
+                {"id":8, "x":1, "y":1, "label":"Some Text", "type":"LABELED_VALUE_DISPLAY",          "pinType":"ANALOG", "pin":8},
                 {"id":9, "x":1, "y":1, "type":"NOTIFICATION", "notifyWhenOffline":true, "androidTokens":{"uid":"token"}},
                 {"id":10, "x":1, "y":1, "token":"token", "secret":"secret", "type":"TWITTER"},
                 {"id":11, "x":1, "y":1, "type":"RTC", "pinType":"VIRTUAL", "pin":9},

@@ -125,10 +125,6 @@ public class ServerProperties extends BaseProperties {
         return getBoolProperty("allow.store.ip");
     }
 
-    public boolean renameOldReportingFiles() {
-        return getBoolProperty("rename.old.reporting.files");
-    }
-
     public boolean isRawDBEnabled() {
         return getBoolProperty("enable.raw.db.data.store");
     }

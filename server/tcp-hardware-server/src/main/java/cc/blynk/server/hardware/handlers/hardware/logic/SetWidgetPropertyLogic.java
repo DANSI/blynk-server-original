@@ -1,5 +1,6 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
@@ -25,14 +26,23 @@ import static cc.blynk.utils.StringUtils.split3;
  * Created on 2/1/2015.
  *
  */
-public class SetWidgetPropertyLogic {
+public final class SetWidgetPropertyLogic {
 
     private static final Logger log = LogManager.getLogger(SetWidgetPropertyLogic.class);
 
     private final SessionDao sessionDao;
 
-    public SetWidgetPropertyLogic(SessionDao sessionDao) {
-        this.sessionDao = sessionDao;
+    private static SetWidgetPropertyLogic instance;
+
+    private SetWidgetPropertyLogic(Holder holder) {
+        this.sessionDao = holder.sessionDao;
+    }
+
+    public static SetWidgetPropertyLogic getInstance(Holder holder) {
+        if (instance == null) {
+            instance = new SetWidgetPropertyLogic(holder);
+        }
+        return instance;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
