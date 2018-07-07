@@ -79,6 +79,31 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         blynkTempDir = Paths.get(System.getProperty("java.io.tmpdir"), "blynk").toString();
     }
 
+    private static String getFileNameByMask(String pattern) {
+        File dir = new File(blynkTempDir);
+        File[] files = dir.listFiles((dir1, name) -> name.startsWith(pattern));
+        return latest(files).getName();
+    }
+
+    private static File latest(File[] files) {
+        long lastMod = Long.MIN_VALUE;
+        File choice = null;
+        for (File file : files) {
+            if (file.lastModified() > lastMod) {
+                choice = file;
+                lastMod = file.lastModified();
+            }
+        }
+        return choice;
+    }
+
+    @Test
+    public void testDeleteGraphCommandWorks() throws Exception {
+        clientPair.appClient.send("getgraphdata 1 d 8 del");
+
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
+    }
+
     @Test
     public void testGetGraphDataFor1Pin() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
@@ -171,13 +196,6 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         assertNotNull(graphDataResponse);
         byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
         assertNotNull(decompressedGraphData);
-    }
-
-    @Test
-    public void testDeleteGraphCommandWorks() throws Exception {
-        clientPair.appClient.send("getgraphdata 1 d 8 del");
-
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
     }
 
     @Test
@@ -1037,7 +1055,6 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
     }
 
-
     @Test
     public void testPagingWorksForGetEnhancedHistoryDataPartialData() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
@@ -1139,6 +1156,29 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
     }
 
     @Test
+    public void testDeleteWorksForEnhancedGraph() throws Exception {
+        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        DataStream dataStream = new DataStream((byte) 8, PinType.DIGITAL);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream
+        };
+
+        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
+        clientPair.appClient.verifyResult(ok(1));
+
+        clientPair.appClient.send("deleteEnhancedData 1\0" + "432");
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.reset();
+
+        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.DAY);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
+    }
+
+    @Test
     public void testPagingWorksForGetEnhancedHistoryDataFullDataAndSecondPage() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 
@@ -1214,47 +1254,6 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
         clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.ONE_HOUR, 1);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
-    }
-
-    @Test
-    public void testDeleteWorksForEnhancedGraph() throws Exception {
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
-        enhancedHistoryGraph.id = 432;
-        enhancedHistoryGraph.width = 8;
-        enhancedHistoryGraph.height = 4;
-        DataStream dataStream = new DataStream((byte) 8, PinType.DIGITAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
-                graphDataStream
-        };
-
-        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
-        clientPair.appClient.verifyResult(ok(1));
-
-        clientPair.appClient.send("deleteEnhancedData 1\0" + "432");
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
-        clientPair.appClient.reset();
-
-        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.DAY);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
-    }
-
-    private static String getFileNameByMask(String pattern) {
-        File dir = new File(blynkTempDir);
-        File[] files = dir.listFiles((dir1, name) -> name.startsWith(pattern));
-        return latest(files).getName();
-    }
-
-    private static File latest(File[] files) {
-        long lastMod = Long.MIN_VALUE;
-        File choice = null;
-        for (File file : files) {
-            if (file.lastModified() > lastMod) {
-                choice = file;
-                lastMod = file.lastModified();
-            }
-        }
-        return choice;
     }
 
     @Test

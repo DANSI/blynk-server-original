@@ -33,10 +33,8 @@ public abstract class BaseTest extends CounterBase {
 
     public Holder holder;
 
-    @Before
-    public void initHolderAndDataFolder() {
-        properties.setProperty("data.folder", getDataFolder());
-        this.holder = createDefaultHolder(properties, "no-db.properties");
+    public static ClientPair initAppAndHardPair() throws Exception {
+        return TestUtil.initAppAndHardPair("localhost", properties.getHttpsPort(), tcpHardPort, getUserName(), "1", "user_profile_json.txt", properties, 10000);
     }
 
     @BeforeClass
@@ -63,8 +61,8 @@ public abstract class BaseTest extends CounterBase {
         return resourcesPath;
     }
 
-    public static ClientPair initAppAndHardPair() throws Exception {
-        return TestUtil.initAppAndHardPair("localhost", properties.getHttpsPort(), tcpHardPort, getUserName(), "1", "user_profile_json.txt", properties, 10000);
+    public static ClientPair initAppAndHardPair(String jsonProfile) throws Exception {
+        return TestUtil.initAppAndHardPair("localhost", properties.getHttpsPort(), tcpHardPort, getUserName(), "1", jsonProfile, properties, 10000);
     }
 
     //for tests only
@@ -82,16 +80,18 @@ public abstract class BaseTest extends CounterBase {
         }
     }
 
-    public static ClientPair initAppAndHardPair(String jsonProfile) throws Exception {
-        return TestUtil.initAppAndHardPair("localhost", properties.getHttpsPort(), tcpHardPort, getUserName(), "1", jsonProfile, properties, 10000);
-    }
-
     public static ClientPair initAppAndHardPair(int tcpAppPort, int tcpHartPort, ServerProperties properties) throws Exception {
         return TestUtil.initAppAndHardPair("localhost", tcpAppPort, tcpHartPort, getUserName(), "1", "user_profile_json.txt", properties, 10000);
     }
 
     public static ClientPair initAppAndHardPair(ServerProperties properties) throws Exception {
         return TestUtil.initAppAndHardPair("localhost", properties.getHttpsPort(), properties.getHttpPort(), getUserName(), "1", "user_profile_json.txt", properties, 10000);
+    }
+
+    @Before
+    public void initHolderAndDataFolder() {
+        properties.setProperty("data.folder", getDataFolder());
+        this.holder = createDefaultHolder(properties, "no-db.properties");
     }
 
 }

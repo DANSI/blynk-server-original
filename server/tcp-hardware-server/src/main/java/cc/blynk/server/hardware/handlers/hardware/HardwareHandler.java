@@ -1,9 +1,9 @@
 package cc.blynk.server.hardware.handlers.hardware;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.common.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.common.handlers.logic.PingLogic;
+import cc.blynk.server.core.dao.TokenValue;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.core.session.StateHolderBase;
