@@ -199,12 +199,8 @@ public class DefaultParser {
         if (!options.getMatchingOptions(t).isEmpty()) {
             // long or partial long options (--L, -L, --L=V, -L=V, --l, --l=V)
             return true;
-        } else if (getLongPrefix(token) != null && !token.startsWith("--")) {
-            // -LV
-            return true;
         }
-
-        return false;
+        return getLongPrefix(token) != null && !token.startsWith("--");
     }
 
     /**

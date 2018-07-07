@@ -49,16 +49,16 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
             log.error("Wrong income message format.");
             ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
         } else {
-            var uid = messageParts.length == 5 ? messageParts[4] : null;
+            //var uid = messageParts.length == 5 ? messageParts[4] : null;
             var version = messageParts.length > 3
                     ? new Version(messageParts[2], messageParts[3])
                     : Version.UNKNOWN_VERSION;
-            appLogin(ctx, message.id, messageParts[0], messageParts[1], version, uid);
+            appLogin(ctx, message.id, messageParts[0], messageParts[1], version);
         }
     }
 
     private void appLogin(ChannelHandlerContext ctx, int messageId, String email,
-                          String token, Version version, String uid) {
+                          String token, Version version) {
         var userName = email.toLowerCase();
 
         var tokenValue = holder.tokenManager.getUserBySharedToken(token);

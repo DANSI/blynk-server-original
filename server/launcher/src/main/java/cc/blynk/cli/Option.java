@@ -377,11 +377,7 @@ public class Option implements Cloneable {
         if (opt != null ? !opt.equals(option.opt) : option.opt != null) {
             return false;
         }
-        if (longOpt != null ? !longOpt.equals(option.longOpt) : option.longOpt != null) {
-            return false;
-        }
-
-        return true;
+        return longOpt != null ? longOpt.equals(option.longOpt) : option.longOpt == null;
     }
 
     @Override
