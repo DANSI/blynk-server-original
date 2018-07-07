@@ -21,8 +21,8 @@ import java.lang.annotation.Target;
  * <li>Have a static classMethod named {@code valueOf} or {@code fromString}
  * that accepts a single
  * {@code String} argument (see, for example, {@link Integer#valueOf(String)})</li>
- * <li>Have a registered implementation of {@link javax.ws.rs.ext.ParamConverterProvider}
- * JAX-RS extension SPI that returns a {@link javax.ws.rs.ext.ParamConverter}
+ * <li>Have a registered implementation of { javax.ws.rs.ext.ParamConverterProvider}
+ * JAX-RS extension SPI that returns a { javax.ws.rs.ext.ParamConverter}
  * instance capable of a "from string" conversion for the type.</li>
  * <li>Be {@code List<T>}, {@code Set<T>} or
  * {@code SortedSet<T>}, where {@code T} satisfies 2, 3 or 4 above.
@@ -41,7 +41,6 @@ import java.lang.annotation.Target;
  *
  * @author Paul Sandoz
  * @author Marc Hadley
- * @see javax.ws.rs.core.UriInfo#getQueryParameters
  * @since 1.0
  */
 @Target({ElementType.PARAMETER, ElementType.METHOD, ElementType.FIELD})

@@ -2,7 +2,6 @@ package cc.blynk.server.core.model.widgets.ui.tiles.templates;
 
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -23,10 +22,6 @@ public class DimmerTileTemplate extends TileTemplate {
     public final int color;
 
     public final int tileColor;
-
-    //todo remove in future releases
-    @Deprecated
-    private final FontSize fontSize;
 
     private final boolean showTileLabel;
 
@@ -53,7 +48,6 @@ public class DimmerTileTemplate extends TileTemplate {
                               @JsonProperty("valueSuffix") String valueSuffix,
                               @JsonProperty("color") int color,
                               @JsonProperty("tileColor")int tileColor,
-                              @JsonProperty("fontSize") FontSize fontSize,
                               @JsonProperty("showTileLabel")boolean showTileLabel,
                               @JsonProperty("maximumFractionDigits") int maximumFractionDigits,
                               @JsonProperty("levelColor") int levelColor) {
@@ -63,7 +57,6 @@ public class DimmerTileTemplate extends TileTemplate {
         this.valueSuffix = valueSuffix;
         this.color = color;
         this.tileColor = tileColor;
-        this.fontSize = fontSize;
         this.showTileLabel = showTileLabel;
         this.maximumFractionDigits = maximumFractionDigits;
         this.levelColor = levelColor;
