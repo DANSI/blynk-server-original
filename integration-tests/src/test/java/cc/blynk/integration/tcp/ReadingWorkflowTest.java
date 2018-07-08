@@ -2,6 +2,7 @@ package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.model.tcp.TestHardClient;
+import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
 import org.junit.After;
 import org.junit.Before;
@@ -113,7 +114,7 @@ public class ReadingWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSendReadForMultipleDevices() throws Exception {
-        Device device2 = new Device(2, "My Device", "ESP8266");
+        Device device2 = new Device(2, "My Device", BoardType.ESP8266);
 
         clientPair.appClient.createDevice(1, device2);
         device2 = clientPair.appClient.parseDevice();
@@ -144,7 +145,7 @@ public class ReadingWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSendReadForDeviceSelector() throws Exception {
-        Device device2 = new Device(2, "My Device", "ESP8266");
+        Device device2 = new Device(2, "My Device", BoardType.ESP8266);
 
         clientPair.appClient.createDevice(1, device2);
         device2 = clientPair.appClient.parseDevice();
@@ -182,7 +183,7 @@ public class ReadingWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSendReadForMultipleDevices2() throws Exception {
-        Device device2 = new Device(2, "My Device", "ESP8266");
+        Device device2 = new Device(2, "My Device", BoardType.ESP8266);
 
         clientPair.appClient.createDevice(1, device2);
         device2 = clientPair.appClient.parseDevice();
@@ -238,7 +239,7 @@ public class ReadingWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSendReadOnlyForOnlineApp() throws Exception {
-        Device device2 = new Device(2, "My Device", "ESP8266");
+        Device device2 = new Device(2, "My Device", BoardType.ESP8266);
 
         clientPair.appClient.createDevice(1, device2);
 

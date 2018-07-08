@@ -5,6 +5,7 @@ import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.model.DataStream;
+import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.device.Tag;
@@ -182,7 +183,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
     @Test
     public void testGetGraphDataForTagAndForEnhancedGraph1StreamWithoutData() throws Exception {
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
         clientPair.appClient.createDevice(1, device1);
         Device device = clientPair.appClient.parseDevice();
@@ -246,7 +247,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
     @Test
     public void testGetGraphDataForTagAndForEnhancedGraphMAX() throws Exception {
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
         clientPair.appClient.createDevice(1, device1);
         Device device = clientPair.appClient.parseDevice();
@@ -312,7 +313,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
     @Test
     public void testGetGraphDataForTagAndForEnhancedGraphMIN() throws Exception {
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
         clientPair.appClient.createDevice(1, device1);
         Device device = clientPair.appClient.parseDevice();
@@ -378,7 +379,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
     @Test
     public void testGetGraphDataForTagAndForEnhancedGraphSUM() throws Exception {
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
         clientPair.appClient.createDevice(1, device1);
         Device device = clientPair.appClient.parseDevice();
@@ -444,7 +445,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
     @Test
     public void testGetGraphDataForTagAndForEnhancedGraphAVG() throws Exception {
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
         clientPair.appClient.createDevice(1, device1);
         Device device = clientPair.appClient.parseDevice();
@@ -510,7 +511,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
     @Test
     public void testGetGraphDataForTagAndForEnhancedGraphMEDIAN() throws Exception {
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
         clientPair.appClient.createDevice(1, device1);
         Device device = clientPair.appClient.parseDevice();
@@ -576,8 +577,8 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
     @Test
     public void testGetGraphDataForTagAndForEnhancedGraphMEDIANFor3Devices() throws Exception {
-        Device device1 = new Device(1, "My Device", "ESP8266");
-        Device device2 = new Device(2, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        Device device2 = new Device(2, "My Device", BoardType.ESP8266);
 
         clientPair.appClient.createDevice(1, device1);
         Device device = clientPair.appClient.parseDevice();
@@ -1317,7 +1318,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
     @Test
     public void testGeneratedCSVIsCorrectForMultiDevicesNoData() throws Exception {
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
@@ -1473,7 +1474,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
                 new Widget[] {
                         enhancedHistoryGraph
                 },
-                deviceIds, "123", "name", "iconName", "ESP8266", new DataStream((byte) 1, PinType.VIRTUAL),
+                deviceIds, "123", "name", "iconName", BoardType.ESP8266, new DataStream((byte) 1, PinType.VIRTUAL),
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
 
         clientPair.appClient.send("createTemplate " + b("1 " + deviceTiles.id + " ")
@@ -1520,7 +1521,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
     @Test
     public void cleanNotUsedPinDataWorksAsExpectedForSuperChartWithDeviceSelector() throws Exception {
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
@@ -1761,7 +1762,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
     @Test
     public void testGeneratedCSVIsCorrectForMultiDevicesAndEnhancedGraph() throws Exception {
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
@@ -1838,7 +1839,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
     @Test
     public void testGeneratedCSVIsCorrectForMultiDevices() throws Exception {
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);

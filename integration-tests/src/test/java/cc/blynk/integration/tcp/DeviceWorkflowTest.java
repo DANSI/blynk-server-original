@@ -5,6 +5,7 @@ import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.dao.TemporaryTokenValue;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.device.Tag;
@@ -76,9 +77,9 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSendHardwareCommandToMultipleDevices() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", "UNO");
+        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
         device0.status = Status.ONLINE;
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
@@ -119,7 +120,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testDeviceWentOfflineMessage() throws Exception {
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
         clientPair.appClient.createDevice(1, device1);
         Device device = clientPair.appClient.parseDevice();
@@ -145,7 +146,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSendHardwareCommandToAppFromMultipleDevices() throws Exception {
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
         clientPair.appClient.createDevice(1, device1);
         Device device = clientPair.appClient.parseDevice();
@@ -177,7 +178,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.createWidget(1, "{\"id\":188, \"width\":1, \"height\":1, \"deviceId\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":1}");
         clientPair.appClient.verifyResult(ok(1));
 
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
         clientPair.appClient.createDevice(1, device1);
         Device device = clientPair.appClient.parseDevice(2);
@@ -203,7 +204,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.createWidget(1, "{\"id\":188, \"width\":1, \"height\":1, \"deviceId\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":33}");
         clientPair.appClient.verifyResult(ok(1));
 
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
         clientPair.appClient.createDevice(1, device1);
         Device device = clientPair.appClient.parseDevice(2);
@@ -242,7 +243,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testActivateForMultiDevices() throws Exception {
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
         clientPair.appClient.createDevice(1, device1);
         Device device = clientPair.appClient.parseDevice();
@@ -270,7 +271,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.createWidget(1, "{\"id\":188, \"width\":1, \"height\":1, \"deviceId\":100000, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":33, \"value\":1}");
         clientPair.appClient.verifyResult(ok(2));
 
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
         clientPair.appClient.createDevice(1, device1);
         Device device = clientPair.appClient.parseDevice(3);
@@ -305,7 +306,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.createWidget(1, "{\"id\":188, \"width\":1, \"height\":1, \"deviceId\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":33, \"value\":1}");
         clientPair.appClient.verifyResult(ok(1));
 
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
         clientPair.appClient.createDevice(1, device1);
         Device device = clientPair.appClient.parseDevice(2);
@@ -336,8 +337,8 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testOfflineOnlineStatusForMultiDevices() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", "UNO");
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
         clientPair.appClient.createDevice(1, device1);
         Device device = clientPair.appClient.parseDevice();
@@ -378,7 +379,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testCorrectOnlineStatusForDisconnect() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", "UNO");
+        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
         device0.status = Status.ONLINE;
 
         clientPair.appClient.send("getDevices 1");
@@ -413,7 +414,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testCorrectOnlineStatusForReconnect() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", "UNO");
+        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
         device0.status = Status.ONLINE;
 
         clientPair.appClient.send("getDevices 1");
@@ -445,7 +446,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testHardwareChannelClosedOnDashRemoval() throws Exception {
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
         clientPair.appClient.createDevice(1, device1);
         Device device = clientPair.appClient.parseDevice();
@@ -476,7 +477,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testHardwareChannelClosedOnDeviceRemoval() throws Exception {
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
         clientPair.appClient.createDevice(1, device1);
         Device device = clientPair.appClient.parseDevice();
@@ -525,7 +526,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testHardwareDataRemovedWhenDeviceRemoved() throws Exception {
-        clientPair.appClient.createDevice(1, new Device(1, "My Device", "ESP8266"));
+        clientPair.appClient.createDevice(1, new Device(1, "My Device", BoardType.ESP8266));
         Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
@@ -586,7 +587,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testTemporaryTokenWorksAsExpected() throws Exception {
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
         clientPair.appClient.send("getProvisionToken 1\0" + device1.toString());
         device1 = clientPair.appClient.parseDevice(1);
@@ -633,7 +634,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testCorrectRemovalForTags() throws Exception {
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
         clientPair.appClient.createDevice(1, device1);
         Device device = clientPair.appClient.parseDevice();
@@ -679,7 +680,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testCorrectRemovalForDeviceSelector() throws Exception {
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
         clientPair.appClient.createDevice(1, device1);
         Device device = clientPair.appClient.parseDevice();
@@ -696,7 +697,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.createWidget(1, deviceTiles);
         clientPair.appClient.verifyResult(ok(2));
         PageTileTemplate tileTemplate = new PageTileTemplate(1,
-                null, null, "name", "name", "iconName", "ESP8266", null,
+                null, null, "name", "name", "iconName", BoardType.ESP8266, null,
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
         clientPair.appClient.createTemplate(1, deviceTiles.id, tileTemplate);
         clientPair.appClient.verifyResult(ok(3));
@@ -710,7 +711,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.createWidget(1, deviceTiles);
         clientPair.appClient.verifyResult(ok(4));
         tileTemplate = new PageTileTemplate(1,
-                null, new int[]{0}, "name", "name", "iconName", "ESP8266", null,
+                null, new int[]{0}, "name", "name", "iconName", BoardType.ESP8266, null,
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
         clientPair.appClient.createTemplate(1, deviceTiles.id, tileTemplate);
         clientPair.appClient.verifyResult(ok(5));
@@ -727,7 +728,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.createWidget(1, deviceTiles);
         clientPair.appClient.verifyResult(ok(7));
         tileTemplate = new PageTileTemplate(1,
-                null, new int[]{1}, "name", "name", "iconName", "ESP8266", null,
+                null, new int[]{1}, "name", "name", "iconName", BoardType.ESP8266, null,
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
         clientPair.appClient.createTemplate(1, deviceTiles.id, tileTemplate);
         clientPair.appClient.verifyResult(ok(8));
@@ -741,7 +742,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.createWidget(1, deviceTiles);
         clientPair.appClient.verifyResult(ok(9));
         tileTemplate = new PageTileTemplate(1,
-                null, new int[]{0, 1}, "name", "name", "iconName", "ESP8266", null,
+                null, new int[]{0, 1}, "name", "name", "iconName", BoardType.ESP8266, null,
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
         clientPair.appClient.createTemplate(1, deviceTiles.id, tileTemplate);
         clientPair.appClient.verifyResult(ok(10));

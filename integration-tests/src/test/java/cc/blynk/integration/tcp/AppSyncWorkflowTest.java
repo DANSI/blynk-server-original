@@ -4,6 +4,7 @@ import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.enums.PinType;
@@ -249,7 +250,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testTerminalAndAnotherWidgetOnTheSamePinAndDeviceSelector() throws Exception {
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
@@ -308,7 +309,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testTerminalAndAnotherWidgetOnTheSamePinAndDeviceSelectorAnotherOrder() throws Exception {
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
@@ -367,7 +368,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testTerminalStorageRemembersCommandsInOldFormatAndDeviceSelector() throws Exception {
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
@@ -427,7 +428,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testTerminalStorageRemembersCommandsInNewFormatAndDeviceTiles() throws Exception {
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
@@ -462,7 +463,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
         appClient.verifyResult(ok(4));
 
         TileTemplate tileTemplate = new PageTileTemplate(1,
-                null, new int[] {0}, "name", "name", "iconName", "ESP8266", new DataStream((byte) 1, PinType.VIRTUAL),
+                null, new int[] {0}, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte) 1, PinType.VIRTUAL),
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
 
         appClient.createTemplate(1, deviceTiles.id, tileTemplate);
@@ -491,7 +492,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testTerminalStorageCleanedAfterTilesAreRemoved() throws Exception {
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
@@ -526,7 +527,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
         appClient.verifyResult(ok(4));
 
         TileTemplate tileTemplate = new PageTileTemplate(1,
-                null, new int[] {0}, "name", "name", "iconName", "ESP8266", new DataStream((byte) 1, PinType.VIRTUAL),
+                null, new int[] {0}, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte) 1, PinType.VIRTUAL),
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
 
         appClient.createTemplate(1, deviceTiles.id, tileTemplate);
@@ -576,7 +577,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testTerminalStorageRemembersCommandsInNewFormatAndDeviceSelector() throws Exception {
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
@@ -814,9 +815,9 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSyncForDeviceSelectorAndSetProperty() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", "UNO");
+        Device device0 = new Device(0, "My Dashboard", BoardType.ESP8266);
         device0.status = Status.ONLINE;
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
@@ -859,9 +860,9 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSyncForDeviceSelectorAndSetPropertyAndMultiValueWidget() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", "UNO");
+        Device device0 = new Device(0, "My Dashboard", BoardType.ESP8266);
         device0.status = Status.ONLINE;
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
@@ -943,7 +944,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testLCDOnActivateSendsCorrectBodySimpleModeAndAnotherDevice() throws Exception {
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);

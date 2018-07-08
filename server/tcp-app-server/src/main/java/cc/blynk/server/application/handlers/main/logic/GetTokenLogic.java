@@ -3,6 +3,7 @@ package cc.blynk.server.application.handlers.main.logic;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.StringUtils;
@@ -50,7 +51,7 @@ public class GetTokenLogic {
         //if token not exists. generate new one
         if (token == null) {
             //todo back compatibility code. remove in future
-            device = new Device(deviceId, "ESP8266", "ESP8266");
+            device = new Device(deviceId, "ESP8266", BoardType.ESP8266);
             dash.devices = new Device[] {device};
 
             token = TokenGeneratorUtil.generateNewToken();

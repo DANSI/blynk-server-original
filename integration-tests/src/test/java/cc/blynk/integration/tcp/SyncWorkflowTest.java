@@ -5,6 +5,7 @@ import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -499,7 +500,7 @@ public class SyncWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.createWidget(1, "{\"id\":188, \"width\":1, \"height\":1, \"deviceId\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"BUTTON\", \"pinType\":\"VIRTUAL\", \"pin\":4, \"value\":1}");
         clientPair.appClient.verifyResult(ok(1));
 
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
         clientPair.appClient.createDevice(1, device1);
         Device device = clientPair.appClient.parseDevice(2);
@@ -531,7 +532,7 @@ public class SyncWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSyncForMultiDevicesNoWidget() throws Exception {
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
         clientPair.appClient.createDevice(1, device1);
         Device device = clientPair.appClient.parseDevice();

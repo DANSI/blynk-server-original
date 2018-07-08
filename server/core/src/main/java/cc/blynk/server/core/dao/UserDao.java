@@ -96,8 +96,9 @@ public class UserDao {
         for (User user : users.values()) {
             for (DashBoard dashBoard : user.profile.dashBoards) {
                 for (Device device : dashBoard.devices) {
-                    Integer i = boards.getOrDefault(device.boardType, 0);
-                    boards.put(device.boardType, ++i);
+                    String label = device.boardType.label;
+                    Integer i = boards.getOrDefault(label, 0);
+                    boards.put(label, ++i);
                 }
             }
         }

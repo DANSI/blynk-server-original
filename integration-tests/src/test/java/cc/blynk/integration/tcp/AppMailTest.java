@@ -2,6 +2,7 @@ package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.model.tcp.TestAppClient;
+import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import org.junit.Test;
@@ -91,7 +92,7 @@ public class AppMailTest extends SingleServerInstancePerTest {
         appClient.login(getUserName(), "1");
         appClient.verifyResult(ok(1));
 
-        Device device1 = new Device(1, "My Device2", "ESP8266");
+        Device device1 = new Device(1, "My Device2", BoardType.ESP8266);
 
         clientPair.appClient.createDevice(1, device1);
         Device device = clientPair.appClient.parseDevice();

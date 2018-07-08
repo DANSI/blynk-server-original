@@ -6,6 +6,7 @@ import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.model.DataStream;
+import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.enums.PinType;
@@ -68,9 +69,9 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSendHardwareCommandViaDeviceSelector() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", "UNO");
+        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
         device0.status = Status.ONLINE;
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
@@ -129,9 +130,9 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSendHardwareCommandViaDeviceSelectorInSharedApp() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", "UNO");
+        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
         device0.status = Status.ONLINE;
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
@@ -219,9 +220,9 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testGetHistoryGraphDataForDeviceSelector() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", "UNO");
+        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
         device0.status = Status.ONLINE;
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
@@ -303,9 +304,9 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSetPropertyIsSentForDeviceSelectorWidget() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", "UNO");
+        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
         device0.status = Status.ONLINE;
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
@@ -349,9 +350,9 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSetPropertyIsRememberedBetweenDevices() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", "UNO");
+        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
         device0.status = Status.ONLINE;
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
@@ -395,9 +396,9 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testBasicSelectorWorkflow() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", "UNO");
+        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
         device0.status = Status.ONLINE;
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
@@ -464,9 +465,9 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testDeviceSelectorSyncTimeInput() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", "UNO");
+        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
         device0.status = Status.ONLINE;
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
@@ -533,9 +534,9 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testNoSyncForDeviceSelectorWidget() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", "UNO");
+        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
         device0.status = Status.ONLINE;
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
@@ -561,9 +562,9 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testDeviceSelectorWorksAfterDeviceRemoval() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", "UNO");
+        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
         device0.status = Status.ONLINE;
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
@@ -616,9 +617,9 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void terminalWithDeviceSelectorStoreMultipleCommands() throws Exception {
-        var device0 = new Device(0, "My Dashboard", "UNO");
+        var device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
         device0.status = Status.ONLINE;
-        var device1 = new Device(1, "My Device", "ESP8266");
+        var device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
@@ -666,9 +667,9 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void TableWithDeviceSelectorStoreMultipleCommands() throws Exception {
-        var device0 = new Device(0, "My Dashboard", "UNO");
+        var device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
         device0.status = Status.ONLINE;
-        var device1 = new Device(1, "My Device", "ESP8266");
+        var device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
@@ -716,9 +717,9 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void LCDWithDeviceSelectorStoreMultipleCommands() throws Exception {
-        var device0 = new Device(0, "My Dashboard", "UNO");
+        var device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
         device0.status = Status.ONLINE;
-        var device1 = new Device(1, "My Device", "ESP8266");
+        var device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);

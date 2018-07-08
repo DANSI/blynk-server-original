@@ -2,6 +2,7 @@ package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.model.tcp.TestHardClient;
+import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
@@ -154,7 +155,7 @@ public class TagCommandsTest extends SingleServerInstancePerTest {
     @Test
     public void testAddNewTagForMultipleDevicesAndAssignWidgetAndVerifySync() throws Exception {
         //creating new device
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
         clientPair.appClient.createDevice(1, device1);
         Device device = clientPair.appClient.parseDevice();
