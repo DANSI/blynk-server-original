@@ -1,8 +1,7 @@
 package cc.blynk.server.application.handlers.main.logic.graph;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
-import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
@@ -30,19 +29,15 @@ import static cc.blynk.utils.StringUtils.split2Device;
  * Created on 2/1/2015.
  *
  */
-public class GetEnhancedGraphDataLogic {
+public final class GetEnhancedGraphDataLogic {
 
     private static final Logger log = LogManager.getLogger(GetEnhancedGraphDataLogic.class);
 
-    private final BlockingIOProcessor blockingIOProcessor;
-    private final ReportingDiskDao reportingDao;
-
-    public GetEnhancedGraphDataLogic(ReportingDiskDao reportingDao, BlockingIOProcessor blockingIOProcessor) {
-        this.reportingDao = reportingDao;
-        this.blockingIOProcessor = blockingIOProcessor;
+    private GetEnhancedGraphDataLogic() {
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
+                                       AppStateHolder state, StringMessage message) {
         var messageParts = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
         if (messageParts.length < 3) {
@@ -109,14 +104,14 @@ public class GetEnhancedGraphDataLogic {
             i++;
         }
 
-        readGraphData(ctx.channel(), state.user, requestedPins, message.id);
+        readGraphData(holder, ctx.channel(), state.user, requestedPins, message.id);
     }
 
-    private void readGraphData(Channel channel, User user,
-                               GraphPinRequest[] requestedPins, int msgId) {
-        blockingIOProcessor.executeHistory(() -> {
+    private static void readGraphData(Holder holder, Channel channel, User user,
+                                      GraphPinRequest[] requestedPins, int msgId) {
+        holder.blockingIOProcessor.executeHistory(() -> {
             try {
-                byte[][] data = reportingDao.getReportingData(user, requestedPins);
+                byte[][] data = holder.reportingDiskDao.getReportingData(user, requestedPins);
                 byte[] compressed = compress(requestedPins[0].dashId, data);
 
                 if (channel.isWritable()) {

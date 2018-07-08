@@ -1,8 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic.face;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.App;
@@ -27,19 +25,15 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
  * Created on 2/1/2015.
  *
  */
-public class UpdateFaceLogic {
+public final class UpdateFaceLogic {
 
     private static final Logger log = LogManager.getLogger(UpdateFaceLogic.class);
 
-    private final UserDao userDao;
-    private final SessionDao sessionDao;
-
-    public UpdateFaceLogic(Holder holder) {
-        this.userDao = holder.userDao;
-        this.sessionDao = holder.sessionDao;
+    private UpdateFaceLogic() {
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
+                                       User user, StringMessage message) {
         int parentDashId = Integer.parseInt(message.body);
 
         DashBoard dash = user.profile.getDashByIdOrThrow(parentDashId);
@@ -65,7 +59,7 @@ public class UpdateFaceLogic {
         int count = 0;
         log.info("Updating face {} for user {}-{}. App Ids : {}", parentDashId,
                 user.email, user.appName, JsonParser.valueToJsonAsString(appIds));
-        for (User existingUser : userDao.users.values()) {
+        for (User existingUser : holder.userDao.users.values()) {
             for (DashBoard existingDash : existingUser.profile.dashBoards) {
                 if (existingDash.parentId == parentDashId && (existingUser == user
                         || appIds.contains(existingUser.appName))) {
@@ -76,7 +70,7 @@ public class UpdateFaceLogic {
                         existingDash.updateFaceFields(dash);
                         //do not close connection for initiator
                         if (existingUser != user) {
-                            sessionDao.closeAppChannelsByUser(new UserKey(existingUser));
+                            holder.sessionDao.closeAppChannelsByUser(new UserKey(existingUser));
                         }
                         count++;
                     } catch (Exception e) {

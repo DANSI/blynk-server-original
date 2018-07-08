@@ -2,15 +2,10 @@ package cc.blynk.server.application.handlers.main.logic.dashboard;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
-import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.ReportingDiskDao;
-import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -24,34 +19,24 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
  * Created on 2/1/2015.
  *
  */
-public class DeleteDashLogic {
+public final class DeleteDashLogic {
 
     private static final Logger log = LogManager.getLogger(DeleteDashLogic.class);
 
-    private final TokenManager tokenManager;
-    private final TimerWorker timerWorker;
-    private final SessionDao sessionDao;
-    private final ReportingDiskDao reportingDao;
-    private final BlockingIOProcessor blockingIOProcessor;
-
-    public DeleteDashLogic(Holder holder) {
-        this.tokenManager = holder.tokenManager;
-        this.timerWorker = holder.timerWorker;
-        this.sessionDao = holder.sessionDao;
-        this.reportingDao = holder.reportingDiskDao;
-        this.blockingIOProcessor = holder.blockingIOProcessor;
+    private DeleteDashLogic() {
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
+                                       AppStateHolder state, StringMessage message) {
         var dashId = Integer.parseInt(message.body);
 
-        deleteDash(state, dashId);
+        deleteDash(holder, state, dashId);
         state.user.lastModifiedTs = System.currentTimeMillis();
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }
 
-    private void deleteDash(AppStateHolder state, int dashId) {
+    private static void deleteDash(Holder holder, AppStateHolder state, int dashId) {
         User user = state.user;
         int index = user.profile.getDashIndexOrThrow(dashId);
 
@@ -61,14 +46,14 @@ public class DeleteDashLogic {
 
         user.addEnergy(dash.energySum());
 
-        timerWorker.deleteTimers(state.userKey, dash);
-        tokenManager.deleteDash(dash);
-        sessionDao.closeHardwareChannelByDashId(state.userKey, dashId);
+        holder.timerWorker.deleteTimers(state.userKey, dash);
+        holder.tokenManager.deleteDash(dash);
+        holder.sessionDao.closeHardwareChannelByDashId(state.userKey, dashId);
 
-        blockingIOProcessor.executeHistory(() -> {
+        holder.blockingIOProcessor.executeHistory(() -> {
             for (Device device : dash.devices) {
                 try {
-                    reportingDao.delete(state.user, dashId, device.id);
+                    holder.reportingDiskDao.delete(state.user, dashId, device.id);
                 } catch (Exception e) {
                     log.warn("Error removing device data. Reason : {}.", e.getMessage());
                 }

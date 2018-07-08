@@ -1,10 +1,11 @@
 package cc.blynk.server.application.handlers.main.logic;
 
-import cc.blynk.server.core.BlockingIOProcessor;
+import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.DBManager;
+import cc.blynk.server.db.model.Redeem;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,28 +21,25 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
  * Created by Dmitriy Dumanskiy.
  * Created on 02.03.16.
  */
-public class RedeemLogic {
+public final class RedeemLogic {
 
     private static final Logger log = LogManager.getLogger(RedeemLogic.class);
 
-    private final BlockingIOProcessor blockingIOProcessor;
-    private final DBManager dbManager;
-
-    public RedeemLogic(DBManager dbManager, BlockingIOProcessor blockingIOProcessor) {
-        this.blockingIOProcessor = blockingIOProcessor;
-        this.dbManager = dbManager;
+    private RedeemLogic() {
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
+                                       User user, StringMessage message) {
         String redeemToken = message.body;
 
-        blockingIOProcessor.executeDB(() ->
-                ctx.writeAndFlush(verifyToken(message, redeemToken, user), ctx.voidPromise()));
+        holder.blockingIOProcessor.executeDB(() ->
+                ctx.writeAndFlush(verifyToken(holder, message, redeemToken, user), ctx.voidPromise()));
     }
 
-    private MessageBase verifyToken(StringMessage message, String redeemToken, User user) {
+    private static MessageBase verifyToken(Holder holder, StringMessage message, String redeemToken, User user) {
         try {
-            var redeem = dbManager.selectRedeemByToken(redeemToken);
+            DBManager dbManager = holder.dbManager;
+            Redeem redeem = dbManager.selectRedeemByToken(redeemToken);
             if (redeem != null) {
                 if (redeem.isRedeemed && redeem.email.equals(user.email)) {
                     return ok(message.id);
@@ -57,7 +55,7 @@ public class RedeemLogic {
         return notAllowed(message.id);
     }
 
-    private void unlockContent(User user, int reward) {
+    private static void unlockContent(User user, int reward) {
         user.addEnergy(reward);
         log.info("Unlocking content for {}. Reward {}.", user.email, reward);
     }

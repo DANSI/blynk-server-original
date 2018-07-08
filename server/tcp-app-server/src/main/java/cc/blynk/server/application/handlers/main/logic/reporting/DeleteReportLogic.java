@@ -22,17 +22,15 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created on 31/05/2018.
  *
  */
-public class DeleteReportLogic {
+public final class DeleteReportLogic {
 
     private static final Logger log = LogManager.getLogger(DeleteReportLogic.class);
 
-    private final ReportScheduler reportScheduler;
-
-    public DeleteReportLogic(Holder holder) {
-        this.reportScheduler = holder.reportScheduler;
+    private DeleteReportLogic() {
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
+                                       User user, StringMessage message) {
         String[] split = split2(message.body);
 
         if (split.length < 2) {
@@ -60,6 +58,7 @@ public class DeleteReportLogic {
         dash.updatedAt = System.currentTimeMillis();
 
         if (reportToDel.isPeriodic()) {
+            ReportScheduler reportScheduler = holder.reportScheduler;
             boolean isRemoved = reportScheduler.cancelStoredFuture(user, dashId, reportId);
             log.debug("Deleting reportId {} in scheduler for {}. Is removed: {}?.",
                     reportToDel.id, user.email, isRemoved);

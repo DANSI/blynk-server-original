@@ -1,12 +1,11 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.db.DBManager;
+import cc.blynk.server.db.model.FlashedToken;
 import cc.blynk.utils.AppNameUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -22,25 +21,19 @@ import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
  * Created on 2/1/2015.
  *
  */
-public class GetProjectByTokenLogic {
+public final class GetProjectByTokenLogic {
 
     private static final Logger log = LogManager.getLogger(GetProjectByTokenLogic.class);
 
-    private final BlockingIOProcessor blockingIOProcessor;
-    private final DBManager dbManager;
-    private final UserDao userDao;
-
-    public GetProjectByTokenLogic(Holder holder) {
-        this.blockingIOProcessor = holder.blockingIOProcessor;
-        this.dbManager = holder.dbManager;
-        this.userDao = holder.userDao;
+    private GetProjectByTokenLogic() {
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        var token = message.body;
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
+                                       User user, StringMessage message) {
+        String token = message.body;
 
-        blockingIOProcessor.executeDB(() -> {
-            var dbFlashedToken = dbManager.selectFlashedToken(token);
+        holder.blockingIOProcessor.executeDB(() -> {
+            FlashedToken dbFlashedToken = holder.dbManager.selectFlashedToken(token);
 
             if (dbFlashedToken == null) {
                 log.error("{} token not exists for app {} for {} (GetProject).", token, user.appName, user.email);
@@ -48,9 +41,9 @@ public class GetProjectByTokenLogic {
                 return;
             }
 
-            var publishUser = userDao.getByName(dbFlashedToken.email, AppNameUtil.BLYNK);
+            User publishUser = holder.userDao.getByName(dbFlashedToken.email, AppNameUtil.BLYNK);
 
-            var dash = publishUser.profile.getDashById(dbFlashedToken.dashId);
+            DashBoard dash = publishUser.profile.getDashById(dbFlashedToken.dashId);
 
             if (dash == null) {
                 log.error("Dash with {} id not exists in dashboards.", dbFlashedToken.dashId);

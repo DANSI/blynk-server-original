@@ -1,5 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.SharedTokenManager;
@@ -17,17 +18,15 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
  * Created on 2/1/2015.
  *
  */
-public class DeActivateDashboardLogic {
+public final class DeActivateDashboardLogic {
 
     private static final Logger log = LogManager.getLogger(ActivateDashboardLogic.class);
 
-    private final SessionDao sessionDao;
-
-    public DeActivateDashboardLogic(SessionDao sessionDao) {
-        this.sessionDao = sessionDao;
+    private DeActivateDashboardLogic() {
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
+                                       AppStateHolder state, StringMessage message) {
         var user = state.user;
 
         String sharedToken;
@@ -45,6 +44,7 @@ public class DeActivateDashboardLogic {
         }
         user.lastModifiedTs = System.currentTimeMillis();
 
+        SessionDao sessionDao = holder.sessionDao;
         var session = sessionDao.userSession.get(state.userKey);
         session.sendToSharedApps(ctx.channel(), sharedToken, message.command, message.id, message.body);
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());

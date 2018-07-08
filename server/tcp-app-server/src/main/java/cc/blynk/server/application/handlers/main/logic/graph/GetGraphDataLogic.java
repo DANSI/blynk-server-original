@@ -1,7 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic.graph;
 
-import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.ReportingDiskDao;
+import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
@@ -32,19 +31,16 @@ import static cc.blynk.utils.StringUtils.split2Device;
  * Created on 2/1/2015.
  *
  */
-public class GetGraphDataLogic {
+@Deprecated
+public final class GetGraphDataLogic {
 
     private static final Logger log = LogManager.getLogger(GetGraphDataLogic.class);
 
-    private final BlockingIOProcessor blockingIOProcessor;
-    private final ReportingDiskDao reportingDao;
-
-    public GetGraphDataLogic(ReportingDiskDao reportingDao, BlockingIOProcessor blockingIOProcessor) {
-        this.reportingDao = reportingDao;
-        this.blockingIOProcessor = blockingIOProcessor;
+    private GetGraphDataLogic() {
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
+                                       User user, StringMessage message) {
         String[] messageParts = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
         if (messageParts.length < 3) {
@@ -72,31 +68,32 @@ public class GetGraphDataLogic {
 
         //special case for delete command
         if (messageParts.length == 4) {
-            deleteGraphData(messageParts, user, dashId, deviceId);
+            deleteGraphData(holder, messageParts, user, dashId, deviceId);
             ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
         } else {
-            process(ctx.channel(), dashId, deviceId,
-                    Arrays.copyOfRange(messageParts, 1, messageParts.length), user, message.id, 4);
+            process(holder, ctx.channel(), dashId, deviceId,
+                    Arrays.copyOfRange(messageParts, 1, messageParts.length), user, message.id);
         }
     }
 
-    private void process(Channel channel, int dashId, int deviceId, String[] messageParts,
-                         User user, int msgId, int valuesPerPin) {
-        int numberOfPins = messageParts.length / valuesPerPin;
+    private static void process(Holder holder, Channel channel, int dashId, int deviceId,
+                                String[] messageParts, User user, int msgId) {
+        int numberOfPins = messageParts.length / 4;
 
         GraphPinRequest[] requestedPins = new GraphPinRequest[numberOfPins];
 
         for (int i = 0; i < numberOfPins; i++) {
-            requestedPins[i] = new GraphPinRequest(dashId, deviceId, messageParts, i, valuesPerPin);
+            requestedPins[i] = new GraphPinRequest(dashId, deviceId, messageParts, i, 4);
         }
 
-        readGraphData(channel, user, requestedPins, msgId);
+        readGraphData(holder, channel, user, requestedPins, msgId);
     }
 
-    private void readGraphData(Channel channel, User user, GraphPinRequest[] requestedPins, int msgId) {
-        blockingIOProcessor.executeHistory(() -> {
+    private static void readGraphData(Holder holder, Channel channel,
+                                      User user, GraphPinRequest[] requestedPins, int msgId) {
+        holder.blockingIOProcessor.executeHistory(() -> {
             try {
-                byte[][] data = reportingDao.getReportingData(user, requestedPins);
+                byte[][] data = holder.reportingDiskDao.getReportingData(user, requestedPins);
                 byte[] compressed = compress(requestedPins[0].dashId, data);
 
                 if (channel.isWritable()) {
@@ -114,16 +111,12 @@ public class GetGraphDataLogic {
         });
     }
 
-    private void deleteGraphData(String[] messageParts, User user, int dashId, int deviceId) {
+    private static void deleteGraphData(Holder holder,
+                                        String[] messageParts, User user, int dashId, int deviceId) {
         try {
             PinType pinType = PinType.getPinType(messageParts[1].charAt(0));
             byte pin = Byte.parseByte(messageParts[2]);
-            //String cmd = messageParts[3];
-            //this check is not necessary actually
-            //if (!"del".equals(cmd)) {
-            //    throw new IllegalCommandBodyException("Wrong body format. Expecting 'del'.");
-            //}
-            reportingDao.delete(user, dashId, deviceId, pinType, pin);
+            holder.reportingDiskDao.delete(user, dashId, deviceId, pinType, pin);
         } catch (NumberFormatException e) {
             throw new IllegalCommandException("HardwareLogic command body incorrect.");
         }

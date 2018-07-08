@@ -33,6 +33,9 @@ public final class BlynkInternalLogic {
 
     private static final Logger log = LogManager.getLogger(BlynkInternalLogic.class);
 
+    private BlynkInternalLogic() {
+    }
+
     public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
                                        HardwareStateHolder state, StringMessage message) {
         var messageParts = message.body.split(StringUtils.BODY_SEPARATOR_STRING);

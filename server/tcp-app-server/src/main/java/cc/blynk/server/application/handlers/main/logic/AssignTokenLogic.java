@@ -1,7 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -22,28 +21,24 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created on 2/1/2015.
  *
  */
-public class AssignTokenLogic {
+public final class AssignTokenLogic {
 
     private static final Logger log = LogManager.getLogger(AssignTokenLogic.class);
 
-    private final TokenManager tokenManager;
-    private final BlockingIOProcessor blockingIOProcessor;
-    private final DBManager dbManager;
-
-    public AssignTokenLogic(Holder holder) {
-        this.tokenManager = holder.tokenManager;
-        this.blockingIOProcessor = holder.blockingIOProcessor;
-        this.dbManager = holder.dbManager;
+    private AssignTokenLogic() {
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
+                                       User user, StringMessage message) {
         var split = split2(message.body);
 
         var dashId = Integer.parseInt(split[0]);
         var token = split[1];
         var dash = user.profile.getDashByIdOrThrow(dashId);
 
-        blockingIOProcessor.executeDB(() -> {
+        DBManager dbManager = holder.dbManager;
+        TokenManager tokenManager = holder.tokenManager;
+        holder.blockingIOProcessor.executeDB(() -> {
             var dbFlashedToken = dbManager.selectFlashedToken(token);
 
             if (dbFlashedToken == null) {

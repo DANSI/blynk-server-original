@@ -2,8 +2,6 @@ package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
-import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
@@ -22,17 +20,13 @@ import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
  * Created on 2/1/2015.
  *
  */
-public class RefreshTokenLogic {
+public final class RefreshTokenLogic {
 
-    private final TokenManager tokenManager;
-    private final SessionDao sessionDao;
-
-    public RefreshTokenLogic(Holder holder) {
-        this.tokenManager = holder.tokenManager;
-        this.sessionDao = holder.sessionDao;
+    private RefreshTokenLogic() {
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
+                                       AppStateHolder state, StringMessage message) {
         String[] split = StringUtils.split2(message.body);
 
         int dashId = Integer.parseInt(split[0]);
@@ -53,9 +47,9 @@ public class RefreshTokenLogic {
             return;
         }
 
-        String token = tokenManager.refreshToken(user, dash, device);
+        String token = holder.tokenManager.refreshToken(user, dash, device);
 
-        Session session = sessionDao.userSession.get(state.userKey);
+        Session session = holder.sessionDao.userSession.get(state.userKey);
         session.closeHardwareChannelByDeviceId(dashId, deviceId);
 
         if (ctx.channel().isWritable()) {

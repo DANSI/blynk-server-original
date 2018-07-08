@@ -30,8 +30,11 @@ public final class SetWidgetPropertyLogic {
 
     private static final Logger log = LogManager.getLogger(SetWidgetPropertyLogic.class);
 
+    private SetWidgetPropertyLogic() {
+    }
+
     public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
-                                HardwareStateHolder state, StringMessage message) {
+                                       HardwareStateHolder state, StringMessage message) {
         SessionDao sessionDao = holder.sessionDao;
 
         String[] bodyParts = split3(message.body);

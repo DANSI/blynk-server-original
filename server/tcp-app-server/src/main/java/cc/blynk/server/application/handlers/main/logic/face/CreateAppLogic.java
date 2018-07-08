@@ -21,17 +21,15 @@ import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
  * Created by Dmitriy Dumanskiy.
  * Created on 01.02.16.
  */
-public class CreateAppLogic {
+public final class CreateAppLogic {
 
     private static final Logger log = LogManager.getLogger(CreateAppLogic.class);
 
-    private final int maxWidgetSize;
-
-    public CreateAppLogic(int maxWidgetSize) {
-        this.maxWidgetSize = maxWidgetSize;
+    private CreateAppLogic() {
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
+    public static void messageReceived(ChannelHandlerContext ctx, AppStateHolder state,
+                                       StringMessage message, int maxWidgetSize) {
         var appString = message.body;
 
         if (appString == null || appString.isEmpty()) {

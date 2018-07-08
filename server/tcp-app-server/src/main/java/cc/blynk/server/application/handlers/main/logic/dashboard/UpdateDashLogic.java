@@ -1,5 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
@@ -18,27 +19,23 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
  * Created on 2/1/2015.
  *
  */
-public class UpdateDashLogic {
+public final class UpdateDashLogic {
 
     private static final Logger log = LogManager.getLogger(UpdateDashLogic.class);
 
-    private final int dashMaxSize;
-    private final TimerWorker timerWorker;
-
-    public UpdateDashLogic(TimerWorker timerWorker, int maxDashSize) {
-        this.timerWorker = timerWorker;
-        this.dashMaxSize = maxDashSize;
+    private UpdateDashLogic() {
     }
 
     //todo should accept only dash info and ignore widgets. should be fixed after migration
-    public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
+                                       AppStateHolder state, StringMessage message) {
         var dashString = message.body;
 
         if (dashString == null || dashString.isEmpty()) {
             throw new IllegalCommandException("Income create dash message is empty.");
         }
 
-        if (dashString.length() > dashMaxSize) {
+        if (dashString.length() > holder.limits.profileSizeLimitBytes) {
             throw new NotAllowedException("User dashboard is larger then limit.", message.id);
         }
 
@@ -55,6 +52,7 @@ public class UpdateDashLogic {
 
         var existingDash = user.profile.getDashByIdOrThrow(updatedDash.id);
 
+        TimerWorker timerWorker = holder.timerWorker;
         timerWorker.deleteTimers(state.userKey, existingDash);
         updatedDash.addTimers(timerWorker, state.userKey);
 

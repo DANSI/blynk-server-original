@@ -18,17 +18,15 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
  * Created on 2/1/2015.
  *
  */
-public class UpdateDashSettingLogic {
+public final class UpdateDashSettingLogic {
 
     private static final Logger log = LogManager.getLogger(UpdateDashSettingLogic.class);
 
-    private final int settingsSizeLimit;
-
-    public UpdateDashSettingLogic(int settingSizeLimit) {
-        this.settingsSizeLimit = settingSizeLimit;
+    private UpdateDashSettingLogic() {
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
+    public static void messageReceived(ChannelHandlerContext ctx, AppStateHolder state,
+                                       StringMessage message, int settingsSizeLimit) {
         var split = StringUtils.split2(message.body);
 
         if (split.length < 2) {

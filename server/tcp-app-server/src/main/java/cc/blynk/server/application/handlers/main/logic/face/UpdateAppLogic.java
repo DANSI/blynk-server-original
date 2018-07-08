@@ -16,17 +16,15 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
  * Created by Dmitriy Dumanskiy.
  * Created on 01.02.16.
  */
-public class UpdateAppLogic {
+public final class UpdateAppLogic {
 
     private static final Logger log = LogManager.getLogger(UpdateAppLogic.class);
 
-    private final int maxWidgetSize;
-
-    public UpdateAppLogic(int maxWidgetSize) {
-        this.maxWidgetSize = maxWidgetSize;
+    private UpdateAppLogic() {
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
+    public static void messageReceived(ChannelHandlerContext ctx, AppStateHolder state,
+                                       StringMessage message, int maxWidgetSize) {
         var appString = message.body;
 
         if (appString == null || appString.isEmpty()) {

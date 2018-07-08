@@ -1,7 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.device;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -23,19 +22,15 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created by Dmitriy Dumanskiy.
  * Created on 01.02.16.
  */
-public class CreateDeviceLogic {
+public final class CreateDeviceLogic {
 
     private static final Logger log = LogManager.getLogger(CreateDeviceLogic.class);
 
-    private final TokenManager tokenManager;
-    private final int deviceLimit;
-
-    public CreateDeviceLogic(Holder holder) {
-        this.tokenManager = holder.tokenManager;
-        this.deviceLimit = holder.limits.deviceLimit;
+    private CreateDeviceLogic() {
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
+                                       User user, StringMessage message) {
         var split = split2(message.body);
 
         if (split.length < 2) {
@@ -51,7 +46,7 @@ public class CreateDeviceLogic {
 
         var dash = user.profile.getDashByIdOrThrow(dashId);
 
-        if (dash.devices.length > deviceLimit) {
+        if (dash.devices.length > holder.limits.deviceLimit) {
             throw new NotAllowedException("Device limit is reached.", message.id);
         }
 
@@ -72,7 +67,7 @@ public class CreateDeviceLogic {
         dash.devices = ArrayUtil.add(dash.devices, newDevice, Device.class);
 
         var newToken = TokenGeneratorUtil.generateNewToken();
-        tokenManager.assignToken(user, dash, newDevice, newToken);
+        holder.tokenManager.assignToken(user, dash, newDevice, newToken);
 
         dash.updatedAt = System.currentTimeMillis();
         user.lastModifiedTs = dash.updatedAt;

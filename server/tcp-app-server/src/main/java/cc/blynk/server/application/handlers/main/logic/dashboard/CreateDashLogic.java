@@ -1,7 +1,7 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
-import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
@@ -9,7 +9,6 @@ import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.exceptions.QuotaLimitException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.internal.EmptyArraysUtil;
-import cc.blynk.server.workers.timer.TimerWorker;
 import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.TokenGeneratorUtil;
@@ -26,23 +25,15 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
  * Created on 2/1/2015.
  *
  */
-public class CreateDashLogic {
+public final class CreateDashLogic {
 
     private static final Logger log = LogManager.getLogger(CreateDashLogic.class);
 
-    private final int dashMaxLimit;
-    private final int dashMaxSize;
-    private final TimerWorker timerWorker;
-    private final TokenManager tokenManager;
-
-    public CreateDashLogic(TimerWorker timerWorker, TokenManager tokenManager, int dashMaxLimit, int dashMaxSize) {
-        this.tokenManager = tokenManager;
-        this.dashMaxLimit = dashMaxLimit;
-        this.dashMaxSize = dashMaxSize;
-        this.timerWorker = timerWorker;
+    private CreateDashLogic() {
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
+                                       AppStateHolder state, StringMessage message) {
         var generateTokensForDevices = true;
         final String dashString;
         if (message.body.startsWith("no_token")) {
@@ -56,7 +47,7 @@ public class CreateDashLogic {
             throw new IllegalCommandException("Income create dash message is empty.");
         }
 
-        if (dashString.length() > dashMaxSize) {
+        if (dashString.length() > holder.limits.profileSizeLimitBytes) {
             throw new NotAllowedException("User dashboard is larger then limit.", message.id);
         }
 
@@ -64,7 +55,7 @@ public class CreateDashLogic {
         var newDash = JsonParser.parseDashboard(dashString, message.id);
 
         var user = state.user;
-        if (user.profile.dashBoards.length >= dashMaxLimit) {
+        if (user.profile.dashBoards.length >= holder.limits.dashboardsLimit) {
             throw new QuotaLimitException("Dashboards limit reached.", message.id);
         }
 
@@ -97,14 +88,14 @@ public class CreateDashLogic {
                 device.erase();
                 if (generateTokensForDevices) {
                     String token = TokenGeneratorUtil.generateNewToken();
-                    tokenManager.assignToken(user, newDash, device, token);
+                    holder.tokenManager.assignToken(user, newDash, device, token);
                 }
             }
         }
 
         user.lastModifiedTs = System.currentTimeMillis();
 
-        newDash.addTimers(timerWorker, state.userKey);
+        newDash.addTimers(holder.timerWorker, state.userKey);
 
         if (!generateTokensForDevices) {
             newDash.eraseValues();

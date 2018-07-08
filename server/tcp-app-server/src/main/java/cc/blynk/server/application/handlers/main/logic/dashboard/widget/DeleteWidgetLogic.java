@@ -1,5 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.widget;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
@@ -28,17 +29,15 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created by Dmitriy Dumanskiy.
  * Created on 01.02.16.
  */
-public class DeleteWidgetLogic {
+public final class DeleteWidgetLogic {
 
     private static final Logger log = LogManager.getLogger(DeleteWidgetLogic.class);
 
-    private final TimerWorker timerWorker;
-
-    public DeleteWidgetLogic(TimerWorker timerWorker) {
-        this.timerWorker = timerWorker;
+    private DeleteWidgetLogic() {
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
+                                       AppStateHolder state, StringMessage message) {
         String[] split = split2(message.body);
 
         if (split.length < 2) {
@@ -84,6 +83,7 @@ public class DeleteWidgetLogic {
         }
 
         user.addEnergy(widgetToDelete.getPrice());
+        TimerWorker timerWorker = holder.timerWorker;
         if (deviceTilesId != -1) {
             TileTemplate tileTemplate = deviceTiles.getTileTemplateByIdOrThrow(templateId);
             if (widgetToDelete instanceof Tabs) {
