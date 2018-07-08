@@ -45,10 +45,12 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
     private final Holder holder;
     private final HardwareLogic hardware;
     private final MailLogic email;
-    private final BridgeLogic bridge;
     private final PushLogic push;
-    private final TwitLogic tweet;
-    private final SmsLogic smsLogic;
+
+    //this is rare handlers, most of users don't use them, so lazy init it.
+    private BridgeLogic bridge;
+    private TwitLogic tweet;
+    private SmsLogic sms;
 
     public HardwareHandler(Holder holder, HardwareStateHolder stateHolder) {
         super(StringMessage.class);
@@ -56,12 +58,8 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
         this.holder = holder;
 
         this.hardware = new HardwareLogic(holder, stateHolder.user.email);
-        this.bridge = new BridgeLogic(holder.sessionDao, holder.tokenManager);
-
         this.email = new MailLogic(holder);
         this.push = new PushLogic(holder.gcmWrapper, holder.limits.notificationPeriodLimitSec);
-        this.tweet = new TwitLogic(holder.twitterWrapper, holder.limits.notificationPeriodLimitSec);
-        this.smsLogic = new SmsLogic(holder.smsWrapper, holder.limits.notificationPeriodLimitSec);
     }
 
     @Override
@@ -74,6 +72,9 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
                 PingLogic.messageReceived(ctx, msg.id);
                 break;
             case BRIDGE:
+                if (bridge == null) {
+                    this.bridge = new BridgeLogic(holder.sessionDao, holder.tokenManager);
+                }
                 bridge.messageReceived(ctx, state, msg);
                 break;
             case EMAIL:
@@ -83,10 +84,16 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
                 push.messageReceived(ctx, state, msg);
                 break;
             case TWEET:
+                if (tweet == null) {
+                    this.tweet = new TwitLogic(holder.twitterWrapper, holder.limits.notificationPeriodLimitSec);
+                }
                 tweet.messageReceived(ctx, state, msg);
                 break;
             case SMS:
-                smsLogic.messageReceived(ctx, state, msg);
+                if (sms == null) {
+                    this.sms = new SmsLogic(holder.smsWrapper, holder.limits.notificationPeriodLimitSec);
+                }
+                sms.messageReceived(ctx, state, msg);
                 break;
             case HARDWARE_SYNC:
                 HardwareSyncLogic.messageReceived(ctx, state, msg);
