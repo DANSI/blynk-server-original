@@ -63,7 +63,7 @@
 
         <!-- turn off netty errors in debug mode for native library loading
          https://github.com/blynkkk/blynk-server/issues/751 -->
-        <Logger name="io.netty.util.internal.NativeLibraryLoader" level="OFF" additivity="false" />
+        <Logger name="io.netty" level="INFO" additivity="false" />
 
         <Root>
             <AppenderRef ref="userLog"/>
