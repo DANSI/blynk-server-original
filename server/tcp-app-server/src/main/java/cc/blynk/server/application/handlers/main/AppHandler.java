@@ -134,13 +134,13 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
     private final Holder holder;
     private final HardwareAppLogic hardwareApp;
 
-    private final HardwareResendFromBTLogic hardwareResendFromBTLogic;
-    private final ExportGraphDataLogic exportGraphData;
-    private final AppMailLogic appMailLogic;
-    private final PurchaseLogic purchaseLogic;
-    private final DeleteAppLogic deleteAppLogic;
-    private final MailQRsLogic mailQRsLogic;
-    private final GetProjectByClonedTokenLogic getProjectByCloneCodeLogic;
+    private HardwareResendFromBTLogic hardwareResendFromBTLogic;
+    private ExportGraphDataLogic exportGraphData;
+    private AppMailLogic appMailLogic;
+    private PurchaseLogic purchaseLogic;
+    private DeleteAppLogic deleteAppLogic;
+    private MailQRsLogic mailQRsLogic;
+    private GetProjectByClonedTokenLogic getProjectByCloneCodeLogic;
 
     public AppHandler(Holder holder, AppStateHolder state) {
         super(StringMessage.class);
@@ -148,14 +148,6 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
         this.holder = holder;
 
         this.hardwareApp = new HardwareAppLogic(holder, state.user.email);
-
-        this.hardwareResendFromBTLogic = new HardwareResendFromBTLogic(holder, state.user.email);
-        this.exportGraphData = new ExportGraphDataLogic(holder);
-        this.appMailLogic = new AppMailLogic(holder);
-        this.purchaseLogic = new PurchaseLogic(holder);
-        this.deleteAppLogic = new DeleteAppLogic(holder);
-        this.mailQRsLogic = new MailQRsLogic(holder);
-        this.getProjectByCloneCodeLogic = new GetProjectByClonedTokenLogic(holder);
     }
 
     @Override
@@ -166,6 +158,9 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 hardwareApp.messageReceived(ctx, state, msg);
                 break;
             case HARDWARE_RESEND_FROM_BLUETOOTH :
+                if (hardwareResendFromBTLogic == null) {
+                    this.hardwareResendFromBTLogic = new HardwareResendFromBTLogic(holder, state.user.email);
+                }
                 hardwareResendFromBTLogic.messageReceived(ctx, state, msg);
                 break;
             case ACTIVATE_DASHBOARD :
@@ -204,6 +199,9 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 DeleteEnhancedGraphDataLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
             case EXPORT_GRAPH_DATA :
+                if (exportGraphData == null) {
+                    this.exportGraphData = new ExportGraphDataLogic(holder);
+                }
                 exportGraphData.messageReceived(ctx, state.user, msg);
                 break;
             case PING :
@@ -218,6 +216,9 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 break;
 
             case EMAIL :
+                if (appMailLogic == null) {
+                    this.appMailLogic = new AppMailLogic(holder);
+                }
                 appMailLogic.messageReceived(ctx, state.user, msg);
                 break;
 
@@ -262,6 +263,9 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 GetEnergyLogic.messageReceived(ctx, state.user, msg);
                 break;
             case ADD_ENERGY :
+                if (purchaseLogic == null) {
+                    this.purchaseLogic = new PurchaseLogic(holder);
+                }
                 purchaseLogic.messageReceived(ctx, state, msg);
                 break;
 
@@ -306,6 +310,9 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 UpdateAppLogic.messageReceived(ctx, state, msg, holder.limits.widgetSizeLimitBytes);
                 break;
             case DELETE_APP :
+                if (deleteAppLogic == null) {
+                    this.deleteAppLogic = new DeleteAppLogic(holder);
+                }
                 deleteAppLogic.messageReceived(ctx, state, msg);
                 break;
 
@@ -313,6 +320,9 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 GetProjectByTokenLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
             case EMAIL_QR :
+                if (mailQRsLogic == null) {
+                    this.mailQRsLogic = new MailQRsLogic(holder);
+                }
                 mailQRsLogic.messageReceived(ctx, state.user, msg);
                 break;
             case UPDATE_FACE :
@@ -322,6 +332,9 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 GetCloneCodeLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
             case GET_PROJECT_BY_CLONE_CODE :
+                if (getProjectByCloneCodeLogic == null) {
+                    this.getProjectByCloneCodeLogic = new GetProjectByClonedTokenLogic(holder);
+                }
                 getProjectByCloneCodeLogic.messageReceived(ctx, state.user, msg);
                 break;
             case LOGOUT :
