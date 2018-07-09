@@ -799,5 +799,9 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.never(hardware(5, "vu 200000 1"));
         appClient2.verifyResult(appSync(5, "1 vu 200000 1"));
 
+        appClient2.send("hardware 1 vu 200000 0");
+        appClient2.verifyResult(ok(2));
+        clientPair.hardwareClient.never(hardware(2, "vu 200000 0"));
+        clientPair.appClient.verifyResult(appSync(2, "1 vu 200000 0"));
     }
 }
