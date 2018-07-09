@@ -1,6 +1,7 @@
 package cc.blynk.server.application.handlers.sharing.logic;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.application.handlers.main.logic.HardwareAppLogic;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareStateHolder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.auth.Session;
@@ -12,13 +13,11 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.application.handlers.main.logic.HardwareAppLogic.processDeviceSelectorCommand;
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.internal.CommonByteBufUtil.deviceNotInNetwork;
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
-import static cc.blynk.server.internal.CommonByteBufUtil.noActiveDash;
 import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
 import static cc.blynk.utils.StringUtils.split2;
 import static cc.blynk.utils.StringUtils.split2Device;
@@ -49,24 +48,26 @@ public class HardwareAppShareLogic extends BaseProcessorHandler {
     public void messageReceived(ChannelHandlerContext ctx, AppShareStateHolder state, StringMessage message) {
         var session = sessionDao.userSession.get(state.userKey);
 
+        //here expecting command in format "1-200000 vw 88 1"
         var split = split2(message.body);
 
+        //here we have "1-200000"
         var dashIdAndTargetIdString = split2Device(split[0]);
         var dashId = Integer.parseInt(dashIdAndTargetIdString[0]);
+
+        var dash = state.user.profile.getDashByIdOrThrow(dashId);
+
+        //if no active dashboard - do nothing. this could happen only in case of app. bug
+        if (!dash.isActive) {
+            return;
+        }
+
         //deviceId or tagId or device selector widget id
         var targetId = 0;
 
         //new logic for multi devices
         if (dashIdAndTargetIdString.length == 2) {
             targetId = Integer.parseInt(dashIdAndTargetIdString[1]);
-        }
-
-        var dash = state.user.profile.getDashByIdOrThrow(dashId);
-
-        if (!dash.isActive) {
-            log.trace("No active dashboard.");
-            ctx.writeAndFlush(noActiveDash(message.id), ctx.voidPromise());
-            return;
         }
 
         if (!dash.isShared) {
@@ -92,10 +93,11 @@ public class HardwareAppShareLogic extends BaseProcessorHandler {
         var operation = split[1].charAt(1);
         switch (operation) {
             case 'u' :
+                //splitting "vu 200000 1"
                 var splitBody = split3(split[1]);
-                processDeviceSelectorCommand(ctx, session, dash, message, splitBody);
+                HardwareAppLogic.processDeviceSelectorCommand(ctx, session, dash, message, splitBody);
                 break;
-            case 'w':
+            case 'w' :
                 splitBody = split3(split[1]);
 
                 if (splitBody.length < 3) {

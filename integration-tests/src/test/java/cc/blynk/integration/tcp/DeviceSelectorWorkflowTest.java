@@ -763,4 +763,41 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
             clientPair.appClient.verifyResult(appSync("1-0 vw 88 " + i));
         }
     }
+
+    @Test
+    public void testDeviceSelectorForSharedApp() throws Exception {
+        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
+        device0.status = Status.ONLINE;
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        device1.status = Status.OFFLINE;
+
+        clientPair.appClient.createDevice(1, device1);
+        Device device = clientPair.appClient.parseDevice();
+        assertNotNull(device);
+        assertNotNull(device.token);
+        clientPair.appClient.verifyResult(createDevice(1, device));
+
+        clientPair.appClient.createWidget(1, "{\"id\":200000, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
+        clientPair.appClient.createWidget(1, "{\"id\":88, \"width\":1, \"height\":1, \"deviceId\":200000, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"STEP\", \"pinType\":\"VIRTUAL\", \"pin\":88}");
+        clientPair.appClient.verifyResult(ok(2));
+        clientPair.appClient.verifyResult(ok(3));
+
+        clientPair.appClient.send("getShareToken 1");
+        String token = clientPair.appClient.getBody(4);
+        assertNotNull(token);
+        assertEquals(32, token.length());
+
+        TestAppClient appClient2 = new TestAppClient(properties);
+        appClient2.start();
+
+        appClient2.send("shareLogin " + getUserName() + " " + token + " Android 24");
+        verify(appClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+
+        //change device
+        clientPair.appClient.send("hardware 1 vu 200000 1");
+        clientPair.appClient.verifyResult(ok(5));
+        clientPair.hardwareClient.never(hardware(5, "vu 200000 1"));
+        appClient2.verifyResult(appSync(5, "1 vu 200000 1"));
+
+    }
 }
