@@ -124,6 +124,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
 
         appClient.send("resetPass reset " + token + " " + SHA256Util.makeHash("2", userName));
         appClient.verifyResult(ok(5));
+        //verify(holder.mailWrapper).sendHtml(eq(userName), eq("Your new password on Blynk"), contains("You have changed your password on Blynk. Please, keep it in your records so you don't forget it."));
 
         appClient.login(userName, "1");
         appClient.verifyResult(new ResponseMessage(6, USER_NOT_AUTHENTICATED));
