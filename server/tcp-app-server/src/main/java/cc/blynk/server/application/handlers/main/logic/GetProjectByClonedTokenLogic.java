@@ -98,6 +98,8 @@ public class GetProjectByClonedTokenLogic {
     private MessageBase createDashboard(User user, String dashString, int msgId) throws IOException {
         DashBoard newDash = JsonParser.parseDashboard(dashString, msgId);
         newDash.id = max(user.profile.dashBoards) + 1;
+        newDash.isPreview = false;
+        newDash.parentId = -1;
 
         if (user.profile.dashBoards.length >= dashMaxLimit) {
             log.debug("Dashboards limit reached.");
