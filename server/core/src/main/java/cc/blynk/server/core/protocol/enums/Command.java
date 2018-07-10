@@ -135,6 +135,9 @@ public final class Command {
     public static final short HTTP_CLONE = 93;
     public static final short HTTP_TOTAL = 94;
 
+    //right now we have less than 100 commands
+    public static final int LAST_COMMAND_INDEX = 100;
+
     private Command() {
     }
 
