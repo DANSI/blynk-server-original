@@ -82,7 +82,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> {
             return;
         }
 
-        var email = messageParts[0].toLowerCase();
+        var email = messageParts[0].trim().toLowerCase();
 
         var version = messageParts.length > 3
                 ? new Version(messageParts[2], messageParts[3])

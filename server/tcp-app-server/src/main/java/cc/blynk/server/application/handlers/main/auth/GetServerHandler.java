@@ -50,7 +50,7 @@ public class GetServerHandler extends SimpleChannelInboundHandler<GetServerMessa
             return;
         }
 
-        var email = parts[0] == null ? null : parts[0].toLowerCase();
+        var email = parts[0] == null ? null : parts[0].trim().toLowerCase();
         var appName = parts[1];
 
         if (appName == null || appName.isEmpty() || appName.length() > 100) {

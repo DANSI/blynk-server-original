@@ -74,7 +74,7 @@ public class MqttHardwareLoginHandler extends SimpleChannelInboundHandler<MqttCo
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, MqttConnectMessage message) {
-        String username = message.payload().userName().toLowerCase();
+        String username = message.payload().userName().trim().toLowerCase();
         String token = new String(message.payload().passwordInBytes(), CharsetUtil.UTF_8);
 
         TokenValue tokenValue = holder.tokenManager.getTokenValueByToken(token);
