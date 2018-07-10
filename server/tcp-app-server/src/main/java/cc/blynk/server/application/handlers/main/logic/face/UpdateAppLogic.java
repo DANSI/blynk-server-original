@@ -1,6 +1,8 @@
 package cc.blynk.server.application.handlers.main.logic.face;
 
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
+import cc.blynk.server.core.model.auth.App;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
@@ -25,7 +27,7 @@ public final class UpdateAppLogic {
 
     public static void messageReceived(ChannelHandlerContext ctx, AppStateHolder state,
                                        StringMessage message, int maxWidgetSize) {
-        var appString = message.body;
+        String appString = message.body;
 
         if (appString == null || appString.isEmpty()) {
             throw new IllegalCommandException("Income app message is empty.");
@@ -35,7 +37,7 @@ public final class UpdateAppLogic {
             throw new NotAllowedException("App is larger then limit.", message.id);
         }
 
-        var newApp = JsonParser.parseApp(appString, message.id);
+        App newApp = JsonParser.parseApp(appString, message.id);
 
         if (newApp.isNotValid()) {
             throw new NotAllowedException("App is not valid.", message.id);
@@ -43,9 +45,9 @@ public final class UpdateAppLogic {
 
         log.debug("Creating new app {}.", newApp);
 
-        var user = state.user;
+        User user = state.user;
 
-        var existingApp = user.profile.getAppById(newApp.id);
+        App existingApp = user.profile.getAppById(newApp.id);
 
         if (existingApp == null) {
             throw new NotAllowedException("App with passed is not exists.", message.id);

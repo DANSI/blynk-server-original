@@ -2,7 +2,9 @@ package cc.blynk.server.application.handlers.main.logic.graph;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
@@ -72,10 +74,10 @@ public final class DeleteEnhancedGraphDataLogic {
         holder.blockingIOProcessor.executeHistory(() -> {
             try {
                 for (GraphDataStream graphDataStream : dataStreams) {
-                    var target = dash.getTarget(graphDataStream.getTargetId(targetId));
-                    var dataStream = graphDataStream.dataStream;
+                    Target target = dash.getTarget(graphDataStream.getTargetId(targetId));
+                    DataStream dataStream = graphDataStream.dataStream;
                     if (target != null && dataStream != null && dataStream.pinType != null) {
-                        var deviceId = target.getDeviceId();
+                        int deviceId = target.getDeviceId();
                         holder.reportingDiskDao.delete(user, dash.id, deviceId, dataStream.pinType, dataStream.pin);
                     }
                 }

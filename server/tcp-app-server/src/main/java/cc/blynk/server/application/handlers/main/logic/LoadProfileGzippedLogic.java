@@ -81,7 +81,7 @@ public final class LoadProfileGzippedLogic {
 
     public static void write(ChannelHandlerContext ctx, byte[] data, int msgId) {
         if (ctx.channel().isWritable()) {
-            var outputMsg = makeResponse(data, msgId);
+            MessageBase outputMsg = makeResponse(data, msgId);
             ctx.writeAndFlush(outputMsg, ctx.voidPromise());
         }
     }

@@ -1,6 +1,7 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
@@ -37,13 +38,13 @@ public final class GetTokenLogic {
             parts = new String[] {dashBoardIdString};
         }
 
-        var dashId = Integer.parseInt(parts[0]);
-        var deviceId = parts.length == 1 ? 0 : Integer.parseInt(parts[1]);
+        int dashId = Integer.parseInt(parts[0]);
+        int deviceId = parts.length == 1 ? 0 : Integer.parseInt(parts[1]);
 
-        var dash = user.profile.getDashByIdOrThrow(dashId);
+        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
-        var device = dash.getDeviceById(deviceId);
-        var token = device == null ? null : device.token;
+        Device device = dash.getDeviceById(deviceId);
+        String token = device == null ? null : device.token;
 
         //if token not exists. generate new one
         if (token == null) {

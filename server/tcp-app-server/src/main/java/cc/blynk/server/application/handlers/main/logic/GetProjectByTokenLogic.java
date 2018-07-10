@@ -4,6 +4,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.model.FlashedToken;
 import cc.blynk.utils.AppNameUtil;
@@ -57,7 +58,7 @@ public final class GetProjectByTokenLogic {
 
     public static void write(ChannelHandlerContext ctx, byte[] data, int msgId) {
         if (ctx.channel().isWritable()) {
-            var outputMsg = makeBinaryMessage(GET_PROJECT_BY_TOKEN, msgId, data);
+            BinaryMessage outputMsg = makeBinaryMessage(GET_PROJECT_BY_TOKEN, msgId, data);
             ctx.writeAndFlush(outputMsg, ctx.voidPromise());
         }
     }
