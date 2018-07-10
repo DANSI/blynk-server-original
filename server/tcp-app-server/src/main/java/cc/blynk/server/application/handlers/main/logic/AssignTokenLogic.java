@@ -1,14 +1,10 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.TokenManager;
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.DBManager;
-import cc.blynk.server.db.model.FlashedToken;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,29 +21,25 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created on 2/1/2015.
  *
  */
-public class AssignTokenLogic {
+public final class AssignTokenLogic {
 
     private static final Logger log = LogManager.getLogger(AssignTokenLogic.class);
 
-    private final TokenManager tokenManager;
-    private final BlockingIOProcessor blockingIOProcessor;
-    private final DBManager dbManager;
-
-    public AssignTokenLogic(Holder holder) {
-        this.tokenManager = holder.tokenManager;
-        this.blockingIOProcessor = holder.blockingIOProcessor;
-        this.dbManager = holder.dbManager;
+    private AssignTokenLogic() {
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        String[] split = split2(message.body);
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
+                                       User user, StringMessage message) {
+        var split = split2(message.body);
 
-        int dashId = Integer.parseInt(split[0]);
-        String token = split[1];
-        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
+        var dashId = Integer.parseInt(split[0]);
+        var token = split[1];
+        var dash = user.profile.getDashByIdOrThrow(dashId);
 
-        blockingIOProcessor.executeDB(() -> {
-            FlashedToken dbFlashedToken = dbManager.selectFlashedToken(token);
+        DBManager dbManager = holder.dbManager;
+        TokenManager tokenManager = holder.tokenManager;
+        holder.blockingIOProcessor.executeDB(() -> {
+            var dbFlashedToken = dbManager.selectFlashedToken(token);
 
             if (dbFlashedToken == null) {
                 log.error("{} token not exists for app {}.", token, user.appName);
@@ -61,7 +53,7 @@ public class AssignTokenLogic {
                 return;
             }
 
-            Device device = dash.getDeviceById(dbFlashedToken.deviceId);
+            var device = dash.getDeviceById(dbFlashedToken.deviceId);
 
             if (device == null) {
                 log.error("Device with {} id not exists in dashboards.", dbFlashedToken.deviceId);

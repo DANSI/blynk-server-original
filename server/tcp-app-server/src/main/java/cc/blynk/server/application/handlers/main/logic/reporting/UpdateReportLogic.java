@@ -26,17 +26,15 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created on 31/05/2018.
  *
  */
-public class UpdateReportLogic {
+public final class UpdateReportLogic {
 
     private static final Logger log = LogManager.getLogger(UpdateReportLogic.class);
 
-    private final ReportScheduler reportScheduler;
-
-    public UpdateReportLogic(Holder holder) {
-        this.reportScheduler = holder.reportScheduler;
+    private UpdateReportLogic() {
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
+                                       User user, StringMessage message) {
         String[] split = split2(message.body);
 
         if (split.length < 2) {
@@ -63,6 +61,8 @@ public class UpdateReportLogic {
         if (existingReportIndex == -1) {
             throw new IllegalCommandException("Cannot find report with provided id.");
         }
+
+        ReportScheduler reportScheduler = holder.reportScheduler;
 
         //always remove prev report before any validations are done
         if (report.isPeriodic()) {

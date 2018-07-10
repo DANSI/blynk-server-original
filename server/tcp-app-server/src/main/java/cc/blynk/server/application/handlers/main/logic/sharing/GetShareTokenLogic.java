@@ -1,6 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic.sharing;
 
-import cc.blynk.server.core.dao.TokenManager;
+import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
@@ -17,17 +17,15 @@ import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
  * Created on 2/1/2015.
  *
  */
-public class GetShareTokenLogic {
+public final class GetShareTokenLogic {
 
     private static final int PRIVATE_TOKEN_PRICE = 1000;
 
-    private final TokenManager tokenManager;
-
-    public GetShareTokenLogic(TokenManager tokenManager) {
-        this.tokenManager = tokenManager;
+    private GetShareTokenLogic() {
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
+                                       User user, StringMessage message) {
         String dashBoardIdString = message.body;
 
         int dashId;
@@ -46,7 +44,7 @@ public class GetShareTokenLogic {
                 ctx.writeAndFlush(energyLimit(message.id), ctx.voidPromise());
                 return;
             }
-            token = tokenManager.refreshSharedToken(user, dash);
+            token = holder.tokenManager.refreshSharedToken(user, dash);
             user.subtractEnergy(PRIVATE_TOKEN_PRICE);
             user.lastModifiedTs = System.currentTimeMillis();
         }

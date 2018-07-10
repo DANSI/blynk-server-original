@@ -1,8 +1,7 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.widget;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
-import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
@@ -29,40 +28,36 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created by Dmitriy Dumanskiy.
  * Created on 01.02.16.
  */
-public class UpdateWidgetLogic {
+public final class UpdateWidgetLogic {
 
     private static final Logger log = LogManager.getLogger(UpdateWidgetLogic.class);
 
-    private final int maxWidgetSize;
-    private final TimerWorker timerWorker;
-
-    public UpdateWidgetLogic(int maxWidgetSize, TimerWorker timerWorker) {
-        this.maxWidgetSize = maxWidgetSize;
-        this.timerWorker = timerWorker;
+    private UpdateWidgetLogic() {
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
-        String[] split = split2(message.body);
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
+                                       AppStateHolder state, StringMessage message) {
+        var split = split2(message.body);
 
         if (split.length < 2) {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        int dashId = Integer.parseInt(split[0]);
-        String widgetString = split[1];
+        var dashId = Integer.parseInt(split[0]);
+        var widgetString = split[1];
 
         if (widgetString == null || widgetString.isEmpty()) {
             throw new IllegalCommandException("Income widget message is empty.");
         }
 
-        if (widgetString.length() > maxWidgetSize) {
+        if (widgetString.length() > holder.limits.widgetSizeLimitBytes) {
             throw new NotAllowedException("Widget is larger then limit.", message.id);
         }
 
-        User user = state.user;
-        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
+        var user = state.user;
+        var dash = user.profile.getDashByIdOrThrow(dashId);
 
-        Widget newWidget = JsonParser.parseWidget(widgetString, message.id);
+        var newWidget = JsonParser.parseWidget(widgetString, message.id);
 
         if (newWidget.width < 1 || newWidget.height < 1) {
             throw new NotAllowedException("Widget has wrong dimensions.", message.id);
@@ -126,6 +121,7 @@ public class UpdateWidgetLogic {
             newReporting.reports = prevReporting.reports;
         }
 
+        TimerWorker timerWorker = holder.timerWorker;
         if (deviceTilesId != -1) {
             TileTemplate tileTemplate = deviceTiles.getTileTemplateByWidgetIdOrThrow(newWidget.id);
             if (newWidget instanceof Tabs) {

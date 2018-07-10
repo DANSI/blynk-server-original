@@ -2,6 +2,7 @@ package cc.blynk.server.core.model.widgets.ui.tiles;
 
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
+import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.ui.tiles.templates.ButtonTileTemplate;
 import cc.blynk.server.core.model.widgets.ui.tiles.templates.DimmerTileTemplate;
@@ -41,7 +42,7 @@ public abstract class TileTemplate {
 
     public final String iconName;
 
-    public final String boardType;
+    public final BoardType boardType;
 
     @JsonProperty("pin")
     public final DataStream dataStream;
@@ -54,7 +55,7 @@ public abstract class TileTemplate {
                         String templateId,
                         String name,
                         String iconName,
-                        String boardType,
+                        BoardType boardType,
                         DataStream dataStream,
                         boolean showDeviceName) {
         this.id = id;

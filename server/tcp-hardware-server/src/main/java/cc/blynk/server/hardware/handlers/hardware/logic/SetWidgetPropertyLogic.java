@@ -30,22 +30,13 @@ public final class SetWidgetPropertyLogic {
 
     private static final Logger log = LogManager.getLogger(SetWidgetPropertyLogic.class);
 
-    private final SessionDao sessionDao;
-
-    private static SetWidgetPropertyLogic instance;
-
-    private SetWidgetPropertyLogic(Holder holder) {
-        this.sessionDao = holder.sessionDao;
+    private SetWidgetPropertyLogic() {
     }
 
-    public static SetWidgetPropertyLogic getInstance(Holder holder) {
-        if (instance == null) {
-            instance = new SetWidgetPropertyLogic(holder);
-        }
-        return instance;
-    }
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
+                                       HardwareStateHolder state, StringMessage message) {
+        SessionDao sessionDao = holder.sessionDao;
 
-    public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
         String[] bodyParts = split3(message.body);
 
         if (bodyParts.length != 3) {

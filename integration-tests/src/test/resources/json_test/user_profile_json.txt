@@ -127,7 +127,7 @@
              [
                {
                   "id":0,
-                  "boardType":"UNO",
+                  "boardType":"Arduino UNO",
                   "token":"12345678901234567890123456789012",
                   "connectionType":"ETHERNET",
                   "name":"My Device"

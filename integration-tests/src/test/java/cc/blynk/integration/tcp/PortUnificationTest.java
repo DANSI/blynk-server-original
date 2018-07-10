@@ -3,6 +3,7 @@ package cc.blynk.integration.tcp;
 import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
+import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,7 +43,7 @@ public class PortUnificationTest extends SingleServerInstancePerTest {
         appClient.login(getUserName(), "1", "Android", "1.10.4");
         appClient.createDash("{\"id\":1, \"createdAt\":1, \"name\":\"test board\"}");
 
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         appClient.createDevice(1, device1);
 
         appClient.verifyResult(ok(1));

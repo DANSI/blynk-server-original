@@ -2,15 +2,12 @@ package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
-import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.db.DBManager;
 import cc.blynk.server.db.model.FlashedToken;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
@@ -31,28 +28,15 @@ import static cc.blynk.server.internal.CommonByteBufUtil.noData;
  * Created on 2/1/2015.
  *
  */
-public class LoadProfileGzippedLogic {
+public final class LoadProfileGzippedLogic {
 
     private static final Logger log = LogManager.getLogger(LoadProfileGzippedLogic.class);
 
-    private final UserDao userDao;
-    private final DBManager dbManager;
-    private final BlockingIOProcessor blockingIOProcessor;
-
-    public LoadProfileGzippedLogic(Holder holder) {
-        this.userDao = holder.userDao;
-        this.dbManager = holder.dbManager;
-        this.blockingIOProcessor = holder.blockingIOProcessor;
+    private LoadProfileGzippedLogic() {
     }
 
-    public static void write(ChannelHandlerContext ctx, byte[] data, int msgId) {
-        if (ctx.channel().isWritable()) {
-            MessageBase outputMsg = makeResponse(data, msgId);
-            ctx.writeAndFlush(outputMsg, ctx.voidPromise());
-        }
-    }
-
-    public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
+                                       AppStateHolder state, StringMessage message) {
         //load all
         int msgId = message.id;
 
@@ -75,11 +59,11 @@ public class LoadProfileGzippedLogic {
             //this is for simplification of testing.
             String appName = parts.length == 4 ? parts[3] : state.userKey.appName;
 
-            blockingIOProcessor.executeDB(() -> {
+            holder.blockingIOProcessor.executeDB(() -> {
                 try {
-                    FlashedToken flashedToken = dbManager.selectFlashedToken(token);
+                    FlashedToken flashedToken = holder.dbManager.selectFlashedToken(token);
                     if (flashedToken != null) {
-                        User publishingUser = userDao.getByName(publishingEmail, appName);
+                        User publishingUser = holder.userDao.getByName(publishingEmail, appName);
                         DashBoard dash = publishingUser.profile.getDashByIdOrThrow(dashId);
                         //todo ugly. but ok for now
                         String copyString = JsonParser.toJsonRestrictiveDashboard(dash);
@@ -92,6 +76,13 @@ public class LoadProfileGzippedLogic {
                     log.error("Error getting publishing profile.", e.getMessage());
                 }
             });
+        }
+    }
+
+    public static void write(ChannelHandlerContext ctx, byte[] data, int msgId) {
+        if (ctx.channel().isWritable()) {
+            var outputMsg = makeResponse(data, msgId);
+            ctx.writeAndFlush(outputMsg, ctx.voidPromise());
         }
     }
 

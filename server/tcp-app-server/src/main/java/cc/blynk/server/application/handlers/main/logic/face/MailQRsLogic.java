@@ -35,11 +35,11 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
  * Created on 2/1/2015.
  *
  */
-public class MailQRsLogic {
+public final class MailQRsLogic {
 
     private static final Logger log = LogManager.getLogger(MailQRsLogic.class);
-    private final TextHolder textHolder;
 
+    private final TextHolder textHolder;
     private final BlockingIOProcessor blockingIOProcessor;
     private final MailWrapper mailWrapper;
     private final DBManager dbManager;

@@ -37,7 +37,8 @@ import static cc.blynk.utils.StringUtils.split2Device;
  * Created on 2/1/2015.
  *
  */
-public class ExportGraphDataLogic {
+@Deprecated
+public final class ExportGraphDataLogic {
 
     private static final Logger log = LogManager.getLogger(ExportGraphDataLogic.class);
 

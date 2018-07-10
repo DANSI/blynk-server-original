@@ -1,5 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.widget;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
@@ -27,19 +28,15 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
  * Created by Dmitriy Dumanskiy.
  * Created on 01.02.16.
  */
-public class CreateWidgetLogic {
+public final class CreateWidgetLogic {
 
     private static final Logger log = LogManager.getLogger(CreateWidgetLogic.class);
 
-    private final int maxWidgetSize;
-    private final TimerWorker timerWorker;
-
-    public CreateWidgetLogic(int maxWidgetSize, TimerWorker timerWorker) {
-        this.maxWidgetSize = maxWidgetSize;
-        this.timerWorker = timerWorker;
+    private CreateWidgetLogic() {
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
+                                       AppStateHolder state, StringMessage message) {
         //format is "dashId widget_json" or "dashId widgetId templateId widget_json"
         String[] split = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
@@ -66,7 +63,7 @@ public class CreateWidgetLogic {
             throw new IllegalCommandException("Income widget message is empty.");
         }
 
-        if (widgetString.length() > maxWidgetSize) {
+        if (widgetString.length() > holder.limits.widgetSizeLimitBytes) {
             throw new NotAllowedException("Widget is larger then limit.", message.id);
         }
 
@@ -114,6 +111,7 @@ public class CreateWidgetLogic {
         dash.cleanPinStorage(newWidget, true);
         user.lastModifiedTs = dash.updatedAt;
 
+        TimerWorker timerWorker = holder.timerWorker;
         if (newWidget instanceof Timer) {
             timerWorker.add(state.userKey, (Timer) newWidget, dashId, widgetAddToId, templateIdAddToId);
         } else if (newWidget instanceof Eventor) {

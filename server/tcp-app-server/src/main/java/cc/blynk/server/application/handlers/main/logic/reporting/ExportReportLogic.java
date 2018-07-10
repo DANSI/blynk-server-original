@@ -27,19 +27,17 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created on 31/05/2018.
  *
  */
-public class ExportReportLogic {
+public final class ExportReportLogic {
 
     private static final Logger log = LogManager.getLogger(ExportReportLogic.class);
 
-    private final ReportScheduler reportScheduler;
-    private final long runDelay;
+    private final static long runDelay = TimeUnit.MINUTES.toMillis(1);
 
-    public ExportReportLogic(Holder holder) {
-        this.reportScheduler = holder.reportScheduler;
-        this.runDelay = TimeUnit.MINUTES.toMillis(1);
+    private ExportReportLogic() {
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
+                                       User user, StringMessage message) {
         String[] split = split2(message.body);
 
         if (split.length < 2) {
@@ -72,6 +70,7 @@ public class ExportReportLogic {
             throw new QuotaLimitException("Report trigger limit reached.");
         }
 
+        ReportScheduler reportScheduler = holder.reportScheduler;
         reportScheduler.schedule(new BaseReportTask(user, dashId, report,
                 reportScheduler.mailWrapper, reportScheduler.reportingDao,
                 reportScheduler.downloadUrl) {

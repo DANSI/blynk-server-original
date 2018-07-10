@@ -1,9 +1,8 @@
 package cc.blynk.server.application.handlers.main.logic.graph;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareStateHolder;
-import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
@@ -27,16 +26,11 @@ import static cc.blynk.utils.StringUtils.split2Device;
  * Created on 2/1/2015.
  *
  */
-public class DeleteDeviceDataLogic {
+public final class DeleteDeviceDataLogic {
 
     private static final Logger log = LogManager.getLogger(DeleteDeviceDataLogic.class);
 
-    private final BlockingIOProcessor blockingIOProcessor;
-    private final ReportingDiskDao reportingDao;
-
-    public DeleteDeviceDataLogic(ReportingDiskDao reportingDao, BlockingIOProcessor blockingIOProcessor) {
-        this.reportingDao = reportingDao;
-        this.blockingIOProcessor = blockingIOProcessor;
+    private DeleteDeviceDataLogic() {
     }
 
     private static int[] getDeviceIds(Device[] devices) {
@@ -47,7 +41,8 @@ public class DeleteDeviceDataLogic {
         return deviceIds;
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
+                                        AppStateHolder state, StringMessage message) {
         String[] messageParts = StringUtils.split2(message.body);
 
         if (messageParts.length < 1) {
@@ -72,26 +67,26 @@ public class DeleteDeviceDataLogic {
 
         if ("*".equals(dashIdAndDeviceId[1])) {
             int[] deviceIds = getDeviceIds(dash.devices);
-            delete(ctx.channel(), message.id, user, dash, deviceIds);
+            delete(holder, ctx.channel(), message.id, user, dash, deviceIds);
         } else {
             int deviceId = Integer.parseInt(dashIdAndDeviceId[1]);
 
             //we have only deviceId
             if (messageParts.length == 1) {
-                delete(ctx.channel(), message.id, user, dash, deviceId);
+                delete(holder, ctx.channel(), message.id, user, dash, deviceId);
             } else {
                 //we have deviceId and datastreams to clean
-                delete(ctx.channel(), message.id, user, dash, deviceId,
+                delete(holder,  ctx.channel(), message.id, user, dash, deviceId,
                         messageParts[1].split(StringUtils.BODY_SEPARATOR_STRING));
             }
         }
     }
 
-    private void delete(Channel channel, int msgId, User user, DashBoard dash, int... deviceIds) {
-        blockingIOProcessor.executeHistory(() -> {
+    private static void delete(Holder holder, Channel channel, int msgId, User user, DashBoard dash, int... deviceIds) {
+        holder.blockingIOProcessor.executeHistory(() -> {
             try {
                 for (int deviceId : deviceIds) {
-                    int removedCounter = reportingDao.delete(user, dash.id, deviceId);
+                    int removedCounter = holder.reportingDiskDao.delete(user, dash.id, deviceId);
                     log.debug("Removed {} files for dashId {} and deviceId {}", removedCounter, dash.id, deviceId);
                 }
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
@@ -102,10 +97,11 @@ public class DeleteDeviceDataLogic {
         });
     }
 
-    private void delete(Channel channel, int msgId, User user, DashBoard dash, int deviceId, String[] pins) {
-        blockingIOProcessor.executeHistory(() -> {
+    private static void delete(Holder holder,  Channel channel, int msgId,
+                        User user, DashBoard dash, int deviceId, String[] pins) {
+        holder.blockingIOProcessor.executeHistory(() -> {
             try {
-                int removedCounter = reportingDao.delete(user, dash.id, deviceId, pins);
+                int removedCounter = holder.reportingDiskDao.delete(user, dash.id, deviceId, pins);
                 log.debug("Removed {} files for dashId {} and deviceId {}", removedCounter, dash.id, deviceId);
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {

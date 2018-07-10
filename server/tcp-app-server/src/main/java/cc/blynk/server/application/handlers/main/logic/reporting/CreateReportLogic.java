@@ -26,24 +26,23 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created on 31/05/2018.
  *
  */
-public class CreateReportLogic {
+public final class CreateReportLogic {
 
     private static final Logger log = LogManager.getLogger(CreateReportLogic.class);
 
-    private final int reportsLimit;
-    private final ReportScheduler reportScheduler;
-
-    public CreateReportLogic(Holder holder) {
-        this.reportsLimit = holder.limits.reportsLimit;
-        this.reportScheduler = holder.reportScheduler;
+    private CreateReportLogic() {
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
+                                       User user, StringMessage message) {
         String[] split = split2(message.body);
 
         if (split.length < 2) {
             throw new IllegalCommandException("Wrong income message format.");
         }
+
+        int reportsLimit = holder.limits.reportsLimit;
+        ReportScheduler reportScheduler = holder.reportScheduler;
 
         int dashId = Integer.parseInt(split[0]);
         String reportJson = split[1];

@@ -7,6 +7,7 @@ import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
@@ -228,7 +229,7 @@ public class LoadBalancingIntegrationTest extends BaseTest {
 
     @Test
     public void hardwareCreatedAndServerStoredInDB() throws Exception {
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
@@ -242,7 +243,7 @@ public class LoadBalancingIntegrationTest extends BaseTest {
 
     @Test
     public void hardwareCreatedAndServerStoredInDBAndDelete() throws Exception {
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);

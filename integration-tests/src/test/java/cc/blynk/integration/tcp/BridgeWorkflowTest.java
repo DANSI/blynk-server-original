@@ -4,6 +4,7 @@ import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.enums.PinType;
@@ -114,7 +115,7 @@ public class BridgeWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testBridgeInitAndSendOtherDevicesButNoBridgeDevices() throws Exception {
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
@@ -378,7 +379,7 @@ public class BridgeWorkflowTest extends SingleServerInstancePerTest {
 
         appClient.reset();
 
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
         appClient.createDevice(1, device1);
@@ -402,7 +403,7 @@ public class BridgeWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.createDash(dash);
         clientPair.appClient.verifyResult(ok(1));
 
-        Device device = new Device(1, "My Device", "ESP8266");
+        Device device = new Device(1, "My Device", BoardType.ESP8266);
         clientPair.appClient.createDevice(dash.id, device);
         device = clientPair.appClient.parseDevice(2);
 
@@ -432,7 +433,7 @@ public class BridgeWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.createDash(dash);
         clientPair.appClient.verifyResult(ok(1));
 
-        Device device = new Device(0, "My Device", "ESP8266");
+        Device device = new Device(0, "My Device", BoardType.ESP8266);
         clientPair.appClient.createDevice(dash.id, device);
         device = clientPair.appClient.parseDevice(2);
 
@@ -448,7 +449,7 @@ public class BridgeWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.createDash(dash);
         clientPair.appClient.verifyResult(ok(1));
 
-        device = new Device(0, "My Device", "ESP8266");
+        device = new Device(0, "My Device", BoardType.ESP8266);
         clientPair.appClient.createDevice(dash.id, device);
         device = clientPair.appClient.parseDevice(2);
 

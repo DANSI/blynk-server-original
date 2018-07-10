@@ -43,28 +43,24 @@ import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
 
     public final HardwareStateHolder state;
+    private final Holder holder;
     private final HardwareLogic hardware;
     private final MailLogic email;
-    private final BridgeLogic bridge;
     private final PushLogic push;
-    private final TwitLogic tweet;
-    private final SmsLogic smsLogic;
-    private final SetWidgetPropertyLogic propertyLogic;
-    private final BlynkInternalLogic info;
+
+    //this is rare handlers, most of users don't use them, so lazy init it.
+    private BridgeLogic bridge;
+    private TwitLogic tweet;
+    private SmsLogic sms;
 
     public HardwareHandler(Holder holder, HardwareStateHolder stateHolder) {
         super(StringMessage.class);
-        this.hardware = new HardwareLogic(holder, stateHolder.user.email);
-        this.bridge = new BridgeLogic(holder.sessionDao, holder.tokenManager);
+        this.state = stateHolder;
+        this.holder = holder;
 
+        this.hardware = new HardwareLogic(holder, stateHolder.user.email);
         this.email = new MailLogic(holder);
         this.push = new PushLogic(holder.gcmWrapper, holder.limits.notificationPeriodLimitSec);
-        this.tweet = new TwitLogic(holder.twitterWrapper, holder.limits.notificationPeriodLimitSec);
-        this.smsLogic = new SmsLogic(holder.smsWrapper, holder.limits.notificationPeriodLimitSec);
-        this.propertyLogic = SetWidgetPropertyLogic.getInstance(holder);
-        this.info = BlynkInternalLogic.getInstance(holder);
-
-        this.state = stateHolder;
     }
 
     @Override
@@ -77,6 +73,9 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
                 PingLogic.messageReceived(ctx, msg.id);
                 break;
             case BRIDGE:
+                if (bridge == null) {
+                    this.bridge = new BridgeLogic(holder.sessionDao, holder.tokenManager);
+                }
                 bridge.messageReceived(ctx, state, msg);
                 break;
             case EMAIL:
@@ -86,19 +85,25 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<StringMessa
                 push.messageReceived(ctx, state, msg);
                 break;
             case TWEET:
+                if (tweet == null) {
+                    this.tweet = new TwitLogic(holder.twitterWrapper, holder.limits.notificationPeriodLimitSec);
+                }
                 tweet.messageReceived(ctx, state, msg);
                 break;
             case SMS:
-                smsLogic.messageReceived(ctx, state, msg);
+                if (sms == null) {
+                    this.sms = new SmsLogic(holder.smsWrapper, holder.limits.notificationPeriodLimitSec);
+                }
+                sms.messageReceived(ctx, state, msg);
                 break;
             case HARDWARE_SYNC:
                 HardwareSyncLogic.messageReceived(ctx, state, msg);
                 break;
             case BLYNK_INTERNAL:
-                info.messageReceived(ctx, state, msg);
+                BlynkInternalLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case SET_WIDGET_PROPERTY:
-                propertyLogic.messageReceived(ctx, state, msg);
+                SetWidgetPropertyLogic.messageReceived(holder, ctx, state, msg);
                 break;
             //may when firmware is bad written
             case LOGIN:

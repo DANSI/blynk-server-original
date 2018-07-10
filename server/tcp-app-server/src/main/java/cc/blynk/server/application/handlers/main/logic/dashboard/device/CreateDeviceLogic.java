@@ -1,8 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.device;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.dao.TokenManager;
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -24,39 +22,35 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created by Dmitriy Dumanskiy.
  * Created on 01.02.16.
  */
-public class CreateDeviceLogic {
+public final class CreateDeviceLogic {
 
     private static final Logger log = LogManager.getLogger(CreateDeviceLogic.class);
 
-    private final TokenManager tokenManager;
-    private final int deviceLimit;
-
-    public CreateDeviceLogic(Holder holder) {
-        this.tokenManager = holder.tokenManager;
-        this.deviceLimit = holder.limits.deviceLimit;
+    private CreateDeviceLogic() {
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        String[] split = split2(message.body);
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
+                                       User user, StringMessage message) {
+        var split = split2(message.body);
 
         if (split.length < 2) {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        int dashId = Integer.parseInt(split[0]);
-        String deviceString = split[1];
+        var dashId = Integer.parseInt(split[0]);
+        var deviceString = split[1];
 
         if (deviceString == null || deviceString.isEmpty()) {
             throw new IllegalCommandException("Income device message is empty.");
         }
 
-        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
+        var dash = user.profile.getDashByIdOrThrow(dashId);
 
-        if (dash.devices.length > deviceLimit) {
+        if (dash.devices.length > holder.limits.deviceLimit) {
             throw new NotAllowedException("Device limit is reached.", message.id);
         }
 
-        Device newDevice = JsonParser.parseDevice(deviceString, message.id);
+        var newDevice = JsonParser.parseDevice(deviceString, message.id);
 
         log.debug("Creating new device {}.", deviceString);
 
@@ -64,7 +58,7 @@ public class CreateDeviceLogic {
             throw new IllegalCommandException("Income device message is not valid.");
         }
 
-        for (Device device : dash.devices) {
+        for (var device : dash.devices) {
             if (device.id == newDevice.id) {
                 throw new NotAllowedException("Device with same id already exists.", message.id);
             }
@@ -72,8 +66,8 @@ public class CreateDeviceLogic {
 
         dash.devices = ArrayUtil.add(dash.devices, newDevice, Device.class);
 
-        String newToken = TokenGeneratorUtil.generateNewToken();
-        tokenManager.assignToken(user, dash, newDevice, newToken);
+        var newToken = TokenGeneratorUtil.generateNewToken();
+        holder.tokenManager.assignToken(user, dash, newDevice, newToken);
 
         dash.updatedAt = System.currentTimeMillis();
         user.lastModifiedTs = dash.updatedAt;

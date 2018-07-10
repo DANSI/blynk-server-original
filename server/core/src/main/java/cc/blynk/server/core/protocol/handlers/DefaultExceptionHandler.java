@@ -48,7 +48,7 @@ public abstract class DefaultExceptionHandler {
                 log.debug("Unsecured connection attempt or not supported protocol. Channel : {}. Reason : {}",
                         ctx.channel().remoteAddress(), cause.getMessage());
             } else {
-                log.error("DecoderException.", cause);
+                log.error("DecoderException. Pipeline : {}.", ctx.pipeline().names(), cause);
             }
             ctx.close();
         } else if (cause instanceof SSLException) {

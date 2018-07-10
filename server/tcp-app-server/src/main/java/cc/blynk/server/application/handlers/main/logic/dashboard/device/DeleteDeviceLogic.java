@@ -2,10 +2,6 @@ package cc.blynk.server.application.handlers.main.logic.dashboard.device;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
-import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.ReportingDiskDao;
-import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
@@ -24,23 +20,15 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created by Dmitriy Dumanskiy.
  * Created on 01.02.16.
  */
-public class DeleteDeviceLogic {
+public final class DeleteDeviceLogic {
 
     private static final Logger log = LogManager.getLogger(DeleteDeviceLogic.class);
 
-    private final TokenManager tokenManager;
-    private final SessionDao sessionDao;
-    private final ReportingDiskDao reportingDao;
-    private final BlockingIOProcessor blockingIOProcessor;
-
-    public DeleteDeviceLogic(Holder holder) {
-        this.tokenManager = holder.tokenManager;
-        this.sessionDao = holder.sessionDao;
-        this.reportingDao = holder.reportingDiskDao;
-        this.blockingIOProcessor = holder.blockingIOProcessor;
+    private DeleteDeviceLogic() {
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
+                                       AppStateHolder state, StringMessage message) {
         String[] split = split2(message.body);
 
         if (split.length < 2) {
@@ -56,8 +44,8 @@ public class DeleteDeviceLogic {
 
         int existingDeviceIndex = dash.getDeviceIndexById(deviceId);
         Device device = dash.devices[existingDeviceIndex];
-        tokenManager.deleteDevice(device);
-        Session session = sessionDao.userSession.get(state.userKey);
+        holder.tokenManager.deleteDevice(device);
+        Session session = holder.sessionDao.userSession.get(state.userKey);
         session.closeHardwareChannelByDeviceId(dashId, deviceId);
 
         dash.devices = ArrayUtil.remove(dash.devices, existingDeviceIndex, Device.class);
@@ -70,9 +58,9 @@ public class DeleteDeviceLogic {
         dash.updatedAt = System.currentTimeMillis();
         state.user.lastModifiedTs = dash.updatedAt;
 
-        blockingIOProcessor.executeHistory(() -> {
+        holder.blockingIOProcessor.executeHistory(() -> {
             try {
-                reportingDao.delete(state.user, dashId, deviceId);
+                holder.reportingDiskDao.delete(state.user, dashId, deviceId);
             } catch (Exception e) {
                 log.warn("Error removing device data. Reason : {}.", e.getMessage());
             }

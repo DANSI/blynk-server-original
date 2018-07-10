@@ -1,8 +1,7 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
-import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
@@ -20,32 +19,28 @@ import static cc.blynk.server.internal.CommonByteBufUtil.ok;
  * Created on 2/1/2015.
  *
  */
-public class UpdateDashLogic {
+public final class UpdateDashLogic {
 
     private static final Logger log = LogManager.getLogger(UpdateDashLogic.class);
 
-    private final int dashMaxSize;
-    private final TimerWorker timerWorker;
-
-    public UpdateDashLogic(TimerWorker timerWorker, int maxDashSize) {
-        this.timerWorker = timerWorker;
-        this.dashMaxSize = maxDashSize;
+    private UpdateDashLogic() {
     }
 
     //todo should accept only dash info and ignore widgets. should be fixed after migration
-    public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
-        String dashString = message.body;
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
+                                       AppStateHolder state, StringMessage message) {
+        var dashString = message.body;
 
         if (dashString == null || dashString.isEmpty()) {
             throw new IllegalCommandException("Income create dash message is empty.");
         }
 
-        if (dashString.length() > dashMaxSize) {
+        if (dashString.length() > holder.limits.profileSizeLimitBytes) {
             throw new NotAllowedException("User dashboard is larger then limit.", message.id);
         }
 
         log.debug("Trying to parse user dash : {}", dashString);
-        DashBoard updatedDash = JsonParser.parseDashboard(dashString, message.id);
+        var updatedDash = JsonParser.parseDashboard(dashString, message.id);
 
         if (updatedDash == null) {
             throw new IllegalCommandException("Project parsing error.");
@@ -53,10 +48,11 @@ public class UpdateDashLogic {
 
         log.debug("Saving dashboard.");
 
-        User user = state.user;
+        var user = state.user;
 
-        DashBoard existingDash = user.profile.getDashByIdOrThrow(updatedDash.id);
+        var existingDash = user.profile.getDashByIdOrThrow(updatedDash.id);
 
+        TimerWorker timerWorker = holder.timerWorker;
         timerWorker.deleteTimers(state.userKey, existingDash);
         updatedDash.addTimers(timerWorker, state.userKey);
 

@@ -4,6 +4,7 @@ import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
+import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
@@ -573,7 +574,7 @@ public class TimerTest extends SingleServerInstancePerTest {
     @Test
     public void testTimerWorksWithTag() throws Exception {
         //creating new device
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
         clientPair.appClient.createDevice(1, device1);
         Device device = clientPair.appClient.parseDevice();
@@ -678,7 +679,7 @@ public class TimerTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
 
         TileTemplate tileTemplate = new ButtonTileTemplate(1,
-                null, new int[] {0}, "name", "name", "iconName", "ESP8266", new DataStream((byte) 111, PinType.VIRTUAL),
+                null, new int[] {0}, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte) 111, PinType.VIRTUAL),
                 false, false, false, null, null);
 
         clientPair.appClient.send("createTemplate " + b("1 " + deviceTiles.id + " ")

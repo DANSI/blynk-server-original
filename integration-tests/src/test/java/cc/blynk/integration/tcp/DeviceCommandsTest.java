@@ -1,6 +1,7 @@
 package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.SingleServerInstancePerTest;
+import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import org.junit.Test;
@@ -24,9 +25,9 @@ public class DeviceCommandsTest extends SingleServerInstancePerTest {
 
     @Test
     public void testAddNewDevice() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", "UNO");
+        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
         device0.status = Status.ONLINE;
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
@@ -49,7 +50,7 @@ public class DeviceCommandsTest extends SingleServerInstancePerTest {
 
     @Test
     public void testUpdateExistingDevice() throws Exception {
-        Device device0 = new Device(0, "My Dashboard Updated", "UNO");
+        Device device0 = new Device(0, "My Dashboard Updated", BoardType.Arduino_UNO);
         device0.status = Status.ONLINE;
 
         clientPair.appClient.updateDevice(1, device0);
@@ -68,7 +69,7 @@ public class DeviceCommandsTest extends SingleServerInstancePerTest {
 
     @Test
     public void testUpdateNonExistingDevice() throws Exception {
-        Device device = new Device(100, "My Dashboard Updated", "UNO");
+        Device device = new Device(100, "My Dashboard Updated", BoardType.Arduino_UNO);
 
         clientPair.appClient.updateDevice(1, device);
         clientPair.appClient.verifyResult(illegalCommandBody(1));
@@ -76,7 +77,7 @@ public class DeviceCommandsTest extends SingleServerInstancePerTest {
 
     @Test
     public void testGetDevices() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", "UNO");
+        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
         device0.status = Status.ONLINE;
 
         clientPair.appClient.send("getDevices 1");
@@ -90,7 +91,7 @@ public class DeviceCommandsTest extends SingleServerInstancePerTest {
 
     @Test
     public void testTokenNotUpdatedForExistingDevice() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", "UNO");
+        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
         device0.status = Status.ONLINE;
 
         clientPair.appClient.send("getDevices 1");
@@ -124,9 +125,9 @@ public class DeviceCommandsTest extends SingleServerInstancePerTest {
 
     @Test
     public void testDeletedNewlyAddedDevice() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", "UNO");
+        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
         device0.status = Status.ONLINE;
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);

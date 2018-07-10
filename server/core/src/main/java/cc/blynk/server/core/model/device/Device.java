@@ -18,7 +18,7 @@ public class Device implements Target {
 
     public volatile String name;
 
-    public volatile String boardType;
+    public volatile BoardType boardType;
 
     @JsonView(View.Private.class)
     public volatile String token;
@@ -55,18 +55,17 @@ public class Device implements Target {
 
     public volatile boolean isUserIcon;
 
-    public boolean isNotValid() {
-        return boardType == null || boardType.isEmpty() || boardType.length() > 50
-                || (name != null && name.length() > 50);
+    public Device(int id, String name, BoardType boardType) {
+        this.id = id;
+        this.name = name;
+        this.boardType = boardType;
     }
 
     public Device() {
     }
 
-    public Device(int id, String name, String boardType) {
-        this.id = id;
-        this.name = name;
-        this.boardType = boardType;
+    public boolean isNotValid() {
+        return boardType == null || (name != null && name.length() > 50);
     }
 
     @Override

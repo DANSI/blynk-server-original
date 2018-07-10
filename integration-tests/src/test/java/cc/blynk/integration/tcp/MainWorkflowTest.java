@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DashboardSettings;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.Theme;
@@ -123,6 +124,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
 
         appClient.send("resetPass reset " + token + " " + SHA256Util.makeHash("2", userName));
         appClient.verifyResult(ok(5));
+        //verify(holder.mailWrapper).sendHtml(eq(userName), eq("Your new password on Blynk"), contains("You have changed your password on Blynk. Please, keep it in your records so you don't forget it."));
 
         appClient.login(userName, "1");
         appClient.verifyResult(new ResponseMessage(6, USER_NOT_AUTHENTICATED));
@@ -234,7 +236,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         Device device = new Device();
         device.id = 1;
         device.name = "123";
-        device.boardType = "ESP32";
+        device.boardType = BoardType.ESP32_Dev_Board;
         appClient.createDevice(1, device);
         device = appClient.parseDevice(5);
 

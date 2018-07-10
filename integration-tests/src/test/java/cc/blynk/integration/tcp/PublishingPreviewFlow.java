@@ -6,6 +6,7 @@ import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.App;
+import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.enums.PinType;
@@ -174,7 +175,7 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
 
     @Test
     public void testSendDynamicEmailForAppPublishWithFewDevices() throws Exception {
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device1);
@@ -218,7 +219,7 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
 
         clientPair.appClient.createDash(dashBoard);
 
-        Device device0 = new Device(0, "My Dashboard", "UNO");
+        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
         device0.status = Status.ONLINE;
 
         clientPair.appClient.createDevice(10, device0);
@@ -288,7 +289,7 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
 
         clientPair.appClient.createDash(dashBoard);
 
-        Device device0 = new Device(0, "My Dashboard", "UNO");
+        Device device0 = new Device(0, "My Dashboard", BoardType.ESP8266);
         device0.status = Status.ONLINE;
 
         clientPair.appClient.createDevice(10, device0);
@@ -317,7 +318,7 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
         clientPair.appClient.verifyResult(ok(4));
 
         TileTemplate tileTemplate = new PageTileTemplate(1,
-                null, null, "123", "name", "iconName", "ESP8266", null,
+                null, null, "123", "name", "iconName", BoardType.ESP8266, null,
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
 
         clientPair.appClient.send("createTemplate " + b("10 " + widgetId + " ")
@@ -331,7 +332,7 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
         clientPair.appClient.verifyResult(ok(7));
 
         tileTemplate = new PageTileTemplate(1,
-                null, null, "123", "name", "iconName", "ESP8266", null,
+                null, null, "123", "name", "iconName", BoardType.ESP8266, null,
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
 
         clientPair.appClient.send("createTemplate " + b("1 " + widgetId + " ")
@@ -372,7 +373,7 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
         assertEquals(1, deviceTiles.templates.length);
 
         tileTemplate = new PageTileTemplate(1,
-                null, new int[] {0}, "123", "name", "iconName", "ESP8266", null,
+                null, new int[] {0}, "123", "name", "iconName", BoardType.ESP8266, null,
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
         appClient2.send("updateTemplate " + b("1 " + widgetId + " ")
                 + MAPPER.writeValueAsString(tileTemplate));
@@ -418,12 +419,12 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
 
         clientPair.appClient.createDash(dashBoard);
 
-        Device device0 = new Device(0, "My Dashboard", "UNO");
+        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
         clientPair.appClient.createDevice(10, device0);
         device0 = clientPair.appClient.parseDevice(2);
         clientPair.appClient.verifyResult(createDevice(2, device0));
 
-        Device device2 = new Device(2, "My Dashboard", "UNO");
+        Device device2 = new Device(2, "My Dashboard", BoardType.Arduino_UNO);
         clientPair.appClient.createDevice(10, device2);
         device2 = clientPair.appClient.parseDevice(3);
         clientPair.appClient.verifyResult(createDevice(3, device2));
@@ -448,7 +449,7 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
         clientPair.appClient.verifyResult(ok(5));
 
         TileTemplate tileTemplate = new PageTileTemplate(1,
-                null, new int[] {2}, "123", "name", "iconName", "ESP8266", null,
+                null, new int[] {2}, "123", "name", "iconName", BoardType.ESP8266, null,
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
 
         clientPair.appClient.send("createTemplate " + b("10 " + widgetId + " ")
@@ -495,12 +496,12 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
 
         clientPair.appClient.createDash(dashBoard);
 
-        Device device0 = new Device(0, "My Dashboard", "UNO");
+        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
         clientPair.appClient.createDevice(10, device0);
         device0 = clientPair.appClient.parseDevice(2);
         clientPair.appClient.verifyResult(createDevice(2, device0));
 
-        Device device2 = new Device(2, "My Dashboard", "UNO");
+        Device device2 = new Device(2, "My Dashboard", BoardType.Arduino_UNO);
         clientPair.appClient.createDevice(10, device2);
         device2 = clientPair.appClient.parseDevice(3);
         clientPair.appClient.verifyResult(createDevice(3, device2));
@@ -525,7 +526,7 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
         clientPair.appClient.verifyResult(ok(5));
 
         TileTemplate tileTemplate = new PageTileTemplate(1,
-                null, new int[] {2}, "123", "name", "iconName", "ESP8266", null,
+                null, new int[] {2}, "123", "name", "iconName", BoardType.ESP8266, null,
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
 
         clientPair.appClient.send("createTemplate " + b("10 " + widgetId + " ")
@@ -618,7 +619,7 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
         clientPair.appClient.createDash(dashBoard);
         clientPair.appClient.verifyResult(ok(1));
 
-        Device device0 = new Device(0, "My Device", "UNO");
+        Device device0 = new Device(0, "My Device", BoardType.Arduino_UNO);
         device0.status = Status.ONLINE;
 
         clientPair.appClient.createDevice(10, device0);

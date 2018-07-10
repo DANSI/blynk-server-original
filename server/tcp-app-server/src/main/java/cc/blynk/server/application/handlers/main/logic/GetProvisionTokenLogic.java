@@ -1,7 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
@@ -21,15 +20,12 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created by Dmitriy Dumanskiy.
  * Created on 06.04.18.
  */
-public class GetProvisionTokenLogic {
+public final class GetProvisionTokenLogic {
 
-    private final TokenManager tokenManager;
-
-    public GetProvisionTokenLogic(Holder holder) {
-        this.tokenManager = holder.tokenManager;
+    private GetProvisionTokenLogic() {
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx, User user, StringMessage message) {
         String[] split = split2(message.body);
 
         int dashId = Integer.parseInt(split[0]);
@@ -53,7 +49,7 @@ public class GetProvisionTokenLogic {
         }
 
         String tempToken = TokenGeneratorUtil.generateNewToken();
-        tokenManager.assignToken(user, dash, temporaryDevice, tempToken, true);
+        holder.tokenManager.assignToken(user, dash, temporaryDevice, tempToken, true);
 
         if (ctx.channel().isWritable()) {
             ctx.writeAndFlush(makeASCIIStringMessage(GET_PROVISION_TOKEN,

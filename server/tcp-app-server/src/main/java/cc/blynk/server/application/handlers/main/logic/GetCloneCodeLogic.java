@@ -1,14 +1,11 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.db.DBManager;
 import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -24,21 +21,15 @@ import static cc.blynk.server.internal.CommonByteBufUtil.serverError;
  * Created on 2/1/2015.
  *
  */
-public class GetCloneCodeLogic {
+public final class GetCloneCodeLogic {
 
     private static final Logger log = LogManager.getLogger(GetCloneCodeLogic.class);
 
-    private final BlockingIOProcessor blockingIOProcessor;
-    private final DBManager dbManager;
-    private final FileManager fileManager;
-
-    public GetCloneCodeLogic(Holder holder) {
-        this.blockingIOProcessor = holder.blockingIOProcessor;
-        this.dbManager = holder.dbManager;
-        this.fileManager = holder.fileManager;
+    private GetCloneCodeLogic() {
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
+                                       User user, StringMessage message) {
         int dashId = Integer.parseInt(message.body);
 
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
@@ -46,11 +37,11 @@ public class GetCloneCodeLogic {
         String qrToken = TokenGeneratorUtil.generateNewToken();
         String json = JsonParser.toJsonRestrictiveDashboard(dash);
 
-        blockingIOProcessor.executeDB(() -> {
+        holder.blockingIOProcessor.executeDB(() -> {
             MessageBase result;
             try {
-                boolean insertStatus = dbManager.insertClonedProject(qrToken, json);
-                if (insertStatus || fileManager.writeCloneProjectToDisk(qrToken, json)) {
+                boolean insertStatus = holder.dbManager.insertClonedProject(qrToken, json);
+                if (insertStatus || holder.fileManager.writeCloneProjectToDisk(qrToken, json)) {
                     result = makeASCIIStringMessage(GET_CLONE_CODE, message.id, qrToken);
                 } else {
                     log.error("Creating clone project failed for {}", user.email);

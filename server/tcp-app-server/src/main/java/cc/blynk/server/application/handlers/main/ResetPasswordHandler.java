@@ -34,8 +34,10 @@ public class ResetPasswordHandler extends SimpleChannelInboundHandler<ResetPassw
     private static final Logger log = LogManager.getLogger(ResetPasswordHandler.class);
 
     private final TokensPool tokensPool;
-    private final String emailBody;
-    private final String emailSubj;
+    private final String resetEmailSubj;
+    private final String resetEmailBody;
+    private final String resetConfirmationSubj;
+    private final String resetConfirmationBody;
     private final MailWrapper mailWrapper;
     private final UserDao userDao;
     private final BlockingIOProcessor blockingIOProcessor;
@@ -44,8 +46,11 @@ public class ResetPasswordHandler extends SimpleChannelInboundHandler<ResetPassw
     public ResetPasswordHandler(Holder holder) {
         this.tokensPool = holder.tokensPool;
         String productName = holder.props.productName;
-        this.emailSubj = "Password restoration for your " + productName + " account.";
-        this.emailBody = FileLoaderUtil.readAppResetEmailTemplateAsString()
+        this.resetEmailSubj = "Password restoration for your " + productName + " account.";
+        this.resetEmailBody = FileLoaderUtil.readAppResetEmailTemplateAsString()
+                .replace(Placeholders.PRODUCT_NAME, productName);
+        this.resetConfirmationSubj = "Your new password on " + productName;
+        this.resetConfirmationBody = FileLoaderUtil.readAppResetEmailConfirmationTemplateAsString()
                 .replace(Placeholders.PRODUCT_NAME, productName);
         this.mailWrapper = holder.mailWrapper;
         this.userDao = holder.userDao;
@@ -91,7 +96,8 @@ public class ResetPasswordHandler extends SimpleChannelInboundHandler<ResetPassw
             log.warn("Invalid token for reset pass {}", token);
             ctx.writeAndFlush(notAllowed(msgId), ctx.voidPromise());
         } else {
-            User user = userDao.getByName(tokenUser.email, tokenUser.appName);
+            String email = tokenUser.email;
+            User user = userDao.getByName(email, tokenUser.appName);
             if (user == null) {
                 log.warn("User is not exists anymore. {}", tokenUser);
                 ctx.writeAndFlush(serverError(msgId), ctx.voidPromise());
@@ -99,6 +105,15 @@ public class ResetPasswordHandler extends SimpleChannelInboundHandler<ResetPassw
             }
             user.resetPass(passHash);
             tokensPool.removeToken(token);
+            blockingIOProcessor.execute(() -> {
+                try {
+                    mailWrapper.sendHtml(email, resetConfirmationSubj,
+                            resetConfirmationBody.replace(Placeholders.EMAIL, email));
+                    log.debug("Confirmation {} mail sent.", email);
+                } catch (Exception e) {
+                    log.error("Error sending confirmation mail for {}. Reason : {}", email, e.getMessage());
+                }
+            });
             ctx.writeAndFlush(ok(msgId), ctx.voidPromise());
         }
     }
@@ -148,14 +163,14 @@ public class ResetPasswordHandler extends SimpleChannelInboundHandler<ResetPassw
         tokensPool.addToken(token, userToken);
 
         String resetUrl = makeResetUrl(host, token, trimmedEmail);
-        String body = emailBody.replace(Placeholders.RESET_URL, resetUrl);
+        String body = resetEmailBody.replace(Placeholders.RESET_URL, resetUrl);
         String qrString = "blynk://restore?token=" + token + "&email=" + trimmedEmail;
         byte[] qrBytes = QRCode.from(qrString).to(ImageType.JPG).withSize(250, 250).stream().toByteArray();
         QrHolder qrHolder = new ResetQrHolder("resetPassQr.jpg", qrBytes);
 
         blockingIOProcessor.execute(() -> {
             try {
-                mailWrapper.sendWithAttachment(trimmedEmail, emailSubj, body, qrHolder);
+                mailWrapper.sendWithAttachment(trimmedEmail, resetEmailSubj, body, qrHolder);
                 log.debug("{} mail sent.", trimmedEmail);
                 ctx.writeAndFlush(ok(msgId), ctx.voidPromise());
             } catch (Exception e) {

@@ -4,6 +4,7 @@ import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
@@ -182,7 +183,7 @@ public class NotificationsLogicTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
-        Device device1 = new Device(1, "Name", "ESP8266");
+        Device device1 = new Device(1, "Name", BoardType.ESP8266);
 
         clientPair.appClient.createDevice(1, device1);
         Device device = clientPair.appClient.parseDevice();

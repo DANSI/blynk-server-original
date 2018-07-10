@@ -1,5 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
@@ -25,19 +26,17 @@ import static cc.blynk.utils.AppStateHolderUtil.getAppState;
  * Created on 2/1/2015.
  *
  */
-public class ActivateDashboardLogic {
+public final class ActivateDashboardLogic {
 
     private static final int PIN_MODE_MSG_ID = 1;
 
     private static final Logger log = LogManager.getLogger(ActivateDashboardLogic.class);
 
-    private final SessionDao sessionDao;
-
-    public ActivateDashboardLogic(SessionDao sessionDao) {
-        this.sessionDao = sessionDao;
+    private ActivateDashboardLogic() {
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
+                                       AppStateHolder state, StringMessage message) {
         User user = state.user;
         String dashBoardIdString = message.body;
 
@@ -48,6 +47,7 @@ public class ActivateDashboardLogic {
         dash.activate();
         user.lastModifiedTs = dash.updatedAt;
 
+        SessionDao sessionDao = holder.sessionDao;
         Session session = sessionDao.userSession.get(state.userKey);
 
         if (session.isHardwareConnected(dashId)) {

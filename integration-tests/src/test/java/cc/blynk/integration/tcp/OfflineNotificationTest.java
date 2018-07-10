@@ -7,6 +7,7 @@ import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DashboardSettings;
 import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.enums.Theme;
@@ -47,7 +48,7 @@ public class OfflineNotificationTest extends SingleServerInstancePerTest {
 
     @Test
     public void testOfflineTimingIsCorrectForMultipleDevices() throws Exception {
-        Device device2 = new Device(1, "My Device", "ESP8266");
+        Device device2 = new Device(1, "My Device", BoardType.ESP8266);
         device2.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device2);
@@ -86,7 +87,7 @@ public class OfflineNotificationTest extends SingleServerInstancePerTest {
 
     @Test
     public void testOfflineTimingIsCorrectForMultipleDevices2() throws Exception {
-        Device device2 = new Device(1, "My Device", "ESP8266");
+        Device device2 = new Device(1, "My Device", BoardType.ESP8266);
         device2.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device2);
@@ -142,7 +143,7 @@ public class OfflineNotificationTest extends SingleServerInstancePerTest {
 
         clientPair.appClient.neverAfter(500, deviceOffline(0, "1-0"));
 
-        Device device2 = new Device(1, "My Device", "ESP8266");
+        Device device2 = new Device(1, "My Device", BoardType.ESP8266);
         device2.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device2);
@@ -188,7 +189,7 @@ public class OfflineNotificationTest extends SingleServerInstancePerTest {
 
     @Test
     public void deviceGoesOfflineAfterBeingIdle() throws Exception {
-        Device device2 = new Device(1, "My Device", "ESP8266");
+        Device device2 = new Device(1, "My Device", BoardType.ESP8266);
         device2.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device2);
@@ -216,7 +217,7 @@ public class OfflineNotificationTest extends SingleServerInstancePerTest {
 
     @Test
     public void sessionDisconnectChangeState() throws Exception {
-        Device device2 = new Device(1, "My Device", "ESP8266");
+        Device device2 = new Device(1, "My Device", BoardType.ESP8266);
         device2.status = Status.OFFLINE;
 
         clientPair.appClient.createDevice(1, device2);

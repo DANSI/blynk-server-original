@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.widgets.ui.tiles.templates;
 
 import cc.blynk.server.core.model.DataStream;
+import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -28,7 +29,7 @@ public class ButtonTileTemplate extends TileTemplate {
                               @JsonProperty("templateId") String templateId,
                               @JsonProperty("name") String name,
                               @JsonProperty("iconName") String iconName,
-                              @JsonProperty("boardType") String boardType,
+                              @JsonProperty("boardType") BoardType boardType,
                               @JsonProperty("dataStream") DataStream dataStream,
                               @JsonProperty("showDeviceName") boolean showDeviceName,
                               @JsonProperty("pushMode")boolean pushMode,

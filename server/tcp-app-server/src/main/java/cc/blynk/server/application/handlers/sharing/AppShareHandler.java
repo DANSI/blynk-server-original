@@ -15,7 +15,6 @@ import cc.blynk.server.common.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.common.handlers.logic.PingLogic;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.StateHolderBase;
-import cc.blynk.server.core.stats.GlobalStats;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.ADD_PUSH_TOKEN;
@@ -38,26 +37,21 @@ import static cc.blynk.server.core.protocol.enums.Command.PING;
 public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
 
     public final AppShareStateHolder state;
+    private final Holder holder;
     private final HardwareAppShareLogic hardwareApp;
-    private final GetGraphDataLogic graphData;
-    private final GetEnhancedGraphDataLogic enhancedGraphDataLogic;
-    private final DeleteDeviceDataLogic deleteDeviceDataLogic;
-    private final GlobalStats stats;
 
     public AppShareHandler(Holder holder, AppShareStateHolder state) {
         super(StringMessage.class);
-        this.hardwareApp = new HardwareAppShareLogic(holder, state.userKey.email);
-        this.graphData = new GetGraphDataLogic(holder.reportingDiskDao, holder.blockingIOProcessor);
-        this.enhancedGraphDataLogic = new GetEnhancedGraphDataLogic(
-                holder.reportingDiskDao, holder.blockingIOProcessor);
-        this.deleteDeviceDataLogic = new DeleteDeviceDataLogic(holder.reportingDiskDao, holder.blockingIOProcessor);
         this.state = state;
-        this.stats = holder.stats;
+        this.holder = holder;
+
+        this.hardwareApp = new HardwareAppShareLogic(holder, state.userKey.email);
+
     }
 
     @Override
     public void messageReceived(ChannelHandlerContext ctx, StringMessage msg) {
-        this.stats.incrementAppStat();
+        holder.stats.incrementAppStat();
         switch (msg.command) {
             case HARDWARE:
                 hardwareApp.messageReceived(ctx, state, msg);
@@ -69,10 +63,10 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
                 AddPushLogic.messageReceived(ctx, state, msg);
                 break;
             case GET_GRAPH_DATA :
-                graphData.messageReceived(ctx, state.user, msg);
+                GetGraphDataLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
             case GET_ENHANCED_GRAPH_DATA :
-                enhancedGraphDataLogic.messageReceived(ctx, state, msg);
+                GetEnhancedGraphDataLogic.messageReceived(holder, ctx, state, msg);
                 break;
             case GET_DEVICES :
                 GetDevicesLogic.messageReceived(ctx, state.user, msg);
@@ -87,7 +81,7 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
                 LogoutLogic.messageReceived(ctx, state.user, msg);
                 break;
             case DELETE_DEVICE_DATA :
-                deleteDeviceDataLogic.messageReceived(ctx, state, msg);
+                DeleteDeviceDataLogic.messageReceived(holder, ctx, state, msg);
                 break;
         }
     }
