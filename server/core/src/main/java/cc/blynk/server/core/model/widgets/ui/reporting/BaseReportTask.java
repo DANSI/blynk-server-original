@@ -153,7 +153,7 @@ public abstract class BaseReportTask implements Runnable {
         //truncate second, minute, hour, depending of granularity in order to do not filter first point.
         //https://github.com/blynkkk/blynk-server/issues/1149
         startFrom = (startFrom / report.granularityType.period) * report.granularityType.period;
-        Path output = Paths.get(userCsvFolder.toString() + ".gz");
+        Path output = Paths.get(userCsvFolder.toString() + ".zip");
 
         boolean hasData = generateReport(output, dash, fetchCount, startFrom);
         if (hasData) {

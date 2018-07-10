@@ -250,7 +250,8 @@ public class AppAndHttpsServer extends BaseServer {
                                         new UrlReWriterHandler("/favicon.ico", "/static/favicon.ico"))
                                 .addLast("HttpStaticFile",
                                         new StaticFileHandler(holder.props, new StaticFile("/static"),
-                                                new StaticFileEdsWith(FileUtils.CSV_DIR, ".gz")))
+                                                new StaticFileEdsWith(FileUtils.CSV_DIR, ".gz"),
+                                                new StaticFileEdsWith(FileUtils.CSV_DIR, ".zip")))
                                 .addLast("HttpsWebSocketUnificator", baseWebSocketUnificator);
                     }
 
