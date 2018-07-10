@@ -107,7 +107,8 @@ public class ResetPasswordHandler extends SimpleChannelInboundHandler<ResetPassw
             tokensPool.removeToken(token);
             blockingIOProcessor.execute(() -> {
                 try {
-                    mailWrapper.sendHtml(email, resetConfirmationSubj, resetConfirmationBody);
+                    mailWrapper.sendHtml(email, resetConfirmationSubj,
+                            resetConfirmationBody.replace(Placeholders.EMAIL, email));
                     log.debug("Confirmation {} mail sent.", email);
                 } catch (Exception e) {
                     log.error("Error sending confirmation mail for {}. Reason : {}", email, e.getMessage());
