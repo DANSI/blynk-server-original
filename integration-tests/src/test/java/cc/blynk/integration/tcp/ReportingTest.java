@@ -459,7 +459,7 @@ public class ReportingTest extends BaseTest {
     }
 
     @Test
-    public void testDailyReportWithSinglePointIsTriggered() throws Exception {
+    public void testDailyReportWithSinglePointIsTriggeredAndNullName() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
         Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
@@ -492,7 +492,7 @@ public class ReportingTest extends BaseTest {
         LocalTime localTime = LocalTime.ofInstant(Instant.ofEpochMilli(now), ZoneId.of("UTC"));
         localTime = LocalTime.of(localTime.getHour(), localTime.getMinute());
 
-        Report report = new Report(1, "DailyReport",
+        Report report = new Report(1, null,
                 new ReportSource[] {reportSource},
                 new DailyReport(now, ReportDurationType.INFINITE, 0, 0), "test@gmail.com",
                 GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN,
@@ -507,9 +507,9 @@ public class ReportingTest extends BaseTest {
         String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".zip";
         String downloadUrl = "http://127.0.0.1:18080/" + filename;
         verify(holder.mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
-                eq("Your daily DailyReport is ready"),
+                eq("Your daily Report is ready"),
                 eq(downloadUrl),
-                eq("Report name: DailyReport<br>Period: Daily, at " + localTime));
+                eq("Report name: Report<br>Period: Daily, at " + localTime));
         sleep(200);
         assertEquals(1, holder.reportScheduler.getCompletedTaskCount());
         assertEquals(2, holder.reportScheduler.getTaskCount());
