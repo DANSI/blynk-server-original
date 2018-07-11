@@ -8,6 +8,7 @@ import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.asynchttpclient.Response;
+import org.junit.AfterClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -22,19 +23,23 @@ import static org.junit.Assert.assertEquals;
  */
 public class TwitterWrapperTest {
 
-    private final AsyncHttpClient asyncHttpClient = new DefaultAsyncHttpClient(
-            new DefaultAsyncHttpClientConfig.Builder()
-                .setUserAgent(null)
-                .setKeepAlive(true)
-                .setUseNativeTransport(Epoll.isAvailable())
-                    .build()
+    private static final AsyncHttpClient client = new DefaultAsyncHttpClient(new DefaultAsyncHttpClientConfig.Builder()
+            .setUserAgent(null)
+            .setKeepAlive(true)
+            .setUseNativeTransport(Epoll.isAvailable())
+            .build()
     );
+
+    @AfterClass
+    public static void closeHttpClient() throws Exception {
+        client.close();
+    }
 
     @Test
     @Ignore("requires real credentials")
     public void testSend() throws Exception {
         TwitterProperties twitterProperties = new TwitterProperties(Collections.emptyMap());
-        TwitterWrapper twitterWrapper = new TwitterWrapper(twitterProperties, asyncHttpClient);
+        TwitterWrapper twitterWrapper = new TwitterWrapper(twitterProperties, client);
 
         String userToken = "";
         String userSecret = "";

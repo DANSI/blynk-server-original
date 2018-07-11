@@ -111,6 +111,7 @@ public class CloneWorkFlowTest extends SingleServerInstancePerTestWithDB {
         assertNotNull(responseBody);
         DashBoard dashBoard = JsonParser.parseDashboard(responseBody, 0);
         assertEquals("My Dashboard", dashBoard.name);
+        httpclient.close();
     }
 
     @Test
@@ -127,6 +128,7 @@ public class CloneWorkFlowTest extends SingleServerInstancePerTestWithDB {
         assertEquals(500, response.getStatusCode());
         String responseBody = response.getResponseBody();
         assertEquals("Requested QR not found.", responseBody);
+        httpclient.close();
     }
 
 }

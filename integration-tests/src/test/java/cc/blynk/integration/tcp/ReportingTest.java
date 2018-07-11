@@ -536,6 +536,7 @@ public class ReportingTest extends BaseTest {
         Response response = f.get();
         assertEquals(200, response.getStatusCode());
         assertEquals("application/zip", response.getContentType());
+        httpclient.close();
     }
 
     @Test

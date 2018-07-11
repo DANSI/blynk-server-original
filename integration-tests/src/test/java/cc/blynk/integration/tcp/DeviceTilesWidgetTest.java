@@ -1661,6 +1661,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         Response response = f.get();
         assertEquals(200, response.getStatusCode());
         assertEquals("1", response.getResponseBody());
+        httpclient.close();
     }
 
     @Test
@@ -2005,6 +2006,6 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         assertEquals(200, response.getStatusCode());
 
         clientPair.appClient.verifyResult(hardware(111, "1-0 vw 5 111"));
-
+        httpclient.close();
     }
 }
