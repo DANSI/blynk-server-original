@@ -74,6 +74,32 @@ public class CloneWorkFlowTest extends SingleServerInstancePerTestWithDB {
     }
 
     @Test
+    public void getProjectByCloneCodeNew() throws Exception {
+        clientPair.appClient.send("getCloneCode 1");
+        String token = clientPair.appClient.getBody();
+        assertNotNull(token);
+        assertEquals(32, token.length());
+
+        clientPair.appClient.send("getProjectByCloneCode " + token + "\0" + "new");
+        DashBoard dashBoard = clientPair.appClient.parseDash(2);
+        assertEquals("My Dashboard", dashBoard.name);
+        Device device = dashBoard.devices[0];
+        assertEquals(-1, dashBoard.parentId);
+        assertEquals(2, dashBoard.id);
+        assertEquals(0, device.connectTime);
+        assertEquals(0, device.dataReceivedAt);
+        assertEquals(0, device.disconnectTime);
+        assertEquals(0, device.firstConnectTime);
+        assertNull(device.deviceOtaInfo);
+        assertNull(device.hardwareInfo);
+        assertNotNull(device.token);
+
+        clientPair.appClient.send("loadProfileGzipped");
+        Profile profile = clientPair.appClient.parseProfile(3);
+        assertEquals(2, profile.dashBoards.length);
+    }
+
+    @Test
     public void getProjectByCloneCodeNewFormat() throws Exception {
         clientPair.appClient.send("getCloneCode 1");
         String token = clientPair.appClient.getBody();
