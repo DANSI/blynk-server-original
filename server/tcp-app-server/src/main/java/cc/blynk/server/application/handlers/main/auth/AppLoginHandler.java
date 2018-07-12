@@ -74,7 +74,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, LoginMessage message) {
-        var messageParts = message.body.split(BODY_SEPARATOR_STRING);
+        String[] messageParts = message.body.split(BODY_SEPARATOR_STRING);
 
         if (messageParts.length < 2) {
             log.error("Wrong income message format.");
@@ -82,9 +82,10 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> {
             return;
         }
 
-        var email = messageParts[0].trim().toLowerCase();
+        ///.trim() is not used for back compatibility
+        String email = messageParts[0].toLowerCase();
 
-        var version = messageParts.length > 3
+        Version version = messageParts.length > 3
                 ? new Version(messageParts[2], messageParts[3])
                 : Version.UNKNOWN_VERSION;
 

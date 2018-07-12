@@ -63,7 +63,8 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
 
     private void appLogin(ChannelHandlerContext ctx, int messageId, String email,
                           String token, Version version) {
-        String userName = email.trim().toLowerCase();
+        ///.trim() is not used for back compatibility
+        String userName = email.toLowerCase();
 
         SharedTokenValue tokenValue = holder.tokenManager.getUserBySharedToken(token);
 
