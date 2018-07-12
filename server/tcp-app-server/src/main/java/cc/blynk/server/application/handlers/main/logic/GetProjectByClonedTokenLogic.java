@@ -138,7 +138,7 @@ public class GetProjectByClonedTokenLogic {
 
         newDash.addTimers(timerWorker, new UserKey(user));
 
-        byte[] data = ByteUtils.compress(dashString);
+        byte[] data = ByteUtils.compress(newDash.toString());
         return makeBinaryMessage(GET_PROJECT_BY_CLONE_CODE, msgId, data);
     }
 
