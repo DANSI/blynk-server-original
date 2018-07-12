@@ -119,7 +119,7 @@ public abstract class BaseReportTask implements Runnable {
 
     private void sendEmail(Path output) throws Exception {
         String durationLabel = report.reportType.getDurationLabel().toLowerCase();
-        String subj = "Your " + durationLabel + " " + report.name + " is ready";
+        String subj = "Your " + durationLabel + " " + report.getReportName() + " is ready";
         String gzipDownloadUrl = downloadUrl + output.getFileName();
         String dynamicSection = report.buildDynamicSection();
         mailWrapper.sendReportEmail(report.recipients, subj, gzipDownloadUrl, dynamicSection);
@@ -153,7 +153,7 @@ public abstract class BaseReportTask implements Runnable {
         //truncate second, minute, hour, depending of granularity in order to do not filter first point.
         //https://github.com/blynkkk/blynk-server/issues/1149
         startFrom = (startFrom / report.granularityType.period) * report.granularityType.period;
-        Path output = Paths.get(userCsvFolder.toString() + ".gz");
+        Path output = Paths.get(userCsvFolder.toString() + ".zip");
 
         boolean hasData = generateReport(output, dash, fetchCount, startFrom);
         if (hasData) {
@@ -183,7 +183,7 @@ public abstract class BaseReportTask implements Runnable {
         boolean atLeastOne = false;
         try (ZipOutputStream zipStream = new ZipOutputStream(Files.newOutputStream(output));
              BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(zipStream, REPORT_ENCODING), size)) {
-            String fileName = truncateFileName(report.name) + ".csv";
+            String fileName = truncateFileName(report.getReportName()) + ".csv";
             ZipEntry zipEntry = new ZipEntry(fileName);
             zipStream.putNextEntry(zipEntry);
             for (ReportSource reportSource : report.reportSources) {

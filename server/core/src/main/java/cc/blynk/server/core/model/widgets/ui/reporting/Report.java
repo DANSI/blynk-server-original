@@ -121,9 +121,13 @@ public class Report {
 
     String buildDynamicSection() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Report name: ").append(name).append("<br>");
+        sb.append("Report name: ").append(getReportName()).append("<br>");
         reportType.buildDynamicSection(sb, tzName);
         return sb.toString();
+    }
+
+    public String getReportName() {
+        return (name == null || name.isEmpty()) ? "Report" : name;
     }
 
     public DateTimeFormatter makeFormatter() {

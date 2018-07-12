@@ -1,5 +1,7 @@
 package cc.blynk.server.core.stats;
 
+import cc.blynk.server.core.protocol.enums.Command;
+
 import java.util.concurrent.atomic.LongAdder;
 
 /**
@@ -9,11 +11,8 @@ import java.util.concurrent.atomic.LongAdder;
  */
 public class GlobalStats {
 
-    //right now we have less than 100 commands
-    private static final int LAST_COMMAND_INDEX = 100;
-
-    private static final int APP_STAT_COUNTER_INDEX = LAST_COMMAND_INDEX - 1;
-    private static final int MQTT_STAT_COUNTER_INDEX = LAST_COMMAND_INDEX - 2;
+    private static final int APP_STAT_COUNTER_INDEX = Command.LAST_COMMAND_INDEX - 1;
+    private static final int MQTT_STAT_COUNTER_INDEX = Command.LAST_COMMAND_INDEX - 2;
 
     //separate by income/outcome?
     public final Meter totalMessages;
@@ -25,8 +24,8 @@ public class GlobalStats {
         this.totalMessages = new Meter();
 
         //yeah, this is a bit ugly code, but as fast as possible =).
-        this.specificCounters = new LongAdder[LAST_COMMAND_INDEX];
-        for (int i = 0; i < LAST_COMMAND_INDEX; i++) {
+        this.specificCounters = new LongAdder[Command.LAST_COMMAND_INDEX];
+        for (int i = 0; i < Command.LAST_COMMAND_INDEX; i++) {
             specificCounters[i] = new LongAdder();
         }
     }

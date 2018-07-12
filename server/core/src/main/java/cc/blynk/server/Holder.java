@@ -233,6 +233,7 @@ public class Holder {
         sessionDao.close();
 
         transportTypeHolder.close();
+        asyncHttpClient.close();
 
         reportingDiskDao.close();
 

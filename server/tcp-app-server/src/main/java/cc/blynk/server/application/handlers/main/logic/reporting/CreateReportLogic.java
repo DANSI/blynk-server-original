@@ -71,7 +71,6 @@ public final class CreateReportLogic {
             ctx.writeAndFlush(energyLimit(message.id), ctx.voidPromise());
             return;
         }
-        user.subtractEnergy(price);
 
         if (!report.isValid()) {
             log.debug("Report is not valid {} for {}.", report, user.email);
@@ -99,6 +98,7 @@ public final class CreateReportLogic {
             }
         }
 
+        user.subtractEnergy(price);
         reportingWidget.reports = ArrayUtil.add(reportingWidget.reports, report, Report.class);
         dash.updatedAt = System.currentTimeMillis();
 

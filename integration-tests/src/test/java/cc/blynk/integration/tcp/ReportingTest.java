@@ -459,7 +459,7 @@ public class ReportingTest extends BaseTest {
     }
 
     @Test
-    public void testDailyReportWithSinglePointIsTriggered() throws Exception {
+    public void testDailyReportWithSinglePointIsTriggeredAndNullName() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
         Path userReportFolder = Paths.get(tempDir, "data", getUserName());
         if (Files.notExists(userReportFolder)) {
@@ -492,7 +492,7 @@ public class ReportingTest extends BaseTest {
         LocalTime localTime = LocalTime.ofInstant(Instant.ofEpochMilli(now), ZoneId.of("UTC"));
         localTime = LocalTime.of(localTime.getHour(), localTime.getMinute());
 
-        Report report = new Report(1, "DailyReport",
+        Report report = new Report(1, null,
                 new ReportSource[] {reportSource},
                 new DailyReport(now, ReportDurationType.INFINITE, 0, 0), "test@gmail.com",
                 GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN,
@@ -504,18 +504,18 @@ public class ReportingTest extends BaseTest {
         assertEquals(System.currentTimeMillis(), report.nextReportAt, 3000);
 
         String date = LocalDate.now(report.tzName).toString();
-        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
+        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".zip";
         String downloadUrl = "http://127.0.0.1:18080/" + filename;
         verify(holder.mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
-                eq("Your daily DailyReport is ready"),
+                eq("Your daily Report is ready"),
                 eq(downloadUrl),
-                eq("Report name: DailyReport<br>Period: Daily, at " + localTime));
+                eq("Report name: Report<br>Period: Daily, at " + localTime));
         sleep(200);
         assertEquals(1, holder.reportScheduler.getCompletedTaskCount());
         assertEquals(2, holder.reportScheduler.getTaskCount());
 
         Path result = Paths.get(FileUtils.CSV_DIR,
-                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".zip");
         assertTrue(Files.exists(result));
         String resultCsvString = readStringFromFirstZipEntry(result);
         String[] split = resultCsvString.split("[,\n]");
@@ -535,6 +535,8 @@ public class ReportingTest extends BaseTest {
         Future<Response> f = httpclient.prepareGet(downloadUrl).execute();
         Response response = f.get();
         assertEquals(200, response.getStatusCode());
+        assertEquals("application/zip", response.getContentType());
+        httpclient.close();
     }
 
     @Test
@@ -587,7 +589,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(System.currentTimeMillis(), report.nextReportAt, 3000);
 
         String date = LocalDate.now(report.tzName).toString();
-        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
+        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".zip";
         String downloadUrl = "http://127.0.0.1:18080/" + filename;
         verify(holder.mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
@@ -598,7 +600,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(2, holder.reportScheduler.getTaskCount());
 
         Path result = Paths.get(FileUtils.CSV_DIR,
-                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".zip");
         assertTrue(Files.exists(result));
         String resultCsvString = readStringFromFirstZipEntry(result);
         String[] split = resultCsvString.split("\n");
@@ -658,7 +660,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(System.currentTimeMillis(), report.nextReportAt, 3000);
 
         String date = LocalDate.now(report.tzName).toString();
-        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
+        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".zip";
         String downloadUrl = "http://127.0.0.1:18080/" + filename;
         verify(holder.mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
@@ -669,7 +671,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(2, holder.reportScheduler.getTaskCount());
 
         Path result = Paths.get(FileUtils.CSV_DIR,
-                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".zip");
         assertTrue(Files.exists(result));
         ZipFile zipFile = new ZipFile(result.toString());
 
@@ -739,7 +741,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(System.currentTimeMillis(), report.nextReportAt, 3000);
 
         String date = LocalDate.now(report.tzName).toString();
-        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
+        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".zip";
         String downloadUrl = "http://127.0.0.1:18080/" + filename;
         verify(holder.mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
@@ -750,7 +752,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(2, holder.reportScheduler.getTaskCount());
 
         Path result = Paths.get(FileUtils.CSV_DIR,
-                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".zip");
         assertTrue(Files.exists(result));
         ZipFile zipFile = new ZipFile(result.toString());
 
@@ -828,7 +830,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(System.currentTimeMillis(), report.nextReportAt, 3000);
 
         String date = LocalDate.now(report.tzName).toString();
-        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
+        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".zip";
         String downloadUrl = "http://127.0.0.1:18080/" + filename;
         verify(holder.mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
@@ -839,7 +841,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(2, holder.reportScheduler.getTaskCount());
 
         Path result = Paths.get(FileUtils.CSV_DIR,
-                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".zip");
         assertTrue(Files.exists(result));
         ZipFile zipFile = new ZipFile(result.toString());
 
@@ -924,7 +926,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(System.currentTimeMillis(), report.nextReportAt, 3000);
 
         String date = LocalDate.now(report.tzName).toString();
-        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
+        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".zip";
         String downloadUrl = "http://127.0.0.1:18080/" + filename;
         verify(holder.mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
@@ -935,7 +937,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(2, holder.reportScheduler.getTaskCount());
 
         Path result = Paths.get(FileUtils.CSV_DIR,
-                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".zip");
         assertTrue(Files.exists(result));
         ZipFile zipFile = new ZipFile(result.toString());
 
@@ -1018,7 +1020,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(System.currentTimeMillis(), report.nextReportAt, 3000);
 
         String date = LocalDate.now(report.tzName).toString();
-        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
+        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".zip";
         String downloadUrl = "http://127.0.0.1:18080/" + filename;
         verify(holder.mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
@@ -1029,7 +1031,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(2, holder.reportScheduler.getTaskCount());
 
         Path result = Paths.get(FileUtils.CSV_DIR,
-                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".zip");
         assertTrue(Files.exists(result));
         ZipFile zipFile = new ZipFile(result.toString());
 
@@ -1110,7 +1112,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(System.currentTimeMillis(), report.nextReportAt, 2000);
 
         String date = LocalDate.now(report.tzName).toString();
-        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
+        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".zip";
         String downloadUrl = "http://127.0.0.1:18080/" + filename;
         verify(holder.mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
@@ -1121,7 +1123,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(2, holder.reportScheduler.getTaskCount());
 
         Path result = Paths.get(FileUtils.CSV_DIR,
-                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".zip");
         assertTrue(Files.exists(result));
         ZipFile zipFile = new ZipFile(result.toString());
 
@@ -1210,7 +1212,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(System.currentTimeMillis(), report.nextReportAt, 2000);
 
         String date = LocalDate.now(report.tzName).toString();
-        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
+        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".zip";
         String downloadUrl = "http://127.0.0.1:18080/" + filename;
         verify(holder.mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
@@ -1221,7 +1223,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(2, holder.reportScheduler.getTaskCount());
 
         Path result = Paths.get(FileUtils.CSV_DIR,
-                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".zip");
         assertTrue(Files.exists(result));
         ZipFile zipFile = new ZipFile(result.toString());
 
@@ -1303,7 +1305,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(System.currentTimeMillis(), report.nextReportAt, 2000);
 
         String date = LocalDate.now(report.tzName).toString();
-        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
+        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".zip";
         String downloadUrl = "http://127.0.0.1:18080/" + filename;
         verify(holder.mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
@@ -1314,7 +1316,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(2, holder.reportScheduler.getTaskCount());
 
         Path result = Paths.get(FileUtils.CSV_DIR,
-                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".zip");
         assertTrue(Files.exists(result));
         ZipFile zipFile = new ZipFile(result.toString());
 
@@ -1396,7 +1398,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(System.currentTimeMillis(), report.nextReportAt, 2000);
 
         String date = LocalDate.now(report.tzName).toString();
-        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
+        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".zip";
         String downloadUrl = "http://127.0.0.1:18080/" + filename;
         verify(holder.mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
@@ -1407,7 +1409,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(2, holder.reportScheduler.getTaskCount());
 
         Path result = Paths.get(FileUtils.CSV_DIR,
-                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".zip");
         assertTrue(Files.exists(result));
         ZipFile zipFile = new ZipFile(result.toString());
 
@@ -1474,7 +1476,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(System.currentTimeMillis(), report.nextReportAt, 3000);
 
         String date = LocalDate.now(report.tzName).toString();
-        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
+        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".zip";
         verify(holder.mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
                 eq("http://127.0.0.1:18080/" + filename),
@@ -1484,7 +1486,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(1, holder.reportScheduler.getTaskCount());
 
         Path result = Paths.get(FileUtils.CSV_DIR,
-                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".zip");
         assertTrue(Files.exists(result));
         String resultCsvString = readStringFromFirstZipEntry(result);
         String[] split = resultCsvString.split("[,\n]");
@@ -1555,7 +1557,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(OK, report.lastRunResult);
 
         String date = LocalDate.now(report.tzName).toString();
-        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
+        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".zip";
         verify(holder.mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your one time OneTime Report is ready"),
                 eq("http://127.0.0.1:18080/" + filename),
@@ -1567,7 +1569,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(0, holder.reportScheduler.getActiveCount());
 
         Path result = Paths.get(FileUtils.CSV_DIR,
-                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".zip");
         assertTrue(Files.exists(result));
         String resultCsvString = readStringFromFirstZipEntry(result);
         assertNotNull(resultCsvString);
@@ -1639,7 +1641,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(OK, report.lastRunResult);
 
         String date = LocalDate.now(report.tzName).toString();
-        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
+        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".zip";
         verify(holder.mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your one time OneTime Report is ready"),
                 eq("http://127.0.0.1:18080/" + filename),
@@ -1651,7 +1653,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(0, holder.reportScheduler.getActiveCount());
 
         Path result = Paths.get(FileUtils.CSV_DIR,
-                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".zip");
         assertTrue(Files.exists(result));
         String resultCsvString = readStringFromFirstZipEntry(result);
         assertNotNull(resultCsvString);
@@ -1718,7 +1720,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(OK, report.lastRunResult);
 
         String date = LocalDate.now(report.tzName).toString();
-        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
+        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".zip";
         verify(holder.mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com,test2@gmail.com"),
                 eq("Your one time OneTime Report is ready"),
                 eq("http://127.0.0.1:18080/" + filename),
@@ -1730,7 +1732,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(0, holder.reportScheduler.getActiveCount());
 
         Path result = Paths.get(FileUtils.CSV_DIR,
-                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".zip");
         assertTrue(Files.exists(result));
         String resultCsvString = readStringFromFirstZipEntry(result);
         assertNotNull(resultCsvString);
@@ -1854,7 +1856,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(OK, report.lastRunResult);
 
         String date = LocalDate.now(report.tzName).toString();
-        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
+        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".zip";
         verify(holder.mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your one time OneTime Report is ready"),
                 eq("http://127.0.0.1:18080/" + filename),
@@ -1866,7 +1868,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(0, holder.reportScheduler.getActiveCount());
 
         Path result = Paths.get(FileUtils.CSV_DIR,
-                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".zip");
         assertTrue(Files.exists(result));
         String resultCsvString = readStringFromFirstZipEntry(result);
         assertNotNull(resultCsvString);
@@ -2151,7 +2153,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(System.currentTimeMillis(), report.nextReportAt, 3000);
 
         String date = LocalDate.now(report.tzName).toString();
-        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".gz";
+        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".zip";
         verify(holder.mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
                 eq("Your daily DailyReport is ready"),
                 eq("http://127.0.0.1:18080/" + filename),
@@ -2161,7 +2163,7 @@ public class ReportingTest extends BaseTest {
         assertEquals(2, holder.reportScheduler.getTaskCount());
 
         Path result = Paths.get(FileUtils.CSV_DIR,
-                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".gz");
+                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".zip");
         assertTrue(Files.exists(result));
         String resultCsvString = readStringFromFirstZipEntry(result);
         String[] split = resultCsvString.split("[,\n]");

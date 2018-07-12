@@ -10,6 +10,7 @@ import io.netty.channel.epoll.Epoll;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
+import org.junit.AfterClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,12 +28,17 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class GCMWrapperTest {
 
-    private final AsyncHttpClient client = new DefaultAsyncHttpClient(new DefaultAsyncHttpClientConfig.Builder()
+    private static final AsyncHttpClient client = new DefaultAsyncHttpClient(new DefaultAsyncHttpClientConfig.Builder()
                 .setUserAgent(null)
                 .setKeepAlive(true)
                 .setUseNativeTransport(Epoll.isAvailable())
             .build()
         );
+
+    @AfterClass
+    public static void closeHttpClient() throws Exception {
+        client.close();
+    }
 
     @Mock
     private GCMProperties props;

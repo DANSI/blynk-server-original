@@ -2,14 +2,12 @@ package cc.blynk.server.workers;
 
 import cc.blynk.server.SslContextHolder;
 import cc.blynk.server.acme.AcmeClient;
-import cc.blynk.utils.DateTimeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.shredzone.acme4j.util.CertificateUtils;
 
 import java.io.FileInputStream;
 import java.security.cert.X509Certificate;
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -23,11 +21,15 @@ public class CertificateRenewalWorker implements Runnable {
     private static final Logger log = LogManager.getLogger(CertificateRenewalWorker.class);
 
     private final SslContextHolder sslContextHolder;
-    private final int renewBeforeDays;
+    private final static int renewBeforeDays = 21;
 
-    public CertificateRenewalWorker(SslContextHolder sslContextHolder, int renewBeforeDays) {
+    public CertificateRenewalWorker(SslContextHolder sslContextHolder) {
         this.sslContextHolder = sslContextHolder;
-        this.renewBeforeDays = renewBeforeDays;
+    }
+
+    private static long getDateDiff(Date expirationDate) {
+        long now = System.currentTimeMillis();
+        return TimeUnit.MILLISECONDS.toDays(expirationDate.getTime() - now);
     }
 
     @Override
@@ -39,13 +41,11 @@ public class CertificateRenewalWorker implements Runnable {
                         new FileInputStream(AcmeClient.DOMAIN_CHAIN_FILE));
 
                 Date expirationDate = cert.getNotAfter();
+                long daysToExpire = getDateDiff(expirationDate);
                 log.info("Certificate expiration date is {}. Days left : {}",
-                        expirationDate, getDateDiff(expirationDate));
+                        expirationDate, daysToExpire);
 
-                //certificate will expire in 1 week
-                LocalDate nowPlusRenewPeriod = LocalDate.now().plusDays(renewBeforeDays);
-                Date aheadDate = Date.from(nowPlusRenewPeriod.atStartOfDay(DateTimeUtils.UTC).toInstant());
-                if (expirationDate.before(aheadDate)) {
+                if (daysToExpire <= renewBeforeDays) {
                     log.warn("Trying to renew...");
                     sslContextHolder.regenerate();
                     log.info("Success! The certificate for your domain has been renewed!");
@@ -57,11 +57,6 @@ public class CertificateRenewalWorker implements Runnable {
         } catch (Exception e) {
             log.error("Error during certificate renewal.", e);
         }
-    }
-
-    private static long getDateDiff(Date date2) {
-        long now = System.currentTimeMillis();
-        return TimeUnit.MILLISECONDS.toDays(date2.getTime() - now);
     }
 
 }

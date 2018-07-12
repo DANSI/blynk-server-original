@@ -1,5 +1,7 @@
 package cc.blynk.server.core.protocol.model.messages;
 
+import cc.blynk.server.core.protocol.enums.Command;
+import cc.blynk.server.core.protocol.exceptions.UnsupportedCommandException;
 import cc.blynk.server.core.protocol.model.messages.appllication.GetServerMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.core.protocol.model.messages.appllication.RegisterMessage;
@@ -26,8 +28,8 @@ public final class MessageFactory {
     private MessageFactory() {
     }
 
-    public static MessageBase produce(int messageId, short command, String body) {
-        switch (command) {
+    public static MessageBase produce(int messageId, short commandId, String body) {
+        switch (commandId) {
             case REGISTER :
                 return new RegisterMessage(messageId, body);
             case LOGIN :
@@ -43,7 +45,10 @@ public final class MessageFactory {
             case RESET_PASSWORD :
                 return new ResetPasswordMessage(messageId, body);
             default:
-                return new StringMessage(messageId, command, body);
+                if (commandId < Command.LAST_COMMAND_INDEX) {
+                    return new StringMessage(messageId, commandId, body);
+                }
+                throw new UnsupportedCommandException("Command not supported. Code : " + commandId, messageId);
         }
     }
 

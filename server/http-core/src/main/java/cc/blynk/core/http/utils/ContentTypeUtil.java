@@ -26,6 +26,9 @@ public final class ContentTypeUtil {
         if (fileName.endsWith(".gz")) {
             return "application/x-gzip";
         }
+        if (fileName.endsWith(".zip")) {
+            return "application/zip";
+        }
         if (fileName.endsWith(".bin")) {
             return "application/octet-stream";
         }

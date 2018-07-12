@@ -82,6 +82,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> {
             return;
         }
 
+        ///.trim() is not used for back compatibility
         String email = messageParts[0].toLowerCase();
 
         Version version = messageParts.length > 3

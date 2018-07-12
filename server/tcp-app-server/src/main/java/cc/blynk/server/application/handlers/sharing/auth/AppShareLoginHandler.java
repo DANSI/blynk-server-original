@@ -13,6 +13,7 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.ShareLoginMessage;
 import cc.blynk.server.internal.ReregisterChannelUtil;
+import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -46,7 +47,7 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ShareLoginMessage message) {
-        String[] messageParts = message.body.split("\0");
+        String[] messageParts = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
         if (messageParts.length < 2) {
             log.error("Wrong income message format.");
@@ -62,6 +63,7 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
 
     private void appLogin(ChannelHandlerContext ctx, int messageId, String email,
                           String token, Version version) {
+        ///.trim() is not used for back compatibility
         String userName = email.toLowerCase();
 
         SharedTokenValue tokenValue = holder.tokenManager.getUserBySharedToken(token);

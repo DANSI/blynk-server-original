@@ -132,7 +132,7 @@ public abstract class BaseProperties extends Properties {
         if (val == null) {
             return null;
         }
-        return val.toLowerCase().split(",");
+        return val.trim().toLowerCase().split(",");
     }
 
     public boolean getAllowWithoutActiveApp() {

@@ -4,8 +4,6 @@ import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.properties.MailProperties;
 import net.glxn.qrgen.core.image.ImageType;
 import net.glxn.qrgen.javase.QRCode;
-import org.asynchttpclient.DefaultAsyncHttpClient;
-import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -18,13 +16,6 @@ import java.util.Collections;
  * Created on 06.04.15.
  */
 public class MailWrapperTest {
-
-    private DefaultAsyncHttpClient httpclient = new DefaultAsyncHttpClient(
-            new DefaultAsyncHttpClientConfig.Builder()
-    .setUserAgent(null)
-    .setKeepAlive(false)
-    .build()
-    );
 
     @Test
     @Ignore

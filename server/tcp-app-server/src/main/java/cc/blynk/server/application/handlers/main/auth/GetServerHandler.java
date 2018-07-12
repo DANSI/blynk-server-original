@@ -50,6 +50,7 @@ public class GetServerHandler extends SimpleChannelInboundHandler<GetServerMessa
             return;
         }
 
+        //.trim() is not used for back compatibility
         String email = parts[0] == null ? null : parts[0].toLowerCase();
         String appName = parts[1];
 
