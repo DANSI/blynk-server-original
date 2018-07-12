@@ -365,7 +365,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
             }
         }
 
-        if (widget == null || pinType != PinType.VIRTUAL) {
+        if (widget == null) {
             log.debug("No widget for SetWidgetProperty command.");
             return badRequest("No widget for SetWidgetProperty command.");
         }
