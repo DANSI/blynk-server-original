@@ -84,7 +84,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
             return;
         }
 
-        var messageParts = StringUtils.split3(message.body);
+        String[] messageParts = StringUtils.split3(message.body);
 
         //expecting message with 2 parts at least.
         if (messageParts.length < 2) {
@@ -93,9 +93,9 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
             return;
         }
 
-        var email = messageParts[0].trim().toLowerCase();
-        var pass = messageParts[1];
-        var appName = messageParts.length == 3 ? messageParts[2] : AppNameUtil.BLYNK;
+        String email = messageParts[0].trim().toLowerCase();
+        String pass = messageParts[1];
+        String appName = messageParts.length == 3 ? messageParts[2] : AppNameUtil.BLYNK;
         log.info("Trying register user : {}, app : {}", email, appName);
 
         if (BlynkEmailValidator.isNotValidEmail(email)) {
@@ -116,7 +116,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
             return;
         }
 
-        var newUser = userDao.add(email, pass, appName);
+        User newUser = userDao.add(email, pass, appName);
 
         log.info("Registered {}.", email);
 
@@ -164,10 +164,10 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
         }
 
         int dashId = app.projectIds[0];
-        var dash = parentUser.profile.getDashByIdOrThrow(dashId);
+        DashBoard dash = parentUser.profile.getDashByIdOrThrow(dashId);
 
         //todo ugly, but quick. refactor
-        var clonedDash = JsonParser.parseDashboard(JsonParser.toJsonRestrictiveDashboard(dash), msgId);
+        DashBoard clonedDash = JsonParser.parseDashboard(JsonParser.toJsonRestrictiveDashboard(dash), msgId);
 
         clonedDash.id = 1;
         clonedDash.parentId = dash.parentId;
