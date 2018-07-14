@@ -72,7 +72,7 @@ public class ResetPasswordHttpLogic extends BaseHttpHandler {
         this.emailSubj = "Password reset request for the " + productName + " app.";
         this.emailBody = FileLoaderUtil.readResetEmailTemplateAsString()
                 .replace(Placeholders.PRODUCT_NAME, productName);
-        this.newResetPage = FileLoaderUtil.readAppResetEmailTemplateAsString()
+        this.newResetPage = holder.textHolder.appResetEmailTemplate
                 .replace(Placeholders.PRODUCT_NAME, productName);
         this.mailWrapper = holder.mailWrapper;
 
@@ -81,7 +81,7 @@ public class ResetPasswordHttpLogic extends BaseHttpHandler {
         //using https for private servers as they have valid certificates.
         String protocol = host.endsWith(".blynk.cc") ? "https://" : "http://";
         this.resetPassUrl = protocol + host + "/landing?token=";
-        this.pageContent = FileLoaderUtil.readResetPassLandingTemplateAsString();
+        this.pageContent = holder.textHolder.resetPassLandingTemplate;
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.dbManager = holder.dbManager;
         this.fileManager = holder.fileManager;

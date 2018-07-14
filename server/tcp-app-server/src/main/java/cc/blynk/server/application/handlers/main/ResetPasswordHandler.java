@@ -10,7 +10,6 @@ import cc.blynk.server.internal.TokensPool;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.mail.QrHolder;
 import cc.blynk.server.notifications.mail.ResetQrHolder;
-import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.TokenGeneratorUtil;
 import cc.blynk.utils.properties.Placeholders;
@@ -47,10 +46,10 @@ public class ResetPasswordHandler extends SimpleChannelInboundHandler<ResetPassw
         this.tokensPool = holder.tokensPool;
         String productName = holder.props.productName;
         this.resetEmailSubj = "Password restoration for your " + productName + " account.";
-        this.resetEmailBody = FileLoaderUtil.readAppResetEmailTemplateAsString()
+        this.resetEmailBody = holder.textHolder.appResetEmailTemplate
                 .replace(Placeholders.PRODUCT_NAME, productName);
         this.resetConfirmationSubj = "Your new password on " + productName;
-        this.resetConfirmationBody = FileLoaderUtil.readAppResetEmailConfirmationTemplateAsString()
+        this.resetConfirmationBody = holder.textHolder.appResetEmailConfirmationTemplate
                 .replace(Placeholders.PRODUCT_NAME, productName);
         this.mailWrapper = holder.mailWrapper;
         this.userDao = holder.userDao;

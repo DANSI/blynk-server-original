@@ -15,6 +15,9 @@ public class TextHolder {
     public final String staticMailBody;
     public final String templateIdMailBody;
     public final String pushNotificationBody;
+    public final String resetPassLandingTemplate;
+    public final String appResetEmailTemplate;
+    public final String appResetEmailConfirmationTemplate;
 
     public TextHolder(GCMProperties gcmProperties) {
         this.tokenBody = FileLoaderUtil.readTokenMailBody();
@@ -22,5 +25,8 @@ public class TextHolder {
         this.staticMailBody = FileLoaderUtil.readStaticMailBody();
         this.templateIdMailBody = FileLoaderUtil.readTemplateIdMailBody();
         this.pushNotificationBody = gcmProperties.getNotificationBody();
+        this.resetPassLandingTemplate = FileLoaderUtil.readResetPassLandingTemplateAsString();
+        this.appResetEmailTemplate = FileLoaderUtil.readAppResetEmailTemplateAsString();
+        this.appResetEmailConfirmationTemplate = FileLoaderUtil.readAppResetEmailConfirmationTemplateAsString();
     }
 }
