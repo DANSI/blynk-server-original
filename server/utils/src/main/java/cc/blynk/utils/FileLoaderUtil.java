@@ -65,13 +65,21 @@ public final class FileLoaderUtil {
         return readFileAsString("static/reset/enterNewPassword.html");
     }
 
+    public static String readRegisterEmailTemplate() {
+        return readFileAsString("static/register-email.html");
+    }
+
+    public static String readReportEmailTemplate() {
+        return readFileAsString("static/report-email.html");
+    }
+
     /**
      * First loads file from class path after that from current folder.
      * So file in current folder is always overrides properties in classpath.
      *
      * @param fileName - name of properties file, for example "twitter4j.properties"
      */
-    public static String readFileAsString(String fileName) {
+    private static String readFileAsString(String fileName) {
         if (!fileName.startsWith("/")) {
             fileName = "/" + fileName;
         }

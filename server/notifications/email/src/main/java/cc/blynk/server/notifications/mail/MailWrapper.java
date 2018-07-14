@@ -12,7 +12,6 @@ import cc.blynk.utils.properties.Placeholders;
 public class MailWrapper {
 
     private final MailClient client;
-    private final String emailBody;
     private final String reportBody;
     private final String productName;
 
@@ -23,8 +22,7 @@ public class MailWrapper {
         } else {
             client = new GMailClient(mailProperties);
         }
-        this.emailBody = FileLoaderUtil.readFileAsString("static/register-email.html");
-        this.reportBody = FileLoaderUtil.readFileAsString("static/report-email.html");
+        this.reportBody = FileLoaderUtil.readReportEmailTemplate();
         this.productName = productName;
     }
 
@@ -37,10 +35,6 @@ public class MailWrapper {
                 .replace(Placeholders.DYNAMIC_SECTION, dynamicSection)
                 .replace(Placeholders.PRODUCT_NAME, productName);
         sendHtml(to, subj, body);
-    }
-
-    public void sendWelcomeEmailForNewUser(String to) throws Exception {
-        sendHtml(to, "Get started with Blynk", emailBody);
     }
 
     public void sendText(String to, String subj, String body) throws Exception {

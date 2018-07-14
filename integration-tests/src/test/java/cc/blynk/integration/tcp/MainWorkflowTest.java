@@ -1449,7 +1449,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         User user = holder.userDao.getByName("test@blynk.cc", "Blynk");
         assertNull(user.lastLoggedIP);
 
-        verify(holder.mailWrapper).sendWelcomeEmailForNewUser(eq("test@blynk.cc"));
+        verify(holder.mailWrapper).sendHtml(eq("test@blynk.cc"), eq("Get started with Blynk"), contains("Welcome to Blynk, a platform to build your next awesome IOT project."));
 
         appClient1.login("test@blynk.cc", "a");
         appClient1.verifyResult(ok(2));

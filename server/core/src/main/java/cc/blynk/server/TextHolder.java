@@ -1,7 +1,15 @@
 package cc.blynk.server;
 
-import cc.blynk.utils.FileLoaderUtil;
 import cc.blynk.utils.properties.GCMProperties;
+
+import static cc.blynk.utils.FileLoaderUtil.readAppResetEmailConfirmationTemplateAsString;
+import static cc.blynk.utils.FileLoaderUtil.readAppResetEmailTemplateAsString;
+import static cc.blynk.utils.FileLoaderUtil.readDynamicMailBody;
+import static cc.blynk.utils.FileLoaderUtil.readRegisterEmailTemplate;
+import static cc.blynk.utils.FileLoaderUtil.readResetPassLandingTemplateAsString;
+import static cc.blynk.utils.FileLoaderUtil.readStaticMailBody;
+import static cc.blynk.utils.FileLoaderUtil.readTemplateIdMailBody;
+import static cc.blynk.utils.FileLoaderUtil.readTokenMailBody;
 
 /**
  * The Blynk Project.
@@ -18,15 +26,17 @@ public class TextHolder {
     public final String resetPassLandingTemplate;
     public final String appResetEmailTemplate;
     public final String appResetEmailConfirmationTemplate;
+    public final String registerEmailTemplate;
 
-    public TextHolder(GCMProperties gcmProperties) {
-        this.tokenBody = FileLoaderUtil.readTokenMailBody();
-        this.dynamicMailBody = FileLoaderUtil.readDynamicMailBody();
-        this.staticMailBody = FileLoaderUtil.readStaticMailBody();
-        this.templateIdMailBody = FileLoaderUtil.readTemplateIdMailBody();
+    TextHolder(GCMProperties gcmProperties) {
+        this.tokenBody = readTokenMailBody();
+        this.dynamicMailBody = readDynamicMailBody();
+        this.staticMailBody = readStaticMailBody();
+        this.templateIdMailBody = readTemplateIdMailBody();
         this.pushNotificationBody = gcmProperties.getNotificationBody();
-        this.resetPassLandingTemplate = FileLoaderUtil.readResetPassLandingTemplateAsString();
-        this.appResetEmailTemplate = FileLoaderUtil.readAppResetEmailTemplateAsString();
-        this.appResetEmailConfirmationTemplate = FileLoaderUtil.readAppResetEmailConfirmationTemplateAsString();
+        this.resetPassLandingTemplate = readResetPassLandingTemplateAsString();
+        this.appResetEmailTemplate = readAppResetEmailTemplateAsString();
+        this.appResetEmailConfirmationTemplate = readAppResetEmailConfirmationTemplateAsString();
+        this.registerEmailTemplate = readRegisterEmailTemplate();
     }
 }
