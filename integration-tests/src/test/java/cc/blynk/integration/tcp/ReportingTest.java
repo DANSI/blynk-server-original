@@ -626,7 +626,7 @@ public class ReportingTest extends BaseTest {
                 ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath20, 1.11D, pointNow);
 
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature,yes", true);
         ReportSource reportSource = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},
                 1,
@@ -680,11 +680,11 @@ public class ReportingTest extends BaseTest {
 
         ZipEntry entry = entries.nextElement();
         assertNotNull(entry);
-        assertEquals("MyDevice_0_v1.csv", entry.getName());
+        assertEquals("MyDevice_0_Temperatureyes.csv", entry.getName());
 
         ZipEntry entry2 = entries.nextElement();
         assertNotNull(entry2);
-        assertEquals("MyDevice2withbig_2_v1.csv", entry2.getName());
+        assertEquals("MyDevice2withbig_2_Temperatureyes.csv", entry2.getName());
 
     }
 

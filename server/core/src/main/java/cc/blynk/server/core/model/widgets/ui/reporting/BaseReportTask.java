@@ -4,7 +4,6 @@ import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportDataStream;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportSource;
 import cc.blynk.server.notifications.mail.MailWrapper;
@@ -65,11 +64,8 @@ public abstract class BaseReportTask implements Runnable {
     }
 
     private static String deviceAndPinFileName(String deviceName, int deviceId, ReportDataStream reportDataStream) {
-        return deviceAndPinFileName(deviceName, deviceId, reportDataStream.pinType, reportDataStream.pin);
-    }
-
-    private static String deviceAndPinFileName(String deviceName, int deviceId, PinType pinType, byte pin) {
-        return deviceName + "_" + deviceId + "_" + pinType.pintTypeChar + pin + ".csv";
+        String pinLabel = reportDataStream.formatForFileName();
+        return deviceName + "_" + deviceId + "_" + pinLabel + ".csv";
     }
 
     private static String deviceFileName(String deviceName, int deviceId) {
@@ -197,7 +193,7 @@ public abstract class BaseReportTask implements Runnable {
                                         reportDataStream.pin, fetchCount, report.granularityType, 0);
 
                                 if (onePinData != null) {
-                                    String pin = reportDataStream.formatPin();
+                                    String pin = reportDataStream.formatAndEscapePin();
                                     atLeastOne = FileUtils.writeBufToCsvFilterAndFormat(writer,
                                             onePinData, pin, deviceName, startFrom, report.makeFormatter());
                                 }
@@ -229,7 +225,7 @@ public abstract class BaseReportTask implements Runnable {
                                         reportDataStream.pin, fetchCount, report.granularityType, 0);
 
                                 if (onePinData != null) {
-                                    String pin = reportDataStream.formatPin();
+                                    String pin = reportDataStream.formatAndEscapePin();
                                     atLeastOne = FileUtils.writeBufToCsvFilterAndFormat(writer,
                                             onePinData, pin, startFrom, report.makeFormatter());
                                 }
