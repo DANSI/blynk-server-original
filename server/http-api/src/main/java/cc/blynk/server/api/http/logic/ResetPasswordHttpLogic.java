@@ -12,7 +12,6 @@ import cc.blynk.core.http.annotation.Path;
 import cc.blynk.core.http.annotation.PathParam;
 import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.server.Holder;
-import cc.blynk.server.application.handlers.main.ResetPasswordHandler;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.UserDao;
@@ -162,7 +161,7 @@ public class ResetPasswordHttpLogic extends BaseHttpHandler {
         //}
 
         log.info("{} landed.", email);
-        String resetUrl = ResetPasswordHandler.makeResetUrl(resetClickHost, token, email);
+        String resetUrl = "http://" + resetClickHost + "/restore?token=" + token + "&email=" + email;
         String body = newResetPage.replace(Placeholders.RESET_URL, resetUrl);
         return ok(body, MediaType.TEXT_HTML);
     }

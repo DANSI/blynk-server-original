@@ -127,10 +127,6 @@ public class ResetPasswordHandler extends SimpleChannelInboundHandler<ResetPassw
         }
     }
 
-    public static String makeResetUrl(String host, String token, String email) {
-        return "http://" + host + "/restore?token=" + token + "&email=" + email;
-    }
-
     private void sendResetEMail(ChannelHandlerContext ctx, String inEMail, String appName, int msgId) {
         String trimmedEmail = inEMail.trim().toLowerCase();
 
@@ -161,9 +157,9 @@ public class ResetPasswordHandler extends SimpleChannelInboundHandler<ResetPassw
         TokenUser userToken = new TokenUser(trimmedEmail, appName);
         tokensPool.addToken(token, userToken);
 
-        String resetUrl = makeResetUrl(host, token, trimmedEmail);
+        String resetUrl = "http://" + host + "/restore?token=" + token + "&email=" + trimmedEmail;
         String body = resetEmailBody.replace(Placeholders.RESET_URL, resetUrl);
-        String qrString = "blynk://restore?token=" + token + "&email=" + trimmedEmail;
+        String qrString = appName.toLowerCase() + "://restore?token=" + token + "&email=" + trimmedEmail;
         byte[] qrBytes = QRCode.from(qrString).to(ImageType.JPG).withSize(250, 250).stream().toByteArray();
         QrHolder qrHolder = new ResetQrHolder("resetPassQr.jpg", qrBytes);
 
