@@ -623,7 +623,9 @@ public class DashBoard {
             Widget copyWidget = newWidget.copy();
 
             //for now erasing only for this types, not sure about DeviceTiles
-            if (copyWidget instanceof OnePinWidget || copyWidget instanceof MultiPinWidget) {
+            if (copyWidget instanceof OnePinWidget
+                    || copyWidget instanceof MultiPinWidget
+                    || copyWidget instanceof ReportingWidget) {
                 copyWidget.erase();
             }
 
