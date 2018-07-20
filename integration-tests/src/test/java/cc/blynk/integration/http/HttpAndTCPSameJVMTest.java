@@ -683,7 +683,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
 
         clientPair.hardwareClient.send("hardware vw 44 123");
         clientPair.hardwareClient.send("hardware vw 45 124");
-
+        clientPair.appClient.verifyResult(hardware(2, "1-0 vw 45 124"));
 
         HttpGet request = new HttpGet(httpServerUrl + clientPair.token + "/get/v45");
 

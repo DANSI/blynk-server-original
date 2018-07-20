@@ -29,6 +29,7 @@ import cc.blynk.server.workers.HistoryGraphUnusedPinDataCleanerWorker;
 import cc.blynk.server.workers.ReportingTruncateWorker;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.ReportingUtil;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -81,6 +82,14 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
     @BeforeClass
     public static void initTempFolder() {
         blynkTempDir = Paths.get(System.getProperty("java.io.tmpdir"), "blynk").toString();
+    }
+
+    @Before
+    public void cleanStorage() {
+        holder.reportingDiskDao.averageAggregator.getMinute().clear();
+        holder.reportingDiskDao.averageAggregator.getHourly().clear();
+        holder.reportingDiskDao.averageAggregator.getDaily().clear();
+        holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.clear();
     }
 
     @Test
@@ -1480,7 +1489,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("export 1 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(illegalCommand(3)));
 
-        clientPair.appClient.send("export 1 14");
+        clientPair.appClient.send("export 1 191600");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(4, NO_DATA)));
 
         //generate fake reporting data
@@ -1491,7 +1500,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(userReportFile, 1.1, 1L);
         FileUtils.write(userReportFile, 2.2, 2L);
 
-        clientPair.appClient.send("export 1 14");
+        clientPair.appClient.send("export 1 191600");
         verify(holder.mailWrapper, timeout(1000)).sendHtml(eq(getUserName()), eq("History graph data for project My Dashboard"), contains("/" + getUserName() + "_1_0_a7_"));
     }
 
@@ -1505,7 +1514,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(userReportFile, 1.1, 1L);
         FileUtils.write(userReportFile, 2.2, 2L);
 
-        clientPair.appClient.send("export 1 14");
+        clientPair.appClient.send("export 1 191600");
         clientPair.appClient.verifyResult(ok(1));
 
         String csvFileName = getFileNameByMask(getUserName() + "_1_0_a7_");
@@ -1543,7 +1552,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
         clientPair.appClient.reset();
 
-        clientPair.appClient.send("export 1-200000 14");
+        clientPair.appClient.send("export 1-200000 191600");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
     }
 
@@ -2062,26 +2071,19 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.appClient.createWidget(1, "{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
-        clientPair.appClient.updateWidget(1, "{\n" +
-                "                    \"type\":\"LOGGER\",\n" +
-                "                    \"id\":14,\n" +
-                "                    \"x\":0,\n" +
-                "                    \"y\":6,\n" +
-                "                    \"color\":0,\n" +
-                "                    \"width\":8,\n" +
-                "                    \"height\":3,\n" +
-                "                    \"tabId\":0,\n" +
-                "                    \"deviceId\":200000,\n" +
-                "                    \"pins\":\n" +
-                "                        [\n" +
-                "                            {\"pinType\":\"ANALOG\", \"pin\":7,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":255},\n" +
-                "                            {\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0},\n" +
-                "                            {\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0},\n" +
-                "                            {\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0}\n" +
-                "                        ],\n" +
-                "                    \"period\":\"THREE_MONTHS\",\n" +
-                "                    \"showLegends\":true\n" +
-                "                }");
+        Superchart superchart = new Superchart();
+        superchart.id = 191600;
+        superchart.width = 8;
+        superchart.height = 4;
+        DataStream dataStream = new DataStream((byte) 7, PinType.ANALOG);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0,
+                200_000, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        superchart.dataStreams = new GraphDataStream[] {
+                graphDataStream,
+        };
+
+        clientPair.appClient.updateWidget(1, superchart);
+        clientPair.appClient.verifyResult(ok(3));
 
         clientPair.appClient.reset();
 
@@ -2099,7 +2101,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(userReportFile, 11.1, 11L);
         FileUtils.write(userReportFile, 12.2, 12L);
 
-        clientPair.appClient.send("export 1 14");
+        clientPair.appClient.send("export 1 191600");
         clientPair.appClient.verifyResult(ok(1));
 
         String csvFileName = getFileNameByMask(getUserName() + "_1_200000_a7_");
