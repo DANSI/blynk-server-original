@@ -20,6 +20,7 @@ import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphType;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
+import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.model.widgets.ui.tiles.templates.PageTileTemplate;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
@@ -52,6 +53,8 @@ import static cc.blynk.integration.TestUtil.createTag;
 import static cc.blynk.integration.TestUtil.illegalCommand;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.server.core.model.serialization.JsonParser.MAPPER;
+import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.ONE_HOUR;
+import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.SIX_HOURS;
 import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
 import static java.nio.file.StandardOpenOption.APPEND;
 import static java.nio.file.StandardOpenOption.CREATE;
@@ -810,6 +813,214 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
         clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.DAY);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
+    }
+
+    @Test
+    public void makeSureNoReportingWhenNotAGraphPin() throws Exception {
+        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream
+        };
+
+        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
+        clientPair.appClient.verifyResult(ok(1));
+        clientPair.appClient.reset();
+
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+
+        clientPair.hardwareClient.send("hardware vw 89 111");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 89 111"))));
+
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+    }
+
+    @Test
+    public void makeSureReportingIsPresentWhenGraphAssignedToDevice() throws Exception {
+        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream
+        };
+
+        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
+        clientPair.appClient.verifyResult(ok(1));
+        clientPair.appClient.reset();
+
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+
+        clientPair.hardwareClient.send("hardware vw 88 111");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
+
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(1, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+    }
+
+    @Test
+    public void makeSureReportingIsPresentWhenGraphAssignedToDevice2() throws Exception {
+        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        //no live
+        enhancedHistoryGraph.selectedPeriods = new GraphPeriod[] {
+                ONE_HOUR, SIX_HOURS
+        };
+        DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream
+        };
+
+        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
+        clientPair.appClient.verifyResult(ok(1));
+        clientPair.appClient.reset();
+
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+
+        clientPair.hardwareClient.send("hardware vw 88 111");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
+
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+    }
+
+    @Test
+    public void makeSureReportingIsPresentWhenGraphAssignedToDeviceTiles() throws Exception {
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(1));
+
+        int[] deviceIds = new int[] {0};
+
+        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        GraphDataStream graphDataStream = new GraphDataStream(
+                null, GraphType.LINE, 0, -1,
+                new DataStream((byte) 88, PinType.VIRTUAL),
+                AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream
+        };
+
+        TileTemplate tileTemplate = new PageTileTemplate(1,
+                new Widget[]{enhancedHistoryGraph}, deviceIds, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte)1, PinType.VIRTUAL),
+                false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
+
+        clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
+        clientPair.appClient.verifyResult(ok(2));
+
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+
+        clientPair.hardwareClient.send("hardware vw 88 111");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
+
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(1, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+    }
+
+    @Test
+    public void makeSureReportingIsPresentWhenGraphAssignedToDeviceTilesWith2Pins() throws Exception {
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(1));
+
+        int[] deviceIds = new int[] {0};
+
+        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        GraphDataStream graphDataStream = new GraphDataStream(
+                null, GraphType.LINE, 0, -1,
+                new DataStream((byte) 88, PinType.VIRTUAL),
+                AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        GraphDataStream graphDataStream2 = new GraphDataStream(
+                null, GraphType.LINE, 0, -1,
+                new DataStream((byte) 89, PinType.VIRTUAL),
+                AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream,
+                graphDataStream2
+        };
+
+        TileTemplate tileTemplate = new PageTileTemplate(1,
+                new Widget[]{enhancedHistoryGraph}, deviceIds, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte)1, PinType.VIRTUAL),
+                false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
+
+        clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
+        clientPair.appClient.verifyResult(ok(2));
+
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+
+        clientPair.hardwareClient.send("hardware vw 88 111");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
+        clientPair.hardwareClient.send("hardware vw 89 112");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(2, b("1-0 vw 89 112"))));
+
+
+        assertEquals(2, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(2, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(2, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(2, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
     }
 
     @Test

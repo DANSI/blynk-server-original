@@ -20,7 +20,7 @@ public class RawDataCacheForGraphProcessor {
 
     private static final int GRAPH_CACHE_SIZE = 60;
 
-    private final ConcurrentHashMap<BaseReportingKey, LimitedArrayDeque<GraphValue>> rawStorage;
+    public final ConcurrentHashMap<BaseReportingKey, LimitedArrayDeque<GraphValue>> rawStorage;
 
     public RawDataCacheForGraphProcessor() {
         rawStorage = new ConcurrentHashMap<>();
