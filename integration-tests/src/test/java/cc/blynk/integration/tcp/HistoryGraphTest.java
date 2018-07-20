@@ -84,12 +84,10 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         blynkTempDir = Paths.get(System.getProperty("java.io.tmpdir"), "blynk").toString();
     }
 
-    @Before
-    public void cleanStorage() {
-        holder.reportingDiskDao.averageAggregator.getMinute().clear();
-        holder.reportingDiskDao.averageAggregator.getHourly().clear();
-        holder.reportingDiskDao.averageAggregator.getDaily().clear();
-        holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.clear();
+    private static String getFileNameByMask(String pattern) {
+        File dir = new File(blynkTempDir);
+        File[] files = dir.listFiles((dir1, name) -> name.startsWith(pattern));
+        return latest(files).getName();
     }
 
     @Test
@@ -128,6 +126,26 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         assertEquals(1111111, bb.getLong());
         assertEquals(1.22D, bb.getDouble(), 0.1);
         assertEquals(2222222, bb.getLong());
+    }
+
+    private static File latest(File[] files) {
+        long lastMod = Long.MIN_VALUE;
+        File choice = null;
+        for (File file : files) {
+            if (file.lastModified() > lastMod) {
+                choice = file;
+                lastMod = file.lastModified();
+            }
+        }
+        return choice;
+    }
+
+    @Before
+    public void cleanStorage() {
+        holder.reportingDiskDao.averageAggregator.getMinute().clear();
+        holder.reportingDiskDao.averageAggregator.getHourly().clear();
+        holder.reportingDiskDao.averageAggregator.getDaily().clear();
+        holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.clear();
     }
 
     @Test
@@ -1457,24 +1475,6 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
         clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.DAY);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
-    }
-
-    private static String getFileNameByMask(String pattern) {
-        File dir = new File(blynkTempDir);
-        File[] files = dir.listFiles((dir1, name) -> name.startsWith(pattern));
-        return latest(files).getName();
-    }
-
-    private static File latest(File[] files) {
-        long lastMod = Long.MIN_VALUE;
-        File choice = null;
-        for (File file : files) {
-            if (file.lastModified() > lastMod) {
-                choice = file;
-                lastMod = file.lastModified();
-            }
-        }
-        return choice;
     }
 
     @Test

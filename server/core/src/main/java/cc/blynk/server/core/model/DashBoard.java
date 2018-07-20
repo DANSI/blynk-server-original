@@ -234,6 +234,29 @@ public class DashBoard {
         return null;
     }
 
+    private static Widget[] copyWidgetsAndPreservePrevValues(Widget[] oldWidgets, Widget[] newWidgets) {
+        ArrayList<Widget> copy = new ArrayList<>(newWidgets.length);
+        for (Widget newWidget : newWidgets) {
+            Widget oldWidget = getWidgetById(oldWidgets, newWidget.id);
+
+            Widget copyWidget = newWidget.copy();
+
+            //for now erasing only for this types, not sure about DeviceTiles
+            if (copyWidget instanceof OnePinWidget
+                    || copyWidget instanceof MultiPinWidget
+                    || copyWidget instanceof ReportingWidget) {
+                copyWidget.erase();
+            }
+
+            if (oldWidget != null) {
+                copyWidget.updateValue(oldWidget);
+            }
+            copy.add(copyWidget);
+        }
+
+        return copy.toArray(new Widget[newWidgets.length]);
+    }
+
     public Superchart getPinGraph(int deviceId, byte pin, PinType pinType) {
         for (Widget widget : widgets) {
             if (widget instanceof Superchart) {
@@ -257,34 +280,6 @@ public class DashBoard {
 
         }
         return null;
-    }
-
-    private boolean isWithinGraph(Superchart graph,
-                                  byte pin, PinType pinType, int deviceId, int... deviceIds) {
-        for (GraphDataStream graphDataStream : graph.dataStreams) {
-            if (graphDataStream != null && graphDataStream.dataStream != null
-                    && graphDataStream.dataStream.isSame(pin, pinType)) {
-
-                int graphTargetId = graphDataStream.targetId;
-                //this is the case when datastream assigned directly to the device
-                if (deviceId == graphTargetId) {
-                    return true;
-                }
-
-                //this is the case when graph is within deviceTiles
-                if (deviceIds != null && ArrayUtil.contains(deviceIds, deviceId)) {
-                    return true;
-                }
-
-                //this is the case when graph is within device selector or tags
-                Target target = getTarget(graphTargetId);
-                if (target == null) {
-                    return false;
-                }
-                return ArrayUtil.contains(target.getAssignedDeviceIds(), graphTargetId);
-            }
-        }
-        return false;
     }
 
     public static int getWidgetIndexByIdOrThrow(Widget[] widgets, long id) {
@@ -658,27 +653,32 @@ public class DashBoard {
         }
     }
 
-    private static Widget[] copyWidgetsAndPreservePrevValues(Widget[] oldWidgets, Widget[] newWidgets) {
-        ArrayList<Widget> copy = new ArrayList<>(newWidgets.length);
-        for (Widget newWidget : newWidgets) {
-            Widget oldWidget = getWidgetById(oldWidgets, newWidget.id);
+    private boolean isWithinGraph(Superchart graph,
+                                  byte pin, PinType pinType, int deviceId, int... deviceIds) {
+        for (GraphDataStream graphDataStream : graph.dataStreams) {
+            if (graphDataStream != null && graphDataStream.dataStream != null
+                    && graphDataStream.dataStream.isSame(pin, pinType)) {
 
-            Widget copyWidget = newWidget.copy();
+                int graphTargetId = graphDataStream.targetId;
+                //this is the case when datastream assigned directly to the device
+                if (deviceId == graphTargetId) {
+                    return true;
+                }
 
-            //for now erasing only for this types, not sure about DeviceTiles
-            if (copyWidget instanceof OnePinWidget
-                    || copyWidget instanceof MultiPinWidget
-                    || copyWidget instanceof ReportingWidget) {
-                copyWidget.erase();
+                //this is the case when graph is within deviceTiles
+                if (deviceIds != null && ArrayUtil.contains(deviceIds, deviceId)) {
+                    return true;
+                }
+
+                //this is the case when graph is within device selector or tags
+                Target target = getTarget(graphTargetId);
+                if (target == null) {
+                    return false;
+                }
+                return ArrayUtil.contains(target.getAssignedDeviceIds(), graphTargetId);
             }
-
-            if (oldWidget != null) {
-                copyWidget.updateValue(oldWidget);
-            }
-            copy.add(copyWidget);
         }
-
-        return copy.toArray(new Widget[newWidgets.length]);
+        return false;
     }
 
     private Tag[] copyTags(Tag[] tagsToCopy) {
