@@ -13,12 +13,12 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
-import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
 import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphType;
+import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.model.widgets.ui.tiles.templates.PageTileTemplate;
@@ -123,7 +123,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
         String tempDir = holder.props.getProperty("data.folder");
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -216,7 +216,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -285,7 +285,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -351,7 +351,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -417,7 +417,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -483,7 +483,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -549,7 +549,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -627,7 +627,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(pinReportingDataPath3, 1.113D, 1111111);
         FileUtils.write(pinReportingDataPath3, 1.223D, 2222222);
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -671,7 +671,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -704,7 +704,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
             FileUtils.write(pinReportingDataPath, (double) point, 1111111 + point);
         }
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -749,7 +749,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -797,7 +797,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -817,7 +817,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
     @Test
     public void makeSureNoReportingWhenNotAGraphPin() throws Exception {
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -847,7 +847,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
     @Test
     public void makeSureReportingIsPresentWhenGraphAssignedToDevice() throws Exception {
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -879,7 +879,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
     @Test
     public void makeSureReportingIsPresentWhenGraphAssignedToDevice2() throws Exception {
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -929,7 +929,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
         int[] deviceIds = new int[] {0};
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -980,7 +980,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
         int[] deviceIds = new int[] {0};
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -1033,7 +1033,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -1100,7 +1100,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.send("hardware vw 88 111");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -1129,7 +1129,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.send("hardware vw 88 111");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -1194,7 +1194,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -1271,7 +1271,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
             dos.flush();
         }
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -1320,7 +1320,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
             dos.flush();
         }
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -1371,7 +1371,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
             dos.flush();
         }
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -1410,7 +1410,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
             dos.flush();
         }
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -1430,7 +1430,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
     @Test
     public void testDeleteWorksForEnhancedGraph() throws Exception {
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -1596,7 +1596,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
     public void cleanNotUsedPinDataWorksAsExpectedForSuperChart() throws Exception {
         HistoryGraphUnusedPinDataCleanerWorker cleaner = new HistoryGraphUnusedPinDataCleanerWorker(holder.userDao, holder.reportingDiskDao);
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -1669,7 +1669,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
         int[] deviceIds = new int[] {1};
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -1746,7 +1746,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
         HistoryGraphUnusedPinDataCleanerWorker cleaner = new HistoryGraphUnusedPinDataCleanerWorker(holder.userDao, holder.reportingDiskDao);
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -1985,7 +1985,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.appClient.createWidget(1, "{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;

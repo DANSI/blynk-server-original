@@ -3,8 +3,8 @@ package cc.blynk.server.application.handlers.main.logic.graph;
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
+import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
@@ -70,11 +70,11 @@ public final class GetEnhancedGraphDataLogic {
             }
         }
 
-        if (!(widget instanceof EnhancedHistoryGraph)) {
+        if (!(widget instanceof Superchart)) {
             throw new IllegalCommandException("Passed wrong widget id.");
         }
 
-        var enhancedHistoryGraph = (EnhancedHistoryGraph) widget;
+        var enhancedHistoryGraph = (Superchart) widget;
 
         var numberOfStreams = enhancedHistoryGraph.dataStreams.length;
         if (numberOfStreams == 0) {

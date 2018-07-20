@@ -18,7 +18,7 @@ import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_GRAPH_DATA_STREAMS;
  * Created by Dmitriy Dumanskiy.
  * Created on 12.08.15.
  */
-public class EnhancedHistoryGraph extends Widget {
+public class Superchart extends Widget {
 
     private static final GraphPeriod[] DEFAULT_PERIODS = new GraphPeriod[] {
             LIVE, ONE_HOUR, SIX_HOURS, N_DAY, N_WEEK, N_MONTH, N_THREE_MONTHS

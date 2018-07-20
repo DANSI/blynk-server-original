@@ -5,8 +5,8 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
-import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
+import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.core.reporting.GraphPinRequest;
 import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
@@ -310,7 +310,7 @@ public class ReportingDiskDao implements Closeable {
         }
 
         //store history data only for the pins assigned to the superchart
-        EnhancedHistoryGraph graphAssignedToPin = dash.getPinGraph(deviceId, pin, pinType);
+        Superchart graphAssignedToPin = dash.getPinGraph(deviceId, pin, pinType);
         if (graphAssignedToPin != null) {
             BaseReportingKey key = new BaseReportingKey(user.email, user.appName, dash.id, deviceId, pinType, pin);
             averageAggregator.collect(key, ts, doubleVal);

@@ -26,8 +26,8 @@ import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
-import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
+import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
@@ -234,10 +234,10 @@ public class DashBoard {
         return null;
     }
 
-    public EnhancedHistoryGraph getPinGraph(int deviceId, byte pin, PinType pinType) {
+    public Superchart getPinGraph(int deviceId, byte pin, PinType pinType) {
         for (Widget widget : widgets) {
-            if (widget instanceof EnhancedHistoryGraph) {
-                EnhancedHistoryGraph graph = (EnhancedHistoryGraph) widget;
+            if (widget instanceof Superchart) {
+                Superchart graph = (Superchart) widget;
                 if (isWithinGraph(graph, pin, pinType, deviceId)) {
                     return graph;
                 }
@@ -245,8 +245,8 @@ public class DashBoard {
                 DeviceTiles deviceTiles = (DeviceTiles) widget;
                 for (TileTemplate tileTemplate : deviceTiles.templates) {
                     for (Widget tilesWidget : tileTemplate.widgets) {
-                        if (tilesWidget instanceof EnhancedHistoryGraph) {
-                            EnhancedHistoryGraph graph = (EnhancedHistoryGraph) tilesWidget;
+                        if (tilesWidget instanceof Superchart) {
+                            Superchart graph = (Superchart) tilesWidget;
                             if (isWithinGraph(graph, pin, pinType, deviceId, tileTemplate.deviceIds)) {
                                 return graph;
                             }
@@ -259,7 +259,7 @@ public class DashBoard {
         return null;
     }
 
-    private boolean isWithinGraph(EnhancedHistoryGraph graph,
+    private boolean isWithinGraph(Superchart graph,
                                   byte pin, PinType pinType, int deviceId, int... deviceIds) {
         for (GraphDataStream graphDataStream : graph.dataStreams) {
             if (graphDataStream != null && graphDataStream.dataStream != null

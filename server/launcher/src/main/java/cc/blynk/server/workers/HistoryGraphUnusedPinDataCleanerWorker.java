@@ -8,9 +8,9 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.HistoryGraph;
-import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
+import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.internal.EmptyArraysUtil;
@@ -102,13 +102,13 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
         if (widget instanceof HistoryGraph) {
             HistoryGraph historyGraph = (HistoryGraph) widget;
             add(doNotRemovePaths, dash.id, historyGraph);
-        } else if (widget instanceof EnhancedHistoryGraph) {
-            EnhancedHistoryGraph enhancedHistoryGraph = (EnhancedHistoryGraph) widget;
+        } else if (widget instanceof Superchart) {
+            Superchart enhancedHistoryGraph = (Superchart) widget;
             add(doNotRemovePaths, dash, enhancedHistoryGraph, deviceIds);
         }
     }
 
-    private static void add(Set<String> doNotRemovePaths, DashBoard dash, EnhancedHistoryGraph graph, int[] deviceIds) {
+    private static void add(Set<String> doNotRemovePaths, DashBoard dash, Superchart graph, int[] deviceIds) {
         for (GraphDataStream graphDataStream : graph.dataStreams) {
             if (graphDataStream != null && graphDataStream.dataStream != null && graphDataStream.dataStream.isValid()) {
                 DataStream dataStream = graphDataStream.dataStream;

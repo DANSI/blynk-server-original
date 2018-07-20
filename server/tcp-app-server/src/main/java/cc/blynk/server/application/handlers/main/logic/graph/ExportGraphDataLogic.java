@@ -10,8 +10,8 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.HistoryGraph;
-import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
+import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -84,8 +84,8 @@ public final class ExportGraphDataLogic {
             blockingIOProcessor.executeHistory(
                     new ExportHistoryGraphJob(ctx, dash, historyGraph, message.id, user)
             );
-        } else if (widget instanceof EnhancedHistoryGraph) {
-            EnhancedHistoryGraph enhancedHistoryGraph = (EnhancedHistoryGraph) widget;
+        } else if (widget instanceof Superchart) {
+            Superchart enhancedHistoryGraph = (Superchart) widget;
 
             blockingIOProcessor.executeHistory(
                     new ExportEnhancedHistoryGraphJob(ctx, dash, targetId, enhancedHistoryGraph, message.id, user)
@@ -163,12 +163,12 @@ public final class ExportGraphDataLogic {
         private final ChannelHandlerContext ctx;
         private final DashBoard dash;
         private final int targetId;
-        private final EnhancedHistoryGraph enhancedHistoryGraph;
+        private final Superchart enhancedHistoryGraph;
         private final int msgId;
         private final User user;
 
         ExportEnhancedHistoryGraphJob(ChannelHandlerContext ctx, DashBoard dash, int targetId,
-                                      EnhancedHistoryGraph enhancedHistoryGraph, int msgId, User user) {
+                                      Superchart enhancedHistoryGraph, int msgId, User user) {
             this.ctx = ctx;
             this.dash = dash;
             this.targetId = targetId;
