@@ -7,7 +7,6 @@ import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.model.widgets.outputs.HistoryGraph;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
@@ -99,10 +98,7 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
     }
 
     private static void add(Set<String> doNotRemovePaths, DashBoard dash, Widget widget, int[] deviceIds) {
-        if (widget instanceof HistoryGraph) {
-            HistoryGraph historyGraph = (HistoryGraph) widget;
-            add(doNotRemovePaths, dash.id, historyGraph);
-        } else if (widget instanceof Superchart) {
+        if (widget instanceof Superchart) {
             Superchart enhancedHistoryGraph = (Superchart) widget;
             add(doNotRemovePaths, dash, enhancedHistoryGraph, deviceIds);
         }
@@ -132,19 +128,6 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
                                 dataStream.pinType, dataStream.pin, type);
                         doNotRemovePaths.add(filename);
                     }
-                }
-            }
-        }
-    }
-
-    //todo history graph is only for back compatibility and should be removed in future
-    private static void add(Set<String> doNotRemovePaths, int dashId, HistoryGraph graph) {
-        for (DataStream dataStream : graph.dataStreams) {
-            if (dataStream.isValid()) {
-                for (GraphGranularityType type : GraphGranularityType.values()) {
-                    String filename = ReportingDiskDao.generateFilename(dashId, graph.deviceId,
-                            dataStream.pinType, dataStream.pin, type);
-                    doNotRemovePaths.add(filename);
                 }
             }
         }

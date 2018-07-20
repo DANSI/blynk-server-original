@@ -9,7 +9,6 @@ import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.model.widgets.outputs.HistoryGraph;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
@@ -78,13 +77,7 @@ public final class ExportGraphDataLogic {
             widget = dash.getWidgetByIdInDeviceTilesOrThrow(widgetId);
         }
 
-        if (widget instanceof HistoryGraph) {
-            HistoryGraph historyGraph = (HistoryGraph) widget;
-
-            blockingIOProcessor.executeHistory(
-                    new ExportHistoryGraphJob(ctx, dash, historyGraph, message.id, user)
-            );
-        } else if (widget instanceof Superchart) {
+        if (widget instanceof Superchart) {
             Superchart enhancedHistoryGraph = (Superchart) widget;
 
             blockingIOProcessor.executeHistory(
@@ -92,69 +85,6 @@ public final class ExportGraphDataLogic {
             );
         } else {
             throw new IllegalCommandException("Passed wrong widget id.");
-        }
-    }
-
-    private class ExportHistoryGraphJob implements Runnable {
-
-        private final ChannelHandlerContext ctx;
-        private final DashBoard dash;
-        private final HistoryGraph historyGraph;
-        private final int msgId;
-        private final User user;
-
-        ExportHistoryGraphJob(ChannelHandlerContext ctx, DashBoard dash,
-                                     HistoryGraph historyGraph, int msgId, User user) {
-            this.ctx = ctx;
-            this.dash = dash;
-            this.historyGraph = historyGraph;
-            this.msgId = msgId;
-            this.user = user;
-        }
-
-        @Override
-        public void run() {
-            try {
-                var dashName = dash.getNameOrEmpty();
-                var pinsCSVFilePath = new ArrayList<DeviceFileLink>();
-                var deviceId = historyGraph.deviceId;
-                for (var dataStream : historyGraph.dataStreams) {
-                    if (dataStream != null) {
-                        try {
-                            var deviceIds = new int[] {deviceId};
-                            //special case, this is not actually a deviceId but device selector widget id
-                            if (deviceId >= DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-                                var deviceSelector = dash.getWidgetById(deviceId);
-                                if (deviceSelector instanceof DeviceSelector) {
-                                    deviceIds = ((DeviceSelector) deviceSelector).deviceIds;
-                                }
-                            }
-                            var path = reportingDao.csvGenerator.createCSV(
-                                    user, dash.id, deviceId, dataStream.pinType, dataStream.pin, deviceIds);
-                            Device device = dash.getDeviceById(deviceId);
-                            String name = (device == null || device.name == null) ? dashName : device.name;
-                            pinsCSVFilePath.add(new DeviceFileLink(path, name, dataStream.pinType, dataStream.pin));
-                        } catch (Exception e) {
-                            //ignore eny exception.
-                        }
-                    }
-                }
-
-                if (pinsCSVFilePath.size() == 0) {
-                    ctx.writeAndFlush(noData(msgId), ctx.voidPromise());
-                } else {
-                    var title = "History graph data for project " + dashName;
-                    String bodyWithLinks = DeviceFileLink.makeBody(csvDownloadUrl, pinsCSVFilePath);
-                    mailWrapper.sendHtml(user.email, title, bodyWithLinks);
-                    ctx.writeAndFlush(ok(msgId), ctx.voidPromise());
-                }
-
-            } catch (Exception e) {
-                log.error("Error making csv file for data export. Reason {}", e.getMessage());
-                if (ctx.channel().isActive() && ctx.channel().isWritable()) {
-                    ctx.writeAndFlush(notificationError(msgId), ctx.voidPromise());
-                }
-            }
         }
     }
 

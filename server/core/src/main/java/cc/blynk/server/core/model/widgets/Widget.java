@@ -34,7 +34,6 @@ import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.model.widgets.outputs.Gauge;
-import cc.blynk.server.core.model.widgets.outputs.HistoryGraph;
 import cc.blynk.server.core.model.widgets.outputs.LCD;
 import cc.blynk.server.core.model.widgets.outputs.LED;
 import cc.blynk.server.core.model.widgets.outputs.LabeledValueDisplay;
@@ -105,7 +104,6 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
         @JsonSubTypes.Type(value = LevelDisplay.class, name = "LEVEL_DISPLAY"),
         @JsonSubTypes.Type(value = VerticalLevelDisplay.class, name = "VERTICAL_LEVEL_DISPLAY"),
         @JsonSubTypes.Type(value = Video.class, name = "VIDEO"),
-        @JsonSubTypes.Type(value = HistoryGraph.class, name = "LOGGER"),
         @JsonSubTypes.Type(value = Superchart.class, name = "ENHANCED_GRAPH"),
 
         //sensors
