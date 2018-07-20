@@ -16,11 +16,11 @@ import cc.blynk.server.core.model.widgets.controls.NumberInput;
 import cc.blynk.server.core.model.widgets.controls.Terminal;
 import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
 import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
-import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
 import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphType;
+import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
 import cc.blynk.server.core.model.widgets.ui.Menu;
 import cc.blynk.server.core.model.widgets.ui.Tab;
 import cc.blynk.server.core.model.widgets.ui.Tabs;
@@ -940,7 +940,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
     }
 
     @Test
-    public void getEnhancedHistoryGraphWorksForTiles() throws Exception {
+    public void getSuperchartGraphWorksForTiles() throws Exception {
         long widgetId = 21321;
 
         DeviceTiles deviceTiles = new DeviceTiles();
@@ -955,20 +955,20 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
 
         int[] deviceIds = new int[] {0};
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
-        enhancedHistoryGraph.id = 432;
-        enhancedHistoryGraph.width = 8;
-        enhancedHistoryGraph.height = 4;
+        Superchart SuperchartGraph = new Superchart();
+        SuperchartGraph.id = 432;
+        SuperchartGraph.width = 8;
+        SuperchartGraph.height = 4;
         GraphDataStream graphDataStream = new GraphDataStream(
                 null, GraphType.LINE, 0, 100_000,
                 new DataStream((byte) 88, PinType.VIRTUAL),
                 AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+        SuperchartGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
 
         TileTemplate tileTemplate = new PageTileTemplate(1,
-                new Widget[]{enhancedHistoryGraph}, deviceIds, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte)1, PinType.VIRTUAL),
+                new Widget[]{SuperchartGraph}, deviceIds, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte)1, PinType.VIRTUAL),
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
 
         clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
@@ -979,7 +979,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
     }
 
     @Test
-    public void getEnhancedHistoryGraphWorksForTiles2() throws Exception {
+    public void getSuperchartGraphWorksForTiles2() throws Exception {
         long widgetId = 21321;
 
         DeviceTiles deviceTiles = new DeviceTiles();
@@ -994,20 +994,20 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
 
         int[] deviceIds = new int[] {0};
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
-        enhancedHistoryGraph.id = 432;
-        enhancedHistoryGraph.width = 8;
-        enhancedHistoryGraph.height = 4;
+        Superchart SuperchartGraph = new Superchart();
+        SuperchartGraph.id = 432;
+        SuperchartGraph.width = 8;
+        SuperchartGraph.height = 4;
         GraphDataStream graphDataStream = new GraphDataStream(
                 null, GraphType.LINE, 0, 100_000,
                 new DataStream((byte) 88, PinType.VIRTUAL),
                 AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+        SuperchartGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
 
         TileTemplate tileTemplate = new PageTileTemplate(1,
-                new Widget[]{enhancedHistoryGraph}, deviceIds, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte)1, PinType.VIRTUAL),
+                new Widget[]{SuperchartGraph}, deviceIds, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte)1, PinType.VIRTUAL),
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
 
         clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
@@ -1018,7 +1018,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
     }
 
     @Test
-    public void exportEnhancedHistoryGraphWorksForTiles() throws Exception {
+    public void exportSuperchartGraphWorksForTiles() throws Exception {
         long widgetId = 21321;
 
         DeviceTiles deviceTiles = new DeviceTiles();
@@ -1033,20 +1033,20 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
 
         int[] deviceIds = new int[] {0};
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
-        enhancedHistoryGraph.id = 432;
-        enhancedHistoryGraph.width = 8;
-        enhancedHistoryGraph.height = 4;
+        Superchart SuperchartGraph = new Superchart();
+        SuperchartGraph.id = 432;
+        SuperchartGraph.width = 8;
+        SuperchartGraph.height = 4;
         GraphDataStream graphDataStream = new GraphDataStream(
                 null, GraphType.LINE, 0, 0,
                 new DataStream((byte) 88, PinType.VIRTUAL),
                 AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+        SuperchartGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
 
         TileTemplate tileTemplate = new PageTileTemplate(1,
-                new Widget[]{enhancedHistoryGraph}, deviceIds, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte)1, PinType.VIRTUAL),
+                new Widget[]{SuperchartGraph}, deviceIds, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte)1, PinType.VIRTUAL),
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
 
         clientPair.appClient.createTemplate(1, widgetId, tileTemplate);

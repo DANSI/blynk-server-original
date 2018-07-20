@@ -6,9 +6,9 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
+import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
@@ -74,11 +74,11 @@ public final class GetEnhancedGraphDataLogic {
             }
         }
 
-        if (!(widget instanceof EnhancedHistoryGraph)) {
+        if (!(widget instanceof Superchart)) {
             throw new IllegalCommandException("Passed wrong widget id.");
         }
 
-        EnhancedHistoryGraph enhancedHistoryGraph = (EnhancedHistoryGraph) widget;
+        Superchart enhancedHistoryGraph = (Superchart) widget;
 
         int numberOfStreams = enhancedHistoryGraph.dataStreams.length;
         if (numberOfStreams == 0) {

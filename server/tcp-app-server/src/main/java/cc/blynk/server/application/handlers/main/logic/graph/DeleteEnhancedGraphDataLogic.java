@@ -6,8 +6,8 @@ import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
+import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.StringUtils;
@@ -59,7 +59,7 @@ public final class DeleteEnhancedGraphDataLogic {
         if (widget == null) {
             widget = dash.getWidgetByIdInDeviceTilesOrThrow(widgetId);
         }
-        EnhancedHistoryGraph enhancedHistoryGraph = (EnhancedHistoryGraph) widget;
+        Superchart enhancedHistoryGraph = (Superchart) widget;
 
         if (streamIndex == -1 || streamIndex > enhancedHistoryGraph.dataStreams.length - 1) {
             delete(holder, ctx.channel(), message.id, user, dash, targetId, enhancedHistoryGraph.dataStreams);

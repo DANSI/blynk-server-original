@@ -12,7 +12,6 @@ import cc.blynk.core.http.annotation.Path;
 import cc.blynk.core.http.annotation.PathParam;
 import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.server.Holder;
-import cc.blynk.server.application.handlers.main.ResetPasswordHandler;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.UserDao;
@@ -72,7 +71,7 @@ public class ResetPasswordHttpLogic extends BaseHttpHandler {
         this.emailSubj = "Password reset request for the " + productName + " app.";
         this.emailBody = FileLoaderUtil.readResetEmailTemplateAsString()
                 .replace(Placeholders.PRODUCT_NAME, productName);
-        this.newResetPage = FileLoaderUtil.readAppResetEmailTemplateAsString()
+        this.newResetPage = holder.textHolder.appResetEmailTemplate
                 .replace(Placeholders.PRODUCT_NAME, productName);
         this.mailWrapper = holder.mailWrapper;
 
@@ -81,7 +80,7 @@ public class ResetPasswordHttpLogic extends BaseHttpHandler {
         //using https for private servers as they have valid certificates.
         String protocol = host.endsWith(".blynk.cc") ? "https://" : "http://";
         this.resetPassUrl = protocol + host + "/landing?token=";
-        this.pageContent = FileLoaderUtil.readResetPassLandingTemplateAsString();
+        this.pageContent = holder.textHolder.resetPassLandingTemplate;
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.dbManager = holder.dbManager;
         this.fileManager = holder.fileManager;
@@ -162,7 +161,7 @@ public class ResetPasswordHttpLogic extends BaseHttpHandler {
         //}
 
         log.info("{} landed.", email);
-        String resetUrl = ResetPasswordHandler.makeResetUrl(resetClickHost, token, email);
+        String resetUrl = "http://" + resetClickHost + "/restore?token=" + token + "&email=" + email;
         String body = newResetPage.replace(Placeholders.RESET_URL, resetUrl);
         return ok(body, MediaType.TEXT_HTML);
     }

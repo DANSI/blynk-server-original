@@ -9,9 +9,8 @@ import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.model.widgets.outputs.HistoryGraph;
-import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
+import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -78,14 +77,8 @@ public final class ExportGraphDataLogic {
             widget = dash.getWidgetByIdInDeviceTilesOrThrow(widgetId);
         }
 
-        if (widget instanceof HistoryGraph) {
-            HistoryGraph historyGraph = (HistoryGraph) widget;
-
-            blockingIOProcessor.executeHistory(
-                    new ExportHistoryGraphJob(ctx, dash, historyGraph, message.id, user)
-            );
-        } else if (widget instanceof EnhancedHistoryGraph) {
-            EnhancedHistoryGraph enhancedHistoryGraph = (EnhancedHistoryGraph) widget;
+        if (widget instanceof Superchart) {
+            Superchart enhancedHistoryGraph = (Superchart) widget;
 
             blockingIOProcessor.executeHistory(
                     new ExportEnhancedHistoryGraphJob(ctx, dash, targetId, enhancedHistoryGraph, message.id, user)
@@ -95,80 +88,17 @@ public final class ExportGraphDataLogic {
         }
     }
 
-    private class ExportHistoryGraphJob implements Runnable {
-
-        private final ChannelHandlerContext ctx;
-        private final DashBoard dash;
-        private final HistoryGraph historyGraph;
-        private final int msgId;
-        private final User user;
-
-        ExportHistoryGraphJob(ChannelHandlerContext ctx, DashBoard dash,
-                                     HistoryGraph historyGraph, int msgId, User user) {
-            this.ctx = ctx;
-            this.dash = dash;
-            this.historyGraph = historyGraph;
-            this.msgId = msgId;
-            this.user = user;
-        }
-
-        @Override
-        public void run() {
-            try {
-                String dashName = dash.getNameOrEmpty();
-                ArrayList<DeviceFileLink> pinsCSVFilePath = new ArrayList<>();
-                int deviceId = historyGraph.deviceId;
-                for (DataStream dataStream : historyGraph.dataStreams) {
-                    if (dataStream != null) {
-                        try {
-                            int[] deviceIds = new int[] {deviceId};
-                            //special case, this is not actually a deviceId but device selector widget id
-                            if (deviceId >= DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-                                Widget deviceSelector = dash.getWidgetById(deviceId);
-                                if (deviceSelector instanceof DeviceSelector) {
-                                    deviceIds = ((DeviceSelector) deviceSelector).deviceIds;
-                                }
-                            }
-                            Path path = reportingDao.csvGenerator.createCSV(
-                                    user, dash.id, deviceId, dataStream.pinType, dataStream.pin, deviceIds);
-                            Device device = dash.getDeviceById(deviceId);
-                            String name = (device == null || device.name == null) ? dashName : device.name;
-                            pinsCSVFilePath.add(new DeviceFileLink(path, name, dataStream.pinType, dataStream.pin));
-                        } catch (Exception e) {
-                            //ignore eny exception.
-                        }
-                    }
-                }
-
-                if (pinsCSVFilePath.size() == 0) {
-                    ctx.writeAndFlush(noData(msgId), ctx.voidPromise());
-                } else {
-                    String title = "History graph data for project " + dashName;
-                    String bodyWithLinks = DeviceFileLink.makeBody(csvDownloadUrl, pinsCSVFilePath);
-                    mailWrapper.sendHtml(user.email, title, bodyWithLinks);
-                    ctx.writeAndFlush(ok(msgId), ctx.voidPromise());
-                }
-
-            } catch (Exception e) {
-                log.error("Error making csv file for data export. Reason {}", e.getMessage());
-                if (ctx.channel().isActive() && ctx.channel().isWritable()) {
-                    ctx.writeAndFlush(notificationError(msgId), ctx.voidPromise());
-                }
-            }
-        }
-    }
-
     private class ExportEnhancedHistoryGraphJob implements Runnable {
 
         private final ChannelHandlerContext ctx;
         private final DashBoard dash;
         private final int targetId;
-        private final EnhancedHistoryGraph enhancedHistoryGraph;
+        private final Superchart enhancedHistoryGraph;
         private final int msgId;
         private final User user;
 
         ExportEnhancedHistoryGraphJob(ChannelHandlerContext ctx, DashBoard dash, int targetId,
-                                      EnhancedHistoryGraph enhancedHistoryGraph, int msgId, User user) {
+                                      Superchart enhancedHistoryGraph, int msgId, User user) {
             this.ctx = ctx;
             this.dash = dash;
             this.targetId = targetId;

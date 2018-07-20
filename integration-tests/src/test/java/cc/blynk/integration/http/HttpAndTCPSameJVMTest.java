@@ -8,6 +8,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.controls.RGB;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
@@ -18,8 +19,10 @@ import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinActi
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinActionType;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
-import cc.blynk.server.core.model.widgets.outputs.HistoryGraph;
 import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphType;
+import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
 import cc.blynk.server.core.model.widgets.ui.table.Table;
 import cc.blynk.server.servers.application.AppAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
@@ -641,17 +644,21 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
     }
 
     @Test
-    public void historyGraphPinsOverlapsWithOtherWidgets() throws Exception {
-        HistoryGraph historyGraph = new HistoryGraph();
-        historyGraph.id = 100;
-        historyGraph.width = 2;
-        historyGraph.height = 2;
-        historyGraph.dataStreams = new DataStream[] {
-                new DataStream((byte) 44, VIRTUAL),
-                new DataStream((byte) 45, VIRTUAL)
+    public void superchartPinsOverlapsWithOtherWidgets() throws Exception {
+        Superchart superchart = new Superchart();
+        superchart.id = 100;
+        superchart.width = 8;
+        superchart.height = 4;
+        DataStream dataStream = new DataStream((byte) 44, PinType.VIRTUAL);
+        DataStream dataStream2 = new DataStream((byte) 45, PinType.VIRTUAL);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream2, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        superchart.dataStreams = new GraphDataStream[] {
+                graphDataStream,
+                graphDataStream2
         };
 
-        clientPair.appClient.createWidget(1, historyGraph);
+        clientPair.appClient.createWidget(1, superchart);
         clientPair.appClient.verifyResult(ok(1));
 
         ValueDisplay valueDisplay = new ValueDisplay();
@@ -676,7 +683,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
 
         clientPair.hardwareClient.send("hardware vw 44 123");
         clientPair.hardwareClient.send("hardware vw 45 124");
-
+        clientPair.appClient.verifyResult(hardware(2, "1-0 vw 45 124"));
 
         HttpGet request = new HttpGet(httpServerUrl + clientPair.token + "/get/v45");
 

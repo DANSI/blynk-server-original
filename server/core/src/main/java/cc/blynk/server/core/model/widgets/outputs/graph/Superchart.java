@@ -1,7 +1,6 @@
 package cc.blynk.server.core.model.widgets.outputs.graph;
 
 import cc.blynk.server.core.model.enums.PinMode;
-import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.TextAlignment;
 
@@ -19,7 +18,7 @@ import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_GRAPH_DATA_STREAMS;
  * Created by Dmitriy Dumanskiy.
  * Created on 12.08.15.
  */
-public class EnhancedHistoryGraph extends Widget {
+public class Superchart extends Widget {
 
     private static final GraphPeriod[] DEFAULT_PERIODS = new GraphPeriod[] {
             LIVE, ONE_HOUR, SIX_HOURS, N_DAY, N_WEEK, N_MONTH, N_THREE_MONTHS
@@ -65,12 +64,9 @@ public class EnhancedHistoryGraph extends Widget {
 
     public GraphPeriod[] selectedPeriods = DEFAULT_PERIODS;
 
-    //actually it is duplicated logic of isSame method, but isSame is used in other places
-    public boolean hasPin(int deviceId, byte pin, PinType pinType) {
-        for (GraphDataStream graphDataStream : dataStreams) {
-            if (graphDataStream.targetId == deviceId
-                    && graphDataStream.dataStream != null
-                    && graphDataStream.dataStream.isSame(pin, pinType)) {
+    public boolean hasLivePeriodsSelected() {
+        for (GraphPeriod graphPeriod : selectedPeriods) {
+            if (graphPeriod == LIVE) {
                 return true;
             }
         }

@@ -100,6 +100,7 @@ public class GetProjectByClonedTokenLogic {
         newDash.id = max(user.profile.dashBoards) + 1;
         newDash.isPreview = false;
         newDash.parentId = -1;
+        newDash.isShared = false;
 
         if (user.profile.dashBoards.length >= dashMaxLimit) {
             log.debug("Dashboards limit reached.");

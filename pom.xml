@@ -19,7 +19,7 @@
 
     <groupId>cc.blynk</groupId>
     <artifactId>blynk</artifactId>
-    <version>0.39.1-SNAPSHOT</version>
+    <version>0.39.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <scm>
@@ -159,11 +159,11 @@
         <netty.version>4.1.27.Final</netty.version>
         <netty.boring.ssl.version>2.0.12.Final</netty.boring.ssl.version>
         <log4j2.version>2.11.0</log4j2.version>
-        <jackson-databind.version>2.9.5</jackson-databind.version>
+        <jackson-databind.version>2.9.6</jackson-databind.version>
         <disruptor.version>3.4.2</disruptor.version>
         <async-http-client.version>2.5.2</async-http-client.version>
         <postgresql.version>42.2.2</postgresql.version>
-        <HikariCP.version>3.1.0</HikariCP.version>
+        <HikariCP.version>3.2.0</HikariCP.version>
         <qrgen.version>2.2.0</qrgen.version>
         <bcpg-jdk15on.version>1.59</bcpg-jdk15on.version>
         <acme4j-client.version>1.0</acme4j-client.version>

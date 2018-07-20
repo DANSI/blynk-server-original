@@ -13,13 +13,14 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
-import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
 import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphType;
+import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
+import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.model.widgets.ui.tiles.templates.PageTileTemplate;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
@@ -28,6 +29,7 @@ import cc.blynk.server.workers.HistoryGraphUnusedPinDataCleanerWorker;
 import cc.blynk.server.workers.ReportingTruncateWorker;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.ReportingUtil;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,6 +54,8 @@ import static cc.blynk.integration.TestUtil.createTag;
 import static cc.blynk.integration.TestUtil.illegalCommand;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.server.core.model.serialization.JsonParser.MAPPER;
+import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.ONE_HOUR;
+import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.SIX_HOURS;
 import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
 import static java.nio.file.StandardOpenOption.APPEND;
 import static java.nio.file.StandardOpenOption.CREATE;
@@ -80,22 +84,12 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         blynkTempDir = Paths.get(System.getProperty("java.io.tmpdir"), "blynk").toString();
     }
 
-    private static String getFileNameByMask(String pattern) {
-        File dir = new File(blynkTempDir);
-        File[] files = dir.listFiles((dir1, name) -> name.startsWith(pattern));
-        return latest(files).getName();
-    }
-
-    private static File latest(File[] files) {
-        long lastMod = Long.MIN_VALUE;
-        File choice = null;
-        for (File file : files) {
-            if (file.lastModified() > lastMod) {
-                choice = file;
-                lastMod = file.lastModified();
-            }
-        }
-        return choice;
+    @Before
+    public void cleanStorage() {
+        holder.reportingDiskDao.averageAggregator.getMinute().clear();
+        holder.reportingDiskDao.averageAggregator.getHourly().clear();
+        holder.reportingDiskDao.averageAggregator.getDaily().clear();
+        holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.clear();
     }
 
     @Test
@@ -145,7 +139,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
         String tempDir = holder.props.getProperty("data.folder");
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -231,7 +225,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -300,7 +294,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -366,7 +360,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -432,7 +426,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -498,7 +492,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -564,7 +558,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -642,7 +636,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(pinReportingDataPath3, 1.113D, 1111111);
         FileUtils.write(pinReportingDataPath3, 1.223D, 2222222);
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -686,7 +680,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -719,7 +713,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
             FileUtils.write(pinReportingDataPath, (double) point, 1111111 + point);
         }
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -764,7 +758,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -812,7 +806,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -831,6 +825,214 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
     }
 
     @Test
+    public void makeSureNoReportingWhenNotAGraphPin() throws Exception {
+        Superchart enhancedHistoryGraph = new Superchart();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream
+        };
+
+        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
+        clientPair.appClient.verifyResult(ok(1));
+        clientPair.appClient.reset();
+
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+
+        clientPair.hardwareClient.send("hardware vw 89 111");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 89 111"))));
+
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+    }
+
+    @Test
+    public void makeSureReportingIsPresentWhenGraphAssignedToDevice() throws Exception {
+        Superchart enhancedHistoryGraph = new Superchart();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream
+        };
+
+        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
+        clientPair.appClient.verifyResult(ok(1));
+        clientPair.appClient.reset();
+
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+
+        clientPair.hardwareClient.send("hardware vw 88 111");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
+
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(1, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+    }
+
+    @Test
+    public void makeSureReportingIsPresentWhenGraphAssignedToDevice2() throws Exception {
+        Superchart enhancedHistoryGraph = new Superchart();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        //no live
+        enhancedHistoryGraph.selectedPeriods = new GraphPeriod[] {
+                ONE_HOUR, SIX_HOURS
+        };
+        DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream
+        };
+
+        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
+        clientPair.appClient.verifyResult(ok(1));
+        clientPair.appClient.reset();
+
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+
+        clientPair.hardwareClient.send("hardware vw 88 111");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
+
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+    }
+
+    @Test
+    public void makeSureReportingIsPresentWhenGraphAssignedToDeviceTiles() throws Exception {
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(1));
+
+        int[] deviceIds = new int[] {0};
+
+        Superchart enhancedHistoryGraph = new Superchart();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        GraphDataStream graphDataStream = new GraphDataStream(
+                null, GraphType.LINE, 0, -1,
+                new DataStream((byte) 88, PinType.VIRTUAL),
+                AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream
+        };
+
+        TileTemplate tileTemplate = new PageTileTemplate(1,
+                new Widget[]{enhancedHistoryGraph}, deviceIds, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte)1, PinType.VIRTUAL),
+                false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
+
+        clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
+        clientPair.appClient.verifyResult(ok(2));
+
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+
+        clientPair.hardwareClient.send("hardware vw 88 111");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
+
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(1, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+    }
+
+    @Test
+    public void makeSureReportingIsPresentWhenGraphAssignedToDeviceTilesWith2Pins() throws Exception {
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(1));
+
+        int[] deviceIds = new int[] {0};
+
+        Superchart enhancedHistoryGraph = new Superchart();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        GraphDataStream graphDataStream = new GraphDataStream(
+                null, GraphType.LINE, 0, -1,
+                new DataStream((byte) 88, PinType.VIRTUAL),
+                AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        GraphDataStream graphDataStream2 = new GraphDataStream(
+                null, GraphType.LINE, 0, -1,
+                new DataStream((byte) 89, PinType.VIRTUAL),
+                AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream,
+                graphDataStream2
+        };
+
+        TileTemplate tileTemplate = new PageTileTemplate(1,
+                new Widget[]{enhancedHistoryGraph}, deviceIds, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte)1, PinType.VIRTUAL),
+                false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
+
+        clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
+        clientPair.appClient.verifyResult(ok(2));
+
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+
+        clientPair.hardwareClient.send("hardware vw 88 111");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
+        clientPair.hardwareClient.send("hardware vw 89 112");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(2, b("1-0 vw 89 112"))));
+
+
+        assertEquals(2, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(2, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(2, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(2, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+    }
+
+    @Test
     public void testGetLIVEGraphDataForEnhancedGraph() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 
@@ -840,7 +1042,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -907,7 +1109,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.send("hardware vw 88 111");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -936,7 +1138,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.send("hardware vw 88 111");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -1001,7 +1203,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -1077,7 +1279,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
             dos.flush();
         }
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -1126,7 +1328,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
             dos.flush();
         }
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -1157,29 +1359,6 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
     }
 
     @Test
-    public void testDeleteWorksForEnhancedGraph() throws Exception {
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
-        enhancedHistoryGraph.id = 432;
-        enhancedHistoryGraph.width = 8;
-        enhancedHistoryGraph.height = 4;
-        DataStream dataStream = new DataStream((byte) 8, PinType.DIGITAL);
-        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
-        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
-                graphDataStream
-        };
-
-        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
-        clientPair.appClient.verifyResult(ok(1));
-
-        clientPair.appClient.send("deleteEnhancedData 1\0" + "432");
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
-        clientPair.appClient.reset();
-
-        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.DAY);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
-    }
-
-    @Test
     public void testPagingWorksForGetEnhancedHistoryDataFullDataAndSecondPage() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
 
@@ -1200,7 +1379,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
             dos.flush();
         }
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -1239,7 +1418,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
             dos.flush();
         }
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -1258,6 +1437,47 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
     }
 
     @Test
+    public void testDeleteWorksForEnhancedGraph() throws Exception {
+        Superchart enhancedHistoryGraph = new Superchart();
+        enhancedHistoryGraph.id = 432;
+        enhancedHistoryGraph.width = 8;
+        enhancedHistoryGraph.height = 4;
+        DataStream dataStream = new DataStream((byte) 8, PinType.DIGITAL);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
+                graphDataStream
+        };
+
+        clientPair.appClient.createWidget(1, enhancedHistoryGraph);
+        clientPair.appClient.verifyResult(ok(1));
+
+        clientPair.appClient.send("deleteEnhancedData 1\0" + "432");
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.reset();
+
+        clientPair.appClient.getEnhancedGraphData(1, 432, GraphPeriod.DAY);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
+    }
+
+    private static String getFileNameByMask(String pattern) {
+        File dir = new File(blynkTempDir);
+        File[] files = dir.listFiles((dir1, name) -> name.startsWith(pattern));
+        return latest(files).getName();
+    }
+
+    private static File latest(File[] files) {
+        long lastMod = Long.MIN_VALUE;
+        File choice = null;
+        for (File file : files) {
+            if (file.lastModified() > lastMod) {
+                choice = file;
+                lastMod = file.lastModified();
+            }
+        }
+        return choice;
+    }
+
+    @Test
     public void testExportDataFromHistoryGraph() throws Exception {
         clientPair.appClient.send("export 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(illegalCommand(1)));
@@ -1268,7 +1488,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("export 1 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(illegalCommand(3)));
 
-        clientPair.appClient.send("export 1 14");
+        clientPair.appClient.send("export 1 191600");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(4, NO_DATA)));
 
         //generate fake reporting data
@@ -1279,7 +1499,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(userReportFile, 1.1, 1L);
         FileUtils.write(userReportFile, 2.2, 2L);
 
-        clientPair.appClient.send("export 1 14");
+        clientPair.appClient.send("export 1 191600");
         verify(holder.mailWrapper, timeout(1000)).sendHtml(eq(getUserName()), eq("History graph data for project My Dashboard"), contains("/" + getUserName() + "_1_0_a7_"));
     }
 
@@ -1293,7 +1513,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(userReportFile, 1.1, 1L);
         FileUtils.write(userReportFile, 2.2, 2L);
 
-        clientPair.appClient.send("export 1 14");
+        clientPair.appClient.send("export 1 191600");
         clientPair.appClient.verifyResult(ok(1));
 
         String csvFileName = getFileNameByMask(getUserName() + "_1_0_a7_");
@@ -1331,7 +1551,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
         clientPair.appClient.reset();
 
-        clientPair.appClient.send("export 1-200000 14");
+        clientPair.appClient.send("export 1-200000 191600");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, NO_DATA)));
     }
 
@@ -1384,7 +1604,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
     public void cleanNotUsedPinDataWorksAsExpectedForSuperChart() throws Exception {
         HistoryGraphUnusedPinDataCleanerWorker cleaner = new HistoryGraphUnusedPinDataCleanerWorker(holder.userDao, holder.reportingDiskDao);
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -1457,7 +1677,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
         int[] deviceIds = new int[] {1};
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -1534,7 +1754,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
         HistoryGraphUnusedPinDataCleanerWorker cleaner = new HistoryGraphUnusedPinDataCleanerWorker(holder.userDao, holder.reportingDiskDao);
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -1773,7 +1993,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.appClient.createWidget(1, "{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
-        EnhancedHistoryGraph enhancedHistoryGraph = new EnhancedHistoryGraph();
+        Superchart enhancedHistoryGraph = new Superchart();
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
@@ -1850,26 +2070,19 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         clientPair.appClient.createWidget(1, "{\"id\":200000, \"deviceIds\":[0,1], \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
-        clientPair.appClient.updateWidget(1, "{\n" +
-                "                    \"type\":\"LOGGER\",\n" +
-                "                    \"id\":14,\n" +
-                "                    \"x\":0,\n" +
-                "                    \"y\":6,\n" +
-                "                    \"color\":0,\n" +
-                "                    \"width\":8,\n" +
-                "                    \"height\":3,\n" +
-                "                    \"tabId\":0,\n" +
-                "                    \"deviceId\":200000,\n" +
-                "                    \"pins\":\n" +
-                "                        [\n" +
-                "                            {\"pinType\":\"ANALOG\", \"pin\":7,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":255},\n" +
-                "                            {\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0},\n" +
-                "                            {\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0},\n" +
-                "                            {\"pin\":-1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0,\"max\":0}\n" +
-                "                        ],\n" +
-                "                    \"period\":\"THREE_MONTHS\",\n" +
-                "                    \"showLegends\":true\n" +
-                "                }");
+        Superchart superchart = new Superchart();
+        superchart.id = 191600;
+        superchart.width = 8;
+        superchart.height = 4;
+        DataStream dataStream = new DataStream((byte) 7, PinType.ANALOG);
+        GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0,
+                200_000, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
+        superchart.dataStreams = new GraphDataStream[] {
+                graphDataStream,
+        };
+
+        clientPair.appClient.updateWidget(1, superchart);
+        clientPair.appClient.verifyResult(ok(3));
 
         clientPair.appClient.reset();
 
@@ -1887,7 +2100,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         FileUtils.write(userReportFile, 11.1, 11L);
         FileUtils.write(userReportFile, 12.2, 12L);
 
-        clientPair.appClient.send("export 1 14");
+        clientPair.appClient.send("export 1 191600");
         clientPair.appClient.verifyResult(ok(1));
 
         String csvFileName = getFileNameByMask(getUserName() + "_1_200000_a7_");
