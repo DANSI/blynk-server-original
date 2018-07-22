@@ -241,7 +241,8 @@ public class DashBoard {
                 if (isWithinGraph(graph, pin, pinType, deviceId)) {
                     return graph;
                 }
-            } else if (widget instanceof DeviceTiles) {
+            }
+            if (widget instanceof DeviceTiles) {
                 DeviceTiles deviceTiles = (DeviceTiles) widget;
                 for (TileTemplate tileTemplate : deviceTiles.templates) {
                     for (Widget tilesWidget : tileTemplate.widgets) {
