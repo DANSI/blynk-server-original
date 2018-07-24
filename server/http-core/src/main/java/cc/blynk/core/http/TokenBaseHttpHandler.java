@@ -46,7 +46,7 @@ public abstract class TokenBaseHttpHandler extends BaseHttpHandler {
         if (session.isSameEventLoop(ctx)) {
             completeLogin(ctx.channel(), handler.invoke(params));
         } else {
-            log.debug("Re registering http channel. {}", ctx.channel());
+            log.trace("Re registering http channel. {}", ctx.channel());
             ReregisterChannelUtil.reRegisterChannel(ctx, session, channelFuture -> completeLogin(
                     channelFuture.channel(), handler.invoke(params)));
         }
@@ -54,6 +54,6 @@ public abstract class TokenBaseHttpHandler extends BaseHttpHandler {
 
     private void completeLogin(Channel channel, FullHttpResponse response) {
         channel.writeAndFlush(response);
-        log.debug("Re registering http channel finished.");
+        log.trace("Re registering http channel finished.");
     }
 }
