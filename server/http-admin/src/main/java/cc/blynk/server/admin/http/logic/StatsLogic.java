@@ -24,8 +24,10 @@ import io.netty.channel.ChannelHandler;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static cc.blynk.core.http.Response.ok;
 import static cc.blynk.core.http.utils.AdminHttpUtil.convertMapToPair;
@@ -162,7 +164,7 @@ public class StatsLogic extends CookiesBaseHttpHandler {
     }
 
     private List<IpNameResponse> searchByIP(String ip) {
-        List<IpNameResponse> res = new ArrayList<>();
+        Set<IpNameResponse> res = new HashSet<>();
 
         for (User user : userDao.users.values()) {
             if (user.lastLoggedIP != null) {
@@ -184,7 +186,7 @@ public class StatsLogic extends CookiesBaseHttpHandler {
             }
         }
 
-        return res;
+        return new ArrayList<>(res);
     }
 
     private boolean deviceContains(User user, String ip) {
