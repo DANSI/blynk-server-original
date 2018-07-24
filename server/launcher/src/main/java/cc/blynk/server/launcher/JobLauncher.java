@@ -70,14 +70,15 @@ final class JobLauncher {
         scheduler.scheduleAtFixedRate(holder.tokenManager::clearTemporaryTokens, 7, 1, DAYS);
 
         //running once every 3 day
+        //todo could be removed?
         HistoryGraphUnusedPinDataCleanerWorker reportingDataDiskCleaner =
                 new HistoryGraphUnusedPinDataCleanerWorker(holder.userDao, holder.reportingDiskDao);
-        //once every 3 days
-        scheduler.scheduleAtFixedRate(reportingDataDiskCleaner, 72, 72, HOURS);
+        //once every 7 days
+        scheduler.scheduleAtFixedRate(reportingDataDiskCleaner, 1, 7, DAYS);
 
         ReportingTruncateWorker reportingTruncateWorker = new ReportingTruncateWorker(holder.reportingDiskDao);
         //once every week
-        scheduler.scheduleAtFixedRate(reportingTruncateWorker, 1, 144, HOURS);
+        scheduler.scheduleAtFixedRate(reportingTruncateWorker, 1, 7, DAYS);
 
         //millis we need to wait to start scheduler at the beginning of a second.
         startDelay = 1000 - (System.currentTimeMillis() % 1000);

@@ -264,7 +264,8 @@ public class DashBoard {
                 if (isWithinGraph(graph, pin, pinType, deviceId)) {
                     return graph;
                 }
-            } else if (widget instanceof DeviceTiles) {
+            }
+            if (widget instanceof DeviceTiles) {
                 DeviceTiles deviceTiles = (DeviceTiles) widget;
                 for (TileTemplate tileTemplate : deviceTiles.templates) {
                     for (Widget tilesWidget : tileTemplate.widgets) {
@@ -280,6 +281,34 @@ public class DashBoard {
 
         }
         return null;
+    }
+
+    private boolean isWithinGraph(Superchart graph,
+                                  byte pin, PinType pinType, int deviceId, int... deviceIds) {
+        for (GraphDataStream graphDataStream : graph.dataStreams) {
+            if (graphDataStream != null && graphDataStream.dataStream != null
+                    && graphDataStream.dataStream.isSame(pin, pinType)) {
+
+                int graphTargetId = graphDataStream.targetId;
+                //this is the case when datastream assigned directly to the device
+                if (deviceId == graphTargetId) {
+                    return true;
+                }
+
+                //this is the case when graph is within deviceTiles
+                if (deviceIds != null && ArrayUtil.contains(deviceIds, deviceId)) {
+                    return true;
+                }
+
+                //this is the case when graph is within device selector or tags
+                Target target = getTarget(graphTargetId);
+                if (target == null) {
+                    return false;
+                }
+                return ArrayUtil.contains(target.getAssignedDeviceIds(), deviceId);
+            }
+        }
+        return false;
     }
 
     public static int getWidgetIndexByIdOrThrow(Widget[] widgets, long id) {
@@ -651,34 +680,6 @@ public class DashBoard {
         for (Widget widget : widgets) {
             widget.isDefaultColor = false;
         }
-    }
-
-    private boolean isWithinGraph(Superchart graph,
-                                  byte pin, PinType pinType, int deviceId, int... deviceIds) {
-        for (GraphDataStream graphDataStream : graph.dataStreams) {
-            if (graphDataStream != null && graphDataStream.dataStream != null
-                    && graphDataStream.dataStream.isSame(pin, pinType)) {
-
-                int graphTargetId = graphDataStream.targetId;
-                //this is the case when datastream assigned directly to the device
-                if (deviceId == graphTargetId) {
-                    return true;
-                }
-
-                //this is the case when graph is within deviceTiles
-                if (deviceIds != null && ArrayUtil.contains(deviceIds, deviceId)) {
-                    return true;
-                }
-
-                //this is the case when graph is within device selector or tags
-                Target target = getTarget(graphTargetId);
-                if (target == null) {
-                    return false;
-                }
-                return ArrayUtil.contains(target.getAssignedDeviceIds(), graphTargetId);
-            }
-        }
-        return false;
     }
 
     private Tag[] copyTags(Tag[] tagsToCopy) {

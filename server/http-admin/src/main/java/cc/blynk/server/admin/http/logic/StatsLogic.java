@@ -24,8 +24,10 @@ import io.netty.channel.ChannelHandler;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static cc.blynk.core.http.Response.ok;
 import static cc.blynk.core.http.utils.AdminHttpUtil.convertMapToPair;
@@ -162,29 +164,30 @@ public class StatsLogic extends CookiesBaseHttpHandler {
     }
 
     private List<IpNameResponse> searchByIP(String ip) {
-        List<IpNameResponse> res = new ArrayList<>();
+        Set<IpNameResponse> res = new HashSet<>();
+        int counter = 0;
 
         for (User user : userDao.users.values()) {
             if (user.lastLoggedIP != null) {
-                final String name = user.email + "-" + user.appName;
+                String name = user.email + "-" + user.appName;
                 if (ip == null) {
-                    res.add(new IpNameResponse(name, user.lastLoggedIP));
+                    res.add(new IpNameResponse(counter++, name, user.lastLoggedIP, "app"));
                     for (DashBoard dashBoard : user.profile.dashBoards) {
                         for (Device device : dashBoard.devices) {
                             if (device.lastLoggedIP != null) {
-                                res.add(new IpNameResponse(name, device.lastLoggedIP));
+                                res.add(new IpNameResponse(counter++, name, device.lastLoggedIP, "hard"));
                             }
                         }
                     }
                 } else {
                     if (user.lastLoggedIP.contains(ip) || deviceContains(user, ip)) {
-                        res.add(new IpNameResponse(name, user.lastLoggedIP));
+                        res.add(new IpNameResponse(counter++, name, user.lastLoggedIP, "hard"));
                     }
                 }
             }
         }
 
-        return res;
+        return new ArrayList<>(res);
     }
 
     private boolean deviceContains(User user, String ip) {

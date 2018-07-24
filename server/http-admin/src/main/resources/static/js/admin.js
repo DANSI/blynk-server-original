@@ -299,15 +299,17 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
             nga.field('count').label('Number')
         ]);
 
-    var ips = nga.entity('ips').identifier(nga.field('name')).url('stats/ips').readOnly();
+    var ips = nga.entity('ips').identifier(nga.field('id')).url('stats/ips').readOnly();
     ips.listView()
         .title('IP List')
         .perPage(50)
         .batchActions([])
-        .sortField('ip')
+        .sortField('id')
         .fields([
+            nga.field('id'),
             nga.field('ip'),
-            nga.field('name')
+            nga.field('name'),
+            nga.field('type')
         ])
         .filters([
             nga.field('ip').label('').pinned(true)
