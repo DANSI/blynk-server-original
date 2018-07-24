@@ -282,7 +282,7 @@ public class DashBoard {
                 if (target == null) {
                     return false;
                 }
-                return ArrayUtil.contains(target.getAssignedDeviceIds(), graphTargetId);
+                return ArrayUtil.contains(target.getAssignedDeviceIds(), deviceId);
             }
         }
         return false;
