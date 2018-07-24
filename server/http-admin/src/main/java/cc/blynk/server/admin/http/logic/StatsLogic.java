@@ -165,22 +165,23 @@ public class StatsLogic extends CookiesBaseHttpHandler {
 
     private List<IpNameResponse> searchByIP(String ip) {
         Set<IpNameResponse> res = new HashSet<>();
+        int counter = 0;
 
         for (User user : userDao.users.values()) {
             if (user.lastLoggedIP != null) {
-                final String name = user.email + "-" + user.appName;
+                String name = user.email + "-" + user.appName;
                 if (ip == null) {
-                    res.add(new IpNameResponse(name, user.lastLoggedIP));
+                    res.add(new IpNameResponse(counter++, name, user.lastLoggedIP, "app"));
                     for (DashBoard dashBoard : user.profile.dashBoards) {
                         for (Device device : dashBoard.devices) {
                             if (device.lastLoggedIP != null) {
-                                res.add(new IpNameResponse(name, device.lastLoggedIP));
+                                res.add(new IpNameResponse(counter++, name, device.lastLoggedIP, "hard"));
                             }
                         }
                     }
                 } else {
                     if (user.lastLoggedIP.contains(ip) || deviceContains(user, ip)) {
-                        res.add(new IpNameResponse(name, user.lastLoggedIP));
+                        res.add(new IpNameResponse(counter++, name, user.lastLoggedIP, "hard"));
                     }
                 }
             }

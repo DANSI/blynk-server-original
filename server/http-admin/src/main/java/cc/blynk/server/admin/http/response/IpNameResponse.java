@@ -9,13 +9,19 @@ import java.util.Objects;
  */
 public final class IpNameResponse {
 
+    public final int id;
+
     public final String name;
 
     public final String ip;
 
-    public IpNameResponse(String name, String ip) {
+    public final String type;
+
+    public IpNameResponse(int id, String name, String ip, String type) {
+        this.id = id;
         this.name = name;
         this.ip = ip;
+        this.type = type;
     }
 
     @Override
@@ -27,12 +33,13 @@ public final class IpNameResponse {
             return false;
         }
         IpNameResponse that = (IpNameResponse) o;
-        return Objects.equals(ip, that.ip)
-                && Objects.equals(name, that.name);
+        return Objects.equals(name, that.name)
+                && Objects.equals(ip, that.ip)
+                && Objects.equals(type, that.type);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ip, name);
+        return Objects.hash(name, ip, type);
     }
 }
