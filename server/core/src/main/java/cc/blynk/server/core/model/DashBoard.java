@@ -290,6 +290,7 @@ public class DashBoard {
                     && graphDataStream.dataStream.isSame(pin, pinType)) {
 
                 int graphTargetId = graphDataStream.targetId;
+
                 //this is the case when datastream assigned directly to the device
                 if (deviceId == graphTargetId) {
                     return true;
@@ -302,10 +303,9 @@ public class DashBoard {
 
                 //this is the case when graph is within device selector or tags
                 Target target = getTarget(graphTargetId);
-                if (target == null) {
-                    return false;
+                if (target != null && ArrayUtil.contains(target.getAssignedDeviceIds(), deviceId)) {
+                    return true;
                 }
-                return ArrayUtil.contains(target.getAssignedDeviceIds(), deviceId);
             }
         }
         return false;
