@@ -102,7 +102,7 @@ public class ReadingWidgetsWorker implements Runnable {
                     for (Widget tileWidget : tileTemplate.widgets) {
                         if (tileWidget instanceof FrequencyWidget) {
                             FrequencyWidget frequencyWidget = (FrequencyWidget) tileWidget;
-                            if (channel.isWritable()) {
+                            if (frequencyWidget.hasReadingInterval() && channel.isWritable()) {
                                 frequencyWidget.writeReadingCommand(channel);
                                 tickedWidgets++;
                             }
