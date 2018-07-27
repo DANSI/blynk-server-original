@@ -22,7 +22,10 @@ public enum WidgetProperty {
     URL("url"),
     STEP("step"),
     VALUE_FORMATTING("valueFormatting"),
-    FRACTION("maximumFractionDigits");
+    FRACTION("maximumFractionDigits"),
+    OPACITY("opacity"),
+    SCALE("scale"),
+    ROTATION("rotation");
 
     public final String label;
 
