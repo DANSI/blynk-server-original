@@ -467,11 +467,8 @@ public class DashBoard {
         pinsStorage.entrySet().removeIf(entry -> entry.getKey().deviceId == deviceId);
         for (Widget widget : widgets) {
             if (widget.isAssignedToDevice(deviceId)) {
-                if (widget instanceof DeviceTiles) {
-                    //deviceTiles has a bit different removal logic, so we remove manually here
-                    DeviceTiles deviceTiles = (DeviceTiles) widget;
-                    deviceTiles.eraseTiles();
-                } else {
+                //deviceTiles has a bit different removal logic, so we skip it here
+                if (!(widget instanceof DeviceTiles)) {
                     widget.erase();
                 }
             }
