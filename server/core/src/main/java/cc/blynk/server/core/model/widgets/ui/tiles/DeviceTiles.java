@@ -66,25 +66,24 @@ public class DeviceTiles extends Widget implements AppSyncWidget, HardwareSyncWi
             return;
         }
 
+        Tile[] existingTiles = this.tiles;
+
         ArrayList<Tile> list = new ArrayList<>();
         for (TileTemplate tileTemplate : this.templates) {
             //creating new device tiles for updated TileTemplate
             if (tileTemplate.id == newTileTemplate.id) {
                 for (int deviceId : newTileTemplate.deviceIds) {
-                    list.add(
-                            new Tile(
-                                    deviceId,
-                                    tileTemplate.id,
-                                    null,
-                                    newTileTemplate.dataStream == null
-                                            ? null
-                                            : new DataStream(newTileTemplate.dataStream)
-                            )
+                    Tile newTile = new Tile(deviceId, tileTemplate.id, null,
+                            newTileTemplate.dataStream == null
+                                    ? null
+                                    : new DataStream(newTileTemplate.dataStream)
                     );
+                    preserveOldValueIfPossible(existingTiles, newTile);
+                    list.add(newTile);
                 }
-            //leaving untouched device tiles that are not updated
+                //leaving untouched device tiles that are not updated
             } else {
-                for (Tile tile : this.tiles) {
+                for (Tile tile : existingTiles) {
                     if (tile.templateId == tileTemplate.id) {
                         list.add(tile);
                     }
@@ -92,6 +91,15 @@ public class DeviceTiles extends Widget implements AppSyncWidget, HardwareSyncWi
             }
         }
         this.tiles = list.toArray(new Tile[0]);
+    }
+
+    private void preserveOldValueIfPossible(Tile[] existingTiles, Tile newTile) {
+        for (Tile existingTile : existingTiles) {
+            if (existingTile.templateId == newTile.templateId
+                    && newTile.updateIfSame(existingTile.deviceId, existingTile.dataStream)) {
+                return;
+            }
+        }
     }
 
     public TileTemplate getTileTemplateByIdOrThrow(long id) {
