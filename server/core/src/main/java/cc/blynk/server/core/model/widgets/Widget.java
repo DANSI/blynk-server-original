@@ -8,6 +8,7 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.storage.PinStorageValue;
 import cc.blynk.server.core.model.storage.SinglePinStorageValue;
 import cc.blynk.server.core.model.widgets.controls.Button;
+import cc.blynk.server.core.model.widgets.controls.LinkButton;
 import cc.blynk.server.core.model.widgets.controls.NumberInput;
 import cc.blynk.server.core.model.widgets.controls.QR;
 import cc.blynk.server.core.model.widgets.controls.RGB;
@@ -81,6 +82,7 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
         //controls
         @JsonSubTypes.Type(value = Button.class, name = "BUTTON"),
         @JsonSubTypes.Type(value = StyledButton.class, name = "STYLED_BUTTON"),
+        @JsonSubTypes.Type(value = LinkButton.class, name = "LINK_BUTTON"),
         @JsonSubTypes.Type(value = TextInput.class, name = "TEXT_INPUT"),
         @JsonSubTypes.Type(value = NumberInput.class, name = "NUMBER_INPUT"),
         @JsonSubTypes.Type(value = Slider.class, name = "SLIDER"),
