@@ -140,3 +140,11 @@ CREATE TABLE reporting_http_command_stat_minute (
 create user test with password 'test';
 GRANT CONNECT ON DATABASE blynk_reporting TO test;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO test;
+
+-- Create a group
+CREATE ROLE readaccess;
+-- Grant access to existing tables
+GRANT USAGE ON SCHEMA public TO readaccess;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO readaccess;
+-- Grant access to future tables
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO readaccess;
