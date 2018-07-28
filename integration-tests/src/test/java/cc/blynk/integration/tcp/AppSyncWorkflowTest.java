@@ -208,6 +208,47 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
     }
 
     @Test
+    public void testTableStorageRemembersCommandsInNewFormat() throws Exception {
+        clientPair.appClient.stop();
+
+        TestAppClient appClient = new TestAppClient(properties);
+        appClient.start();
+
+        appClient.login(getUserName(), "1", "Android", "2.26.0");
+        appClient.verifyResult(ok(1));
+
+        appClient.send("loadProfileGzipped");
+        Profile profile = appClient.parseProfile(2);
+        assertEquals(16, profile.dashBoards[0].widgets.length);
+
+        Table table = new Table();
+        table.id = 102;
+        table.width = 2;
+        table.height = 2;
+        table.pin = 56;
+        table.pinType = PinType.VIRTUAL;
+        table.deviceId = 0;
+
+        appClient.createWidget(1, table);
+        appClient.verifyResult(ok(3));
+
+        clientPair.hardwareClient.send("hardware vw 56 add 1 Row1 row1");
+        clientPair.hardwareClient.send("hardware vw 56 add 2 Row2 row2");
+        clientPair.hardwareClient.send("hardware vw 56 add 3 Row3 row3");
+        clientPair.hardwareClient.send("hardware vw 56 add 4 Row4 row4");
+
+        appClient.verifyResult(hardware(1, "1-0 vw 56 add 1 Row1 row1"));
+        appClient.verifyResult(hardware(2, "1-0 vw 56 add 2 Row2 row2"));
+        appClient.verifyResult(hardware(3, "1-0 vw 56 add 3 Row3 row3"));
+        appClient.verifyResult(hardware(4, "1-0 vw 56 add 4 Row4 row4"));
+
+        appClient.activate(1);
+        appClient.verifyResult(ok(4));
+
+        appClient.verifyResult(appSync("1-0 vm 56 add 1 Row1 row1 true add 2 Row2 row2 true add 3 Row3 row3 true add 4 Row4 row4 true"));
+    }
+
+    @Test
     public void testTerminalAndAnotherWidgetOnTheSamePin() throws Exception {
         clientPair.appClient.stop();
 
