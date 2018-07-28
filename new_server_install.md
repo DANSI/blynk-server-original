@@ -9,6 +9,10 @@
         sudo ntpd -gq
         sudo service ntp start
 
+        sudo apt-get upgrade
+        sudo apt-get dist-upgrade
+        sudo apt-get autoremove --purge
+
         sudo add-apt-repository ppa:linuxuprising/java
         sudo apt-get update
         sudo apt-get install oracle-java10-installer
