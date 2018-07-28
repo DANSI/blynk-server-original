@@ -15,7 +15,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
-import static cc.blynk.server.core.protocol.enums.Command.GET_GRAPH_DATA_RESPONSE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_CLONE_CODE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
@@ -57,7 +56,6 @@ public class ClientMessageDecoder extends ByteToMessageDecoder {
 
             ByteBuf buf = in.readSlice(length);
             switch (command) {
-                case GET_GRAPH_DATA_RESPONSE :
                 case GET_ENHANCED_GRAPH_DATA :
                 case GET_PROJECT_BY_CLONE_CODE :
                 case LOAD_PROFILE_GZIPPED :
