@@ -5,7 +5,6 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 
 import java.util.Arrays;
 
@@ -40,29 +39,6 @@ public class GraphPinRequest {
     public final GraphGranularityType type;
 
     public final int skipCount;
-
-    //todo remove in future versions
-    public GraphPinRequest(int dashId, int deviceId, String[] messageParts, int pinIndex, int valuesPerPin) {
-        try {
-            this.dashId = dashId;
-            this.deviceId = deviceId;
-            this.pinType = PinType.getPinType(messageParts[pinIndex * valuesPerPin].charAt(0));
-            this.pin = Byte.parseByte(messageParts[pinIndex * valuesPerPin + 1]);
-
-            //not used for old graphs, so setting any value.
-            this.graphPeriod = GraphPeriod.ALL;
-            this.functionType = null;
-            this.deviceIds = EMPTY_INTS;
-            this.isTag = false;
-            /////////////////////////////////////
-
-            this.count = Integer.parseInt(messageParts[pinIndex * valuesPerPin + 2]);
-            this.type = GraphGranularityType.getPeriodByType(messageParts[pinIndex * valuesPerPin + 3].charAt(0));
-            this.skipCount = 0;
-        } catch (NumberFormatException e) {
-            throw new IllegalCommandException("Graph request command body incorrect.");
-        }
-    }
 
     public GraphPinRequest(int dashId, int[] deviceIds, DataStream dataStream,
                            GraphPeriod graphPeriod, int skipCount, AggregationFunctionType function) {

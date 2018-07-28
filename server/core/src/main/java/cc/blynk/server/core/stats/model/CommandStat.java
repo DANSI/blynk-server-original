@@ -21,7 +21,6 @@ import static cc.blynk.server.core.protocol.enums.Command.EVENTOR;
 import static cc.blynk.server.core.protocol.enums.Command.EXPORT_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICES;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
-import static cc.blynk.server.core.protocol.enums.Command.GET_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.GET_SERVER;
 import static cc.blynk.server.core.protocol.enums.Command.GET_SHARE_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.GET_TAGS;
@@ -167,9 +166,6 @@ public class CommandStat {
                 break;
             case REFRESH_TOKEN :
                 this.refreshToken = val;
-                break;
-            case GET_GRAPH_DATA :
-                this.getGraphData = val;
                 break;
             case EXPORT_GRAPH_DATA :
                 this.exportGraphData = val;

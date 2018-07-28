@@ -50,7 +50,6 @@ import cc.blynk.server.application.handlers.main.logic.graph.DeleteDeviceDataLog
 import cc.blynk.server.application.handlers.main.logic.graph.DeleteEnhancedGraphDataLogic;
 import cc.blynk.server.application.handlers.main.logic.graph.ExportGraphDataLogic;
 import cc.blynk.server.application.handlers.main.logic.graph.GetEnhancedGraphDataLogic;
-import cc.blynk.server.application.handlers.main.logic.graph.GetGraphDataLogic;
 import cc.blynk.server.application.handlers.main.logic.reporting.CreateReportLogic;
 import cc.blynk.server.application.handlers.main.logic.reporting.DeleteReportLogic;
 import cc.blynk.server.application.handlers.main.logic.reporting.ExportReportLogic;
@@ -94,7 +93,6 @@ import static cc.blynk.server.core.protocol.enums.Command.GET_CLONE_CODE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICES;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
-import static cc.blynk.server.core.protocol.enums.Command.GET_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_CLONE_CODE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROVISION_TOKEN;
@@ -189,9 +187,6 @@ public class AppHandler extends BaseSimpleChannelInboundHandler<StringMessage> {
                 RefreshTokenLogic.messageReceived(holder, ctx, state, msg);
                 break;
 
-            case GET_GRAPH_DATA :
-                GetGraphDataLogic.messageReceived(holder, ctx, state.user, msg);
-                break;
             case GET_ENHANCED_GRAPH_DATA :
                 GetEnhancedGraphDataLogic.messageReceived(holder, ctx, state, msg);
                 break;

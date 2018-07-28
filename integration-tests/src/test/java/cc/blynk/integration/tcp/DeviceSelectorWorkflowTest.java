@@ -1,10 +1,8 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.BaseTest;
 import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
-import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
@@ -12,20 +10,12 @@ import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.controls.Terminal;
 import cc.blynk.server.core.model.widgets.outputs.LCD;
-import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.model.widgets.ui.table.Table;
-import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
-import cc.blynk.utils.FileUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.nio.ByteBuffer;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import static cc.blynk.integration.TestUtil.appSync;
 import static cc.blynk.integration.TestUtil.b;
@@ -216,90 +206,6 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.verifyResult(hardware(6, "vw 88 0"));
         hardClient2.never(hardware(6, "vw 88 0"));
         clientPair.appClient.verifyResult(appSync(6, b("1-200000 vw 88 0")));
-    }
-
-    @Test
-    public void testGetHistoryGraphDataForDeviceSelector() throws Exception {
-        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
-        device0.status = Status.ONLINE;
-        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
-        device1.status = Status.OFFLINE;
-
-        clientPair.appClient.createDevice(1, device1);
-        Device device = clientPair.appClient.parseDevice();
-        assertNotNull(device);
-        assertNotNull(device.token);
-        clientPair.appClient.verifyResult(createDevice(1, device));
-
-        clientPair.appClient.createWidget(1, "{\"id\":200000, \"width\":1, \"height\":1, \"value\":0, \"x\":0, \"y\":0, \"label\":\"Some Text\", \"type\":\"DEVICE_SELECTOR\"}");
-        clientPair.appClient.createWidget(1, "{\"id\":88, \"width\":1, \"height\":1, \"deviceId\":200000, \"x\":0, \"y\":0, \"label\":\"Button\", \"type\":\"BUTTON\", \"pinType\":\"VIRTUAL\", \"pin\":88}");
-        clientPair.appClient.createWidget(1, "{\"id\":89, \"width\":1, \"height\":1, \"deviceId\":200000, \"x\":0, \"y\":0, \"label\":\"Display\", \"type\":\"DIGIT4_DISPLAY\", \"pinType\":\"VIRTUAL\", \"pin\":89}");
-        clientPair.appClient.verifyResult(ok(2));
-        clientPair.appClient.verifyResult(ok(3));
-        clientPair.appClient.verifyResult(ok(4));
-
-        clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.parseDevices(5);
-
-        assertNotNull(devices);
-        assertEquals(2, devices.length);
-
-        assertEqualDevice(device0, devices[0]);
-        assertEqualDevice(device1, devices[1]);
-
-        String tempDir = holder.props.getProperty("data.folder");
-
-        final Path userReportFolder = Paths.get(tempDir, "data", getUserName());
-        if (Files.notExists(userReportFolder)) {
-            Files.createDirectories(userReportFolder);
-        }
-
-        Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
-        Path pinReportingDataPath2 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
-
-        FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
-        FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
-
-        FileUtils.write(pinReportingDataPath2, 3D, 33);
-        FileUtils.write(pinReportingDataPath2, 4D, 44);
-
-        clientPair.appClient.reset();
-
-        clientPair.appClient.send("getgraphdata 1-200000 d 8 24 h");
-        BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
-
-        assertNotNull(graphDataResponse);
-        byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
-        ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
-
-        assertEquals(1, bb.getInt());
-        assertEquals(2, bb.getInt());
-        assertEquals(1.11D, bb.getDouble(), 0.1);
-        assertEquals(1111111, bb.getLong());
-        assertEquals(1.22D, bb.getDouble(), 0.1);
-        assertEquals(2222222, bb.getLong());
-
-        //changing device
-        clientPair.appClient.send("hardware 1 vu 200000 1");
-        clientPair.appClient.verifyResult(ok(2));
-
-        clientPair.appClient.reset();
-
-        clientPair.appClient.send("getgraphdata 1-200000 d 8 24 h");
-        graphDataResponse = clientPair.appClient.getBinaryBody();
-
-        assertNotNull(graphDataResponse);
-        decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
-        bb = ByteBuffer.wrap(decompressedGraphData);
-
-        assertEquals(1, bb.getInt());
-        assertEquals(2, bb.getInt());
-        assertEquals(3D, bb.getDouble(), 0.1);
-        assertEquals(33, bb.getLong());
-        assertEquals(4D, bb.getDouble(), 0.1);
-        assertEquals(44, bb.getLong());
     }
 
     @Test
