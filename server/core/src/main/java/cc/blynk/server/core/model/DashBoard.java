@@ -234,30 +234,7 @@ public class DashBoard {
         return null;
     }
 
-    private static Widget[] copyWidgetsAndPreservePrevValues(Widget[] oldWidgets, Widget[] newWidgets) {
-        ArrayList<Widget> copy = new ArrayList<>(newWidgets.length);
-        for (Widget newWidget : newWidgets) {
-            Widget oldWidget = getWidgetById(oldWidgets, newWidget.id);
-
-            Widget copyWidget = newWidget.copy();
-
-            //for now erasing only for this types, not sure about DeviceTiles
-            if (copyWidget instanceof OnePinWidget
-                    || copyWidget instanceof MultiPinWidget
-                    || copyWidget instanceof ReportingWidget) {
-                copyWidget.erase();
-            }
-
-            if (oldWidget != null) {
-                copyWidget.updateValue(oldWidget);
-            }
-            copy.add(copyWidget);
-        }
-
-        return copy.toArray(new Widget[newWidgets.length]);
-    }
-
-    public Superchart getPinGraph(int deviceId, byte pin, PinType pinType) {
+    public Widget getWidgetWithLoggedPin(int deviceId, byte pin, PinType pinType) {
         for (Widget widget : widgets) {
             if (widget instanceof Superchart) {
                 Superchart graph = (Superchart) widget;
@@ -278,7 +255,12 @@ public class DashBoard {
                     }
                 }
             }
-
+            if (widget instanceof ReportingWidget) {
+                ReportingWidget reportingWidget = (ReportingWidget) widget;
+                if (reportingWidget.hasPin(pin, pinType, deviceId)) {
+                    return reportingWidget;
+                }
+            }
         }
         return null;
     }
@@ -490,11 +472,8 @@ public class DashBoard {
         pinsStorage.entrySet().removeIf(entry -> entry.getKey().deviceId == deviceId);
         for (Widget widget : widgets) {
             if (widget.isAssignedToDevice(deviceId)) {
-                if (widget instanceof DeviceTiles) {
-                    //deviceTiles has a bit different removal logic, so we remove manually here
-                    DeviceTiles deviceTiles = (DeviceTiles) widget;
-                    deviceTiles.eraseTiles();
-                } else {
+                //deviceTiles has a bit different removal logic, so we skip it here
+                if (!(widget instanceof DeviceTiles)) {
                     widget.erase();
                 }
             }
@@ -537,17 +516,15 @@ public class DashBoard {
         this.updatedAt = System.currentTimeMillis();
     }
 
-    public void cleanPinStorageInternalWithoutUpdatedAt(Widget widget, boolean removeProperties) {
-        if (widget instanceof OnePinWidget) {
-            OnePinWidget onePinWidget = (OnePinWidget) widget;
-            cleanPinStorage(onePinWidget, -1, removeProperties);
-        } else if (widget instanceof MultiPinWidget) {
-            MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
-            cleanPinStorage(multiPinWidget, -1, removeProperties);
-        } else if (widget instanceof DeviceTiles) {
-            DeviceTiles deviceTiles = (DeviceTiles) widget;
-            cleanPinStorage(deviceTiles, removeProperties);
+    private static Tag[] copyTags(Tag[] tagsToCopy) {
+        if (tagsToCopy.length == 0) {
+            return tagsToCopy;
         }
+        Tag[] copy = new Tag[tagsToCopy.length];
+        for (int i = 0; i < copy.length; i++) {
+            copy[i] = tagsToCopy[i].copy();
+        }
+        return copy;
     }
 
     private void cleanPinStorage(DeviceTiles deviceTiles, boolean removeProperties) {
@@ -682,15 +659,40 @@ public class DashBoard {
         }
     }
 
-    private Tag[] copyTags(Tag[] tagsToCopy) {
-        if (tagsToCopy.length == 0) {
-            return tagsToCopy;
+    private static Widget[] copyWidgetsAndPreservePrevValues(Widget[] oldWidgets, Widget[] newWidgets) {
+        ArrayList<Widget> copy = new ArrayList<>(newWidgets.length);
+        for (Widget newWidget : newWidgets) {
+            Widget oldWidget = getWidgetById(oldWidgets, newWidget.id);
+
+            Widget copyWidget = newWidget.copy();
+
+            //for now erasing only for this types, not sure about DeviceTiles
+            if (copyWidget instanceof OnePinWidget
+                    || copyWidget instanceof MultiPinWidget
+                    || copyWidget instanceof ReportingWidget) {
+                copyWidget.erase();
+            }
+
+            if (oldWidget != null) {
+                copyWidget.updateValue(oldWidget);
+            }
+            copy.add(copyWidget);
         }
-        Tag[] copy = new Tag[tagsToCopy.length];
-        for (int i = 0; i < copy.length; i++) {
-            copy[i] = tagsToCopy[i].copy();
+
+        return copy.toArray(new Widget[newWidgets.length]);
+    }
+
+    private void cleanPinStorageInternalWithoutUpdatedAt(Widget widget, boolean removeProperties) {
+        if (widget instanceof OnePinWidget) {
+            OnePinWidget onePinWidget = (OnePinWidget) widget;
+            cleanPinStorage(onePinWidget, -1, removeProperties);
+        } else if (widget instanceof MultiPinWidget) {
+            MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
+            cleanPinStorage(multiPinWidget, -1, removeProperties);
+        } else if (widget instanceof DeviceTiles) {
+            DeviceTiles deviceTiles = (DeviceTiles) widget;
+            cleanPinStorage(deviceTiles, removeProperties);
         }
-        return copy;
     }
 
     //removes devices that has no widgets assigned to

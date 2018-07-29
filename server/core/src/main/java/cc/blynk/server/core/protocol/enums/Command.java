@@ -24,8 +24,6 @@ public final class Command {
     public static final short ACTIVATE_DASHBOARD = 7;
     public static final short DEACTIVATE_DASHBOARD = 8;
     public static final short REFRESH_TOKEN = 9;
-    public static final short GET_GRAPH_DATA = 10;
-    public static final short GET_GRAPH_DATA_RESPONSE = 11;
     //HARDWARE commands
     public static final short TWEET = 12;
     public static final short EMAIL = 13;
@@ -163,10 +161,8 @@ public final class Command {
             put(ACTIVATE_DASHBOARD, "Activate");
             put(DEACTIVATE_DASHBOARD, "Deactivate");
             put(REFRESH_TOKEN, "RefreshToken");
-            put(GET_GRAPH_DATA, "GetGraphDataRequest");
             put(GET_ENHANCED_GRAPH_DATA, "GetEnhancedGraphDataRequest");
             put(DELETE_ENHANCED_GRAPH_DATA, "DeleteEnhancedGraphDataRequest");
-            put(GET_GRAPH_DATA_RESPONSE, "GetGraphDataResponse");
             put(EXPORT_GRAPH_DATA, "ExportGraphData");
             put(SET_WIDGET_PROPERTY, "setWidgetProperty");
             put(BRIDGE, "Bridge");

@@ -8,7 +8,6 @@ import cc.blynk.server.application.handlers.main.logic.LogoutLogic;
 import cc.blynk.server.application.handlers.main.logic.dashboard.device.GetDevicesLogic;
 import cc.blynk.server.application.handlers.main.logic.graph.DeleteDeviceDataLogic;
 import cc.blynk.server.application.handlers.main.logic.graph.GetEnhancedGraphDataLogic;
-import cc.blynk.server.application.handlers.main.logic.graph.GetGraphDataLogic;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareStateHolder;
 import cc.blynk.server.application.handlers.sharing.logic.HardwareAppShareLogic;
 import cc.blynk.server.common.BaseSimpleChannelInboundHandler;
@@ -22,7 +21,6 @@ import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_DEVICE_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICES;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
-import static cc.blynk.server.core.protocol.enums.Command.GET_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.core.protocol.enums.Command.LOGOUT;
@@ -61,9 +59,6 @@ public class AppShareHandler extends BaseSimpleChannelInboundHandler<StringMessa
                 break;
             case ADD_PUSH_TOKEN :
                 AddPushLogic.messageReceived(ctx, state, msg);
-                break;
-            case GET_GRAPH_DATA :
-                GetGraphDataLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
             case GET_ENHANCED_GRAPH_DATA :
                 GetEnhancedGraphDataLogic.messageReceived(holder, ctx, state, msg);

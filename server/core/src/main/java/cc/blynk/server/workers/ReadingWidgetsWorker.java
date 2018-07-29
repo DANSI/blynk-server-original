@@ -47,7 +47,7 @@ public class ReadingWidgetsWorker implements Runnable {
     public void run() {
         long now = System.currentTimeMillis();
         try {
-            process(now, allowRunWithoutApp);
+            process(now);
             totalTime += System.currentTimeMillis() - now;
         } catch (Exception e) {
             log.error("Error processing reading widgets. ", e);
@@ -63,7 +63,7 @@ public class ReadingWidgetsWorker implements Runnable {
         }
     }
 
-    private void process(long now, boolean allowRunWithoutApp) {
+    private void process(long now) {
         for (Map.Entry<UserKey, Session> entry : sessionDao.userSession.entrySet()) {
             Session session = entry.getValue();
             //for now checking widgets for active app only
@@ -102,7 +102,7 @@ public class ReadingWidgetsWorker implements Runnable {
                     for (Widget tileWidget : tileTemplate.widgets) {
                         if (tileWidget instanceof FrequencyWidget) {
                             FrequencyWidget frequencyWidget = (FrequencyWidget) tileWidget;
-                            if (channel.isWritable()) {
+                            if (frequencyWidget.hasReadingInterval() && channel.isWritable()) {
                                 frequencyWidget.writeReadingCommand(channel);
                                 tickedWidgets++;
                             }

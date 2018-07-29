@@ -38,6 +38,13 @@ public class Tile {
         return this.deviceId == deviceId && dataStream != null && dataStream.isSame(pin, pinType);
     }
 
+    public boolean updateIfSame(int deviceId, DataStream dataStream) {
+        if (dataStream != null) {
+            return updateIfSame(deviceId, dataStream.pin, dataStream.pinType, dataStream.value);
+        }
+        return false;
+    }
+
     public boolean updateIfSame(int deviceId, byte pin, PinType pinType, String value) {
         if (isSame(deviceId, pin, pinType)) {
             this.dataStream.value = value;

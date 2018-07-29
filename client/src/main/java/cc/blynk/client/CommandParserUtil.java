@@ -32,7 +32,6 @@ import static cc.blynk.server.core.protocol.enums.Command.GET_CLONE_CODE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICES;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
-import static cc.blynk.server.core.protocol.enums.Command.GET_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_CLONE_CODE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROVISION_TOKEN;
@@ -108,8 +107,6 @@ public final class CommandParserUtil {
                 return HARDWARE_LOGIN;
             case "logout" :
                 return LOGOUT;
-            case "getgraphdata" :
-                return GET_GRAPH_DATA;
             case "getenhanceddata" :
                 return GET_ENHANCED_GRAPH_DATA;
             case "deleteenhanceddata" :

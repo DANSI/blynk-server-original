@@ -586,7 +586,7 @@ public class ReportingTest extends BaseTest {
 
         report = clientPair.appClient.parseReportFromResponse(2);
         assertNotNull(report);
-        assertEquals(System.currentTimeMillis(), report.nextReportAt, 3000);
+        assertEquals(System.currentTimeMillis(), report.nextReportAt, 3500);
 
         String date = LocalDate.now(report.tzName).toString();
         String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".zip";

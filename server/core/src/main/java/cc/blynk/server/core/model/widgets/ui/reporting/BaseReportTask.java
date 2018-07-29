@@ -162,14 +162,13 @@ public abstract class BaseReportTask implements Runnable {
     }
 
     private boolean generateReport(Path output, DashBoard dash, int fetchCount, long startFrom) throws Exception {
-        //todo for now supporting only some types of output format
         switch (report.reportOutput) {
-            case EXCEL_TAB_PER_DEVICE:
             case MERGED_CSV:
                 return merged(output, dash, fetchCount, startFrom);
             case CSV_FILE_PER_DEVICE:
                 return filePerDevice(output, dash, fetchCount, startFrom);
             case CSV_FILE_PER_DEVICE_PER_PIN:
+            case EXCEL_TAB_PER_DEVICE:
             default:
                 return filePerDevicePerPin(output, dash, fetchCount, startFrom);
         }

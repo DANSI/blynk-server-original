@@ -137,7 +137,6 @@ public class HttpsAdminServerTest extends BaseTest {
         try (CloseableHttpResponse response = httpclient.execute(loadLoginPageRequest)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String loginPage = TestUtil.consumeText(response);
-            //todo add full page match?
             assertTrue(loginPage.contains("Use your Admin account to log in"));
         }
 
@@ -147,7 +146,6 @@ public class HttpsAdminServerTest extends BaseTest {
         try (CloseableHttpResponse response = httpclient.execute(loadAdminPage)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
             String adminPage = TestUtil.consumeText(response);
-            //todo add full page match?
             assertTrue(adminPage.contains("Blynk Administration"));
             assertTrue(adminPage.contains("admin.js"));
         }

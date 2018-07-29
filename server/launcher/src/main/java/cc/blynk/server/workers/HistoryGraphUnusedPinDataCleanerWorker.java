@@ -49,9 +49,6 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
             log.info("Start removing unused reporting data...");
 
             long now = System.currentTimeMillis();
-            //todo
-            //actually, it is better to do not save data for such pins
-            //but fow now this approach is simpler and quicker
             int result = removeUnsedInHistoryGraphData();
 
             lastStart = now;

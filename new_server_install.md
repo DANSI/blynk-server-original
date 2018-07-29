@@ -9,11 +9,15 @@
         sudo ntpd -gq
         sudo service ntp start
 
+        sudo apt-get upgrade
+        sudo apt-get dist-upgrade
+        sudo apt-get autoremove --purge
+
         sudo add-apt-repository ppa:linuxuprising/java
         sudo apt-get update
         sudo apt-get install oracle-java10-installer
         
-        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.39.3/server-0.39.3.jar"
+        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.39.4/server-0.39.4.jar"
         
 
 server.properties

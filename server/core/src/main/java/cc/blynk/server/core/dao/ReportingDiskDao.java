@@ -4,6 +4,7 @@ import cc.blynk.server.core.dao.functions.GraphFunction;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.AggregationFunctionType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
@@ -310,12 +311,14 @@ public class ReportingDiskDao implements Closeable {
         }
 
         //store history data only for the pins assigned to the superchart
-        Superchart graphAssignedToPin = dash.getPinGraph(deviceId, pin, pinType);
-        if (graphAssignedToPin != null) {
+        Widget widgetWithLogPins = dash.getWidgetWithLoggedPin(deviceId, pin, pinType);
+        if (widgetWithLogPins != null) {
             BaseReportingKey key = new BaseReportingKey(user.email, user.appName, dash.id, deviceId, pinType, pin);
             averageAggregator.collect(key, ts, doubleVal);
-            if (graphAssignedToPin.hasLivePeriodsSelected()) {
-                rawDataCacheForGraphProcessor.collect(key, new GraphValue(doubleVal, ts));
+            if (widgetWithLogPins instanceof Superchart) {
+                if (((Superchart) widgetWithLogPins).hasLivePeriodsSelected()) {
+                    rawDataCacheForGraphProcessor.collect(key, new GraphValue(doubleVal, ts));
+                }
             }
         }
     }

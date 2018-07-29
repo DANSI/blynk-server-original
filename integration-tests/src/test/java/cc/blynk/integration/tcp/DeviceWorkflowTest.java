@@ -69,13 +69,6 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
     }
 
     @Test
-    public void testDeleteGraphCommandWorks() throws Exception {
-        clientPair.appClient.send("getgraphdata 1-0 d 8 del");
-
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
-    }
-
-    @Test
     public void testSendHardwareCommandToMultipleDevices() throws Exception {
         Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
         device0.status = Status.ONLINE;

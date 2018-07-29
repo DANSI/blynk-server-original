@@ -21,6 +21,7 @@ import java.util.Collections;
 
 import static cc.blynk.integration.TestUtil.createDefaultHolder;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -67,8 +68,10 @@ public class AcmeTest extends BaseTest {
     public void testCreateCertificates() throws Exception {
         final String STAGING = "acme://letsencrypt.org/staging";
         ContentHolder contentHolder = holder2.sslContextHolder.contentHolder;
-        AcmeClient acmeClient = new AcmeClient(STAGING, "test@blynk.cc", "test.blynk.cc", contentHolder);
+        assertNull(contentHolder.content);
+        AcmeClient acmeClient = new AcmeClient(STAGING, "test@blynk.cc", "let.blynk.cc", contentHolder);
         acmeClient.requestCertificate();
+        assertNotNull(contentHolder.content);
     }
 
     @Test

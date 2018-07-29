@@ -25,7 +25,6 @@ import static cc.blynk.server.core.protocol.enums.Command.BRIDGE;
 import static cc.blynk.server.core.protocol.enums.Command.DELETE_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL;
 import static cc.blynk.server.core.protocol.enums.Command.EXPORT_GRAPH_DATA;
-import static cc.blynk.server.core.protocol.enums.Command.GET_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_RESEND_FROM_BLUETOOTH;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_SYNC;
@@ -88,7 +87,6 @@ public abstract class BaseClient {
 
         if (command == HARDWARE
                 || command == SHARE_LOGIN
-                || command == GET_GRAPH_DATA
                 || command == LOAD_PROFILE_GZIPPED
                 || command == HARDWARE_RESEND_FROM_BLUETOOTH
                 || command == BRIDGE
