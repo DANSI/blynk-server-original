@@ -706,7 +706,6 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.deleteDash(10);
         clientPair.appClient.verifyResult(ok(2));
 
-        //todo on delete also close existing connections?
         TestHardClient newHardClient = new TestHardClient("localhost", properties.getHttpPort());
         newHardClient.start();
         newHardClient.login(token);
@@ -868,7 +867,6 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(illegalCommand(2)));
 
         clientPair.appClient.send("hardware 1 ar 1 1");
-        //todo check no response
         verify(clientPair.appClient.responseMock, never()).channelRead(any(), eq(ok(3)));
 
         clientPair.appClient.activate(1);

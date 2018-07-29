@@ -68,7 +68,6 @@ public final class AnnotationsProcessor {
         return processors.toArray(new HandlerWrapper[0]);
     }
 
-    //todo simplify
     private static Param resolveParam(Parameter parameter, String contentType) {
         cc.blynk.core.http.annotation.QueryParam queryParamAnnotation =
                 parameter.getAnnotation(cc.blynk.core.http.annotation.QueryParam.class);

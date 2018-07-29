@@ -511,17 +511,15 @@ public class DashBoard {
         this.updatedAt = System.currentTimeMillis();
     }
 
-    public void cleanPinStorageInternalWithoutUpdatedAt(Widget widget, boolean removeProperties) {
-        if (widget instanceof OnePinWidget) {
-            OnePinWidget onePinWidget = (OnePinWidget) widget;
-            cleanPinStorage(onePinWidget, -1, removeProperties);
-        } else if (widget instanceof MultiPinWidget) {
-            MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
-            cleanPinStorage(multiPinWidget, -1, removeProperties);
-        } else if (widget instanceof DeviceTiles) {
-            DeviceTiles deviceTiles = (DeviceTiles) widget;
-            cleanPinStorage(deviceTiles, removeProperties);
+    private static Tag[] copyTags(Tag[] tagsToCopy) {
+        if (tagsToCopy.length == 0) {
+            return tagsToCopy;
         }
+        Tag[] copy = new Tag[tagsToCopy.length];
+        for (int i = 0; i < copy.length; i++) {
+            copy[i] = tagsToCopy[i].copy();
+        }
+        return copy;
     }
 
     private void cleanPinStorage(DeviceTiles deviceTiles, boolean removeProperties) {
@@ -679,15 +677,17 @@ public class DashBoard {
         return copy.toArray(new Widget[newWidgets.length]);
     }
 
-    private Tag[] copyTags(Tag[] tagsToCopy) {
-        if (tagsToCopy.length == 0) {
-            return tagsToCopy;
+    private void cleanPinStorageInternalWithoutUpdatedAt(Widget widget, boolean removeProperties) {
+        if (widget instanceof OnePinWidget) {
+            OnePinWidget onePinWidget = (OnePinWidget) widget;
+            cleanPinStorage(onePinWidget, -1, removeProperties);
+        } else if (widget instanceof MultiPinWidget) {
+            MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
+            cleanPinStorage(multiPinWidget, -1, removeProperties);
+        } else if (widget instanceof DeviceTiles) {
+            DeviceTiles deviceTiles = (DeviceTiles) widget;
+            cleanPinStorage(deviceTiles, removeProperties);
         }
-        Tag[] copy = new Tag[tagsToCopy.length];
-        for (int i = 0; i < copy.length; i++) {
-            copy[i] = tagsToCopy[i].copy();
-        }
-        return copy;
     }
 
     //removes devices that has no widgets assigned to

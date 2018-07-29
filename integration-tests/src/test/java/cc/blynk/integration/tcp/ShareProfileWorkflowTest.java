@@ -111,7 +111,6 @@ public class ShareProfileWorkflowTest extends SingleServerInstancePerTest {
 
         profile.dashBoards[0].updatedAt = serverDash.updatedAt;
         assertNull(serverDash.sharedToken);
-        //todo fix
         serverDash.devices = null;
         profile.dashBoards[0].devices = null;
 
@@ -781,7 +780,6 @@ public class ShareProfileWorkflowTest extends SingleServerInstancePerTest {
         profile.dashBoards[0].updatedAt = serverDash.updatedAt;
         assertNull(serverDash.sharedToken);
 
-        //todo fix
         serverDash.devices = null;
         profile.dashBoards[0].devices = null;
 

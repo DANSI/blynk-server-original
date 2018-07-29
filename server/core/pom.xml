@@ -24,7 +24,6 @@
             <version>${disruptor.version}</version>
         </dependency>
 
-        <!-- TODO ADD BUILD PROFILES -->
         <!-- SHOULD BE ADDED ONLY FOR SPECIFIC BUILDS -->
         <dependency>
             <groupId>io.netty</groupId>
