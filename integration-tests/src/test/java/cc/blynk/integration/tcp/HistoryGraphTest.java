@@ -20,6 +20,11 @@ import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphType;
 import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
+import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
+import cc.blynk.server.core.model.widgets.ui.reporting.source.DeviceReportSource;
+import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportDataStream;
+import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportSource;
+import cc.blynk.server.core.model.widgets.ui.reporting.source.TileTemplateReportSource;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.model.widgets.ui.tiles.templates.PageTileTemplate;
@@ -1045,6 +1050,108 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         assertEquals(1, holder.reportingDiskDao.averageAggregator.getHourly().size());
         assertEquals(1, holder.reportingDiskDao.averageAggregator.getDaily().size());
         assertEquals(1, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+    }
+
+    @Test
+    public void makeSureReportingIsPresentWhenPinAssignedToReporting() throws Exception {
+        ReportingWidget reportingWidget = new ReportingWidget();
+        reportingWidget.id = 432;
+        reportingWidget.width = 8;
+        reportingWidget.height = 4;
+        reportingWidget.reportSources = new ReportSource[] {
+                new DeviceReportSource(
+                        new ReportDataStream[] {new ReportDataStream((byte) 88, PinType.VIRTUAL, null, false)},
+                        new int[] {0}
+                )
+        };
+
+        clientPair.appClient.createWidget(1, reportingWidget);
+        clientPair.appClient.verifyResult(ok(1));
+        clientPair.appClient.reset();
+
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+
+        clientPair.hardwareClient.send("hardware vw 88 111");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
+
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+    }
+
+    @Test
+    public void makeSureReportingIsPresentWhenPinAssignedToReporting2() throws Exception {
+        ReportingWidget reportingWidget = new ReportingWidget();
+        reportingWidget.id = 432;
+        reportingWidget.width = 8;
+        reportingWidget.height = 4;
+        reportingWidget.reportSources = new ReportSource[] {
+                new TileTemplateReportSource(
+                        new ReportDataStream[] {new ReportDataStream((byte) 88, PinType.VIRTUAL, null, false)},
+                        0,
+                        new int[] {0}
+                )
+        };
+
+        clientPair.appClient.createWidget(1, reportingWidget);
+        clientPair.appClient.verifyResult(ok(1));
+        clientPair.appClient.reset();
+
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+
+        clientPair.hardwareClient.send("hardware vw 88 111");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 88 111"))));
+
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+    }
+
+    @Test
+    public void makeSureReportingIsPresentWhenPinAssignedToReporting3() throws Exception {
+        ReportingWidget reportingWidget = new ReportingWidget();
+        reportingWidget.id = 432;
+        reportingWidget.width = 8;
+        reportingWidget.height = 4;
+        reportingWidget.reportSources = new ReportSource[] {
+                new TileTemplateReportSource(
+                        new ReportDataStream[] {new ReportDataStream((byte) 88, PinType.VIRTUAL, null, false),
+                                                new ReportDataStream((byte) 89, PinType.VIRTUAL, null, false)},
+                        0,
+                        new int[] {0}
+                )
+        };
+
+        clientPair.appClient.createWidget(1, reportingWidget);
+        clientPair.appClient.verifyResult(ok(1));
+        clientPair.appClient.reset();
+
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(0, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
+        assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
+
+        clientPair.hardwareClient.send("hardware vw 89 111");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new HardwareMessage(1, b("1-0 vw 89 111"))));
+
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getMinute().size());
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getHourly().size());
+        assertEquals(1, holder.reportingDiskDao.averageAggregator.getDaily().size());
+        assertEquals(0, holder.reportingDiskDao.rawDataCacheForGraphProcessor.rawStorage.size());
         assertEquals(0, holder.reportingDiskDao.rawDataProcessor.rawStorage.size());
     }
 

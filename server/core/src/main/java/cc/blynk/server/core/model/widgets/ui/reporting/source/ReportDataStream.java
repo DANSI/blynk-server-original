@@ -32,6 +32,10 @@ public class ReportDataStream {
         this.isSelected = isSelected;
     }
 
+    public boolean isSame(byte pin, PinType pinType) {
+        return this.pin == pin && this.pinType == pinType;
+    }
+
     public boolean isValid() {
         return DataStream.isValid(pin, pinType);
     }

@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.widgets.ui.reporting;
 
+import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.DeviceCleaner;
 import cc.blynk.server.core.model.widgets.NoPinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -56,6 +57,15 @@ public class ReportingWidget extends NoPinWidget implements DeviceCleaner {
             }
         }
         return -1;
+    }
+
+    public boolean hasPin(byte pin, PinType pinType, int deviceId) {
+        for (ReportSource reportSource : reportSources) {
+            if (reportSource.isSame(pin, pinType, deviceId)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

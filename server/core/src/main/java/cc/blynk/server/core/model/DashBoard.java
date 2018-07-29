@@ -234,7 +234,7 @@ public class DashBoard {
         return null;
     }
 
-    public Superchart getPinGraph(int deviceId, byte pin, PinType pinType) {
+    public Widget getWidgetWithLoggedPin(int deviceId, byte pin, PinType pinType) {
         for (Widget widget : widgets) {
             if (widget instanceof Superchart) {
                 Superchart graph = (Superchart) widget;
@@ -255,7 +255,12 @@ public class DashBoard {
                     }
                 }
             }
-
+            if (widget instanceof ReportingWidget) {
+                ReportingWidget reportingWidget = (ReportingWidget) widget;
+                if (reportingWidget.hasPin(pin, pinType, deviceId)) {
+                    return reportingWidget;
+                }
+            }
         }
         return null;
     }

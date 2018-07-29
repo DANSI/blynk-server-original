@@ -1,6 +1,8 @@
 package cc.blynk.server.core.model.widgets.ui.reporting.source;
 
+import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.DeviceCleaner;
+import cc.blynk.utils.ArrayUtil;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
@@ -28,5 +30,14 @@ public abstract class ReportSource implements DeviceCleaner {
 
     public boolean isValid() {
         return reportDataStreams.length > 0;
+    }
+
+    public boolean isSame(byte pin, PinType pinType, int deviceId) {
+        for (ReportDataStream reportDataStream : reportDataStreams) {
+            if (reportDataStream.isSame(pin, pinType) && ArrayUtil.contains(getDeviceIds(), deviceId)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
