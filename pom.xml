@@ -170,7 +170,7 @@
         <jackson-databind.version>2.9.6</jackson-databind.version>
         <disruptor.version>3.4.2</disruptor.version>
         <async-http-client.version>2.5.2</async-http-client.version>
-        <postgresql.version>42.2.2</postgresql.version>
+        <postgresql.version>42.2.4</postgresql.version>
         <HikariCP.version>3.2.0</HikariCP.version>
         <qrgen.version>2.2.0</qrgen.version>
         <bcpg-jdk15on.version>1.60</bcpg-jdk15on.version>
