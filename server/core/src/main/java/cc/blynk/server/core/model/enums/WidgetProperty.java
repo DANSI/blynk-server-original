@@ -22,6 +22,7 @@ public enum WidgetProperty {
     URL("url"),
     STEP("step"),
     VALUE_FORMATTING("valueFormatting"),
+    SUFFIX("suffix"),
     FRACTION("maximumFractionDigits"),
     OPACITY("opacity"),
     SCALE("scale"),
@@ -65,6 +66,8 @@ public enum WidgetProperty {
                 return STEP;
             case "valueFormatting" :
                 return VALUE_FORMATTING;
+            case "suffix" :
+                return SUFFIX;
             case "maximumFractionDigits" :
                 return FRACTION;
             default:

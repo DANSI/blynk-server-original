@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.widgets.outputs;
 
 import cc.blynk.server.core.model.enums.PinMode;
+import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.widgets.OnePinReadingWidget;
 import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 
@@ -16,6 +17,18 @@ public class LabeledValueDisplay extends OnePinReadingWidget {
     private String valueFormatting;
 
     private FontSize fontSize;
+
+    @Override
+    public void setProperty(WidgetProperty property, String propertyValue) {
+        switch (property) {
+            case VALUE_FORMATTING :
+                this.valueFormatting = propertyValue;
+                break;
+            default:
+                super.setProperty(property, propertyValue);
+                break;
+        }
+    }
 
     @Override
     public PinMode getModeType() {
