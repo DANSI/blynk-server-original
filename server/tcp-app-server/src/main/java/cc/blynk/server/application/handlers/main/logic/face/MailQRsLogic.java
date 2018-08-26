@@ -14,6 +14,7 @@ import cc.blynk.server.notifications.mail.QrHolder;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.TokenGeneratorUtil;
 import cc.blynk.utils.properties.Placeholders;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import net.glxn.qrgen.core.image.ImageType;
 import net.glxn.qrgen.javase.QRCode;
@@ -76,8 +77,9 @@ public final class MailQRsLogic {
     private void makePublishPreviewEmail(ChannelHandlerContext ctx, DashBoard dash,
                                          ProvisionType provisionType, String to,
                                          String publishAppName, String publishAppId, int msgId) {
-        var subj = publishAppName + " - App details";
-        var channel = ctx.channel();
+        String subj = publishAppName + " - App details";
+        Channel channel = ctx.channel();
+        String dashName = dash.getNameOrDefault();
         if (provisionType == ProvisionType.DYNAMIC) {
             blockingIOProcessor.execute(() -> {
                 try {
@@ -91,7 +93,7 @@ public final class MailQRsLogic {
                     }
 
                     String finalBody = textHolder.dynamicMailBody
-                            .replace(Placeholders.PROJECT_NAME, dash.name);
+                            .replace(Placeholders.PROJECT_NAME, dashName);
 
                     mailWrapper.sendWithAttachment(to, subj, finalBody, qrHolder);
                     channel.writeAndFlush(ok(msgId), channel.voidPromise());
@@ -110,7 +112,7 @@ public final class MailQRsLogic {
                     }
 
                     String finalBody = textHolder.staticMailBody
-                            .replace(Placeholders.PROJECT_NAME, dash.name)
+                            .replace(Placeholders.PROJECT_NAME, dashName)
                             .replace(Placeholders.DYNAMIC_SECTION, sb.toString());
 
                     mailWrapper.sendWithAttachment(to, subj, finalBody, qrHolders);

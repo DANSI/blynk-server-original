@@ -126,6 +126,10 @@ public class DashBoard {
         return name == null ? "" : name;
     }
 
+    public String getNameOrDefault() {
+        return name == null ? "New Project" : name;
+    }
+
     public void putPinPropertyStorageValue(int deviceId, PinType type, byte pin,
                                            WidgetProperty property, String value) {
         putPinStorageValue(new PinPropertyStorageKey(deviceId, type, pin, property), value);

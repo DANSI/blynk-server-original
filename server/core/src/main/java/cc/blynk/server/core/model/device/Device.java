@@ -122,6 +122,10 @@ public class Device implements Target {
         this.deviceOtaInfo = null;
     }
 
+    public String getNameOrDefault() {
+        return name == null ? "New Device" : name;
+    }
+
     //for single device update device always updated when ota is initiated.
     public void updateOTAInfo(String initiatedBy) {
         long now = System.currentTimeMillis();
