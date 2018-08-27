@@ -158,15 +158,15 @@
     <properties>
         <!-- maven plugins -->
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
-        <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
         <maven-shade-plugin.version>3.1.1</maven-shade-plugin.version>
-        <maven-surefire-plugin.version>2.21.0</maven-surefire-plugin.version>
+        <maven-surefire-plugin.version>2.22.0</maven-surefire-plugin.version>
         <maven-checkstyle-plugin.version>2.17</maven-checkstyle-plugin.version>
 
         <!-- dependencies -->
-        <netty.version>4.1.28.Final</netty.version>
-        <netty.boring.ssl.version>2.0.12.Final</netty.boring.ssl.version>
-        <log4j2.version>2.11.0</log4j2.version>
+        <netty.version>4.1.29.Final</netty.version>
+        <netty.boring.ssl.version>2.0.14.Final</netty.boring.ssl.version>
+        <log4j2.version>2.11.1</log4j2.version>
         <jackson-databind.version>2.9.6</jackson-databind.version>
         <disruptor.version>3.4.2</disruptor.version>
         <async-http-client.version>2.5.2</async-http-client.version>
