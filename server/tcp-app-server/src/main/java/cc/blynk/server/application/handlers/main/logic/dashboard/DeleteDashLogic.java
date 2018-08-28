@@ -49,6 +49,7 @@ public final class DeleteDashLogic {
         holder.timerWorker.deleteTimers(state.userKey, dash);
         holder.tokenManager.deleteDash(dash);
         holder.sessionDao.closeHardwareChannelByDashId(state.userKey, dashId);
+        holder.reportScheduler.cancelStoredFuture(user, dashId);
 
         holder.blockingIOProcessor.executeHistory(() -> {
             for (Device device : dash.devices) {
