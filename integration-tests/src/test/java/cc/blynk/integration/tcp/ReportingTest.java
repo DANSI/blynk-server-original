@@ -459,6 +459,70 @@ public class ReportingTest extends BaseTest {
     }
 
     @Test
+    public void testReportIdRemovedFromSchedulerWhenDashIsRemoved() throws Exception {
+        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportSource reportSource = new TileTemplateReportSource(
+                new ReportDataStream[] {reportDataStream},
+                1,
+                new int[] {0}
+        );
+
+        ReportingWidget reportingWidget = new ReportingWidget();
+        reportingWidget.height = 1;
+        reportingWidget.width = 1;
+        reportingWidget.reportSources = new ReportSource[] {
+                reportSource
+        };
+
+        clientPair.appClient.createWidget(1, reportingWidget);
+        clientPair.appClient.verifyResult(ok(1));
+
+        clientPair.appClient.send("addEnergy " + "100000" + "\0" + "1370-3990-1414-55681");
+        clientPair.appClient.verifyResult(ok(2));
+
+        //a bit upfront
+        long now = System.currentTimeMillis() + 1000;
+
+        Report report = new Report(1, "DailyReport",
+                new ReportSource[] {reportSource},
+                new DailyReport(now, ReportDurationType.INFINITE, 0, 0), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, null, ZoneId.of("UTC"), 0, 0, null);
+        clientPair.appClient.createReport(1, report);
+
+        report = clientPair.appClient.parseReportFromResponse(3);
+        assertNotNull(report);
+        assertEquals(System.currentTimeMillis(), report.nextReportAt, 3000);
+
+        Report report2 = new Report(2, "DailyReport2",
+                new ReportSource[] {reportSource},
+                new DailyReport(now, ReportDurationType.INFINITE, now, now), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE, null, ZoneId.of("UTC"), 0, 0, null);
+        clientPair.appClient.createReport(1, report2);
+
+        report2 = clientPair.appClient.parseReportFromResponse(4);
+        assertNotNull(report2);
+        assertEquals(System.currentTimeMillis(), report2.nextReportAt, 3000);
+
+        int tries = 0;
+        while (holder.reportScheduler.getCompletedTaskCount() < 2 && tries < 20) {
+            sleep(100);
+            tries++;
+        }
+
+        verify(holder.mailWrapper, never()).sendReportEmail(eq("test@gmail.com"), eq("DailyReport"), any(), any());
+        verify(holder.mailWrapper, never()).sendReportEmail(eq("test@gmail.com"), eq("DailyReport2"), any(), any());
+        assertEquals(2, holder.reportScheduler.getCompletedTaskCount());
+        assertEquals(4, holder.reportScheduler.getTaskCount());
+
+        clientPair.appClient.deleteDash(1);
+        clientPair.appClient.verifyResult(ok(5));
+
+        assertEquals(2, holder.reportScheduler.getCompletedTaskCount());
+        assertEquals(2, holder.reportScheduler.getTaskCount());
+        assertEquals(0, holder.reportScheduler.map.size());
+    }
+
+    @Test
     public void testDailyReportWithSinglePointIsTriggeredAndNullName() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
         Path userReportFolder = Paths.get(tempDir, "data", getUserName());

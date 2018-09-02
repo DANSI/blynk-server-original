@@ -6,6 +6,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportDataStream;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportSource;
+import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.StringUtils;
@@ -131,6 +132,9 @@ public abstract class BaseReportTask implements Runnable {
         try {
             DashBoard dash = key.user.profile.getDashByIdOrThrow(key.dashId);
             report.lastRunResult = generateReport(userCsvFolder, dash, now);
+        } catch (IllegalCommandException illegalState) {
+            report.lastRunResult = ReportResult.ERROR;
+            log.debug("Dashboard is not exists anymore for the report {} for user {}. ", report.id, key.user.email);
         } catch (Exception e) {
             report.lastRunResult = ReportResult.ERROR;
             log.error("Error generating report {} for user {}. ", report.id, key.user.email);

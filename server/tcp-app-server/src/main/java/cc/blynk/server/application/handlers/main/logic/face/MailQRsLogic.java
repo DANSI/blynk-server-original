@@ -81,6 +81,7 @@ public final class MailQRsLogic {
                                          String publishAppName, String publishAppId, int msgId) {
         String subj = publishAppName + " - App details";
         Channel channel = ctx.channel();
+        String dashName = dash.getNameOrDefault();
         if (provisionType == ProvisionType.DYNAMIC) {
             blockingIOProcessor.execute(() -> {
                 try {
@@ -94,7 +95,7 @@ public final class MailQRsLogic {
                     }
 
                     String finalBody = textHolder.dynamicMailBody
-                            .replace(Placeholders.PROJECT_NAME, dash.name);
+                            .replace(Placeholders.PROJECT_NAME, dashName);
 
                     mailWrapper.sendWithAttachment(to, subj, finalBody, qrHolder);
                     channel.writeAndFlush(ok(msgId), channel.voidPromise());
@@ -113,7 +114,7 @@ public final class MailQRsLogic {
                     }
 
                     String finalBody = textHolder.staticMailBody
-                            .replace(Placeholders.PROJECT_NAME, dash.name)
+                            .replace(Placeholders.PROJECT_NAME, dashName)
                             .replace(Placeholders.DYNAMIC_SECTION, sb.toString());
 
                     mailWrapper.sendWithAttachment(to, subj, finalBody, qrHolders);

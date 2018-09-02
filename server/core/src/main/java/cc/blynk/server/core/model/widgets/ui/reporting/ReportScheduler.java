@@ -11,6 +11,7 @@ import cc.blynk.utils.BlynkTPFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
@@ -106,6 +107,21 @@ public class ReportScheduler extends ScheduledThreadPoolExecutor {
             map.put(baseReportTask.key, scheduledFuture);
         }
         return scheduledFuture;
+    }
+
+    public void cancelStoredFuture(User user, int dashId) {
+        Iterator<Map.Entry<ReportTaskKey, ScheduledFuture<?>>> iter = map.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry<ReportTaskKey, ScheduledFuture<?>> entry = iter.next();
+            ReportTaskKey reportTaskKey = entry.getKey();
+            if (reportTaskKey.dashId == dashId && reportTaskKey.user.equals(user)) {
+                iter.remove();
+                ScheduledFuture<?> scheduledFuture = entry.getValue();
+                if (scheduledFuture != null) {
+                    scheduledFuture.cancel(true);
+                }
+            }
+        }
     }
 
     public boolean cancelStoredFuture(User user, int dashId, int reportId) {

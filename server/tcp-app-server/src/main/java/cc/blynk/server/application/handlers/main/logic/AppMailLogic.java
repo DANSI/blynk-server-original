@@ -100,8 +100,8 @@ public class AppMailLogic {
     }
 
     private void makeSingleTokenEmail(ChannelHandlerContext ctx, DashBoard dash, Device device, String to, int msgId) {
-        String dashName = dash.name == null ? "New Project" : dash.name;
-        String deviceName = device.name == null ? "New Device" : device.name;
+        String dashName = dash.getNameOrDefault();
+        String deviceName = device.getNameOrDefault();
         String subj = "Auth Token for " + dashName + " project and device " + deviceName;
         String body = "Auth Token : " + device.token + "\n";
 
@@ -110,12 +110,12 @@ public class AppMailLogic {
     }
 
     private void sendMultiTokenEmail(ChannelHandlerContext ctx, DashBoard dash, String to, int msgId) {
-        String dashName = dash.name == null ? "New Project" : dash.name;
+        String dashName = dash.getNameOrDefault();
         String subj = "Auth Tokens for " + dashName + " project and " + dash.devices.length + " devices";
 
         StringBuilder body = new StringBuilder();
         for (Device device : dash.devices) {
-            String deviceName = device.name == null ? "New Device" : device.name;
+            String deviceName = device.getNameOrDefault();
             body.append("Auth Token for device '")
                 .append(deviceName)
                 .append("' : ")

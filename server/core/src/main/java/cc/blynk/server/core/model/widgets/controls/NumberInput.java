@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.widgets.controls;
 
 import cc.blynk.server.core.model.enums.PinMode;
+import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 
@@ -18,6 +19,18 @@ public class NumberInput extends OnePinWidget {
     public boolean isLoopOn;
 
     public FontSize fontSize;
+
+    @Override
+    public void setProperty(WidgetProperty property, String propertyValue) {
+        switch (property) {
+            case SUFFIX :
+                this.suffix = propertyValue;
+                break;
+            default:
+                super.setProperty(property, propertyValue);
+                break;
+        }
+    }
 
     @Override
     public PinMode getModeType() {
