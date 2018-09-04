@@ -48,6 +48,13 @@ public class Timer extends OnePinWidget {
     }
 
     @Override
+    public void erase() {
+        super.erase();
+        this.startTime = -1;
+        this.stopTime = -1;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
