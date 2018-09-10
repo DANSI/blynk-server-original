@@ -3,6 +3,7 @@ package cc.blynk.integration.tcp;
 import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
@@ -222,6 +223,69 @@ public class NotificationsLogicTest extends SingleServerInstancePerTest {
 
         String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Your My Device went offline.", 1).toJson();
         assertEquals(expectedJson, message.toJson());
+    }
+
+    @Test
+    public void testNotifWidgetOverrideProjectSetting() throws Exception {
+        Profile profile = parseProfile(readTestUserProfile());
+        DashBoard dashBoard = profile.getDashById(1);
+        dashBoard.isNotificationsOff = true;
+
+        Notification notification = dashBoard.getNotificationWidget();
+        notification.notifyWhenOffline = true;
+
+        clientPair.appClient.updateDash(dashBoard);
+        clientPair.appClient.verifyResult(ok(1));
+
+        ChannelFuture channelFuture = clientPair.hardwareClient.stop();
+        channelFuture.await();
+
+        ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
+        verify(holder.gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
+        AndroidGCMMessage message = objectArgumentCaptor.getValue();
+
+        String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Your My Device went offline.", 1).toJson();
+        assertEquals(expectedJson, message.toJson());
+
+        clientPair.appClient.never(deviceOffline(0, "1-0"));
+    }
+
+    @Test
+    public void testNoOfflineNotifsExpected() throws Exception {
+        Profile profile = parseProfile(readTestUserProfile());
+        DashBoard dashBoard = profile.getDashById(1);
+        dashBoard.isNotificationsOff = true;
+
+        Notification notification = dashBoard.getNotificationWidget();
+        notification.notifyWhenOffline = false;
+
+        clientPair.appClient.updateDash(dashBoard);
+        clientPair.appClient.verifyResult(ok(1));
+
+        ChannelFuture channelFuture = clientPair.hardwareClient.stop();
+        channelFuture.await();
+
+        verify(holder.gcmWrapper, after(500).never()).send(any(), any(), any());
+        clientPair.appClient.never(deviceOffline(0, "1-0"));
+    }
+
+    @Test
+    public void testOfflineNotifsExpectedButNotPush() throws Exception {
+        Profile profile = parseProfile(readTestUserProfile());
+        DashBoard dashBoard = profile.getDashById(1);
+        dashBoard.isNotificationsOff = false;
+
+        Notification notification = dashBoard.getNotificationWidget();
+        notification.notifyWhenOffline = false;
+
+        clientPair.appClient.updateDash(dashBoard);
+        clientPair.appClient.verifyResult(ok(1));
+
+        ChannelFuture channelFuture = clientPair.hardwareClient.stop();
+        channelFuture.await();
+
+        verify(holder.gcmWrapper, after(500).never()).send(any(), any(), any());
+        clientPair.appClient.verifyResult(deviceOffline(0, "1-0"));
     }
 
     @Test
