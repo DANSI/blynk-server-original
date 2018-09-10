@@ -51,6 +51,8 @@ public class Timer extends OnePinWidget {
     @Override
     public void erase() {
         super.erase();
+        this.startValue = null;
+        this.stopValue = null;
         this.startTime = -1;
         this.stopTime = -1;
     }
