@@ -3,6 +3,7 @@ package cc.blynk.server.application.handlers.main.logic;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.serialization.CopyUtil;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.model.FlashedToken;
@@ -44,6 +45,8 @@ public final class GetProjectByTokenLogic {
             User publishUser = holder.userDao.getByName(dbFlashedToken.email, AppNameUtil.BLYNK);
 
             DashBoard dash = publishUser.profile.getDashById(dbFlashedToken.dashId);
+            DashBoard copy = CopyUtil.deepCopy(dash);
+            copy.eraseValues();
 
             if (dash == null) {
                 log.error("Dash with {} id not exists in dashboards.", dbFlashedToken.dashId);
@@ -51,7 +54,7 @@ public final class GetProjectByTokenLogic {
                 return;
             }
 
-            write(ctx, JsonParser.gzipDashRestrictive(dash), message.id);
+            write(ctx, JsonParser.gzipDashRestrictive(copy), message.id);
         });
     }
 
