@@ -29,6 +29,9 @@ module cc.blynk.core {
     exports cc.blynk.server.internal;
     exports cc.blynk.server.common;
     exports cc.blynk.server.core.model.device;
+    exports cc.blynk.server.workers.timer;
+    exports cc.blynk.server.core.model.widgets.others.eventor;
+    exports cc.blynk.server.core.model.widgets.others.webhook;
     requires cc.blynk.server.notifications.mail;
     requires cc.blynk.server.notifications.push;
     requires cc.blynk.server.notifications.sms;
