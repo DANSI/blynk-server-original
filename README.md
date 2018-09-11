@@ -389,10 +389,6 @@ Available server options:
         
         contact.email=pupkin@gmail.com
         
-+ Comma separated list of users allowed to create accounts. Leave it empty if no restriction required.
-        
-        allowed.users.list=allowed1@gmail.com,allowed2@gmail.com
-        
 ## Administration UI
 
 Blynk server provides administration panel where you can monitor your server. It is accessible at this URL:
