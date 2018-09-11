@@ -32,6 +32,16 @@ module cc.blynk.core {
     exports cc.blynk.server.workers.timer;
     exports cc.blynk.server.core.model.widgets.others.eventor;
     exports cc.blynk.server.core.model.widgets.others.webhook;
+    exports cc.blynk.server.core.reporting.average;
+    exports cc.blynk.server.core.reporting.raw;
+    exports cc.blynk.server.core.reporting;
+    exports cc.blynk.server.db.model;
+    exports cc.blynk.server.db.dao;
+    exports cc.blynk.server.core.protocol.model.messages;
+    exports cc.blynk.server.core.session;
+    exports cc.blynk.server.core.model.widgets.controls;
+    exports cc.blynk.server.transport;
+    exports cc.blynk.server.workers;
     requires cc.blynk.server.notifications.mail;
     requires cc.blynk.server.notifications.push;
     requires cc.blynk.server.notifications.sms;

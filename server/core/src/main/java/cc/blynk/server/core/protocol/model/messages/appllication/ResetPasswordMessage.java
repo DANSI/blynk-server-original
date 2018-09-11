@@ -15,10 +15,6 @@ public class ResetPasswordMessage extends StringMessage {
         super(messageId, RESET_PASSWORD, body);
     }
 
-    public ResetPasswordMessage(int messageId, short command, String body) {
-        super(messageId, command, body);
-    }
-
     @Override
     public String toString() {
         return "ResetPasswordMessage{" + super.toString() + "}";
