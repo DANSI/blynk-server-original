@@ -86,7 +86,7 @@ public class AcmeClient {
         Account account = new AccountBuilder()
                 .agreeToTermsOfService()
                 .useKeyPair(userKeyPair)
-                .addContact("mailto:" + contact)
+                .addEmail(contact)
                 .create(session);
         log.info("Registered a new user, URL: {}", account.getLocation());
 
@@ -162,7 +162,7 @@ public class AcmeClient {
      *            {@link Authorization} to perform
      */
     private void authorize(Authorization auth) throws AcmeException {
-        log.info("Starting authorization for domain {}", auth.getDomain());
+        log.info("Starting authorization for domain {}", auth.getIdentifier().getDomain());
 
         // Find the desired challenge and prepare it.
         Http01Challenge challenge = httpChallenge(auth);
@@ -198,7 +198,8 @@ public class AcmeClient {
 
         // All reattempts are used up and there is still no valid authorization?
         if (challenge.getStatus() != Status.VALID) {
-            throw new AcmeException("Failed to pass the challenge for domain " + auth.getDomain() + ", ... Giving up.");
+            throw new AcmeException("Failed to pass the challenge for domain "
+                    + auth.getIdentifier().getDomain() + ", ... Giving up.");
         }
     }
 
@@ -210,7 +211,7 @@ public class AcmeClient {
         }
 
         // Output the challenge, wait for acknowledge...
-        log.debug("http://{}/.well-known/acme-challenge/{}", auth.getDomain(), challenge.getToken());
+        log.debug("http://{}/.well-known/acme-challenge/{}", auth.getIdentifier().getDomain(), challenge.getToken());
         log.debug("Content: {}", challenge.getAuthorization());
 
         return challenge;

@@ -7,13 +7,7 @@ package cc.blynk.utils.http;
  */
 public enum ContentType {
 
-    TEXT_HTML(MediaType.TEXT_HTML),
-    TEXT_PLAIN(MediaType.TEXT_PLAIN);
-
-    public final String label;
-
-    ContentType(String label) {
-        this.label = label;
-    }
+    TEXT_HTML,
+    TEXT_PLAIN
 
 }

@@ -81,7 +81,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
             device.disconnected();
         }
 
-        if (!dashBoard.isActive || dashBoard.isNotificationsOff) {
+        if (!dashBoard.isActive) {
             return;
         }
 
@@ -89,7 +89,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
 
         if (notification != null && notification.notifyWhenOffline) {
             sendPushNotification(ctx, notification, dashBoard.id, device);
-        } else {
+        } else if (!dashBoard.isNotificationsOff) {
             session.sendOfflineMessageToApps(dashBoard.id, device.id);
         }
     }

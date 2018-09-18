@@ -508,14 +508,18 @@ public class DashBoard {
         }
     }
 
-    public void cleanPinStorage(Widget widget, boolean removePropertiesToo) {
-        cleanPinStorageInternalWithoutUpdatedAt(widget, removePropertiesToo);
+    public void cleanPinStorage(Widget widget, boolean removePropertiesToo, boolean removeTemplates) {
+        cleanPinStorageInternalWithoutUpdatedAt(widget, removePropertiesToo, removeTemplates);
         this.updatedAt = System.currentTimeMillis();
+    }
+
+    public void cleanPinStorage(Widget widget, boolean removePropertiesToo) {
+        cleanPinStorage(widget, removePropertiesToo, true);
     }
 
     private void cleanPinStorage(Widget[] widgets) {
         for (Widget widget : widgets) {
-            cleanPinStorageInternalWithoutUpdatedAt(widget, false);
+            cleanPinStorageInternalWithoutUpdatedAt(widget, false, true);
         }
         this.updatedAt = System.currentTimeMillis();
     }
@@ -543,9 +547,6 @@ public class DashBoard {
                     }
                 }
             }
-        }
-        for (TileTemplate tileTemplate : deviceTiles.templates) {
-            cleanPinStorageForTileTemplate(tileTemplate, removeProperties);
         }
     }
 
@@ -686,7 +687,8 @@ public class DashBoard {
         return copy.toArray(new Widget[newWidgets.length]);
     }
 
-    private void cleanPinStorageInternalWithoutUpdatedAt(Widget widget, boolean removeProperties) {
+    private void cleanPinStorageInternalWithoutUpdatedAt(Widget widget,
+                                                         boolean removeProperties, boolean eraseTemplates) {
         if (widget instanceof OnePinWidget) {
             OnePinWidget onePinWidget = (OnePinWidget) widget;
             cleanPinStorage(onePinWidget, -1, removeProperties);
@@ -696,6 +698,15 @@ public class DashBoard {
         } else if (widget instanceof DeviceTiles) {
             DeviceTiles deviceTiles = (DeviceTiles) widget;
             cleanPinStorage(deviceTiles, removeProperties);
+            if (eraseTemplates) {
+                cleanPinStorageForTemplate(deviceTiles, removeProperties);
+            }
+        }
+    }
+
+    private void cleanPinStorageForTemplate(DeviceTiles deviceTiles, boolean removeProperties) {
+        for (TileTemplate tileTemplate : deviceTiles.templates) {
+            cleanPinStorageForTileTemplate(tileTemplate, removeProperties);
         }
     }
 

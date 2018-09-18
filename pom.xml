@@ -19,7 +19,7 @@
 
     <groupId>cc.blynk</groupId>
     <artifactId>blynk</artifactId>
-    <version>0.39.6-SNAPSHOT</version>
+    <version>0.39.7-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <scm>
@@ -161,12 +161,12 @@
         <log4j2.version>2.11.1</log4j2.version>
         <jackson-databind.version>2.9.6</jackson-databind.version>
         <disruptor.version>3.4.2</disruptor.version>
-        <async-http-client.version>2.5.2</async-http-client.version>
-        <postgresql.version>42.2.4</postgresql.version>
+        <async-http-client.version>2.5.3</async-http-client.version>
+        <postgresql.version>42.2.5</postgresql.version>
         <HikariCP.version>3.2.0</HikariCP.version>
         <qrgen.version>2.2.0</qrgen.version>
         <bcpg-jdk15on.version>1.60</bcpg-jdk15on.version>
-        <acme4j-client.version>2.2</acme4j-client.version>
+        <acme4j-client.version>2.3</acme4j-client.version>
         <javax.mail.version>1.6.1</javax.mail.version>
         <javax.activation.version>1.2.0</javax.activation.version>
 

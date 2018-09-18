@@ -2,6 +2,7 @@ package cc.blynk.server.core.model.widgets.controls;
 
 import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
+import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
 
 /**
@@ -45,6 +46,33 @@ public class Timer extends OnePinWidget {
     @Override
     public int getPrice() {
         return 200;
+    }
+
+    @Override
+    public void erase() {
+        super.erase();
+        this.startValue = null;
+        this.stopValue = null;
+        this.startTime = -1;
+        this.stopTime = -1;
+    }
+
+    @Override
+    public void updateValue(Widget oldWidget) {
+        if (oldWidget instanceof Timer) {
+            Timer oldTimer = (Timer) oldWidget;
+            if (isSame(oldTimer.deviceId, oldTimer.pin, oldTimer.pinType)) {
+                if (oldTimer.value != null) {
+                    this.value = oldTimer.value;
+                }
+                if (oldTimer.startTime != -1) {
+                    this.startTime = oldTimer.startTime;
+                }
+                if (oldTimer.stopTime != -1) {
+                    this.stopTime = oldTimer.stopTime;
+                }
+            }
+        }
     }
 
     @Override

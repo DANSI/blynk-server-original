@@ -102,7 +102,7 @@ public class TimerWorker implements Runnable {
             for (Rule rule : eventor.rules) {
                 if (rule.isValidTimerRule()) {
                     add(userKey, dashId, eventor.deviceId, eventor.id,
-                            rule.triggerTime.id, -1L, -1L, rule.triggerTime, rule.actions);
+                            rule.triggerTime.id, rule.triggerTime, rule.actions);
                 }
             }
         }
@@ -128,8 +128,7 @@ public class TimerWorker implements Runnable {
     }
 
     private void add(UserKey userKey, int dashId, int deviceId, long widgetId,
-                     int additionalId, long deviceTilesId, long templateId,
-                     TimerTime time, BaseAction[] actions) {
+                     int additionalId, TimerTime time, BaseAction[] actions) {
         ArrayList<BaseAction> validActions = new ArrayList<>(actions.length);
         for (BaseAction action : actions) {
             if (action.isValid()) {
@@ -139,7 +138,7 @@ public class TimerWorker implements Runnable {
         if (!validActions.isEmpty()) {
             getExecutorOrCreate(time.time).put(
                     new TimerKey(userKey, dashId, deviceId, widgetId, additionalId,
-                            deviceTilesId, templateId, time),
+                            -1L, -1L, time),
                     validActions.toArray(new BaseAction[0]));
         }
     }

@@ -27,10 +27,6 @@ public class GraphKey {
         this.ts = ts;
     }
 
-    public String toCSV() {
-        return value + "," + ts;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {

@@ -208,7 +208,8 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> {
         channel.writeAndFlush(ok(msgId), channel.voidPromise());
         for (DashBoard dashBoard : user.profile.dashBoards) {
             if (dashBoard.isAppConnectedOn && dashBoard.isActive) {
-                log.trace("{}-{}. Sending App Connected event to hardware.", user.email, user.appName);
+                log.trace("{}-{}. Sending App Connected event to hardware for project {}.",
+                        user.email, user.appName, dashBoard.id);
                 session.sendMessageToHardware(dashBoard.id, BLYNK_INTERNAL, 7777, "acon");
             }
         }
