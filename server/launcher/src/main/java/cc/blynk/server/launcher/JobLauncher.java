@@ -77,7 +77,7 @@ final class JobLauncher {
 
         var reportingTruncateWorker = new ReportingTruncateWorker(holder.reportingDiskDao);
         //once every week
-        scheduler.scheduleAtFixedRate(reportingTruncateWorker, 1, 7, DAYS);
+        scheduler.scheduleAtFixedRate(reportingTruncateWorker, 1, 24 * 7, HOURS);
 
         //millis we need to wait to start scheduler at the beginning of a second.
         startDelay = 1000 - (System.currentTimeMillis() % 1000);
