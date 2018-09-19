@@ -289,19 +289,16 @@ public class OTATest extends BaseTest {
         String responseUrl = "http://127.0.0.1:18080" + path;
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
 
-        clientPair.appClient.send("getDevices 1");
+        clientPair.appClient.getDevice(1, 0);
 
-        Device[] devices = clientPair.appClient.parseDevices(1);
-        assertNotNull(devices);
-        assertEquals(1, devices.length);
-        Device device = devices[0];
+        Device device = clientPair.appClient.parseDevice(1);
+        assertNotNull(device);
         assertEquals("admin@blynk.cc", device.deviceOtaInfo.otaInitiatedBy);
         assertEquals(System.currentTimeMillis(), device.deviceOtaInfo.otaInitiatedAt, 5000);
         assertEquals(System.currentTimeMillis(), device.deviceOtaInfo.otaUpdateAt, 5000);
 
         clientPair.hardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 111"));
 
-        device = devices[0];
         assertEquals("admin@blynk.cc", device.deviceOtaInfo.otaInitiatedBy);
         assertEquals(System.currentTimeMillis(), device.deviceOtaInfo.otaInitiatedAt, 5000);
         assertEquals(System.currentTimeMillis(), device.deviceOtaInfo.otaUpdateAt, 5000);
@@ -340,13 +337,11 @@ public class OTATest extends BaseTest {
         String responseUrl = "http://127.0.0.1:18080" + path;
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
 
-        clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.parseDevices(1);
+        clientPair.appClient.getDevice(1, 0);
+        Device device = clientPair.appClient.parseDevice(1);
 
-        assertNotNull(devices);
-        assertEquals(1, devices.length);
+        assertNotNull(device);
 
-        Device device = devices[0];
         assertEquals("0.3.1", device.hardwareInfo.blynkVersion);
         assertEquals(10, device.hardwareInfo.heartbeatInterval);
         assertEquals("111", device.hardwareInfo.build);
@@ -357,13 +352,11 @@ public class OTATest extends BaseTest {
         clientPair.hardwareClient.send("internal " + b("ver 0.3.1 fm 0.3.3 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build 112"));
         clientPair.hardwareClient.verifyResult(ok(2));
 
-        clientPair.appClient.send("getDevices 1");
-        devices = clientPair.appClient.parseDevices(2);
+        clientPair.appClient.getDevice(1, 0);
+        device = clientPair.appClient.parseDevice(2);
 
-        assertNotNull(devices);
-        assertEquals(1, devices.length);
+        assertNotNull(device);
 
-        device = devices[0];
         assertEquals("0.3.1", device.hardwareInfo.blynkVersion);
         assertEquals(10, device.hardwareInfo.heartbeatInterval);
         assertEquals("112", device.hardwareInfo.build);
@@ -449,17 +442,16 @@ public class OTATest extends BaseTest {
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(internal(7777, "ota " + responseUrl)));
         clientPair.hardwareClient.reset();
 
-        clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.parseDevices();
+        clientPair.appClient.getDevice(1, 0);
+        Device device = clientPair.appClient.parseDevice();
 
-        assertNotNull(devices);
-        assertEquals(1, devices.length);
-        assertNotNull(devices[0].deviceOtaInfo);
-        assertEquals("admin@blynk.cc", devices[0].deviceOtaInfo.otaInitiatedBy);
-        assertEquals(System.currentTimeMillis(), devices[0].deviceOtaInfo.otaInitiatedAt, 5000);
-        assertEquals(System.currentTimeMillis(), devices[0].deviceOtaInfo.otaInitiatedAt, 5000);
-        assertNotEquals(devices[0].deviceOtaInfo.otaInitiatedAt, devices[0].deviceOtaInfo.otaUpdateAt);
-        assertEquals("123", devices[0].hardwareInfo.build);
+        assertNotNull(device);
+        assertNotNull(device.deviceOtaInfo);
+        assertEquals("admin@blynk.cc", device.deviceOtaInfo.otaInitiatedBy);
+        assertEquals(System.currentTimeMillis(), device.deviceOtaInfo.otaInitiatedAt, 5000);
+        assertEquals(System.currentTimeMillis(), device.deviceOtaInfo.otaInitiatedAt, 5000);
+        assertNotEquals(device.deviceOtaInfo.otaInitiatedAt, device.deviceOtaInfo.otaUpdateAt);
+        assertEquals("123", device.hardwareInfo.build);
 
         clientPair.hardwareClient.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100 build ") + "Aug 14 2017 20:31:49");
         clientPair.hardwareClient.verifyResult(ok(1));

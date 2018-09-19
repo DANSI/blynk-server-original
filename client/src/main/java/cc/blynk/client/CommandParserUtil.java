@@ -29,6 +29,7 @@ import static cc.blynk.server.core.protocol.enums.Command.EMAIL_QR;
 import static cc.blynk.server.core.protocol.enums.Command.EXPORT_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.EXPORT_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.GET_CLONE_CODE;
+import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICES;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
@@ -174,6 +175,8 @@ public final class CommandParserUtil {
                 return DELETE_DEVICE;
             case "getdevices" :
                 return GET_DEVICES;
+            case "getdevice" :
+                return GET_DEVICE;
 
             case "createtag" :
                 return CREATE_TAG;
