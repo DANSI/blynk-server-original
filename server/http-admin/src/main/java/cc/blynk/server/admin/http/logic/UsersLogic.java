@@ -12,6 +12,7 @@ import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.core.http.model.Filter;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.FileManager;
+import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.dao.TokenValue;
@@ -34,7 +35,7 @@ import static cc.blynk.core.http.Response.appendTotalCountHeader;
 import static cc.blynk.core.http.Response.badRequest;
 import static cc.blynk.core.http.Response.notFound;
 import static cc.blynk.core.http.Response.ok;
-import static cc.blynk.utils.AdminHttpUtil.sort;
+import static cc.blynk.core.http.utils.AdminHttpUtil.sort;
 
 
 /**
@@ -49,30 +50,34 @@ public class UsersLogic extends CookiesBaseHttpHandler {
     private final UserDao userDao;
     private final FileManager fileManager;
     private final DBManager dbManager;
+    private final ReportingDiskDao reportingDao;
 
     public UsersLogic(Holder holder, String rootPath) {
         super(holder, rootPath);
         this.userDao = holder.userDao;
         this.fileManager = holder.fileManager;
         this.dbManager = holder.dbManager;
+        this.reportingDao = holder.reportingDiskDao;
     }
 
     //for tests only
     public UsersLogic(UserDao userDao, SessionDao sessionDao, DBManager dbManager,
-                      FileManager fileManager, TokenManager tokenManager, String rootPath) {
+                      FileManager fileManager, TokenManager tokenManager,
+                      ReportingDiskDao reportingDao, String rootPath) {
         super(tokenManager, sessionDao, null, rootPath);
         this.userDao = userDao;
         this.fileManager = fileManager;
         this.dbManager = dbManager;
+        this.reportingDao = reportingDao;
     }
 
     @GET
     @Path("")
     public Response getUsers(@QueryParam("_filters") String filterParam,
-                                 @QueryParam("_page") int page,
-                                 @QueryParam("_perPage") int size,
-                                 @QueryParam("_sortField") String sortField,
-                                 @QueryParam("_sortDir") String sortOrder) {
+                             @QueryParam("_page") int page,
+                             @QueryParam("_perPage") int size,
+                             @QueryParam("_sortField") String sortField,
+                             @QueryParam("_sortDir") String sortOrder) {
         if (filterParam != null) {
             Filter filter = JsonParser.readAny(filterParam, Filter.class);
             filterParam = filter == null ? null : filter.name;
@@ -119,10 +124,10 @@ public class UsersLogic extends CookiesBaseHttpHandler {
     @GET
     @Path("/token/force")
     public Response forceToken(@QueryParam("email") String email,
-                                    @QueryParam("app") String app,
-                                    @QueryParam("dashId") int dashId,
-                                    @QueryParam("deviceId") int deviceId,
-                                    @QueryParam("new") String newToken) {
+                               @QueryParam("app") String app,
+                               @QueryParam("dashId") int dashId,
+                               @QueryParam("deviceId") int deviceId,
+                               @QueryParam("new") String newToken) {
 
         User user = userDao.getUsers().get(new UserKey(email, app));
 
@@ -141,7 +146,7 @@ public class UsersLogic extends CookiesBaseHttpHandler {
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Path("/{id}")
     public Response updateUser(@PathParam("id") String id,
-                                   User updatedUser) {
+                               User updatedUser) {
 
         log.debug("Updating user {}", id);
 
@@ -157,7 +162,7 @@ public class UsersLogic extends CookiesBaseHttpHandler {
             return badRequest("You need also change password when changing email.");
         }
 
-            //user name was changed
+        //user name was changed
         if (!updatedUser.email.equals(oldUser.email)) {
             deleteUserByName(id);
             for (DashBoard dashBoard : oldUser.profile.dashBoards) {
@@ -214,6 +219,8 @@ public class UsersLogic extends CookiesBaseHttpHandler {
         if (!fileManager.delete(email, appName)) {
             return notFound();
         }
+
+        reportingDao.delete(user);
 
         dbManager.deleteUser(userKey);
 

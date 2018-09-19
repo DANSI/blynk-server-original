@@ -16,4 +16,16 @@ public abstract class NoPinWidget extends Widget {
         return null;
     }
 
+    @Override
+    public void erase() {
+    }
+
+    @Override
+    public void updateValue(Widget oldWidget) {
+    }
+
+    @Override
+    public boolean isAssignedToDevice(int deviceId) {
+        return false;
+    }
 }

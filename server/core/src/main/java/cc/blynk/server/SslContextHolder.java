@@ -29,7 +29,7 @@ public class SslContextHolder {
 
     public final AcmeClient acmeClient;
 
-    public final boolean isAutoGenerationEnabled;
+    private final boolean isAutoGenerationEnabled;
 
     public final boolean isNeedInitializeOnStart;
 
@@ -80,30 +80,34 @@ public class SslContextHolder {
             log.info("Using native openSSL provider.");
         }
         SslProvider sslProvider = fetchSslProvider();
-        this.sslCtx = initSslContext(certPath, keyPath, keyPass, sslProvider, true);
+        this.sslCtx = initSslContext(certPath, keyPath, keyPass, sslProvider);
     }
 
     static boolean isOpenSslAvailable() {
         return PlatformDependent.bitMode() != 32 && OpenSsl.isAvailable();
     }
 
-    private void regenerate() {
+    public void regenerate() throws Exception {
+        this.acmeClient.requestCertificate();
+
         String certPath = AcmeClient.DOMAIN_CHAIN_FILE.getAbsolutePath();
         String keyPath = AcmeClient.DOMAIN_KEY_FILE.getAbsolutePath();
 
         SslProvider sslProvider = fetchSslProvider();
-        this.sslCtx = initSslContext(certPath, keyPath, null, sslProvider, true);
+        this.sslCtx = initSslContext(certPath, keyPath, null, sslProvider);
+    }
+
+    public boolean runRenewalWorker() {
+        return isAutoGenerationEnabled && acmeClient != null;
     }
 
     public void generateInitialCertificates(ServerProperties props) {
         if (isAutoGenerationEnabled && isNeedInitializeOnStart) {
             System.out.println("Generating own initial certificates...");
             try {
-                if (this.acmeClient.requestCertificate()) {
-                    System.out.println("Success! The certificate for your domain "
-                            + props.getProperty("server.host") + " has been generated!");
-                    regenerate();
-                }
+                regenerate();
+                System.out.println("Success! The certificate for your domain "
+                        + props.getProperty("server.host") + " has been generated!");
             } catch (Exception e) {
                 System.out.println("Error during certificate generation.");
                 System.out.println(e.getMessage());
@@ -112,19 +116,17 @@ public class SslContextHolder {
     }
 
     private static SslContext initSslContext(String serverCertPath, String serverKeyPath, String serverPass,
-                                            SslProvider sslProvider, boolean printWarn) {
+                                            SslProvider sslProvider) {
         try {
             File serverCert = new File(serverCertPath);
             File serverKey = new File(serverKeyPath);
 
 
             if (!serverCert.exists() || !serverKey.exists()) {
-                if (printWarn) {
-                    log.warn("ATTENTION. Server certificate paths (cert : '{}', key : '{}') not valid."
-                                    + " Using embedded server certs and one way ssl. This is not secure."
-                                    + " Please replace it with your own certs.",
-                            serverCert.getAbsolutePath(), serverKey.getAbsolutePath());
-                }
+                log.warn("ATTENTION. Server certificate paths (cert : '{}', key : '{}') not valid."
+                                + " Using embedded server certs and one way ssl. This is not secure."
+                                + " Please replace it with your own certs.",
+                        serverCert.getAbsolutePath(), serverKey.getAbsolutePath());
 
                 return build(sslProvider);
             }

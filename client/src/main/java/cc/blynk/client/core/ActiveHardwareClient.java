@@ -3,8 +3,8 @@ package cc.blynk.client.core;
 import cc.blynk.client.handlers.ClientReplayingMessageDecoder;
 import cc.blynk.client.handlers.hardware.HardwareEchoHandler;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
-import cc.blynk.server.core.protocol.model.messages.common.PingMessage;
 import cc.blynk.server.core.stats.GlobalStats;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -13,6 +13,8 @@ import io.netty.channel.socket.SocketChannel;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
+
+import static cc.blynk.server.core.protocol.enums.Command.PING;
 
 /**
  * The Blynk Project.
@@ -28,7 +30,7 @@ public class ActiveHardwareClient extends BaseClient {
         super(host, port, new Random());
         log.info("Creating hardware client. Host : {}, port : {}", host, port);
         //pinging for hardware client to avoid closing from server side for inactivity
-        nioEventLoopGroup.scheduleAtFixedRate(() -> send(new PingMessage(777)), 12, 12, TimeUnit.SECONDS);
+        nioEventLoopGroup.scheduleAtFixedRate(() -> send(new StringMessage(777, PING, "")), 12, 12, TimeUnit.SECONDS);
     }
 
     private static HardwareMessage makeCommand(String body) {
@@ -37,9 +39,9 @@ public class ActiveHardwareClient extends BaseClient {
 
     @Override
     public ChannelInitializer<SocketChannel> getChannelInitializer() {
-        return new ChannelInitializer<SocketChannel>() {
+        return new ChannelInitializer<>() {
             @Override
-            public void initChannel(SocketChannel ch) throws Exception {
+            public void initChannel(SocketChannel ch) {
                 ChannelPipeline pipeline = ch.pipeline();
                 pipeline.addLast(new ClientReplayingMessageDecoder());
                 pipeline.addLast(new MessageEncoder(new GlobalStats()));

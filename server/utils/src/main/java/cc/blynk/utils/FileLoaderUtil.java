@@ -41,13 +41,45 @@ public final class FileLoaderUtil {
         return readFileAsString("static_provisioning_mail.html");
     }
 
+    public static String readTemplateIdMailBody() {
+        return readFileAsString("template_id_mail.html");
+    }
+
+    public static String readResetEmailTemplateAsString() {
+        return readFileAsString("static/reset/reset-email.html");
+    }
+
+    public static String readNewServerUpTemplateAsString() {
+        return readFileAsString("static/reset/new-server-up.html");
+    }
+
+    public static String readAppResetEmailConfirmationTemplateAsString() {
+        return readFileAsString("static/reset/reset-email-app-confirmation.html");
+    }
+
+    public static String readAppResetEmailTemplateAsString() {
+        return readFileAsString("static/reset/reset-email-app.html");
+    }
+
+    public static String readResetPassLandingTemplateAsString() {
+        return readFileAsString("static/reset/enterNewPassword.html");
+    }
+
+    public static String readRegisterEmailTemplate() {
+        return readFileAsString("static/register-email.html");
+    }
+
+    public static String readReportEmailTemplate() {
+        return readFileAsString("static/report-email.html");
+    }
+
     /**
      * First loads file from class path after that from current folder.
      * So file in current folder is always overrides properties in classpath.
      *
      * @param fileName - name of properties file, for example "twitter4j.properties"
      */
-    public static String readFileAsString(String fileName) {
+    private static String readFileAsString(String fileName) {
         if (!fileName.startsWith("/")) {
             fileName = "/" + fileName;
         }

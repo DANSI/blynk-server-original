@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import static cc.blynk.utils.ListUtils.subList;
+import static cc.blynk.core.http.utils.ListUtils.subList;
 import static cc.blynk.utils.http.MediaType.APPLICATION_JSON;
 import static cc.blynk.utils.http.MediaType.TEXT_PLAIN;
 import static io.netty.handler.codec.http.HttpHeaderNames.ACCESS_CONTROL_ALLOW_ORIGIN;
@@ -40,7 +40,7 @@ public final class Response extends DefaultFullHttpResponse {
     private static final String JSON = APPLICATION_JSON + ";charset=utf-8";
     private static final String PLAIN_TEXT = TEXT_PLAIN + ";charset=utf-8";
 
-    static Response NO_RESPONSE = null;
+    final static Response NO_RESPONSE = null;
 
     private Response(HttpVersion version, HttpResponseStatus status, String content, String contentType) {
         super(version, status, (

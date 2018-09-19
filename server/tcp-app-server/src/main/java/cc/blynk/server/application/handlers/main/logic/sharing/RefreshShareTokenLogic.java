@@ -1,9 +1,8 @@
 package cc.blynk.server.application.handlers.main.logic.sharing;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.application.handlers.sharing.auth.AppShareStateHolder;
-import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
@@ -14,8 +13,8 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_SHARE_TOKEN;
-import static cc.blynk.server.internal.BlynkByteBufUtil.makeUTF8StringMessage;
-import static cc.blynk.server.internal.BlynkByteBufUtil.notAllowed;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
 import static cc.blynk.utils.AppStateHolderUtil.getShareState;
 
 /**
@@ -24,33 +23,29 @@ import static cc.blynk.utils.AppStateHolderUtil.getShareState;
  * Created on 2/1/2015.
  *
  */
-public class RefreshShareTokenLogic {
+public final class RefreshShareTokenLogic {
 
-    private final TokenManager tokenManager;
-    private final SessionDao sessionDao;
-
-    public RefreshShareTokenLogic(TokenManager tokenManager, SessionDao sessionDao) {
-        this.tokenManager = tokenManager;
-        this.sessionDao = sessionDao;
+    private RefreshShareTokenLogic() {
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
+                                       AppStateHolder state, StringMessage message) {
         String dashBoardIdString = message.body;
 
         int dashId;
         try {
             dashId = Integer.parseInt(dashBoardIdString);
         } catch (NumberFormatException ex) {
-            throw new NotAllowedException("Dash board id not valid. Id : " + dashBoardIdString);
+            throw new NotAllowedException("Dash board id not valid. Id : " + dashBoardIdString, message.id);
         }
 
         User user = state.user;
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
-        String token = tokenManager.refreshSharedToken(user, dash);
+        String token = holder.tokenManager.refreshSharedToken(user, dash);
 
         //todo move to session class?
-        Session session = sessionDao.userSession.get(state.userKey);
+        Session session = holder.sessionDao.userSession.get(state.userKey);
         for (Channel appChannel : session.appChannels) {
             AppShareStateHolder localState = getShareState(appChannel);
             if (localState != null && localState.dashId == dashId) {

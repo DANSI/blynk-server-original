@@ -17,4 +17,6 @@ public interface FrequencyWidget {
 
     boolean isTicked(long now);
 
+    boolean hasReadingInterval();
+
 }

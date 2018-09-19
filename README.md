@@ -23,6 +23,7 @@ If you need more information, please follow these links:
 - [Download](#blynk-server)
 - [Requirements](#requirements)
 - [Quick Local Server setup](#quick-local-server-setup)
+- [Enabling mail on Local server](#enabling-mail-on-local-server)
 - [Quick local server setup on Raspberry PI](#quick-local-server-setup-on-raspberry-pi)
 - [Enabling server auto restart on unix-like systems](#enabling-server-auto-restart-on-unix-like-systems)
 - [Enabling server auto restart on Windows](#enabling-server-auto-restart-on-windows)
@@ -32,7 +33,6 @@ If you need more information, please follow these links:
 - [Advanced local server setup](#advanced-local-server-setup)
 - [Administration UI](#administration-ui)
 - [HTTP/S RESTful API](#https-restful)
-- [Enabling mail on Local server](#enabling-mail-on-local-server)
 - [Enabling sms on local server](#enabling-sms-on-local-server)
 - [Enabling raw data storage](#enabling-raw-data-storage)
 - [Automatic Let's Encrypt Certificates](#automatic-lets-encrypt-certificates-generation)
@@ -55,25 +55,25 @@ messages between Blynk mobile application and various microcontroller boards and
 [ ![Build Status](https://travis-ci.org/blynkkk/blynk-server.svg?branch=master)](https://travis-ci.org/blynkkk/blynk-server)
 
 ## Requirements
-- Java 8/9 required (OpenJDK, Oracle) 
+- Java 8/10 required (OpenJDK, Oracle) 
 - Any OS that can run java 
 - At least 30 MB of RAM (could be less with tuning)
-- Open ports 8443 (for app), 8442 (for hardware without ssl), 8441 (for hardware with ssl)
+- Open ports 9443 (for app), 8080 (for hardware without ssl), 8441 (for hardware with ssl)
 
 [Ubuntu java installation instruction](#install-java-for-ubuntu).
 
-For Windows download Java [here](http://download.oracle.com/otn-pub/java/jdk/9+181/jre-9_windows-x64_bin.exe) and install. 
+For Windows download Java [here](http://download.oracle.com/otn-pub/java/jdk/10.0.1+10/fb4372174a714e6b8c52526dc134031e/jdk-10.0.1_windows-x64_bin.exe) and install. 
 
 ## Quick local server setup
 
-+ Make sure you are using Java 9
++ Make sure you are using Java 10
 
         java -version
-        Output: java version "9"
+        Output: java version "10"
 
-+ Run the server on default 'hardware port 8442' and default 'application port 8443' (SSL port)
++ Run the server on default 'hardware port 8080' and default 'application port 9443' (SSL port)
 
-        java -jar server-0.29.0.jar -dataFolder /path
+        java -jar server-0.39.6.jar -dataFolder /path
         
 That's it! 
 
@@ -85,7 +85,7 @@ That's it!
         All server output is stored in current folder in 'logs/blynk.log' file.
         
 ### Enabling mail on Local server
-To enable mail notifications on Local server you need to provide your own mail credentials. Create file ```mail.properties``` within same folder where ```server.jar``` is.
+To enable mail notifications on Local server you need to provide your own mail credentials. Create file `mail.properties` within same folder where `server.jar` is.
 Mail properties:
 
         mail.smtp.auth=true
@@ -116,11 +116,11 @@ Go [here](https://www.google.com/settings/security/lesssecureapps) and then clic
         
 + Download Blynk server jar file (or manually copy it to Raspberry Pi via ssh and scp command): 
    
-        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.29.0/server-0.29.0-java8.jar"
+        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.39.6/server-0.39.6-java8.jar"
 
-+ Run the server on default 'hardware port 8442' and default 'application port 8443' (SSL port)
++ Run the server on default 'hardware port 8080' and default 'application port 9443' (SSL port)
 
-        java -jar server-0.29.0-java8.jar -dataFolder /home/pi/Blynk        
+        java -jar server-0.39.6-java8.jar -dataFolder /home/pi/Blynk
         
 That's it! 
 
@@ -128,12 +128,21 @@ That's it!
 
         Blynk Server successfully started.
         All server output is stored in current folder in 'logs/blynk.log' file.
-       
+
+## Quick Docker container setup
+
++ Install [Docker](https://docs.docker.com/install/)
++ Run Docker container
+
+        docker run -p 8080:8080 -p 8441:8441 -p 9443:9443 mpherg/blynk-server
+
+That's it!
+
 ## Enabling server auto restart on unix-like systems
         
 + To enable server auto restart find /etc/rc.local file and add:
 
-        java -jar /home/pi/server-0.29.0.jar -dataFolder /home/pi/Blynk &
+        java -jar /home/pi/server-0.39.6.jar -dataFolder /home/pi/Blynk &
         
 + Or if the approach above doesn't work, execute 
        
@@ -141,7 +150,7 @@ That's it!
 
 add the following line
 
-        @reboot java -jar /home/pi/server-0.29.0.jar -dataFolder /home/pi/Blynk &
+        @reboot java -jar /home/pi/server-0.39.6.jar -dataFolder /home/pi/Blynk &
         
 save and exit.
 
@@ -153,7 +162,7 @@ save and exit.
 
 + Put in it one line: 
 
-        java -jar server-0.29.0.jar -dataFolder /home/pi/Blynk
+        java -jar server-0.39.6.jar -dataFolder /home/pi/Blynk
         
 + Put bat file to windows startup folder
 
@@ -170,7 +179,7 @@ Server should be always updated before you update Blynk App. To update your serv
         
 + You should see something like that
  
-        username   10539  1.0 12.1 3325808 428948 pts/76 Sl   Jan22   9:11 java -jar server-0.29.0.jar   
+        username   10539  1.0 12.1 3325808 428948 pts/76 Sl   Jan22   9:11 java -jar server-0.39.6.jar   
         
 + Kill the old process
 
@@ -211,13 +220,13 @@ Please **do not** revert your server to lower versions. You may loose all of you
     to
     
     ```
-    Blynk.begin(auth, "your_host");
+    Blynk.begin(auth, "your_host", 8080);
     ```
     
     or to
     
     ```
-    Blynk.begin(auth, IPAddress(xxx,xxx,xxx,xxx));
+    Blynk.begin(auth, IPAddress(xxx,xxx,xxx,xxx), 8080);
     ```
         
 + Change your WIFI sketch from
@@ -229,13 +238,13 @@ Please **do not** revert your server to lower versions. You may loose all of you
     to
     
     ```
-    Blynk.begin(auth, SSID, pass, "your_host");
+    Blynk.begin(auth, SSID, pass, "your_host", 8080);
     ```
     
     or to
     
     ```
-    Blynk.begin(auth, SSID, pass, IPAddress(XXX,XXX,XXX,XXX));
+    Blynk.begin(auth, SSID, pass, IPAddress(XXX,XXX,XXX,XXX), 8080);
     ```
         
 + Change your rasp PI javascript from
@@ -247,7 +256,7 @@ Please **do not** revert your server to lower versions. You may loose all of you
     to
     
     ```
-    var blynk = new Blynk.Blynk(AUTH, options= {addr:"xxx.xxx.xxx.xxx"});
+    var blynk = new Blynk.Blynk(AUTH, options= {addr:"xxx.xxx.xxx.xxx", port:8080});
     ```
         
 + or in case of USB when running blynk-ser.sh provide '-s' option with address of your local server
@@ -269,19 +278,19 @@ do the same with ```mail.properties``` via ```-mailConfig``` and ```sms.properti
  
 For example:
 
-    java -jar server-0.29.0.jar -dataFolder /home/pi/Blynk -serverConfig /home/pi/someFolder/server.properties
+    java -jar server-0.39.6.jar -dataFolder /home/pi/Blynk -serverConfig /home/pi/someFolder/server.properties
 
 Available server options:
 
-+ Application mutual ssl/tls port
++ Blynk app, https, web sockets, admin port
+        
+        https.port=9443
 
-        app.ssl.port=8443
-        
-        
-+ Hardware plain tcp/ip port
 
-        hardware.default.port=8442
-        
++ Http, hardware and web sockets port
+
+        http.port=8080
+
 
 + Hardware ssl/tls port (for hardware that supports SSL/TLS sockets)
 
@@ -295,16 +304,6 @@ Available server options:
         server.ssl.cert=./server_embedded.crt
         server.ssl.key=./server_embedded.pem
         server.ssl.key.pass=pupkin123
-                
-        
-+ Https, web sockets, admin port
-        
-        https.port=9443
-        
-        
-+ Http and web sockets port
-        
-        http.port=8080
         
         
 + User profiles folder. Folder in which all users profiles will be stored. By default System.getProperty("java.io.tmpdir")/blynk used. Will be created if not exists
@@ -390,10 +389,6 @@ Available server options:
         
         contact.email=pupkin@gmail.com
         
-+ Comma separated list of users allowed to create accounts. Leave it empty if no restriction required.
-        
-        allowed.users.list=allowed1@gmail.com,allowed2@gmail.com
-        
 ## Administration UI
 
 Blynk server provides administration panel where you can monitor your server. It is accessible at this URL:
@@ -461,14 +456,17 @@ Enable raw data in ```server.properties``` :
 #### 3. Download Blynk DB script
 
         wget https://raw.githubusercontent.com/blynkkk/blynk-server/master/server/core/src/main/resources/create_schema.sql
+        wget https://raw.githubusercontent.com/blynkkk/blynk-server/master/server/core/src/main/resources/reporting_schema.sql
 
-#### 4. Move create_schema.sql to temp folder (to avoid permission problems)
+#### 4. Move create_schema.sql and reporting_schema.sql to temp folder (to avoid permission problems)
 
         mv create_schema.sql /tmp
+        mv reporting_schema.sql /tmp
         
 Result:  
 
         /tmp/create_schema.sql
+        /tmp/reporting_schema.sql
         
 Copy it to clipboard from your console.
 
@@ -477,9 +475,10 @@ Copy it to clipboard from your console.
         sudo su - postgres
         psql
 
-#### 6. Create Blynk DB, test user and tables
+#### 6. Create Blynk DB and Reporting DB, test user and tables
 
         \i /tmp/create_schema.sql
+        \i /tmp/reporting_schema.sql
         
 ```/tmp/create_schema.sql``` - is path from step 4.
         
@@ -596,15 +595,15 @@ As an output you'll retrieve server.crt and server.pem files that you need to pr
 
 ### Install java for Ubuntu
 
+        sudo add-apt-repository ppa:linuxuprising/java
+        sudo apt-get update
+        sudo apt-get install oracle-java10-installer
+        
+or if above doesn't work:
+
         sudo apt-add-repository ppa:webupd8team/java
         sudo apt-get update
-        sudo apt-get install oracle-java9-installer
-        
-or 
-
         sudo apt-get install oracle-java8-installer
-        
-in case your system doesn't have Java 9 yet.
         
 ### Port forwarding for HTTP/S API
 
@@ -625,33 +624,53 @@ Blynk has a bunch of integration tests that require DB, so you have to skip test
         
 ### How Blynk Works?
 When hardware connects to Blynk cloud it opens either keep-alive ssl/tls connection on port 8441 or keep-alive plain 
-tcp/ip connection on port 8442. Blynk app opens mutual ssl/tls connection to Blynk Cloud on port 8443. Blynk Cloud is 
-responsible for forwarding messages between hardware and app. In both (app and hardware) connections Blynk uses  
+tcp/ip connection on port 8080. Blynk app opens mutual ssl/tls connection to Blynk Cloud on port 443 (9443 for local servers).
+Blynk Cloud is responsible for forwarding messages between hardware and app. In both (app and hardware) connections Blynk uses 
 own binary protocol described below.
 
 ### Blynk protocol
 
-Blynk transfers binary messages with the following structure:
+
+#### Hardware side protocol
+
+Blynk transfers binary messages between the server and the hardware with the following structure:
 
 | Command       | Message Id    | Length/Status   | Body     |
 |:-------------:|:-------------:|:---------------:|:--------:|
 | 1 byte        | 2 bytes       | 2 bytes         | Variable |
 
+Command and Status definitions: [BlynkProtocolDefs.h](https://github.com/blynkkk/blynk-library/blob/7e942d661bc54ded310bf5d00edee737d0ca44d7/src/Blynk/BlynkProtocolDefs.h)
+
+
+#### Mobile app side protocol
+
+Blynk transfers binary messages between the server and mobile app with the following structure:
+
+| Command       | Message Id    | Length/Status   | Body     |
+|:-------------:|:-------------:|:---------------:|:--------:|
+| 1 byte        | 2 bytes       | 4 bytes         | Variable |
+
+
+#### Websockets web side protocol
+
+Blynk transfers binary messages between the server and websockets (for web) with the following structure:
+
+| Websocket header   | Command       | Message Id    | Body     |
+|:------------------:|:-------------:|:-------------:|:--------:|
+|                    | 1 byte        | 2 bytes       | Variable |
+
+
+When command code == 0, than message structure is next:
+
+| Websocket header   | Command       | Message Id    | Response code |
+|:------------------:|:-------------:|:-------------:|:-------------:|
+|                    | 1 byte        | 2 bytes       | 4 bytes       |
+
+[Possible response codes](https://github.com/blynkkk/blynk-server/blob/master/server/core/src/main/java/cc/blynk/server/core/protocol/enums/Response.java#L12).
+[Possible command codes](https://github.com/blynkkk/blynk-server/blob/master/server/core/src/main/java/cc/blynk/server/core/protocol/enums/Command.java#L12)
+
 Message Id and Length are [big endian](http://en.wikipedia.org/wiki/Endianness#Big-endian).
 Body has a command-specific format.
-
-Command and Status definitions: [BlynkProtocolDefs.h](https://github.com/blynkkk/blynk-library/blob/master/Blynk/BlynkProtocolDefs.h)
-
-Typical Blynk library knows how to send(S)/process(P):
-
-    S   BLYNK_CMD_LOGIN + auth token
-    SP  BLYNK_CMD_PING
-    SP  BLYNK_CMD_RESPONSE
-    SP  BLYNK_CMD_BRIDGE
-    SP  BLYNK_CMD_HARDWARE
-    S   BLYNK_CMD_TWEET
-    S   BLYNK_CMD_EMAIL
-    S   BLYNK_CMD_PUSH_NOTIFICATION
 
 ## Licensing
 [GNU GPL license](https://github.com/blynkkk/blynk-server/blob/master/license.txt)

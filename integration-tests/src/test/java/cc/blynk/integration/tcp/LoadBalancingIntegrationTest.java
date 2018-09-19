@@ -1,21 +1,19 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.IntegrationBase;
+import cc.blynk.integration.BaseTest;
+import cc.blynk.integration.TestUtil;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.Holder;
-import cc.blynk.server.application.AppServer;
-import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
-import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
-import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
-import cc.blynk.server.core.protocol.model.messages.appllication.GetServerMessage;
-import cc.blynk.server.core.protocol.model.messages.hardware.ConnectRedirectMessage;
-import cc.blynk.server.hardware.HardwareServer;
+import cc.blynk.server.servers.BaseServer;
+import cc.blynk.server.servers.application.AppAndHttpsServer;
+import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.server.workers.ProfileSaverWorker;
 import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.properties.ServerProperties;
@@ -26,14 +24,22 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.Collections;
+
+import static cc.blynk.integration.TestUtil.connectRedirect;
+import static cc.blynk.integration.TestUtil.createDefaultHolder;
+import static cc.blynk.integration.TestUtil.createDevice;
+import static cc.blynk.integration.TestUtil.getServer;
+import static cc.blynk.integration.TestUtil.illegalCommand;
+import static cc.blynk.integration.TestUtil.invalidToken;
+import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.server.core.protocol.enums.Response.DEVICE_NOT_IN_NETWORK;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.after;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 
@@ -44,7 +50,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class LoadBalancingIntegrationTest extends IntegrationBase {
+public class LoadBalancingIntegrationTest extends BaseTest {
 
     private BaseServer appServer1;
     private BaseServer hardwareServer1;
@@ -60,22 +66,22 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
-        holder = new Holder(properties, twitterWrapper, mailWrapper, gcmWrapper, smsWrapper, "db-test.properties");
-        hardwareServer1 = new HardwareServer(holder).start();
-        appServer1 = new AppServer(holder).start();
+        holder = createDefaultHolder(properties, "db-test.properties");;
+        hardwareServer1 = new HardwareAndHttpAPIServer(holder).start();
+        appServer1 = new AppAndHttpsServer(holder).start();
 
-        properties2 = new ServerProperties("server2.properties");
+        properties2 = new ServerProperties(Collections.emptyMap(), "server2.properties");
         properties2.setProperty("data.folder", getDataFolder());
 
-        this.holder2 = new Holder(properties2, twitterWrapper, mailWrapper, gcmWrapper, smsWrapper, "db-test.properties");
-        hardwareServer2 = new HardwareServer(holder2).start();
-        appServer2 = new AppServer(holder2).start();
-        plainHardPort2 = properties2.getIntProperty("hardware.default.port");
-        tcpAppPort2 = properties2.getIntProperty("app.ssl.port");
+        this.holder2 = createDefaultHolder(properties2, "db-test.properties");;
+        hardwareServer2 = new HardwareAndHttpAPIServer(holder2).start();
+        appServer2 = new AppAndHttpsServer(holder2).start();
+        plainHardPort2 = properties2.getIntProperty("http.port");
+        tcpAppPort2 = properties2.getIntProperty("https.port");
 
         holder.dbManager.executeSQL("DELETE FROM users");
         holder.dbManager.executeSQL("DELETE FROM forwarding_tokens");
-        clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties2);
+        clientPair = initAppAndHardPair(properties.getHttpsPort(), properties.getHttpPort(), properties2);
     }
 
     @After
@@ -94,7 +100,7 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
 
     @Test
     public void test2NewUsersStoredOnDifferentServers() throws Exception {
-        TestAppClient appClient1 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient1 =new TestAppClient(properties);
         appClient1.start();
 
         String email = "test_new@gmail.com";
@@ -102,7 +108,7 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
         String appName = AppNameUtil.BLYNK;
 
         appClient1.send("getServer " + email + "\0" + appName);
-        verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(new GetServerMessage(1, "127.0.0.1")));
+        appClient1.verifyResult(getServer(1, "127.0.0.1"));
 
         appClient1.reset();
 
@@ -112,7 +118,7 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
         workflowForUser(appClient1, email, pass, appName);
         profileSaverWorker.run();
         //waiting for DB update
-        sleep(500);
+        TestUtil.sleep(500);
 
         assertEquals("127.0.0.1", holder.dbManager.getUserServerIp(email, AppNameUtil.BLYNK));
 
@@ -122,30 +128,37 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
         String username2 = "test2_new@gmail.com";
 
         appClient2.send("getServer " + username2 + "\0" + appName);
-        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(new GetServerMessage(1, "localhost2")));
+        appClient2.verifyResult(getServer(1, "localhost2"));
 
         appClient2.reset();
 
         workflowForUser(appClient2, username2, pass, appName);
         profileSaverWorker2.run();
-        //waiting for DB update
-        sleep(500);
 
-        assertEquals("localhost2", holder2.dbManager.getUserServerIp(username2, AppNameUtil.BLYNK));
+        long tries = 0;
+        String host;
+        //waiting for channel to be closed.
+        //but only limited amount if time
+        while ((host = holder2.dbManager.getUserServerIp(username2, AppNameUtil.BLYNK)) == null && tries < 100) {
+            TestUtil.sleep(10);
+            tries++;
+        }
+
+        assertEquals("localhost2", host);
     }
 
     @Test
     public void testNoGetServerHandlerAfterLogin() throws Exception {
-        TestAppClient appClient1 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient1 =new TestAppClient(properties);
         appClient1.start();
         workflowForUser(appClient1, "123@gmail.com", "a", AppNameUtil.BLYNK);
         appClient1.send("getServer " + "123@gmail.com" + "\0" + AppNameUtil.BLYNK);
-        verify(appClient1.responseMock, after(500).never()).channelRead(any(), eq(new GetServerMessage(1, "127.0.0.1")));
+        appClient1.neverAfter(500, getServer(1, "127.0.0.1"));
     }
 
     @Test
     public void testUserRedirectedToCorrectServer() throws Exception {
-        TestAppClient appClient1 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient1 =new TestAppClient(properties);
         appClient1.start();
 
         String email = "test_new@gmail.com";
@@ -153,7 +166,7 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
         String appName = AppNameUtil.BLYNK;
 
         appClient1.send("getServer " + email + "\0" + appName);
-        verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(new GetServerMessage(1, "127.0.0.1")));
+        appClient1.verifyResult(getServer(1, "127.0.0.1"));
 
         appClient1.reset();
 
@@ -162,7 +175,7 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
         workflowForUser(appClient1, email, pass, appName);
         profileSaverWorker.run();
         //waiting for DB update
-        sleep(500);
+        TestUtil.sleep(500);
 
         assertEquals("127.0.0.1", holder.dbManager.getUserServerIp(email, AppNameUtil.BLYNK));
 
@@ -170,12 +183,12 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
         appClient2.start();
 
         appClient2.send("getServer " + email + "\0" + appName);
-        verify(appClient2.responseMock, timeout(1000)).channelRead(any(), eq(new GetServerMessage(1, "127.0.0.1")));
+        appClient2.verifyResult(getServer(1, "127.0.0.1"));
     }
 
     @Test
     public void testCreateFewAccountWithDifferentApp() throws Exception {
-        TestAppClient appClient1 = new TestAppClient("localhost", tcpAppPort, properties);
+        TestAppClient appClient1 = new TestAppClient(properties);
         appClient1.start();
 
         String email = "test@gmmail.com";
@@ -183,19 +196,19 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
         String appName = "Blynk";
 
         appClient1.send("getServer");
-        verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(illegalCommand(1)));
+        appClient1.verifyResult(illegalCommand(1));
 
         appClient1.send("getServer " + email + "\0" + appName);
-        verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(new GetServerMessage(2, "127.0.0.1")));
+        appClient1.verifyResult(getServer(2, "127.0.0.1"));
 
-        appClient1.send("register " + email + " " + pass + " " + appName);
-        verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(ok(3)));
-        appClient1.send("login " + email + " " + pass + " Android 1.10.4 " + appName);
+        appClient1.register(email, pass, appName);
+        appClient1.verifyResult(ok(3));
+        appClient1.login(email, pass, "Android", "1.10.4 " + appName);
         //we should wait until login finished. Only after that we can send commands
-        verify(appClient1.responseMock, timeout(1000)).channelRead(any(), eq(ok(4)));
+        appClient1.verifyResult(ok(4));
 
         appClient1.send("getServer " + email + "\0" + appName);
-        verify(appClient1.responseMock, timeout(1000).times(0)).channelRead(any(), eq(new GetServerMessage(5, "127.0.0.1")));
+        appClient1.never(getServer(5, "127.0.0.1"));
     }
 
     @Test
@@ -203,48 +216,46 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
         TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
         hardClient.start();
 
-        hardClient.send("login 123");
-        verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(invalidToken(1)));
+        hardClient.login("123");
+        hardClient.verifyResult(invalidToken(1));
 
         holder.dbManager.assignServerToToken("123", "127.0.0.1", "user", 0, 0);
-        hardClient.send("login 123");
-        verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(invalidToken(2)));
+        hardClient.login("123");
+        hardClient.verifyResult(invalidToken(2));
 
-        hardClient.send("login \0");
-        verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(invalidToken(3)));
+        hardClient.login("\0");
+        hardClient.verifyResult(invalidToken(3));
     }
 
     @Test
     public void hardwareCreatedAndServerStoredInDB() throws Exception {
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
-        clientPair.appClient.send("createDevice 1\0" + device1.toString());
-        String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice);
+        clientPair.appClient.createDevice(1, device1);
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, after(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+        clientPair.appClient.verifyResultAfter(500, createDevice(1, device));
 
         assertEquals("127.0.0.1", holder.dbManager.forwardingTokenDBDao.selectHostByToken(device.token));
     }
 
     @Test
     public void hardwareCreatedAndServerStoredInDBAndDelete() throws Exception {
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
         device1.status = Status.OFFLINE;
 
-        clientPair.appClient.send("createDevice 1\0" + device1.toString());
-        String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice);
+        clientPair.appClient.createDevice(1, device1);
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, after(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+        clientPair.appClient.verifyResultAfter(1000, createDevice(1, device));
 
         assertEquals("127.0.0.1", holder.dbManager.forwardingTokenDBDao.selectHostByToken(device.token));
 
         clientPair.appClient.send("deleteDevice 1\0" + device.id);
-        verify(clientPair.appClient.responseMock, after(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResultAfter(1000, ok(2));
 
         assertNull(holder.dbManager.forwardingTokenDBDao.selectHostByToken(device.token));
     }
@@ -254,27 +265,40 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
         String token = "12345678901234567890123456789012";
 
         assertTrue(holder.dbManager.forwardingTokenDBDao.insertTokenHost(
-                token, "test_host", DEFAULT_TEST_USER, 0, 0));
+                token, "test_host", getUserName(), 0, 0));
 
         TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
         hardClient.start();
 
-        hardClient.send("login " + token);
-        verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(
-                new ConnectRedirectMessage(1, b("test_host " + tcpHardPort))));
+        hardClient.login(token);
+        hardClient.verifyResult(connectRedirect(1, "test_host " + tcpHardPort));
     }
 
     @Test
-    public void invalidToken() throws Exception {
+    public void redirectForHardwareWorksWithForce80Port() throws Exception {
+        String token = "12345678901234567890123456789013";
+
+        assertTrue(holder.dbManager.forwardingTokenDBDao.insertTokenHost(
+                token, "test_host", getUserName(), 0, 0));
+
+        TestHardClient hardClient = new TestHardClient("localhost", plainHardPort2);
+        hardClient.start();
+
+        hardClient.login(token);
+        hardClient.verifyResult(connectRedirect(1, "test_host " + 80));
+    }
+
+    @Test
+    public void testInvalidToken() throws Exception {
         String token = "1234567890123456789012345678901";
 
         assertTrue(holder.dbManager.forwardingTokenDBDao.insertTokenHost(
-                token, "test_host", DEFAULT_TEST_USER, 0, 0));
+                token, "test_host", getUserName(), 0, 0));
 
         TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
         hardClient.start();
 
-        hardClient.send("login " + token);
+        hardClient.login(token);
         verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(invalidToken(1)));
     }
 
@@ -283,20 +307,18 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
         String token = "12345678901234567890123456789013";
 
         assertTrue(holder.dbManager.forwardingTokenDBDao.insertTokenHost(
-                token, "test_host", DEFAULT_TEST_USER, 0, 0));
+                token, "test_host", getUserName(), 0, 0));
 
         TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
         hardClient.start();
 
-        hardClient.send("login " + token);
-        verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(
-                new ConnectRedirectMessage(1, b("test_host " + tcpHardPort))));
+        hardClient.login(token);
+        hardClient.verifyResult(connectRedirect(1, "test_host " + tcpHardPort));
 
         holder.dbManager.executeSQL("DELETE FROM forwarding_tokens");
 
-        hardClient.send("login " + token);
-        verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(
-                new ConnectRedirectMessage(2, b("test_host " + tcpHardPort))));
+        hardClient.login(token);
+        hardClient.verifyResult(connectRedirect(2, "test_host " + tcpHardPort));
     }
 
     @Test
@@ -304,53 +326,49 @@ public class LoadBalancingIntegrationTest extends IntegrationBase {
         String token = "12345678901234567890123456789012";
 
         assertTrue(holder.dbManager.forwardingTokenDBDao.insertTokenHost(
-                token, "test_host", DEFAULT_TEST_USER, 0, 0));
+                token, "test_host", getUserName(), 0, 0));
 
         TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
         hardClient.start();
 
-        hardClient.send("login " + token);
-        verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(
-                new ConnectRedirectMessage(1, b("test_host " + tcpHardPort))));
+        hardClient.login(token);
+        hardClient.verifyResult(connectRedirect(1, "test_host " + tcpHardPort));
 
         holder.dbManager.executeSQL("DELETE FROM forwarding_tokens");
 
-        hardClient.send("login " + token);
-        verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(
-                new ConnectRedirectMessage(2, b("test_host " + tcpHardPort))));
+        hardClient.login(token);
+        hardClient.verifyResult(connectRedirect(2, "test_host " + tcpHardPort));
 
         LRUCache.LOGIN_TOKENS_CACHE.clear();
 
-        hardClient.send("login " + token);
-        verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(invalidToken(3)));
+        hardClient.login(token);
+        hardClient.verifyResult(invalidToken(3));
 
         assertTrue(holder.dbManager.forwardingTokenDBDao.insertTokenHost(
-                token, "test_host_2", DEFAULT_TEST_USER, 0, 0));
+                token, "test_host_2", getUserName(), 0, 0));
 
         LRUCache.LOGIN_TOKENS_CACHE.clear();
 
-        hardClient.send("login " + token);
-        verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(
-                new ConnectRedirectMessage(4, b("test_host_2 " + tcpHardPort))));
+        hardClient.login(token);
+        hardClient.verifyResult(connectRedirect(4, "test_host_2 " + tcpHardPort));
     }
 
     private String workflowForUser(TestAppClient appClient, String username, String pass, String appName) throws Exception{
-        appClient.send("register " + username + " " + pass + " " + appName);
-        verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
-        appClient.send("login " + username + " " + pass + " Android 1.10.4 " + appName);
-        //we should wait until login finished. Only after that we can send commands
-        verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
+        appClient.register(username,  pass, appName);
+        appClient.verifyResult(ok(1));
+        appClient.login(username, pass, "Android", "1.10.4 " + appName);
+        appClient.verifyResult(ok(2));
 
         DashBoard dash = new DashBoard();
         dash.id = 1;
         dash.name = "test";
-        appClient.send("createDash " + dash.toString());
-        verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(3)));
-        appClient.send("activate 1");
-        verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(4, DEVICE_NOT_IN_NETWORK)));
+        appClient.createDash(dash);
+        appClient.verifyResult(ok(3));
+        appClient.activate(1);
+        appClient.verifyResult(new ResponseMessage(4, DEVICE_NOT_IN_NETWORK));
 
         appClient.reset();
-        appClient.send("getToken 1");
+        appClient.getToken(1);
 
         String token = appClient.getBody();
         assertNotNull(token);

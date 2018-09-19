@@ -4,7 +4,6 @@ import cc.blynk.client.core.ActiveHardwareClient;
 import cc.blynk.client.core.AppClient;
 import cc.blynk.client.core.HardwareClient;
 import cc.blynk.client.enums.ClientMode;
-import cc.blynk.server.internal.ParseUtil;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
@@ -21,8 +20,8 @@ import java.io.InputStreamReader;
 public final class ClientLauncher {
 
     static final String DEFAULT_HOST = "localhost";
-    static final int DEFAULT_HARDWARE_PORT = 8442;
-    static final int DEFAULT_APPLICATION_PORT = 8443;
+    static final int DEFAULT_HARDWARE_PORT = 8080;
+    static final int DEFAULT_APPLICATION_PORT = 9443;
 
     private static final Options options = new Options();
 
@@ -41,7 +40,7 @@ public final class ClientLauncher {
 
         ClientMode mode = ClientMode.parse(cmd.getOptionValue("mode", ClientMode.HARDWARE.name()));
         String host = cmd.getOptionValue("host", DEFAULT_HOST);
-        int port = ParseUtil.parseInt(cmd.getOptionValue("port",
+        int port = Integer.parseInt(cmd.getOptionValue("port",
                         (mode == ClientMode.APP
                                 ? String.valueOf(DEFAULT_APPLICATION_PORT)
                                 : String.valueOf(DEFAULT_HARDWARE_PORT)))

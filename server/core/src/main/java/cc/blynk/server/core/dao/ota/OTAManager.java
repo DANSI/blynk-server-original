@@ -6,19 +6,20 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.DeviceOtaInfo;
 import cc.blynk.server.core.model.device.HardwareInfo;
-import cc.blynk.utils.FileUtils;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.properties.ServerProperties;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
-import static cc.blynk.server.internal.BlynkByteBufUtil.makeASCIIStringMessage;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeASCIIStringMessage;
+import static cc.blynk.utils.FileUtils.getPatternFromString;
 
 /**
  * Very basic OTA manager implementation.
@@ -34,13 +35,14 @@ public class OTAManager {
 
     public final String serverHostUrl;
     private volatile OTAInfo allInfo;
-    private final ConcurrentHashMap<UserKey, OTAInfo> otaInfos = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<UserKey, OTAInfo> otaInfos;
     private final String staticFilesFolder;
 
     public OTAManager(ServerProperties props) {
         String port = props.getProperty("http.port", "8080");
-        this.serverHostUrl = "http://" + props.getServerHost() + (port.equals("80") ? "" : (":" + port));
+        this.serverHostUrl = "http://" + props.host + (port.equals("80") ? "" : (":" + port));
         this.staticFilesFolder = props.jarPath;
+        this.otaInfos = new ConcurrentHashMap<>();
     }
 
     public void initiateHardwareUpdate(ChannelHandlerContext ctx, UserKey userKey,
@@ -78,7 +80,7 @@ public class OTAManager {
     }
 
     private void sendOtaCommand(ChannelHandlerContext ctx, Device device, OTAInfo otaInfo) {
-        ByteBuf msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777, otaInfo.makeHardwareBody(serverHostUrl));
+        StringMessage msg = makeASCIIStringMessage(BLYNK_INTERNAL, 7777, otaInfo.makeHardwareBody(serverHostUrl));
         if (ctx.channel().isWritable()) {
             device.deviceOtaInfo = new DeviceOtaInfo(otaInfo.initiatedBy,
                     otaInfo.initiatedAt, System.currentTimeMillis());
@@ -97,10 +99,18 @@ public class OTAManager {
         log.info("Ota initiated. {}", allInfo);
     }
 
-    //todo this is ugly. but for now is ok.
+    public static String getBuildPatternFromString(Path path) {
+        try {
+            return getPatternFromString(path, "\0" + "build" + "\0");
+        } catch (IOException ioe) {
+            log.error("Error getting pattern from file. Reason : {}", ioe.getMessage());
+            throw new RuntimeException(ioe);
+        }
+    }
+
     private String fetchBuildNumber(String pathToFirmware) {
         Path path = Paths.get(staticFilesFolder, pathToFirmware);
-        return FileUtils.getBuildPatternFromString(path);
+        return getBuildPatternFromString(path);
     }
 
     public void stop(User user) {

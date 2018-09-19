@@ -8,13 +8,12 @@ import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.split3;
 
 /**
@@ -36,9 +35,9 @@ public final class DeleteTileTemplateLogic {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        int dashId = ParseUtil.parseInt(split[0]);
-        long widgetId = ParseUtil.parseLong(split[1]);
-        long tileId = ParseUtil.parseLong(split[2]);
+        int dashId = Integer.parseInt(split[0]);
+        long widgetId = Long.parseLong(split[1]);
+        long tileId = Long.parseLong(split[2]);
 
         User user = state.user;
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
@@ -53,8 +52,12 @@ public final class DeleteTileTemplateLogic {
 
         log.debug("Deleting tile template dashId : {}, widgetId : {}, tileId : {}.", dash, widgetId, tileId);
 
+        TileTemplate tileTemplate = deviceTiles.templates[existingTileIndex];
+        user.addEnergy(tileTemplate.getPrice());
+
         deviceTiles.templates = ArrayUtil.remove(deviceTiles.templates, existingTileIndex, TileTemplate.class);
         deviceTiles.deleteDeviceTilesByTemplateId(tileId);
+        dash.cleanPinStorageForTileTemplate(tileTemplate, true);
 
         dash.updatedAt = System.currentTimeMillis();
 

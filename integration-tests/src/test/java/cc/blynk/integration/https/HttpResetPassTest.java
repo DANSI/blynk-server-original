@@ -1,8 +1,9 @@
 package cc.blynk.integration.https;
 
 import cc.blynk.integration.BaseTest;
-import cc.blynk.server.api.http.HttpAPIServer;
-import cc.blynk.server.core.BaseServer;
+import cc.blynk.integration.TestUtil;
+import cc.blynk.server.servers.BaseServer;
+import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.AppNameUtil;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -46,12 +47,12 @@ public class HttpResetPassTest extends BaseTest {
 
     @Before
     public void init() throws Exception {
-        httpServerUrl = String.format("http://localhost:%s/", httpPort);
+        httpServerUrl = String.format("http://localhost:%s/", properties.getHttpPort());
 
         // Allow TLSv1 protocol only
         this.httpclient = HttpClients.createDefault();
 
-        httpServer = new HttpAPIServer(holder).start();
+        httpServer = new HardwareAndHttpAPIServer(holder).start();
     }
 
     @Override
@@ -70,12 +71,23 @@ public class HttpResetPassTest extends BaseTest {
 
         try (CloseableHttpResponse response = httpclient.execute(resetPassRequest)) {
             assertEquals(200, response.getStatusLine().getStatusCode());
-            String data = consumeText(response);
+            String data = TestUtil.consumeText(response);
             assertNotNull(data);
             assertEquals("Email was sent.", data);
         }
 
-        verify(mailWrapper).sendHtml(eq(email), eq("Password reset request for Blynk app."), contains("/landing?token="));
+        String productName = properties.productName;
+        verify(holder.mailWrapper).sendHtml(eq(email),
+                eq("Password reset request for the " + productName + " app."),
+                contains("/landing?token="));
+
+        verify(holder.mailWrapper).sendHtml(eq(email),
+                eq("Password reset request for the " + productName + " app."),
+                contains("You recently made a request to reset your password for the " + productName + " app. To complete the process, click the link below."));
+
+        verify(holder.mailWrapper).sendHtml(eq(email),
+                eq("Password reset request for the " + productName + " app."),
+                contains("If you did not request a password reset from " + productName + ", please ignore this message."));
     }
 
 

@@ -1,36 +1,29 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.IntegrationBase;
-import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.SingleServerInstancePerTest;
+import cc.blynk.integration.TestUtil;
+import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
-import cc.blynk.server.application.AppServer;
-import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DashboardSettings;
 import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.enums.Theme;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
-import cc.blynk.server.core.protocol.model.messages.appllication.DeviceOfflineMessage;
-import cc.blynk.server.hardware.HardwareServer;
-import junit.framework.TestCase;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static cc.blynk.integration.TestUtil.b;
+import static cc.blynk.integration.TestUtil.createDevice;
+import static cc.blynk.integration.TestUtil.deviceOffline;
+import static cc.blynk.integration.TestUtil.ok;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.after;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -39,115 +32,102 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class OfflineNotificationTest extends IntegrationBase {
+public class OfflineNotificationTest extends SingleServerInstancePerTest {
 
-    private BaseServer appServer;
-    private BaseServer hardwareServer;
-    private ClientPair clientPair;
+    private static int tcpHardPort;
 
-    @Before
-    public void init() throws Exception {
-        this.hardwareServer = new HardwareServer(holder).start();
-        this.appServer = new AppServer(holder).start();
-
-        this.clientPair = initAppAndHardPair("user_profile_json_empty_dash.txt");
+    @BeforeClass
+    public static void initPort() {
+        tcpHardPort = properties.getHttpPort();
     }
 
-    @After
-    public void shutdown() {
-        this.appServer.close();
-        this.hardwareServer.close();
-        this.clientPair.stop();
+    @Override
+    protected String changeProfileTo() {
+        return "user_profile_json_empty_dash.txt";
     }
 
     @Test
     public void testOfflineTimingIsCorrectForMultipleDevices() throws Exception {
-        Device device2 = new Device(1, "My Device", "ESP8266");
+        Device device2 = new Device(1, "My Device", BoardType.ESP8266);
         device2.status = Status.OFFLINE;
 
-        clientPair.appClient.send("createDevice 1\0" + device2.toString());
-        String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice);
+        clientPair.appClient.createDevice(1, device2);
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+        clientPair.appClient.verifyResult(createDevice(1, device));
 
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody(2);
 
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
-        TestCase.assertNotNull(devices);
+        Device[] devices = clientPair.appClient.parseDevices(2);
+        assertNotNull(devices);
         assertEquals(2, devices.length);
 
         assertEquals(1, devices[1].id);
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
-        hardClient2.send("login " + devices[1].token);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        hardClient2.login(devices[1].token);
+        hardClient2.verifyResult(ok(1));
 
         hardClient2.send("internal " + b("ver 0.3.1 h-beat 10 buff-in 256 dev Arduino cpu ATmega328P con W5100"));
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        hardClient2.verifyResult(ok(2));
 
         clientPair.hardwareClient.stop();
 
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(),
-                eq(new DeviceOfflineMessage(0, b("1-0"))));
-        verify(clientPair.appClient.responseMock, never()).channelRead(any(),
-                eq(new DeviceOfflineMessage(0, b("1-1"))));
+        clientPair.appClient.verifyResult(deviceOffline(0, "1-0"));
+        clientPair.appClient.never(deviceOffline(0, "1-1"));
 
         clientPair.appClient.reset();
         hardClient2.stop();
 
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new DeviceOfflineMessage(0, b("1-1"))));
-        verify(clientPair.appClient.responseMock, never()).channelRead(any(), eq(new DeviceOfflineMessage(0, b("1-0"))));
+        clientPair.appClient.verifyResult(deviceOffline(0, b("1-1")));
+        clientPair.appClient.never(deviceOffline(0, b("1-0")));
     }
 
     @Test
     public void testOfflineTimingIsCorrectForMultipleDevices2() throws Exception {
-        Device device2 = new Device(1, "My Device", "ESP8266");
+        Device device2 = new Device(1, "My Device", BoardType.ESP8266);
         device2.status = Status.OFFLINE;
 
-        clientPair.appClient.send("createDevice 1\0" + device2.toString());
-        String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice);
-        TestCase.assertNotNull(device);
-        TestCase.assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+        clientPair.appClient.createDevice(1, device2);
+        Device device = clientPair.appClient.parseDevice();
+        assertNotNull(device);
+        assertNotNull(device.token);
+        clientPair.appClient.verifyResult(createDevice(1, device));
 
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody(2);
 
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
-        TestCase.assertNotNull(devices);
+        Device[] devices = clientPair.appClient.parseDevices(2);
+        assertNotNull(devices);
         assertEquals(2, devices.length);
 
         assertEquals(1, devices[1].id);
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
-        hardClient2.send("login " + devices[1].token);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        hardClient2.login(devices[1].token);
+        hardClient2.verifyResult(ok(1));
 
         hardClient2.send("internal " + b("ver 0.3.1 h-beat 1 buff-in 256 dev Arduino cpu ATmega328P con W5100"));
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        hardClient2.verifyResult(ok(2));
 
         clientPair.hardwareClient.stop();
         hardClient2.stop();
 
-        verify(clientPair.appClient.responseMock, timeout(5000).times(1)).channelRead(any(), eq(new DeviceOfflineMessage(0, b("1-0"))));
-        verify(clientPair.appClient.responseMock, timeout(5000).times(1)).channelRead(any(), eq(new DeviceOfflineMessage(0, b("1-1"))));
+        clientPair.appClient.verifyResult(deviceOffline(0, b("1-0")));
+        clientPair.appClient.verifyResult(deviceOffline(0, b("1-1")));
     }
 
     @Test
     public void testTurnOffNotifications() throws Exception{
-        DashboardSettings settings = new DashboardSettings("New Name", true, Theme.BlynkLight, true, true, true);
+        DashboardSettings settings = new DashboardSettings("New Name", true, Theme.BlynkLight, true, true, true, false);
 
         clientPair.appClient.send("updateSettings 1\0" + JsonParser.toJson(settings));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = parseProfile(clientPair.appClient.getBody(2));
+        Profile profile = clientPair.appClient.parseProfile(2);
         DashBoard dashBoard = profile.dashBoards[0];
         assertNotNull(dashBoard);
         assertEquals(settings.name, dashBoard.name);
@@ -157,41 +137,116 @@ public class OfflineNotificationTest extends IntegrationBase {
         assertEquals(settings.isShared, dashBoard.isShared);
         assertEquals(settings.keepScreenOn, dashBoard.keepScreenOn);
         assertEquals(settings.theme, dashBoard.theme);
+        assertEquals(settings.widgetBackgroundOn, dashBoard.widgetBackgroundOn);
 
         clientPair.hardwareClient.stop();
 
-        verify(clientPair.appClient.responseMock, after(500).never()).channelRead(any(),
-                eq(new DeviceOfflineMessage(0, b("1-0"))));
+        clientPair.appClient.neverAfter(500, deviceOffline(0, "1-0"));
 
-        Device device2 = new Device(1, "My Device", "ESP8266");
+        Device device2 = new Device(1, "My Device", BoardType.ESP8266);
         device2.status = Status.OFFLINE;
 
-        clientPair.appClient.send("createDevice 1\0" + device2.toString());
-        String createdDevice = clientPair.appClient.getBody(3);
-        Device device = JsonParser.parseDevice(createdDevice);
-        TestCase.assertNotNull(device);
-        TestCase.assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(3, device.toString())));
+        clientPair.appClient.createDevice(1, device2);
+        Device device = clientPair.appClient.parseDevice(3);
+        assertNotNull(device);
+        assertNotNull(device.token);
+        clientPair.appClient.verifyResult(createDevice(3, device));
 
         clientPair.appClient.send("getDevices 1");
-        String response = clientPair.appClient.getBody(4);
 
-        Device[] devices = JsonParser.MAPPER.readValue(response, Device[].class);
-        TestCase.assertNotNull(devices);
+        Device[] devices = clientPair.appClient.parseDevices(4);
+        assertNotNull(devices);
         assertEquals(2, devices.length);
 
         assertEquals(1, devices[1].id);
 
-        settings = new DashboardSettings("New Name", true, Theme.BlynkLight, true, true, false);
+        settings = new DashboardSettings("New Name", true, Theme.BlynkLight, true, true, false, false);
         clientPair.appClient.send("updateSettings 1\0" + JsonParser.toJson(settings));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(5)));
+        clientPair.appClient.verifyResult(ok(5));
 
         TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
         hardClient2.start();
-        hardClient2.send("login " + devices[1].token);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        hardClient2.login(devices[1].token);
+        hardClient2.verifyResult(ok(1));
         hardClient2.stop();
 
-        verify(clientPair.appClient.responseMock, timeout(500).times(1)).channelRead(any(), eq(new DeviceOfflineMessage(0, b("1-1"))));
+        clientPair.appClient.verifyResult(deviceOffline(0, "1-1"));
+    }
+
+    @Test
+    public void testTurnOffNotificationsAndNoDevices() throws Exception{
+        DashboardSettings settings = new DashboardSettings("New Name", true, Theme.BlynkLight, true, true, true, false);
+
+        clientPair.appClient.send("updateSettings 1\0" + JsonParser.toJson(settings));
+        clientPair.appClient.verifyResult(ok(1));
+
+        clientPair.hardwareClient.stop();
+        clientPair.appClient.neverAfter(500, deviceOffline(0, "1-0"));
+
+        clientPair.appClient.activate(1);
+        clientPair.appClient.verifyResult(ok(2));
+    }
+
+    @Test
+    public void deviceGoesOfflineAfterBeingIdle() throws Exception {
+        Device device2 = new Device(1, "My Device", BoardType.ESP8266);
+        device2.status = Status.OFFLINE;
+
+        clientPair.appClient.createDevice(1, device2);
+        clientPair.appClient.send("getDevices 1");
+
+        Device[] devices = clientPair.appClient.parseDevices(2);
+        assertNotNull(devices);
+        assertEquals(2, devices.length);
+
+        assertEquals(1, devices[1].id);
+
+        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
+        hardClient2.start();
+        hardClient2.login(devices[1].token);
+        hardClient2.verifyResult(ok(1));
+
+        hardClient2.send("internal " + b("ver 0.3.1 h-beat 1 buff-in 256 dev Arduino cpu ATmega328P con W5100"));
+        hardClient2.verifyResult(ok(2));
+
+        //just waiting 2.5 secs so server trigger idle event
+        TestUtil.sleep(2500);
+
+        clientPair.appClient.verifyResult(deviceOffline(0, b("1-1")));
+    }
+
+    @Test
+    public void sessionDisconnectChangeState() throws Exception {
+        Device device2 = new Device(1, "My Device", BoardType.ESP8266);
+        device2.status = Status.OFFLINE;
+
+        clientPair.appClient.createDevice(1, device2);
+        clientPair.appClient.send("getDevices 1");
+
+        Device[] devices = clientPair.appClient.parseDevices(2);
+        assertNotNull(devices);
+        assertEquals(2, devices.length);
+
+        assertEquals(1, devices[1].id);
+        assertEquals(0, devices[1].disconnectTime);
+
+        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
+        hardClient2.start();
+        hardClient2.login(devices[1].token);
+        hardClient2.verifyResult(ok(1));
+
+        holder.sessionDao.close();
+
+        TestAppClient testAppClient = new TestAppClient(properties);
+        testAppClient.start();
+        testAppClient.login(getUserName(), "1");
+        testAppClient.verifyResult(ok(1));
+
+        testAppClient.send("getDevices 1");
+        devices = testAppClient.parseDevices(2);
+        assertNotNull(devices);
+        assertEquals(2, devices.length);
+        assertEquals(1, devices[1].id);
+        assertEquals(System.currentTimeMillis(), devices[1].disconnectTime, 5000);
     }
 }

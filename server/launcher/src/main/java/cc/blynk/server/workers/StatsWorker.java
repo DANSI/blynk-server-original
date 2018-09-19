@@ -4,9 +4,10 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.model.widgets.ui.reporting.ReportScheduler;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.core.stats.model.Stat;
-import cc.blynk.server.db.DBManager;
+import cc.blynk.server.db.ReportingDBManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,25 +27,27 @@ public class StatsWorker implements Runnable {
     private final GlobalStats stats;
     private final SessionDao sessionDao;
     private final UserDao userDao;
-    private final DBManager dbManager;
+    private final ReportingDBManager reportingDBManager;
     private final String region;
     private final BlockingIOProcessor blockingIOProcessor;
+    private final ReportScheduler reportScheduler;
 
     public StatsWorker(Holder holder) {
         this.stats = holder.stats;
         this.sessionDao = holder.sessionDao;
         this.userDao = holder.userDao;
-        this.dbManager = holder.dbManager;
-        this.region = holder.region;
+        this.reportingDBManager = holder.reportingDBManager;
+        this.region = holder.props.region;
         this.blockingIOProcessor = holder.blockingIOProcessor;
+        this.reportScheduler = holder.reportScheduler;
     }
 
     @Override
     public void run() {
         try {
-            Stat stat = new Stat(sessionDao, userDao, blockingIOProcessor, stats, true);
+            var stat = new Stat(sessionDao, userDao, blockingIOProcessor, stats, reportScheduler, true);
             log.info(stat);
-            dbManager.insertStat(this.region, stat);
+            reportingDBManager.insertStat(this.region, stat);
         } catch (Exception e) {
             log.error("Error making stats.", e);
         }

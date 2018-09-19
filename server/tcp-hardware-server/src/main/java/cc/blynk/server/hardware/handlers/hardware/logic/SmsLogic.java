@@ -1,9 +1,7 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.widgets.notifications.SMS;
 import cc.blynk.server.core.processors.NotificationBase;
-import cc.blynk.server.core.protocol.exceptions.NotificationBodyInvalidException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.notifications.sms.SMSWrapper;
@@ -12,10 +10,10 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_NOT_AUTHORIZED;
-import static cc.blynk.server.internal.BlynkByteBufUtil.makeResponse;
-import static cc.blynk.server.internal.BlynkByteBufUtil.notificationError;
-import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.CommonByteBufUtil.notificationError;
+import static cc.blynk.server.internal.CommonByteBufUtil.notificationInvalidBody;
+import static cc.blynk.server.internal.CommonByteBufUtil.notificationNotAuthorized;
+import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 
 /**
  * Sends tweets from hardware.
@@ -40,16 +38,18 @@ public class SmsLogic extends NotificationBase {
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
         if (message.body == null || message.body.isEmpty() || message.body.length() > MAX_SMS_BODY_SIZE) {
-            throw new NotificationBodyInvalidException();
+            log.debug("Notification message is empty or larger than limit.");
+            ctx.writeAndFlush(notificationInvalidBody(message.id), ctx.voidPromise());
+            return;
         }
 
-        DashBoard dash = state.dash;
-        SMS smsWidget = dash.getWidgetByType(SMS.class);
+        var dash = state.dash;
+        var smsWidget = dash.getWidgetByType(SMS.class);
 
         if (smsWidget == null || !dash.isActive
                 || smsWidget.to == null || smsWidget.to.isEmpty()) {
             log.debug("User has no access phone number provided.");
-            ctx.writeAndFlush(makeResponse(message.id, NOTIFICATION_NOT_AUTHORIZED), ctx.voidPromise());
+            ctx.writeAndFlush(notificationNotAuthorized(message.id), ctx.voidPromise());
             return;
         }
 

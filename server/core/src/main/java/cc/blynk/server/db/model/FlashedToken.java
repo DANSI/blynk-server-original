@@ -9,15 +9,15 @@ import java.util.Date;
  */
 public class FlashedToken {
 
-    public String token;
+    public final String token;
 
-    public String appId;
+    public final String appId;
 
-    public String email;
+    public final String email;
 
-    public int dashId;
+    public final int dashId;
 
-    public int deviceId;
+    public final int deviceId;
 
     public boolean isActivated;
 

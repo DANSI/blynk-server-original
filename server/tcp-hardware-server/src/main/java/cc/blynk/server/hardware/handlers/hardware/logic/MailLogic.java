@@ -1,5 +1,6 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
@@ -10,14 +11,15 @@ import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.notifications.mail.MailWrapper;
+import cc.blynk.utils.properties.Placeholders;
 import cc.blynk.utils.validators.BlynkEmailValidator;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.BlynkByteBufUtil.notificationError;
-import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.CommonByteBufUtil.notificationError;
+import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 
 /**
  * Sends email from received from hardware. Via google smtp server.
@@ -33,21 +35,24 @@ public class MailLogic extends NotificationBase {
 
     private final BlockingIOProcessor blockingIOProcessor;
     private final MailWrapper mailWrapper;
+    private final String vendorEmail;
 
-    public MailLogic(BlockingIOProcessor blockingIOProcessor, MailWrapper mailWrapper, long notificationQuotaLimit) {
-        super(notificationQuotaLimit);
-        this.blockingIOProcessor = blockingIOProcessor;
-        this.mailWrapper = mailWrapper;
+    public MailLogic(Holder holder) {
+        super(holder.limits.notificationPeriodLimitSec);
+        this.blockingIOProcessor = holder.blockingIOProcessor;
+        this.mailWrapper = holder.mailWrapper;
+        String tmp = holder.props.vendorEmail;
+        this.vendorEmail = tmp == null ? "" : tmp;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
         User user = state.user;
         DashBoard dash = state.dash;
 
-        Mail mail = dash.getWidgetByType(Mail.class);
+        Mail mail = dash.getMailWidget();
 
         if (mail == null || !dash.isActive) {
-            throw new NotAllowedException("User has no mail widget or active dashboard.");
+            throw new NotAllowedException("User has no mail widget or active dashboard.", message.id);
         }
 
         if (message.body.isEmpty()) {
@@ -67,7 +72,9 @@ public class MailLogic extends NotificationBase {
         String body;
 
         if (bodyParts.length == 3) {
-            to = bodyParts[0];
+            to = bodyParts[0]
+                    .replace(Placeholders.VENDOR_EMAIL, vendorEmail)
+                    .replace(Placeholders.DEVICE_OWNER_EMAIL, user.email);
             subj = bodyParts[1];
             body = bodyParts[2];
         } else {
@@ -83,22 +90,37 @@ public class MailLogic extends NotificationBase {
             throw new IllegalCommandException("Invalid mail receiver.");
         }
 
-        log.trace("Sending Mail for user {}, with message : '{}'.", user.email, message.body);
-        mail(ctx.channel(), user.email, to, subj, body, message.id);
+        String deviceName = state.device.name == null ? "" : state.device.name;
+
+        String updatedSubj = subj.replace(Placeholders.DEVICE_NAME, deviceName)
+                                 .replace(Placeholders.VENDOR_EMAIL, vendorEmail)
+                                 .replace(Placeholders.DEVICE_OWNER_EMAIL, user.email);
+
+        String updatedBody = body.replace(Placeholders.DEVICE_NAME, deviceName)
+                                 .replace(Placeholders.VENDOR_EMAIL, vendorEmail)
+                                 .replace(Placeholders.DEVICE_OWNER_EMAIL, user.email);
+
+        log.trace("Sending Mail for user {}, with message : '{}'.", user.email, updatedBody);
+        mail(ctx.channel(), user.email, to, updatedSubj, updatedBody, message.id, mail.isText());
         user.emailMessages++;
     }
 
-    private void mail(Channel channel, String email, String to, String subj, String body, int msgId) {
+    private void mail(Channel channel, String email, String to, String subj, String body, int msgId, boolean isText) {
         blockingIOProcessor.execute(() -> {
             try {
-                mailWrapper.sendHtml(to, subj, body);
+                if (isText) {
+                    mailWrapper.sendText(to, subj, body);
+                } else {
+                    mailWrapper.sendHtml(to, subj, body);
+                }
                 channel.writeAndFlush(ok(msgId), channel.voidPromise());
             } catch (Exception e) {
                 log.error("Error sending email from hardware. From user {}, to : {}. Reason : {}",
                         email, to, e.getMessage());
-                channel.writeAndFlush(notificationError(msgId), channel.voidPromise());
+                if (channel.isActive() && channel.isWritable()) {
+                    channel.writeAndFlush(notificationError(msgId), channel.voidPromise());
+                }
             }
         });
     }
-
 }

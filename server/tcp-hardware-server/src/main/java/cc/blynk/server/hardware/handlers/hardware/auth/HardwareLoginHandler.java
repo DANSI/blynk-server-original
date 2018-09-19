@@ -7,30 +7,35 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
-import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
+import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.appllication.LoginMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.db.DBManager;
-import cc.blynk.server.handlers.DefaultReregisterHandler;
-import cc.blynk.server.handlers.common.HardwareNotLoggedHandler;
 import cc.blynk.server.hardware.handlers.hardware.HardwareHandler;
+import cc.blynk.server.internal.ReregisterChannelUtil;
+import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.IPUtils;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.structure.LRUCache;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.concurrent.RejectedExecutionException;
+
 import static cc.blynk.server.core.protocol.enums.Command.CONNECT_REDIRECT;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_CONNECTED;
-import static cc.blynk.server.internal.BlynkByteBufUtil.invalidToken;
-import static cc.blynk.server.internal.BlynkByteBufUtil.makeASCIIStringMessage;
-import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.CommonByteBufUtil.invalidToken;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeASCIIStringMessage;
+import static cc.blynk.server.internal.CommonByteBufUtil.ok;
+import static cc.blynk.server.internal.CommonByteBufUtil.serverError;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
+import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
 
 /**
  * Handler responsible for managing hardware and apps login messages.
@@ -42,10 +47,9 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
  *
  */
 @ChannelHandler.Sharable
-public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
-        implements DefaultReregisterHandler, DefaultExceptionHandler {
+public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessage> {
 
-    private static final Logger log = LogManager.getLogger(DefaultExceptionHandler.class);
+    private static final Logger log = LogManager.getLogger(HardwareLoginHandler.class);
 
     private static final int HARDWARE_PIN_MODE_MSG_ID = 1;
 
@@ -53,15 +57,18 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
     private final DBManager dbManager;
     private final BlockingIOProcessor blockingIOProcessor;
     private final String listenPort;
+    private final boolean allowStoreIp;
 
     public HardwareLoginHandler(Holder holder, int listenPort) {
         this.holder = holder;
         this.dbManager = holder.dbManager;
         this.blockingIOProcessor = holder.blockingIOProcessor;
-        this.listenPort = String.valueOf(listenPort);
+        boolean isForce80ForRedirect = holder.props.getBoolProperty("force.port.80.for.redirect");
+        this.listenPort = isForce80ForRedirect ? "80" : String.valueOf(listenPort);
+        this.allowStoreIp = holder.props.getAllowStoreIp();
     }
 
-    private static void completeLogin(Channel channel, Session session, User user,
+    private void completeLogin(Channel channel, Session session, User user,
                                       DashBoard dash, Device device, int msgId) {
         log.debug("completeLogin. {}", channel);
 
@@ -69,22 +76,28 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         channel.write(ok(msgId));
 
         String body = dash.buildPMMessage(device.id);
-        if (dash.isActive && body.length() > 2) {
+        if (dash.isActive && body != null) {
             channel.write(makeASCIIStringMessage(HARDWARE, HARDWARE_PIN_MODE_MSG_ID, body));
         }
 
         channel.flush();
 
-        session.sendToApps(HARDWARE_CONNECTED, msgId, dash.id, device.id);
+        String responseBody = String.valueOf(dash.id) + DEVICE_SEPARATOR + device.id;
+        session.sendToApps(HARDWARE_CONNECTED, msgId, dash.id, responseBody);
         log.trace("Connected device id {}, dash id {}", device.id, dash.id);
         device.connected();
-        device.lastLoggedIP = IPUtils.getIp(channel.remoteAddress());
+        if (device.firstConnectTime == 0) {
+            device.firstConnectTime = device.connectTime;
+        }
+        if (allowStoreIp) {
+            device.lastLoggedIP = IPUtils.getIp(channel.remoteAddress());
+        }
 
         log.info("{} hardware joined.", user.email);
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, LoginMessage message) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, LoginMessage message) {
         String token = message.body.trim();
         TokenValue tokenValue = holder.tokenManager.getTokenValueByToken(token);
 
@@ -104,56 +117,62 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         Device device = tokenValue.device;
         DashBoard dash = tokenValue.dash;
 
-        ctx.pipeline().remove(this);
-        ctx.pipeline().remove(HardwareNotLoggedHandler.class);
+        if (tokenValue.isTemporary()) {
+            holder.tokenManager.updateRegularCache(token, tokenValue);
+            dash.devices = ArrayUtil.add(dash.devices, device, Device.class);
+            dash.updatedAt = System.currentTimeMillis();
+        }
+
         HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(user, tokenValue.dash, device);
-        ctx.pipeline().addLast("HHArdwareHandler", new HardwareHandler(holder, hardwareStateHolder));
+
+        ChannelPipeline pipeline = ctx.pipeline();
+        pipeline.replace(this, "HHArdwareHandler", new HardwareHandler(holder, hardwareStateHolder));
 
         Session session = holder.sessionDao.getOrCreateSessionByUser(
                 hardwareStateHolder.userKey, ctx.channel().eventLoop());
 
-        if (session.initialEventLoop != ctx.channel().eventLoop()) {
-            log.debug("Re registering hard channel. {}", ctx.channel());
-            reRegisterChannel(ctx, session, channelFuture ->
-                    completeLogin(channelFuture.channel(), session, user, dash, device, message.id));
-        } else {
+        if (session.isSameEventLoop(ctx)) {
             completeLogin(ctx.channel(), session, user, dash, device, message.id);
+        } else {
+            log.debug("Re registering hard channel. {}", ctx.channel());
+            ReregisterChannelUtil.reRegisterChannel(ctx, session, channelFuture ->
+                    completeLogin(channelFuture.channel(), session, user, dash, device, message.id));
         }
     }
 
     private void checkTokenOnOtherServer(ChannelHandlerContext ctx, String token, int msgId) {
-        blockingIOProcessor.executeDB(() -> {
-            //check cache first
-            LRUCache.CacheEntry cacheEntry = LRUCache.LOGIN_TOKENS_CACHE.get(token);
-
-            String server;
-            if (cacheEntry == null) {
-                log.debug("Checking invalid token in DB.");
-                server = dbManager.getServerByToken(token);
-                LRUCache.LOGIN_TOKENS_CACHE.put(token, new LRUCache.CacheEntry(server));
-                if (server != null) {
-                    log.info("Redirecting token '{}' to {}", token, server);
-                }
-            } else {
-                log.debug("Taking invalid token from cache.");
-                server = cacheEntry.value;
+        //check cache first
+        LRUCache.CacheEntry cacheEntry = LRUCache.LOGIN_TOKENS_CACHE.get(token);
+        if (cacheEntry == null) {
+            try {
+                blockingIOProcessor.executeDBGetServer(() -> {
+                    String server;
+                    log.debug("Checking invalid token in DB.");
+                    server = dbManager.getServerByToken(token);
+                    LRUCache.LOGIN_TOKENS_CACHE.put(token, new LRUCache.CacheEntry(server));
+                    // no server found, that's means token is wrong.
+                    sendRedirectResponse(ctx, token, server, msgId);
+                });
+            } catch (RejectedExecutionException ree) {
+                log.warn("Error in getServerByToken handler. Limit of tasks reached.");
+                ctx.writeAndFlush(serverError(msgId), ctx.voidPromise());
             }
-
-            // no server found, that's means token is wrong.
-            if (server == null || server.equals(holder.host)) {
-                log.debug("HardwareLogic token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());
-                ctx.writeAndFlush(invalidToken(msgId), ctx.voidPromise());
-            } else {
-                ctx.writeAndFlush(makeASCIIStringMessage(
-                        CONNECT_REDIRECT, msgId, server + BODY_SEPARATOR + listenPort),
-                        ctx.voidPromise());
-            }
-        });
+        } else {
+            log.debug("Taking token from cache.");
+            sendRedirectResponse(ctx, token, cacheEntry.value, msgId);
+        }
     }
 
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        handleGeneralException(ctx, cause);
+    private void sendRedirectResponse(ChannelHandlerContext ctx, String token, String server, int msgId) {
+        MessageBase response;
+        if (server == null || server.equals(holder.props.host)) {
+            log.debug("HardwareLogic token is invalid. Token '{}', '{}'", token, ctx.channel().remoteAddress());
+            response = invalidToken(msgId);
+        } else {
+            log.debug("Redirecting token '{}' to {}", token, server);
+            response = makeASCIIStringMessage(CONNECT_REDIRECT, msgId, server + BODY_SEPARATOR + listenPort);
+        }
+        ctx.writeAndFlush(response, ctx.voidPromise());
     }
 
 }

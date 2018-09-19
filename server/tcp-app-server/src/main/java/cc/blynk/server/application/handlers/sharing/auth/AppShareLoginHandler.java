@@ -3,16 +3,17 @@ package cc.blynk.server.application.handlers.sharing.auth;
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppLoginHandler;
 import cc.blynk.server.application.handlers.main.auth.GetServerHandler;
-import cc.blynk.server.application.handlers.main.auth.OsType;
 import cc.blynk.server.application.handlers.main.auth.RegisterHandler;
+import cc.blynk.server.application.handlers.main.auth.Version;
 import cc.blynk.server.application.handlers.sharing.AppShareHandler;
+import cc.blynk.server.common.handlers.UserNotLoggedHandler;
 import cc.blynk.server.core.dao.SharedTokenValue;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.ShareLoginMessage;
-import cc.blynk.server.handlers.DefaultReregisterHandler;
-import cc.blynk.server.handlers.common.UserNotLoggedHandler;
+import cc.blynk.server.internal.ReregisterChannelUtil;
+import cc.blynk.utils.StringUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -21,9 +22,9 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.BlynkByteBufUtil.illegalCommand;
-import static cc.blynk.server.internal.BlynkByteBufUtil.notAllowed;
-import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
+import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
+import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 
 /**
  * Handler responsible for managing apps sharing login messages.
@@ -34,8 +35,7 @@ import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
  *
  */
 @ChannelHandler.Sharable
-public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLoginMessage>
-        implements DefaultReregisterHandler {
+public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLoginMessage> {
 
     private static final Logger log = LogManager.getLogger(AppShareLoginHandler.class);
 
@@ -46,30 +46,24 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, ShareLoginMessage message) throws Exception {
-        //warn: split may be optimized
-        String[] messageParts = message.body.split("\0");
+    protected void channelRead0(ChannelHandlerContext ctx, ShareLoginMessage message) {
+        String[] messageParts = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
         if (messageParts.length < 2) {
             log.error("Wrong income message format.");
             ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
         } else {
-            OsType osType = null;
-            String version = null;
-            String uid = null;
-            if (messageParts.length > 3) {
-                osType = OsType.parse(messageParts[2]);
-                version = messageParts[3];
-            }
-            if (messageParts.length == 5) {
-              uid = messageParts[4];
-            }
-            appLogin(ctx, message.id, messageParts[0], messageParts[1], osType, version, uid);
+            //var uid = messageParts.length == 5 ? messageParts[4] : null;
+            var version = messageParts.length > 3
+                    ? new Version(messageParts[2], messageParts[3])
+                    : Version.UNKNOWN_VERSION;
+            appLogin(ctx, message.id, messageParts[0], messageParts[1], version);
         }
     }
 
     private void appLogin(ChannelHandlerContext ctx, int messageId, String email,
-                          String token, OsType osType, String version, String uid) {
+                          String token, Version version) {
+        ///.trim() is not used for back compatibility
         String userName = email.toLowerCase();
 
         SharedTokenValue tokenValue = holder.tokenManager.getUserBySharedToken(token);
@@ -93,18 +87,18 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
         }
 
         cleanPipeline(ctx.pipeline());
-        AppShareStateHolder appShareStateHolder = new AppShareStateHolder(user, osType, version, token, dashId);
+        AppShareStateHolder appShareStateHolder = new AppShareStateHolder(user, version, token, dashId);
         ctx.pipeline().addLast("AAppSHareHandler", new AppShareHandler(holder, appShareStateHolder));
 
         Session session = holder.sessionDao.getOrCreateSessionByUser(
                 appShareStateHolder.userKey, ctx.channel().eventLoop());
 
-        if (session.initialEventLoop != ctx.channel().eventLoop()) {
-            log.debug("Re registering app channel. {}", ctx.channel());
-            reRegisterChannel(ctx, session, channelFuture ->
-                    completeLogin(channelFuture.channel(), session, user.email, messageId));
-        } else {
+        if (session.isSameEventLoop(ctx)) {
             completeLogin(ctx.channel(), session, user.email, messageId);
+        } else {
+            log.debug("Re registering app channel. {}", ctx.channel());
+            ReregisterChannelUtil.reRegisterChannel(ctx, session, channelFuture ->
+                    completeLogin(channelFuture.channel(), session, user.email, messageId));
         }
     }
 

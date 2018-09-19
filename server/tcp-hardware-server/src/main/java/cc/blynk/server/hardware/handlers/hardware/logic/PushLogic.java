@@ -3,18 +3,18 @@ package cc.blynk.server.hardware.handlers.hardware.logic;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.processors.NotificationBase;
-import cc.blynk.server.core.protocol.exceptions.NotificationBodyInvalidException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.notifications.push.GCMWrapper;
+import cc.blynk.utils.properties.Placeholders;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.core.protocol.enums.Response.NOTIFICATION_NOT_AUTHORIZED;
-import static cc.blynk.server.internal.BlynkByteBufUtil.makeResponse;
-import static cc.blynk.server.internal.BlynkByteBufUtil.noActiveDash;
-import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.CommonByteBufUtil.noActiveDash;
+import static cc.blynk.server.internal.CommonByteBufUtil.notificationInvalidBody;
+import static cc.blynk.server.internal.CommonByteBufUtil.notificationNotAuthorized;
+import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 
 /**
  * Handler sends push notifications to Applications. Initiation is on hardware side.
@@ -38,7 +38,9 @@ public class PushLogic extends NotificationBase {
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
         if (Notification.isWrongBody(message.body)) {
-            throw new NotificationBodyInvalidException();
+            log.debug("Notification message is empty or larger than limit.");
+            ctx.writeAndFlush(notificationInvalidBody(message.id), ctx.voidPromise());
+            return;
         }
 
         DashBoard dash = state.dash;
@@ -49,19 +51,28 @@ public class PushLogic extends NotificationBase {
             return;
         }
 
-        Notification widget = dash.getWidgetByType(Notification.class);
+        Notification widget = dash.getNotificationWidget();
 
         if (widget == null || widget.hasNoToken()) {
             log.debug("User has no access token provided for push widget.");
-            ctx.writeAndFlush(makeResponse(message.id, NOTIFICATION_NOT_AUTHORIZED), ctx.voidPromise());
+            ctx.writeAndFlush(notificationNotAuthorized(message.id), ctx.voidPromise());
             return;
         }
 
         long now = System.currentTimeMillis();
         checkIfNotificationQuotaLimitIsNotReached(now);
 
+        String deviceName = state.device.name == null ? "" : state.device.name;
+        String updatedBody = message.body.replace(Placeholders.DEVICE_NAME, deviceName);
+
+        if (Notification.isWrongBody(updatedBody)) {
+            log.debug("Notification message is larger than limit.");
+            ctx.writeAndFlush(notificationInvalidBody(message.id), ctx.voidPromise());
+            return;
+        }
+
         log.trace("Sending push for user {}, with message : '{}'.", state.user.email, message.body);
-        widget.push(gcmWrapper, message.body, state.dash.id);
+        widget.push(gcmWrapper, updatedBody, state.dash.id);
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }
 

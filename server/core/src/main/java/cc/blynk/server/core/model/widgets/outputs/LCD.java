@@ -3,17 +3,19 @@ package cc.blynk.server.core.model.widgets.outputs;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.storage.MultiPinStorageValue;
+import cc.blynk.server.core.model.storage.MultiPinStorageValueType;
+import cc.blynk.server.core.model.storage.PinStorageValue;
 import cc.blynk.server.core.model.widgets.FrequencyWidget;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
-import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
-import cc.blynk.server.internal.ParseUtil;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.utils.structure.LCDLimitedQueue;
 import cc.blynk.utils.structure.LimitedArrayDeque;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.internal.BlynkByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
 
 /**
@@ -34,11 +36,11 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
 
     private transient long lastRequestTS;
 
-    private static final int POOL_SIZE = ParseUtil.parseInt(System.getProperty("lcd.strings.pool.size", "6"));
-    private transient final LimitedArrayDeque<String> lastCommands = new LimitedArrayDeque<>(POOL_SIZE);
+    //todo move to persistent LCDLimitedQueue?
+    private transient final LimitedArrayDeque<String> lastCommands = new LimitedArrayDeque<>(LCDLimitedQueue.POOL_SIZE);
 
     private static void sendSyncOnActivate(DataStream dataStream, int dashId, int deviceId, Channel appChannel) {
-        if (dataStream.notEmpty()) {
+        if (dataStream.notEmptyAndIsValid()) {
             String body = prependDashIdAndDeviceId(dashId, deviceId, dataStream.makeHardwareBody());
             appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body),
                     appChannel.voidPromise());
@@ -63,14 +65,14 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
     }
 
     @Override
-    public void sendAppSync(Channel appChannel, int dashId, int targetId) {
+    public void sendAppSync(Channel appChannel, int dashId, int targetId, boolean useNewSyncFormat) {
         if (dataStreams == null) {
             return;
         }
 
         //do not send SYNC message for widgets assigned to device selector
         //as it will be duplicated later.
-        if (this.deviceId >= DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
+        if (isAssignedToDeviceSelector()) {
             return;
         }
 
@@ -95,11 +97,16 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
 
     @Override
     public boolean isTicked(long now) {
-        if (frequency > 0 && now >= lastRequestTS + frequency) {
+        if (hasReadingInterval() && now >= lastRequestTS + frequency) {
             this.lastRequestTS = now;
             return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean hasReadingInterval() {
+        return frequency > 0;
     }
 
     @Override
@@ -108,13 +115,22 @@ public class LCD extends MultiPinWidget implements FrequencyWidget {
             return;
         }
         for (DataStream dataStream : dataStreams) {
-            if (dataStream.isNotValid()) {
-                continue;
+            if (dataStream.isValid()) {
+                StringMessage msg = makeUTF8StringMessage(HARDWARE, READING_MSG_ID,
+                        DataStream.makeReadingHardwareBody(dataStream.pinType.pintTypeChar, dataStream.pin));
+                channel.write(msg, channel.voidPromise());
             }
-            ByteBuf msg = makeUTF8StringMessage(HARDWARE, READING_MSG_ID,
-                    DataStream.makeReadingHardwareBody(dataStream.pinType.pintTypeChar, dataStream.pin));
-            channel.write(msg, channel.voidPromise());
         }
+    }
+
+    @Override
+    public PinStorageValue getPinStorageValue() {
+        return new MultiPinStorageValue(MultiPinStorageValueType.LCD);
+    }
+
+    @Override
+    public boolean isMultiValueWidget() {
+        return true;
     }
 
     @Override

@@ -1,23 +1,22 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.ota.OTAManager;
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.HardwareInfo;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.utils.StringUtils;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.handler.timeout.IdleStateHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.BLYNK_INTERNAL;
-import static cc.blynk.server.internal.BlynkByteBufUtil.illegalCommand;
-import static cc.blynk.server.internal.BlynkByteBufUtil.makeASCIIStringMessage;
-import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeASCIIStringMessage;
+import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 
 /**
@@ -30,45 +29,45 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
  * Created on 2/1/2015.
  *
  */
-@ChannelHandler.Sharable
-public class BlynkInternalLogic {
+public final class BlynkInternalLogic {
 
     private static final Logger log = LogManager.getLogger(BlynkInternalLogic.class);
 
-    private final OTAManager otaManager;
-    private final int hardwareIdleTimeout;
-
-    public BlynkInternalLogic(OTAManager otaManager, int hardwareIdleTimeout) {
-        this.otaManager = otaManager;
-        this.hardwareIdleTimeout = hardwareIdleTimeout;
+    private BlynkInternalLogic() {
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
-        String[] messageParts = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
+                                       HardwareStateHolder state, StringMessage message) {
+        var messageParts = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
         if (messageParts.length == 0 || messageParts[0].length() == 0) {
             ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
             return;
         }
 
-        final String cmd = messageParts[0];
+        var cmd = messageParts[0];
 
         switch (cmd.charAt(0)) {
-            case 'v' :
-                parseHardwareInfo(ctx, messageParts, state, message.id);
+            case 'v' : //ver
+            case 'f' : //fw
+            case 'h' : //h-beat
+            case 'b' : //buff-in
+            case 'd' : //dev
+            case 'c' : //cpu
+            case 't' : //tmpl
+                parseHardwareInfo(holder, ctx, messageParts, state, message.id);
                 break;
-            case 'a' :
-                break;
-            case 'r' :
+            case 'r' : //rtc
                 sendRTC(ctx, state, message.id);
                 break;
+            case 'a' :
             case 'o' :
                 break;
         }
 
     }
 
-    private void sendRTC(ChannelHandlerContext ctx, HardwareStateHolder state, int msgId) {
+    private static void sendRTC(ChannelHandlerContext ctx, HardwareStateHolder state, int msgId) {
         DashBoard dashBoard = state.dash;
         RTC rtc = dashBoard.getWidgetByType(RTC.class);
         if (rtc != null && ctx.channel().isWritable()) {
@@ -77,22 +76,25 @@ public class BlynkInternalLogic {
         }
     }
 
-    private void parseHardwareInfo(ChannelHandlerContext ctx, String[] messageParts,
-                                   HardwareStateHolder state, int msgId) {
+    private static void parseHardwareInfo(Holder holder, ChannelHandlerContext ctx,
+                                          String[] messageParts,
+                                          HardwareStateHolder state, int msgId) {
         HardwareInfo hardwareInfo = new HardwareInfo(messageParts);
         int newHardwareInterval = hardwareInfo.heartbeatInterval;
 
         log.trace("Info command. heartbeat interval {}", newHardwareInterval);
+        OTAManager otaManager = holder.otaManager;
+        int hardwareIdleTimeout = holder.limits.hardwareIdleTimeout;
 
         if (hardwareIdleTimeout != 0 && newHardwareInterval > 0) {
-            int newReadTimeout = (int) Math.ceil(newHardwareInterval * 2.3D);
+            var newReadTimeout = (int) Math.ceil(newHardwareInterval * 2.3D);
             log.debug("Changing read timeout interval to {}", newReadTimeout);
-            ctx.pipeline().replace(ReadTimeoutHandler.class,
-                    "H_ReadTimeout_Replaced", new ReadTimeoutHandler(newReadTimeout));
+            ctx.pipeline().replace(IdleStateHandler.class,
+                    "H_IdleStateHandler_Replaced", new IdleStateHandler(newReadTimeout, 0, 0));
         }
 
-        DashBoard dashBoard = state.dash;
-        Device device = state.device;
+        var dashBoard = state.dash;
+        var device = state.device;
 
         if (device != null) {
             otaManager.initiateHardwareUpdate(ctx, state.userKey, hardwareInfo, dashBoard, device);

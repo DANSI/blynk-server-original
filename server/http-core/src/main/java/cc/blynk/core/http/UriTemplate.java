@@ -31,7 +31,7 @@ public class UriTemplate {
     // Appended to the end of the built-up regex string.
     private static final String URL_QUERY_STRING_REGEX = "(?:\\?.*?)?$";
 
-    private String urlPattern;
+    private final String urlPattern;
     private Matcher matcher;
     private Pattern compiledUrl;
 

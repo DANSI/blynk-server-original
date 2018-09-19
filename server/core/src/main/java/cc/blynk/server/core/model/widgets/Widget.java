@@ -5,14 +5,19 @@ import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.storage.PinStorageValue;
+import cc.blynk.server.core.model.storage.SinglePinStorageValue;
 import cc.blynk.server.core.model.widgets.controls.Button;
-import cc.blynk.server.core.model.widgets.controls.FieldInput;
-import cc.blynk.server.core.model.widgets.controls.OneAxisJoystick;
+import cc.blynk.server.core.model.widgets.controls.LinkButton;
+import cc.blynk.server.core.model.widgets.controls.NumberInput;
 import cc.blynk.server.core.model.widgets.controls.QR;
 import cc.blynk.server.core.model.widgets.controls.RGB;
+import cc.blynk.server.core.model.widgets.controls.SegmentedControl;
 import cc.blynk.server.core.model.widgets.controls.Slider;
 import cc.blynk.server.core.model.widgets.controls.Step;
+import cc.blynk.server.core.model.widgets.controls.StyledButton;
 import cc.blynk.server.core.model.widgets.controls.Terminal;
+import cc.blynk.server.core.model.widgets.controls.TextInput;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.controls.TwoAxisJoystick;
 import cc.blynk.server.core.model.widgets.controls.VerticalSlider;
@@ -30,8 +35,6 @@ import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.model.widgets.outputs.Gauge;
-import cc.blynk.server.core.model.widgets.outputs.Graph;
-import cc.blynk.server.core.model.widgets.outputs.HistoryGraph;
 import cc.blynk.server.core.model.widgets.outputs.LCD;
 import cc.blynk.server.core.model.widgets.outputs.LED;
 import cc.blynk.server.core.model.widgets.outputs.LabeledValueDisplay;
@@ -39,7 +42,7 @@ import cc.blynk.server.core.model.widgets.outputs.LevelDisplay;
 import cc.blynk.server.core.model.widgets.outputs.Map;
 import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
 import cc.blynk.server.core.model.widgets.outputs.VerticalLevelDisplay;
-import cc.blynk.server.core.model.widgets.outputs.graph.EnhancedHistoryGraph;
+import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
 import cc.blynk.server.core.model.widgets.sensors.Accelerometer;
 import cc.blynk.server.core.model.widgets.sensors.Barometer;
 import cc.blynk.server.core.model.widgets.sensors.GPSStreaming;
@@ -50,15 +53,18 @@ import cc.blynk.server.core.model.widgets.sensors.Light;
 import cc.blynk.server.core.model.widgets.sensors.Proximity;
 import cc.blynk.server.core.model.widgets.sensors.Temperature;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
-import cc.blynk.server.core.model.widgets.ui.Image;
 import cc.blynk.server.core.model.widgets.ui.Menu;
 import cc.blynk.server.core.model.widgets.ui.Tabs;
 import cc.blynk.server.core.model.widgets.ui.TimeInput;
+import cc.blynk.server.core.model.widgets.ui.image.Image;
+import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.model.widgets.ui.table.Table;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.utils.ByteUtils;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+import java.io.IOException;
 
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 
@@ -69,24 +75,27 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
  */
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
-        include = JsonTypeInfo.As.PROPERTY,
-        property = "type")
+        property = "type",
+        defaultImpl = Button.class)
 @JsonSubTypes({
 
         //controls
         @JsonSubTypes.Type(value = Button.class, name = "BUTTON"),
-        @JsonSubTypes.Type(value = FieldInput.class, name = "FIELD_INPUT"),
+        @JsonSubTypes.Type(value = StyledButton.class, name = "STYLED_BUTTON"),
+        @JsonSubTypes.Type(value = LinkButton.class, name = "LINK_BUTTON"),
+        @JsonSubTypes.Type(value = TextInput.class, name = "TEXT_INPUT"),
+        @JsonSubTypes.Type(value = NumberInput.class, name = "NUMBER_INPUT"),
         @JsonSubTypes.Type(value = Slider.class, name = "SLIDER"),
         @JsonSubTypes.Type(value = VerticalSlider.class, name = "VERTICAL_SLIDER"),
         @JsonSubTypes.Type(value = RGB.class, name = "RGB"),
         @JsonSubTypes.Type(value = Timer.class, name = "TIMER"),
-        @JsonSubTypes.Type(value = OneAxisJoystick.class, name = "ONE_AXIS_JOYSTICK"),
         @JsonSubTypes.Type(value = TwoAxisJoystick.class, name = "TWO_AXIS_JOYSTICK"),
         @JsonSubTypes.Type(value = Terminal.class, name = "TERMINAL"),
         @JsonSubTypes.Type(value = Step.class, name = "STEP"),
         @JsonSubTypes.Type(value = VerticalStep.class, name = "VERTICAL_STEP"),
         @JsonSubTypes.Type(value = QR.class, name = "QR"),
         @JsonSubTypes.Type(value = TimeInput.class, name = "TIME_INPUT"),
+        @JsonSubTypes.Type(value = SegmentedControl.class, name = "SEGMENTED_CONTROL"),
 
         //outputs
         @JsonSubTypes.Type(value = LED.class, name = "LED"),
@@ -94,12 +103,10 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
         @JsonSubTypes.Type(value = LabeledValueDisplay.class, name = "LABELED_VALUE_DISPLAY"),
         @JsonSubTypes.Type(value = Gauge.class, name = "GAUGE"),
         @JsonSubTypes.Type(value = LCD.class, name = "LCD"),
-        @JsonSubTypes.Type(value = Graph.class, name = "GRAPH"),
         @JsonSubTypes.Type(value = LevelDisplay.class, name = "LEVEL_DISPLAY"),
         @JsonSubTypes.Type(value = VerticalLevelDisplay.class, name = "VERTICAL_LEVEL_DISPLAY"),
         @JsonSubTypes.Type(value = Video.class, name = "VIDEO"),
-        @JsonSubTypes.Type(value = HistoryGraph.class, name = "LOGGER"),
-        @JsonSubTypes.Type(value = EnhancedHistoryGraph.class, name = "ENHANCED_GRAPH"),
+        @JsonSubTypes.Type(value = Superchart.class, name = "ENHANCED_GRAPH"),
 
         //sensors
         @JsonSubTypes.Type(value = GPSTrigger.class, name = "GPS_TRIGGER"),
@@ -124,6 +131,7 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
         @JsonSubTypes.Type(value = Player.class, name = "PLAYER"),
         @JsonSubTypes.Type(value = Table.class, name = "TABLE"),
         @JsonSubTypes.Type(value = Image.class, name = "IMAGE"),
+        @JsonSubTypes.Type(value = ReportingWidget.class, name = "REPORT"),
 
         //others
         @JsonSubTypes.Type(value = RTC.class, name = "RTC"),
@@ -162,6 +170,12 @@ public abstract class Widget implements CopyObject<Widget> {
 
     public abstract int getPrice();
 
+    public abstract void updateValue(Widget oldWidget);
+
+    public abstract void erase();
+
+    public abstract boolean isAssignedToDevice(int deviceId);
+
     protected void append(StringBuilder sb, byte pin, PinType pinType) {
         if (pin != DataStream.NO_PIN && pinType != PinType.VIRTUAL) {
             PinMode pinMode = getModeType();
@@ -196,7 +210,19 @@ public abstract class Widget implements CopyObject<Widget> {
     @Override
     public Widget copy() {
         String copyWidgetString = JsonParser.toJson(this);
-        return JsonParser.parseWidget(copyWidgetString);
+        try {
+            return JsonParser.parseWidget(copyWidgetString);
+        } catch (IOException ioe) {
+            throw new RuntimeException(ioe);
+        }
+    }
+
+    public PinStorageValue getPinStorageValue() {
+        return new SinglePinStorageValue();
+    }
+
+    public boolean isMultiValueWidget() {
+        return false;
     }
 
     public void setProperty(WidgetProperty property, String propertyValue) {
@@ -209,7 +235,7 @@ public abstract class Widget implements CopyObject<Widget> {
                 this.isDefaultColor = false;
                 break;
             default:
-                throw new RuntimeException("Error setting widget property.");
+                throw new RuntimeException("Property is not supported for this widget.");
         }
     }
 }

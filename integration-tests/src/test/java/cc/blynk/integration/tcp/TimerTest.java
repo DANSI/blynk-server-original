@@ -1,12 +1,10 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.IntegrationBase;
-import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.model.tcp.TestHardClient;
-import cc.blynk.server.application.AppServer;
-import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
+import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
@@ -20,10 +18,9 @@ import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinActionType;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.NotifyAction;
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
-import cc.blynk.server.core.protocol.model.messages.appllication.CreateDevice;
-import cc.blynk.server.core.protocol.model.messages.appllication.CreateTag;
-import cc.blynk.server.hardware.HardwareServer;
+import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
+import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
+import cc.blynk.server.core.model.widgets.ui.tiles.templates.ButtonTileTemplate;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.enums.Priority;
 import cc.blynk.utils.DateTimeUtils;
@@ -39,11 +36,15 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.core.protocol.enums.Response.OK;
-import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
+import static cc.blynk.integration.TestUtil.b;
+import static cc.blynk.integration.TestUtil.createDevice;
+import static cc.blynk.integration.TestUtil.createTag;
+import static cc.blynk.integration.TestUtil.hardware;
+import static cc.blynk.integration.TestUtil.ok;
+import static cc.blynk.server.core.model.serialization.JsonParser.MAPPER;
 import static cc.blynk.server.workers.timer.TimerWorker.TIMER_MSG_ID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -62,30 +63,24 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class TimerTest extends IntegrationBase {
+public class TimerTest extends SingleServerInstancePerTest {
 
-    private BaseServer appServer;
-    private BaseServer hardwareServer;
-    private ClientPair clientPair;
+    private ScheduledExecutorService ses;
 
     @Before
-    public void init() throws Exception {
-        this.hardwareServer = new HardwareServer(holder).start();
-        this.appServer = new AppServer(holder).start();
-
-        this.clientPair = initAppAndHardPair();
+    public void initSES() {
+        ses = Executors.newScheduledThreadPool(1);
     }
 
     @After
-    public void shutdown() {
-        this.appServer.close();
-        this.hardwareServer.close();
-        this.clientPair.stop();
+    public void closeSES() {
+        ses.shutdownNow();
     }
+
 
     @Test
     public void testTimerEvent() throws Exception {
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        ses.scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
 
         TimerTime timerTime = new TimerTime(
                 0,
@@ -103,17 +98,17 @@ public class TimerTest extends IntegrationBase {
                 new Rule(dataStream, timerTime, null, new BaseAction[] {setPinAction}, true)
         });
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.createWidget(1, eventor);
+        clientPair.appClient.verifyResult(ok(1));
 
-        verify(clientPair.appClient.responseMock, timeout(3000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1 vw 1 1"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(3000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("vw 1 1"))));
+        verify(clientPair.appClient.responseMock, timeout(3000)).channelRead(any(), eq(hardware(TIMER_MSG_ID, "1-0 vw 1 1")));
+        verify(clientPair.hardwareClient.responseMock, timeout(3000)).channelRead(any(), eq(hardware(TIMER_MSG_ID, "vw 1 1")));
     }
 
 
     @Test
     public void testTimerEventNotActive() throws Exception {
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        ses.scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
 
         TimerTime timerTime = new TimerTime(
                 0,
@@ -131,11 +126,11 @@ public class TimerTest extends IntegrationBase {
                 new Rule(dataStream, timerTime, null, new BaseAction[] {setPinAction}, true)
         });
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.createWidget(1, eventor);
+        clientPair.appClient.verifyResult(ok(1));
 
-        verify(clientPair.appClient.responseMock, timeout(3000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1 vw 1 1"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(3000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("vw 1 1"))));
+        verify(clientPair.appClient.responseMock, timeout(3000)).channelRead(any(), eq(hardware(TIMER_MSG_ID, "1-0 vw 1 1")));
+        verify(clientPair.hardwareClient.responseMock, timeout(3000)).channelRead(any(), eq(hardware(TIMER_MSG_ID, "vw 1 1")));
 
         clientPair.appClient.reset();
         clientPair.hardwareClient.reset();
@@ -152,11 +147,11 @@ public class TimerTest extends IntegrationBase {
                         null, new BaseAction[] {setPinAction}, false)
         });
 
-        clientPair.appClient.send("updateWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.updateWidget(1, eventor);
+        clientPair.appClient.verifyResult(ok(1));
 
-        verify(clientPair.appClient.responseMock, after(1500).never()).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1 vw 1 1"))));
-        verify(clientPair.hardwareClient.responseMock, after(1500).never()).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("vw 1 1"))));
+        verify(clientPair.appClient.responseMock, after(1500).never()).channelRead(any(), eq(hardware(TIMER_MSG_ID, "1-0 vw 1 1")));
+        verify(clientPair.hardwareClient.responseMock, after(1500).never()).channelRead(any(), eq(hardware(TIMER_MSG_ID, "vw 1 1")));
     }
 
     @Test
@@ -182,20 +177,20 @@ public class TimerTest extends IntegrationBase {
                 rule
         });
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.createWidget(1, eventor);
+        clientPair.appClient.verifyResult(ok(1));
 
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        ses.scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
 
-        verify(clientPair.appClient.responseMock, timeout(2100)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1 vw 1 1"))));
-        verify(clientPair.appClient.responseMock, timeout(2100)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1 vw 2 2"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(2100)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("vw 1 1"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(2100)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("vw 2 2"))));
+        verify(clientPair.appClient.responseMock, timeout(2100)).channelRead(any(), eq(hardware(TIMER_MSG_ID, "1-0 vw 1 1")));
+        verify(clientPair.appClient.responseMock, timeout(2100)).channelRead(any(), eq(hardware(TIMER_MSG_ID, "1-0 vw 2 2")));
+        verify(clientPair.hardwareClient.responseMock, timeout(2100)).channelRead(any(), eq(hardware(TIMER_MSG_ID, "vw 1 1")));
+        verify(clientPair.hardwareClient.responseMock, timeout(2100)).channelRead(any(), eq(hardware(TIMER_MSG_ID, "vw 2 2")));
     }
 
     @Test
     public void testTimerEventWithMultiActions1() throws Exception {
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        ses.scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
 
         TimerTime timerTime = new TimerTime(
                 0,
@@ -214,18 +209,18 @@ public class TimerTest extends IntegrationBase {
                 rule
         });
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.createWidget(1, eventor);
+        clientPair.appClient.verifyResult(ok(1));
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
-        verify(gcmWrapper, timeout(2000).times(1)).send(objectArgumentCaptor.capture(), any(), any());
+        verify(holder.gcmWrapper, timeout(2000).times(1)).send(objectArgumentCaptor.capture(), any(), any());
         AndroidGCMMessage message = objectArgumentCaptor.getValue();
 
         String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Hello", 1).toJson();
         assertEquals(expectedJson, message.toJson());
 
-        verify(clientPair.appClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1 vw 1 1"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("vw 1 1"))));
+        verify(clientPair.appClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(TIMER_MSG_ID, "1-0 vw 1 1")));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(TIMER_MSG_ID, "vw 1 1")));
     }
 
     @Test
@@ -238,7 +233,7 @@ public class TimerTest extends IntegrationBase {
 
     @Test
     public void testTimerEventWithWrongDayDontWork() throws Exception {
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        ses.scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
 
         ZonedDateTime now = ZonedDateTime.now(DateTimeUtils.UTC);
         int currentDayIndex = now.getDayOfWeek().ordinal();
@@ -263,16 +258,16 @@ public class TimerTest extends IntegrationBase {
                 rule
         });
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.createWidget(1, eventor);
+        clientPair.appClient.verifyResult(ok(1));
 
-        verify(clientPair.appClient.responseMock, after(700).never()).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("1 vw 1 1"))));
-        verify(clientPair.hardwareClient.responseMock, after(700).never()).channelRead(any(), eq(produce(TIMER_MSG_ID, HARDWARE, b("vw 1 1"))));
+        verify(clientPair.appClient.responseMock, after(700).never()).channelRead(any(), eq(hardware(TIMER_MSG_ID, "1-0 vw 1 1")));
+        verify(clientPair.hardwareClient.responseMock, after(700).never()).channelRead(any(), eq(hardware(TIMER_MSG_ID, "vw 1 1")));
     }
 
     @Test
     public void testAddTimerWidgetWithStartTimeTriggered() throws Exception {
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        ses.scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
         Timer timer = new Timer();
         timer.id = 112;
         timer.x = 1;
@@ -281,21 +276,21 @@ public class TimerTest extends IntegrationBase {
         timer.height = 1;
         timer.pinType = PinType.DIGITAL;
         timer.pin = 5;
-        timer.startValue = b("dw 5 1");
+        timer.startValue = "1";
         LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
         int curTime = localDateTime.toSecondOfDay();
         timer.startTime = curTime + 1;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        clientPair.appClient.createWidget(1, timer);
+        clientPair.appClient.verifyResult(ok(1));
 
         verify(clientPair.hardwareClient.responseMock, timeout(1500).times(1)).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 1"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "dw 5 1")));
     }
 
     @Test
     public void testAddTimerWidgetWithStopAndStartTimeTriggered() throws Exception {
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        ses.scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
         Timer timer = new Timer();
         timer.id = 112;
         timer.x = 1;
@@ -304,21 +299,21 @@ public class TimerTest extends IntegrationBase {
         timer.height = 1;
         timer.pinType = PinType.DIGITAL;
         timer.pin = 5;
-        timer.stopValue = b("dw 5 0");
+        timer.stopValue = "0";
         LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
         int curTime = localDateTime.toSecondOfDay();
         timer.stopTime = curTime + 1;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        clientPair.appClient.createWidget(1, timer);
+        clientPair.appClient.verifyResult(ok(1));
 
         verify(clientPair.hardwareClient.responseMock, timeout(1500).times(1)).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "dw 5 0")));
     }
 
     @Test
     public void testAddTimerWidgetWithStopTimeTriggered() throws Exception {
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        ses.scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
         Timer timer = new Timer();
         timer.id = 112;
         timer.x = 1;
@@ -327,25 +322,25 @@ public class TimerTest extends IntegrationBase {
         timer.pin = 5;
         timer.width = 2;
         timer.height = 1;
-        timer.startValue = b("dw 5 1");
-        timer.stopValue = b("dw 5 0");
+        timer.startValue = "1";
+        timer.stopValue = "0";
         LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
         int curTime = localDateTime.toSecondOfDay();
         timer.startTime = curTime + 1;
         timer.stopTime = curTime + 2;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        clientPair.appClient.createWidget(1, timer);
+        clientPair.appClient.verifyResult(ok(1));
 
         verify(clientPair.hardwareClient.responseMock, timeout(2500).times(2)).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 0"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 1"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "dw 5 0")));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "dw 5 1")));
     }
 
 
     @Test
     public void testAddTimerWidgetWithStopTimeAndRemove() throws Exception {
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        ses.scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
         Timer timer = new Timer();
         timer.id = 112;
         timer.x = 1;
@@ -354,55 +349,55 @@ public class TimerTest extends IntegrationBase {
         timer.pin = 5;
         timer.width = 2;
         timer.height = 1;
-        timer.startValue = b("dw 5 1");
-        timer.stopValue = b("dw 5 0");
+        timer.startValue = "1";
+        timer.stopValue = "0";
         LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
         int curTime = localDateTime.toSecondOfDay();
         timer.startTime = curTime + 1;
         timer.stopTime = curTime + 2;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        clientPair.appClient.createWidget(1, timer);
+        clientPair.appClient.verifyResult(ok(1));
 
-        clientPair.appClient.send("deleteWidget 1\0" + 112);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+        clientPair.appClient.deleteWidget(1, 112);
+        clientPair.appClient.verifyResult(ok(2));
 
         verify(clientPair.hardwareClient.responseMock, after(2500).never()).channelRead(any(), any());
     }
 
     @Test
     public void testAddFewTimersWidgetWithStartTimeTriggered() throws Exception {
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        ses.scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
         Timer timer = new Timer();
         timer.id = 112;
         timer.x = 1;
         timer.y = 1;
         timer.pinType = PinType.DIGITAL;
         timer.pin = 5;
-        timer.startValue = b("1");
+        timer.startValue = "1";
         timer.width = 2;
         timer.height = 1;
         LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
         int curTime = localDateTime.toSecondOfDay();
         timer.startTime = curTime + 1;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        clientPair.appClient.createWidget(1, timer);
+        clientPair.appClient.verifyResult(ok(1));
 
         timer.id = 113;
-        timer.startValue = b("2");
+        timer.startValue = "2";
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+        clientPair.appClient.createWidget(1, timer);
+        clientPair.appClient.verifyResult(ok(2));
 
         verify(clientPair.hardwareClient.responseMock, timeout(2500).times(2)).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 1"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 2"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "dw 5 1")));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "dw 5 2")));
     }
 
     @Test
     public void testAddTimerWithSameStartStopTriggered() throws Exception {
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        ses.scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
         Timer timer = new Timer();
         timer.id = 112;
         timer.x = 1;
@@ -411,24 +406,24 @@ public class TimerTest extends IntegrationBase {
         timer.pin = 5;
         timer.width = 2;
         timer.height = 1;
-        timer.startValue = b("dw 5 0");
-        timer.stopValue = b("dw 5 1");
+        timer.startValue = "0";
+        timer.stopValue = "1";
         LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
         int curTime = localDateTime.toSecondOfDay();
         timer.startTime = curTime + 1;
         timer.stopTime = curTime + 1;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        clientPair.appClient.createWidget(1, timer);
+        clientPair.appClient.verifyResult(ok(1));
 
         verify(clientPair.hardwareClient.responseMock, timeout(2500).times(2)).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 0"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 1"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "dw 5 0")));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "dw 5 1")));
     }
 
     @Test
     public void testUpdateTimerWidgetWithStopTimeTriggered() throws Exception {
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        ses.scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
         Timer timer = new Timer();
         timer.id = 112;
         timer.x = 1;
@@ -437,30 +432,30 @@ public class TimerTest extends IntegrationBase {
         timer.height = 1;
         timer.pinType = PinType.DIGITAL;
         timer.pin = 5;
-        timer.startValue = b("dw 5 1");
-        timer.stopValue = b("dw 5 0");
+        timer.startValue = "1";
+        timer.stopValue = "0";
         LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
         int curTime = localDateTime.toSecondOfDay();
         timer.startTime = curTime + 1;
         timer.stopTime = curTime + 2;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        clientPair.appClient.createWidget(1, timer);
+        clientPair.appClient.verifyResult(ok(1));
 
-        timer.startValue = b("dw 5 11");
-        timer.stopValue = b("dw 5 10");
+        timer.startValue = "11";
+        timer.stopValue = "10";
 
-        clientPair.appClient.send("updateWidget 1\0" + JsonParser.toJson(timer));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        clientPair.appClient.updateWidget(1, timer);
+        clientPair.appClient.verifyResult(ok(1));
 
         verify(clientPair.hardwareClient.responseMock, timeout(2500).times(2)).channelRead(any(), any());
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 11"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 10"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "dw 5 11")));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "dw 5 10")));
     }
 
     @Test
     public void testDashTimerNotTriggered() throws Exception {
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        ses.scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
         Timer timer = new Timer();
         timer.id = 112;
         timer.x = 1;
@@ -469,18 +464,18 @@ public class TimerTest extends IntegrationBase {
         timer.height = 1;
         timer.pinType = PinType.DIGITAL;
         timer.pin = 5;
-        timer.startValue = b("dw 5 1");
-        timer.stopValue = b("dw 5 0");
+        timer.startValue = "1";
+        timer.stopValue = "0";
         LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
         int curTime = localDateTime.toSecondOfDay();
         timer.startTime = curTime + 1;
         timer.stopTime = curTime + 2;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        clientPair.appClient.createWidget(1, timer);
+        clientPair.appClient.verifyResult(ok(1));
 
-        clientPair.appClient.send("deleteDash 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+        clientPair.appClient.deleteDash(1);
+        clientPair.appClient.verifyResult(ok(2));
 
         verify(clientPair.hardwareClient.responseMock, after(2500).times(0)).channelRead(any(), any());
     }
@@ -489,63 +484,13 @@ public class TimerTest extends IntegrationBase {
 
     @Test
     public void testTimerWidgetTriggeredAndSendCommandToCorrectDevice() throws Exception {
-        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
+        TestHardClient hardClient2 = new TestHardClient("localhost", properties.getHttpPort());
         hardClient2.start();
 
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        ses.scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
 
-        clientPair.appClient.send("deactivate 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
-
-        Timer timer = new Timer();
-        timer.id = 1;
-        timer.x = 1;
-        timer.y = 1;
-        timer.pinType = PinType.DIGITAL;
-        timer.pin = 5;
-        timer.startValue = b("dw 5 1");
-        timer.stopValue = b("dw 5 0");
-        LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
-        int curTime = localDateTime.toSecondOfDay();
-        timer.startTime = curTime + 1;
-        timer.stopTime = curTime + 2;
-
-        DashBoard dashBoard = new DashBoard();
-        dashBoard.id = 1;
-        dashBoard.name = "Test";
-        dashBoard.widgets = new Widget[] {timer};
-
-        clientPair.appClient.send("updateDash " + dashBoard.toString());
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
-
-        dashBoard.id = 2;
-        clientPair.appClient.send("createDash " + dashBoard.toString());
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, OK)));
-
-        clientPair.appClient.send("activate 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(4, OK)));
-
-        clientPair.appClient.reset();
-        clientPair.appClient.send("getToken 2");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), any());
-        hardClient2.send("login " + clientPair.appClient.getBody());
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
-        hardClient2.reset();
-
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 1"))));
-        clientPair.hardwareClient.reset();
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 0"))));
-
-        verify(hardClient2.responseMock, never()).channelRead(any(), any());
-        hardClient2.stop().awaitUninterruptibly();
-    }
-
-    @Test
-    public void testTimerWidgetTriggered() throws Exception {
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
-
-        clientPair.appClient.send("deactivate 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        clientPair.appClient.deactivate(1);
+        clientPair.appClient.verifyResult(ok(1));
 
         Timer timer = new Timer();
         timer.id = 1;
@@ -565,34 +510,83 @@ public class TimerTest extends IntegrationBase {
         dashBoard.name = "Test";
         dashBoard.widgets = new Widget[] {timer};
 
-        clientPair.appClient.send("updateDash " + dashBoard.toString());
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+        clientPair.appClient.updateDash(dashBoard);
+        clientPair.appClient.verifyResult(ok(2));
 
-        clientPair.appClient.send("activate 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(3, OK)));
+        dashBoard.id = 2;
+        clientPair.appClient.createDash(dashBoard);
+        clientPair.appClient.verifyResult(ok(3));
 
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 1"))));
+        clientPair.appClient.activate(1);
+        clientPair.appClient.verifyResult(ok(4));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.getToken(2);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), any());
+        hardClient2.login(clientPair.appClient.getBody());
+        hardClient2.verifyResult(ok(1));
+        hardClient2.reset();
+
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "dw 5 1")));
         clientPair.hardwareClient.reset();
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "dw 5 0")));
+
+        verify(hardClient2.responseMock, never()).channelRead(any(), any());
+        hardClient2.stop().awaitUninterruptibly();
+    }
+
+    @Test
+    public void testTimerWidgetTriggered() throws Exception {
+        ses.scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+
+        clientPair.appClient.deactivate(1);
+        clientPair.appClient.verifyResult(ok(1));
+
+        Timer timer = new Timer();
+        timer.id = 1;
+        timer.x = 1;
+        timer.y = 1;
+        timer.pinType = PinType.DIGITAL;
+        timer.pin = 5;
+        timer.startValue = "1";
+        timer.stopValue = "0";
+        LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
+        int curTime = localDateTime.toSecondOfDay();
+        timer.startTime = curTime + 1;
+        timer.stopTime = curTime + 2;
+
+        DashBoard dashBoard = new DashBoard();
+        dashBoard.id = 1;
+        dashBoard.name = "Test";
+        dashBoard.widgets = new Widget[] {timer};
+
+        clientPair.appClient.updateDash(dashBoard);
+        clientPair.appClient.verifyResult(ok(2));
+
+        clientPair.appClient.activate(1);
+        clientPair.appClient.verifyResult(ok(3));
+
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "dw 5 1")));
+        clientPair.hardwareClient.reset();
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "dw 5 0")));
     }
 
     @Test
     public void testTimerWorksWithTag() throws Exception {
         //creating new device
-        Device device1 = new Device(1, "My Device", "ESP8266");
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
-        clientPair.appClient.send("createDevice 1\0" + device1.toString());
-        String createdDevice = clientPair.appClient.getBody();
-        Device device = JsonParser.parseDevice(createdDevice);
+        clientPair.appClient.createDevice(1, device1);
+        Device device = clientPair.appClient.parseDevice();
         assertNotNull(device);
         assertNotNull(device.token);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateDevice(1, device.toString())));
+        clientPair.appClient.verifyResult(createDevice(1, device));
 
-        TestHardClient hardClient2 = new TestHardClient("localhost", tcpHardPort);
+        TestHardClient hardClient2 = new TestHardClient("localhost", properties.getHttpPort());
         hardClient2.start();
 
-        hardClient2.send("login " + device.token);
-        verify(hardClient2.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, OK)));
+        hardClient2.login(device.token);
+        hardClient2.verifyResult(ok(1));
         clientPair.appClient.reset();
 
         //creating new tag
@@ -600,16 +594,14 @@ public class TimerTest extends IntegrationBase {
         //assigning 2 devices on 1 tag.
         tag0.deviceIds = new int[] {0, 1};
 
-        clientPair.appClient.send("createTag 1\0" + tag0.toString());
+        clientPair.appClient.createTag(1, tag0);
         String createdTag = clientPair.appClient.getBody();
-        Tag tag = JsonParser.parseTag(createdTag);
+        Tag tag = JsonParser.parseTag(createdTag, 0);
         assertNotNull(tag);
         assertEquals(100_000, tag.id);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new CreateTag(1, tag.toString())));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(createTag(1, tag)));
 
-
-
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        ses.scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
         Timer timer = new Timer();
         timer.id = 112;
         timer.x = 1;
@@ -618,19 +610,102 @@ public class TimerTest extends IntegrationBase {
         timer.height = 1;
         timer.pinType = PinType.DIGITAL;
         timer.pin = 5;
-        timer.startValue = b("dw 5 1");
+        timer.startValue = "1";
         timer.deviceId = 100_000;
 
         LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
         int curTime = localDateTime.toSecondOfDay();
         timer.startTime = curTime + 1;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.toJson(timer));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+        clientPair.appClient.createWidget(1, timer);
+        clientPair.appClient.verifyResult(ok(2));
 
-        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 1"))));
-        verify(hardClient2.responseMock, timeout(2000)).channelRead(any(), eq(produce(7777, HARDWARE, b("dw 5 1"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "dw 5 1")));
+        verify(hardClient2.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "dw 5 1")));
     }
 
+    @Test
+    public void testTimerWidgetTriggeredAndSyncWorks() throws Exception {
+        ses.scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
 
+        clientPair.appClient.deactivate(1);
+        clientPair.appClient.verifyResult(ok(1));
+
+        Timer timer = new Timer();
+        timer.id = 1;
+        timer.x = 1;
+        timer.y = 1;
+        timer.pinType = PinType.VIRTUAL;
+        timer.pin = 5;
+        timer.startValue = "1";
+        timer.stopValue = "0";
+        LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
+        int curTime = localDateTime.toSecondOfDay();
+        timer.startTime = curTime + 1;
+        timer.stopTime = curTime + 2;
+
+        DashBoard dashBoard = new DashBoard();
+        dashBoard.id = 1;
+        dashBoard.name = "Test";
+        dashBoard.widgets = new Widget[] {timer};
+
+        clientPair.appClient.updateDash(dashBoard);
+        clientPair.appClient.verifyResult(ok(2));
+
+        clientPair.appClient.activate(1);
+        clientPair.appClient.verifyResult(ok(3));
+
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "vw 5 1")));
+        clientPair.hardwareClient.reset();
+        clientPair.hardwareClient.sync(PinType.VIRTUAL, 5);
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(1, "vw 5 1")));
+
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "vw 5 0")));
+
+        clientPair.hardwareClient.sync(PinType.VIRTUAL, 5);
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(2, "vw 5 0")));
+    }
+
+    @Test
+    public void testAddTimerWidgetToDeviceTilesWithStartTimeTriggered() throws Exception {
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = 21321;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(1));
+
+        TileTemplate tileTemplate = new ButtonTileTemplate(1,
+                null, new int[] {0}, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte) 111, PinType.VIRTUAL),
+                false, false, false, null, null);
+
+        clientPair.appClient.send("createTemplate " + b("1 " + deviceTiles.id + " ")
+                + MAPPER.writeValueAsString(tileTemplate));
+        clientPair.appClient.verifyResult(ok(2));
+
+        ses.scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        Timer timer = new Timer();
+        timer.id = 112;
+        timer.x = 1;
+        timer.y = 1;
+        timer.width = 2;
+        timer.height = 1;
+        timer.pinType = PinType.DIGITAL;
+        timer.pin = 5;
+        timer.startValue = "1";
+        timer.deviceId = -1;
+        LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
+        int curTime = localDateTime.toSecondOfDay();
+        timer.startTime = curTime + 1;
+
+        clientPair.appClient.createWidget(1, b("21321 1 ") + JsonParser.MAPPER.writeValueAsString(timer));
+        clientPair.appClient.verifyResult(ok(3));
+
+        verify(clientPair.hardwareClient.responseMock, timeout(1500).times(1)).channelRead(any(), any());
+        verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "dw 5 1")));
+        verify(clientPair.appClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "1-0 dw 5 1")));
+    }
 }

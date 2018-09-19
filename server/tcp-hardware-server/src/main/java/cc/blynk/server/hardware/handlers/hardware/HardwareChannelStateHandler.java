@@ -1,18 +1,18 @@
 package cc.blynk.server.hardware.handlers.hardware;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
-import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.notifications.push.GCMWrapper;
-import io.netty.channel.Channel;
+import cc.blynk.utils.properties.Placeholders;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.handler.timeout.ReadTimeoutException;
+import io.netty.handler.timeout.IdleStateEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -34,67 +34,68 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
 
     private final SessionDao sessionDao;
     private final GCMWrapper gcmWrapper;
+    private final String pushNotificationBody;
 
-    public HardwareChannelStateHandler(SessionDao sessionDao, GCMWrapper gcmWrapper) {
-        this.sessionDao = sessionDao;
-        this.gcmWrapper = gcmWrapper;
+    public HardwareChannelStateHandler(Holder holder) {
+        this.sessionDao = holder.sessionDao;
+        this.gcmWrapper = holder.gcmWrapper;
+        this.pushNotificationBody = holder.textHolder.pushNotificationBody;
     }
 
     @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        Channel hardwareChannel = ctx.channel();
-        HardwareStateHolder state = getHardState(hardwareChannel);
+    public void channelInactive(ChannelHandlerContext ctx) {
+        var hardwareChannel = ctx.channel();
+        var state = getHardState(hardwareChannel);
         if (state != null) {
-            Session session = sessionDao.userSession.get(state.userKey);
+            var session = sessionDao.userSession.get(state.userKey);
             if (session != null) {
-                session.removeHardChannel(hardwareChannel);
-                log.trace("Hardware channel disconnect.");
-                sentOfflineMessage(ctx, session, state);
+                var device = state.device;
+                log.trace("Hardware channel disconnect for {}, dashId {}, deviceId {}, token {}.",
+                        state.userKey, state.dash.id, device.id, device.token);
+                sentOfflineMessage(ctx, session, state.dash, device);
             }
         }
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        if (cause instanceof ReadTimeoutException) {
-            log.trace("Hardware timeout disconnect.");
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) {
+        if (evt instanceof IdleStateEvent) {
+            log.trace("State handler. Hardware timeout disconnect. Event : {}. Closing.",
+                    ((IdleStateEvent) evt).state());
+            ctx.close();
         } else {
-            super.exceptionCaught(ctx, cause);
+            ctx.fireUserEventTriggered(evt);
         }
     }
 
-    private void sentOfflineMessage(ChannelHandlerContext ctx, Session session, HardwareStateHolder state) {
-        DashBoard dashBoard = state.dash;
-        Device device = state.device;
-
+    private void sentOfflineMessage(ChannelHandlerContext ctx, Session session, DashBoard dashBoard, Device device) {
         //this is special case.
         //in case hardware quickly reconnects we do not mark it as disconnected
         //as it is already online after quick disconnect.
         //https://github.com/blynkkk/blynk-server/issues/403
         boolean isHardwareConnected = session.isHardwareConnected(dashBoard.id, device.id);
         if (!isHardwareConnected) {
-            log.trace("Disconnected device id {}, dash id {}", device.id, dashBoard.id);
+            log.trace("Changing device status. DeviceId {}, dashId {}", device.id, dashBoard.id);
             device.disconnected();
         }
 
-        if (!dashBoard.isActive || dashBoard.isNotificationsOff) {
+        if (!dashBoard.isActive) {
             return;
         }
 
-        Notification notification = dashBoard.getWidgetByType(Notification.class);
+        Notification notification = dashBoard.getNotificationWidget();
 
         if (notification != null && notification.notifyWhenOffline) {
-            sendPushNotification(ctx, dashBoard, notification, dashBoard.id, device);
-        } else {
+            sendPushNotification(ctx, notification, dashBoard.id, device);
+        } else if (!dashBoard.isNotificationsOff) {
             session.sendOfflineMessageToApps(dashBoard.id, device.id);
         }
     }
 
-    private void sendPushNotification(ChannelHandlerContext ctx, DashBoard dashBoard,
+    private void sendPushNotification(ChannelHandlerContext ctx,
                                       Notification notification, int dashId, Device device) {
-        String dashName = dashBoard.name == null ? "" : dashBoard.name;
-        String deviceName = ((device == null || device.name == null) ? "device" : device.name);
-        String message = "Your " + deviceName + " went offline. \"" + dashName + "\" project is disconnected.";
+        var deviceName = ((device == null || device.name == null) ? "device" : device.name);
+        var message = pushNotificationBody.replace(Placeholders.DEVICE_NAME, deviceName);
         if (notification.notifyWhenOfflineIgnorePeriod == 0 || device == null) {
             notification.push(gcmWrapper,
                     message,

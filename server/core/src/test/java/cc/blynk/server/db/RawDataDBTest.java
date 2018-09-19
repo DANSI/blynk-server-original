@@ -29,7 +29,7 @@ import static org.junit.Assert.assertNull;
  */
 public class RawDataDBTest {
 
-    private static DBManager dbManager;
+    private static ReportingDBManager reportingDBManager;
     private static BlockingIOProcessor blockingIOProcessor;
     private static final Calendar UTC = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
     private static User user;
@@ -37,8 +37,8 @@ public class RawDataDBTest {
     @BeforeClass
     public static void init() throws Exception {
         blockingIOProcessor = new BlockingIOProcessor(4, 10000);
-        dbManager = new DBManager("db-test.properties", blockingIOProcessor, true);
-        assertNotNull(dbManager.getConnection());
+        reportingDBManager = new ReportingDBManager("db-test.properties", blockingIOProcessor, true);
+        assertNotNull(reportingDBManager.getConnection());
         user = new User();
         user.email = "test@test.com";
         user.appName = AppNameUtil.BLYNK;
@@ -46,13 +46,13 @@ public class RawDataDBTest {
 
     @AfterClass
     public static void close() {
-        dbManager.close();
+        reportingDBManager.close();
     }
 
     @Before
     public void cleanAll() throws Exception {
         //clean everything just in case
-        dbManager.executeSQL("DELETE FROM reporting_raw_data");
+        reportingDBManager.executeSQL("DELETE FROM reporting_raw_data");
     }
 
     @Test
@@ -61,9 +61,9 @@ public class RawDataDBTest {
         rawDataProcessor.collect(new BaseReportingKey(user.email, user.appName, 1, 2, PinType.VIRTUAL, (byte) 3), 1111111111, "Lamp is ON", NumberUtil.NO_RESULT);
 
         //invoking directly dao to avoid separate thread execution
-        dbManager.reportingDBDao.insertRawData(rawDataProcessor.rawStorage);
+        reportingDBManager.reportingDBDao.insertRawData(rawDataProcessor.rawStorage);
 
-        try (Connection connection = dbManager.getConnection();
+        try (Connection connection = reportingDBManager.getConnection();
              Statement statement = connection.createStatement();
              ResultSet rs = statement.executeQuery("select * from reporting_raw_data")) {
 
@@ -90,9 +90,9 @@ public class RawDataDBTest {
         rawDataProcessor.collect(new BaseReportingKey(user.email, user.appName, 1, 2, PinType.VIRTUAL, (byte) 3), 1111111111, "Lamp is ON", 1.33D);
 
         //invoking directly dao to avoid separate thread execution
-        dbManager.reportingDBDao.insertRawData(rawDataProcessor.rawStorage);
+        reportingDBManager.reportingDBDao.insertRawData(rawDataProcessor.rawStorage);
 
-        try (Connection connection = dbManager.getConnection();
+        try (Connection connection = reportingDBManager.getConnection();
              Statement statement = connection.createStatement();
              ResultSet rs = statement.executeQuery("select * from reporting_raw_data")) {
 

@@ -7,6 +7,6 @@ package cc.blynk.server.core.model.widgets.outputs.graph;
  */
 public enum GoalLine {
 
-    GOAL, ABOVE_GOAL, BELOW_GOAL;
+    GOAL, ABOVE_GOAL, BELOW_GOAL
 
 }

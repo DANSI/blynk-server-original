@@ -1,17 +1,20 @@
 package cc.blynk.server.core.model.device;
 
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.widgets.DeviceCleaner;
 import cc.blynk.server.core.model.widgets.Target;
-import cc.blynk.server.internal.EmptyArraysUtil;
+import cc.blynk.utils.ArrayUtil;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_INTS;
 
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 16.11.16.
  */
-public class Tag implements Target {
+public class Tag implements Target, DeviceCleaner {
 
     public static final int START_TAG_ID = 100_000;
     private static final int MAX_NUMBER_OF_DEVICE_PER_TAG = 25;
@@ -30,7 +33,7 @@ public class Tag implements Target {
     public Tag(int id, String name) {
         this.id = id;
         this.name = name;
-        this.deviceIds = EmptyArraysUtil.EMPTY_INTS;
+        this.deviceIds = EMPTY_INTS;
     }
 
     @JsonCreator
@@ -39,11 +42,21 @@ public class Tag implements Target {
                @JsonProperty("deviceIds") int[] deviceIds) {
         this.id = id;
         this.name = name;
-        this.deviceIds = deviceIds == null ? EmptyArraysUtil.EMPTY_INTS : deviceIds;
+        this.deviceIds = deviceIds == null ? EMPTY_INTS : deviceIds;
     }
 
     @Override
     public int[] getDeviceIds() {
+        return deviceIds;
+    }
+
+    @Override
+    public boolean isSelected(int deviceId) {
+        return ArrayUtil.contains(deviceIds, deviceId);
+    }
+
+    @Override
+    public int[] getAssignedDeviceIds() {
         return deviceIds;
     }
 
@@ -64,6 +77,11 @@ public class Tag implements Target {
 
     public Tag copy() {
         return new Tag(id, name, deviceIds);
+    }
+
+    @Override
+    public void deleteDevice(int deviceId) {
+        this.deviceIds = deleteDeviceFromArray(this.deviceIds, deviceId);
     }
 
     @Override

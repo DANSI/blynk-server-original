@@ -1,17 +1,20 @@
 package cc.blynk.utils;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.EnumSet;
 
@@ -26,12 +29,13 @@ import static java.nio.file.StandardOpenOption.READ;
  */
 public final class FileUtils {
 
-    private final static Logger log = LogManager.getLogger(FileUtils.class);
+    private static final String BLYNK_FOLDER = "blynk";
+    public static final String CSV_DIR = Paths.get(
+            System.getProperty("java.io.tmpdir"), BLYNK_FOLDER)
+            .toString();
 
     private FileUtils() {
     }
-
-    public static final String BLYNK_FOLDER = "blynk";
 
     private static final String[] POSSIBLE_LOCAL_PATHS = new String[] {
             "./server/http-dashboard/target/classes",
@@ -59,15 +63,9 @@ public final class FileUtils {
         }
     }
 
-    public static boolean move(Path source, Path target) {
-        try {
-            Path targetFile = Paths.get(target.toString(), source.getFileName().toString());
-            Files.move(source, targetFile, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            log.debug("Failed to move file. {}", e.getMessage());
-            return false;
-        }
-        return true;
+    public static void move(Path source, Path target) throws IOException {
+        Path targetFile = Paths.get(target.toString(), source.getFileName().toString());
+        Files.move(source, targetFile, StandardCopyOption.REPLACE_EXISTING);
     }
 
     /**
@@ -122,18 +120,97 @@ public final class FileUtils {
         try (SeekableByteChannel channel = Files.newByteChannel(userDataFile, EnumSet.of(READ))) {
             channel.position(startReadIndex)
                     .read(buf);
+            ((Buffer) buf).flip();
             return buf;
         }
     }
 
-    public static String getUserReportingDir(String email, String appName) {
+    public static boolean writeBufToCsvFilterAndFormat(BufferedWriter writer, ByteBuffer onePinData,
+                                                      String pin, String deviceName,
+                                                      long startFrom, DateTimeFormatter formatter) throws IOException {
+        boolean hasData = false;
+        while (onePinData.remaining() > 0) {
+            double value = onePinData.getDouble();
+            long ts = onePinData.getLong();
+
+            if (startFrom <= ts) {
+                String formattedTs = formatTS(formatter, ts);
+                writer.write(formattedTs + ',' + pin + ',' + deviceName + ',' + value + '\n');
+                hasData = true;
+            }
+        }
+        if (hasData) {
+            writer.flush();
+        }
+        return hasData;
+    }
+
+    public static boolean writeBufToCsvFilterAndFormat(BufferedWriter writer, ByteBuffer onePinData, String pin,
+                                                      long startFrom, DateTimeFormatter formatter) throws IOException {
+        boolean hasData = false;
+        while (onePinData.remaining() > 0) {
+            double value = onePinData.getDouble();
+            long ts = onePinData.getLong();
+
+            if (startFrom <= ts) {
+                String formattedTs = formatTS(formatter, ts);
+                writer.write(formattedTs + ',' + pin + ',' + value + '\n');
+                hasData = true;
+            }
+        }
+        if (hasData) {
+            writer.flush();
+        }
+        return hasData;
+    }
+
+    public static String writeBufToCsvFilterAndFormat(ByteBuffer onePinData,
+                                                    long startFrom, DateTimeFormatter formatter) {
+        StringBuilder sb = new StringBuilder(onePinData.capacity() * 3);
+        while (onePinData.remaining() > 0) {
+            double value = onePinData.getDouble();
+            long ts = onePinData.getLong();
+
+            if (startFrom <= ts) {
+                String formattedTs = formatTS(formatter, ts);
+                sb.append(formattedTs).append(',')
+                        .append(value).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
+    private static String formatTS(DateTimeFormatter formatter, long ts) {
+        if (formatter == null) {
+            return String.valueOf(ts);
+        }
+        return formatter.format(Instant.ofEpochMilli(ts));
+    }
+
+    public static void writeBufToCsv(BufferedWriter writer, ByteBuffer onePinData, int deviceId) throws Exception {
+        while (onePinData.remaining() > 0) {
+            double value = onePinData.getDouble();
+            long ts = onePinData.getLong();
+
+            writer.write("" + value + ',' + ts + ',' + deviceId + '\n');
+        }
+    }
+
+    public static Path getUserReportDir(String email, String appName, int reportId, String date) {
+        return Paths.get(FileUtils.CSV_DIR, email + "_" + appName + "_" + reportId + "_" + date);
+    }
+
+    public static String getUserStorageDir(String email, String appName) {
         if (AppNameUtil.BLYNK.equals(appName)) {
             return email;
         }
         return email + "_" + appName;
     }
 
-    public static String csvDownloadUrl(String host, String httpPort) {
+    public static String downloadUrl(String host, String httpPort, boolean forcePort80) {
+        if (forcePort80) {
+            return "http://" + host + "/";
+        }
         return "http://" + host + ":" + httpPort + "/";
     }
 
@@ -150,31 +227,23 @@ public final class FileUtils {
         return lastModifiedFile;
     }
 
-    public static String getBuildPatternFromString(Path path) {
-        return getPatternFromString(path, "\0" + "build" + "\0");
-    }
+    public static String getPatternFromString(Path path, String pattern) throws IOException {
+        byte[] data = Files.readAllBytes(path);
 
-    private static String getPatternFromString(Path path, String pattern) {
-        try {
-            byte[] data = Files.readAllBytes(path);
+        int index = KMPMatch.indexOf(data, pattern.getBytes());
 
-            int index = KMPMatch.indexOf(data, pattern.getBytes());
+        if (index != -1) {
+            int start = index + pattern.length();
+            int end = 0;
+            byte b = -1;
 
-            if (index != -1) {
-                int start = index + pattern.length();
-                int end = 0;
-                byte b = -1;
-
-                while (b != '\0') {
-                    end++;
-                    b = data[start + end];
-                }
-
-                byte[] copy = Arrays.copyOfRange(data, start, start + end);
-                return new String(copy);
+            while (b != '\0') {
+                end++;
+                b = data[start + end];
             }
-        } catch (Exception e) {
-            log.error("Error getting pattern from file. Reason : {}", e.getMessage());
+
+            byte[] copy = Arrays.copyOfRange(data, start, start + end);
+            return new String(copy);
         }
         throw new RuntimeException("Unable to read build number fro firmware.");
     }
@@ -187,5 +256,11 @@ public final class FileUtils {
             }
         }
         return null;
+    }
+
+    public static long getLastModified(Path filePath) throws IOException {
+        BasicFileAttributes attr = Files.readAttributes(filePath, BasicFileAttributes.class);
+        FileTime modifiedTime = attr.lastModifiedTime();
+        return modifiedTime.toMillis();
     }
 }

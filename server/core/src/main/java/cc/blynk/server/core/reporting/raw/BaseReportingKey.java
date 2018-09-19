@@ -17,7 +17,7 @@ public final class BaseReportingKey implements Serializable {
     public final String appName;
     public final int dashId;
     public final int deviceId;
-    public final char pinType;
+    public final PinType pinType;
     public final byte pin;
 
     public BaseReportingKey(User user, GraphPinRequest graphPinRequest) {
@@ -31,7 +31,7 @@ public final class BaseReportingKey implements Serializable {
         this.appName = appName;
         this.dashId = dashId;
         this.deviceId = deviceId;
-        this.pinType = pinType.pintTypeChar;
+        this.pinType = pinType;
         this.pin = pin;
     }
 
@@ -52,16 +52,16 @@ public final class BaseReportingKey implements Serializable {
         if (deviceId != that.deviceId) {
             return false;
         }
-        if (pinType != that.pinType) {
-            return false;
-        }
         if (pin != that.pin) {
             return false;
         }
         if (email != null ? !email.equals(that.email) : that.email != null) {
             return false;
         }
-        return appName != null ? appName.equals(that.appName) : that.appName == null;
+        if (appName != null ? !appName.equals(that.appName) : that.appName != null) {
+            return false;
+        }
+        return pinType == that.pinType;
     }
 
     @Override
@@ -70,7 +70,7 @@ public final class BaseReportingKey implements Serializable {
         result = 31 * result + (appName != null ? appName.hashCode() : 0);
         result = 31 * result + dashId;
         result = 31 * result + deviceId;
-        result = 31 * result + (int) pinType;
+        result = 31 * result + (pinType != null ? pinType.hashCode() : 0);
         result = 31 * result + (int) pin;
         return result;
     }

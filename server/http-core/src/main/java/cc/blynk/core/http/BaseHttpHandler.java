@@ -6,10 +6,7 @@ import cc.blynk.core.http.rest.URIDecoder;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
-import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import cc.blynk.server.core.stats.GlobalStats;
-import cc.blynk.server.handlers.DefaultReregisterHandler;
-import cc.blynk.utils.AnnotationsUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.FullHttpResponse;
@@ -22,14 +19,14 @@ import java.util.Map;
 import java.util.regex.Matcher;
 
 import static cc.blynk.core.http.Response.serverError;
+import static cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler.handleUnexpectedException;
 
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 24.12.15.
  */
-public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter
-        implements DefaultReregisterHandler, DefaultExceptionHandler {
+public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter {
 
     protected static final Logger log = LogManager.getLogger(BaseHttpHandler.class);
 
@@ -47,11 +44,11 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter
         this.tokenManager = tokenManager;
         this.sessionDao = sessionDao;
         this.rootPath = rootPath;
-        this.handlers = AnnotationsUtil.register(rootPath, this, globalStats);
+        this.handlers = AnnotationsProcessor.register(rootPath, this, globalStats);
     }
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
         if (msg instanceof HttpRequest) {
             HttpRequest req = (HttpRequest) msg;
 
@@ -82,9 +79,10 @@ public abstract class BaseHttpHandler extends ChannelInboundHandlerAdapter
     private void invokeHandler(ChannelHandlerContext ctx, HttpRequest req,
                                HandlerWrapper handler, Map<String, String> extractedParams) {
         log.debug("{} : {}", req.method().name(), req.uri());
-        URIDecoder uriDecoder = new URIDecoder(req, extractedParams);
-        Object[] params = handler.fetchParams(ctx, uriDecoder);
-        finishHttp(ctx, uriDecoder, handler, params);
+        try (URIDecoder uriDecoder = new URIDecoder(req, extractedParams)) {
+            Object[] params = handler.fetchParams(ctx, uriDecoder);
+            finishHttp(ctx, uriDecoder, handler, params);
+        }
     }
 
     public void finishHttp(ChannelHandlerContext ctx, URIDecoder uriDecoder,

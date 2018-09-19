@@ -1,7 +1,5 @@
 package cc.blynk.server.core.model.enums;
 
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
-
 /**
  * User: ddumanskiy
  * Date: 10.12.13
@@ -33,23 +31,8 @@ public enum PinType {
             case 'D' :
                 return DIGITAL;
             default:
-                throw new IllegalCommandBodyException("Invalid pin type.");
-        }
-    }
-
-    public static String getPinTypeString(char pinTypeChar) {
-        switch (pinTypeChar) {
-            case 'a' :
-            case 'A' :
-                return ANALOG.pinTypeString;
-            case 'v' :
-            case 'V' :
-                return VIRTUAL.pinTypeString;
-            case 'd' :
-            case 'D' :
-                return DIGITAL.pinTypeString;
-            default:
-                throw new IllegalCommandBodyException("Invalid pin type.");
+                //NumberFormatException is used for parsing errors
+                throw new NumberFormatException("Invalid pin type.");
         }
     }
 }

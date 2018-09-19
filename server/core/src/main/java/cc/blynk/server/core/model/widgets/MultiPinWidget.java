@@ -2,6 +2,7 @@ package cc.blynk.server.core.model.widgets;
 
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.StringJoiner;
@@ -49,6 +50,10 @@ public abstract class MultiPinWidget extends Widget implements AppSyncWidget {
 
     public abstract boolean isSplitMode();
 
+    public boolean isAssignedToDeviceSelector() {
+        return this.deviceId >= DeviceSelector.DEVICE_SELECTOR_STARTING_ID;
+    }
+
     public String makeHardwareBody(byte pinIn, PinType pinType) {
         if (dataStreams == null) {
             return null;
@@ -60,10 +65,10 @@ public abstract class MultiPinWidget extends Widget implements AppSyncWidget {
                 }
             }
         } else {
-            if (dataStreams[0].notEmpty()) {
+            if (dataStreams[0].notEmptyAndIsValid()) {
                 StringBuilder sb = new StringBuilder(dataStreams[0].makeHardwareBody());
                 for (int i = 1; i < dataStreams.length; i++) {
-                    if (dataStreams[i].notEmpty()) {
+                    if (dataStreams[i].notEmptyAndIsValid()) {
                         sb.append(BODY_SEPARATOR).append(dataStreams[i].value);
                     }
                 }
@@ -98,7 +103,7 @@ public abstract class MultiPinWidget extends Widget implements AppSyncWidget {
                 }
             }
         } else {
-            if (dataStreams[0].notEmpty()) {
+            if (dataStreams[0].notEmptyAndIsValid()) {
                 for (String pinValue : dataStreams[0].value.split(BODY_SEPARATOR_STRING)) {
                     sj.add("\"" + pinValue + "\"");
                 }
@@ -107,4 +112,32 @@ public abstract class MultiPinWidget extends Widget implements AppSyncWidget {
         return sj.toString();
     }
 
+    @Override
+    public void updateValue(Widget oldWidget) {
+        if (oldWidget instanceof MultiPinWidget) {
+            MultiPinWidget multiPinWidget = (MultiPinWidget) oldWidget;
+            if (multiPinWidget.dataStreams != null) {
+                for (DataStream dataStream : multiPinWidget.dataStreams) {
+                    updateIfSame(multiPinWidget.deviceId,
+                            dataStream.pin, dataStream.pinType, dataStream.value);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void erase() {
+        if (dataStreams != null) {
+            for (DataStream dataStream : this.dataStreams) {
+                if (dataStream != null) {
+                    dataStream.value = null;
+                }
+            }
+        }
+    }
+
+    @Override
+    public boolean isAssignedToDevice(int deviceId) {
+        return this.deviceId == deviceId;
+    }
 }

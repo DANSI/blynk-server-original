@@ -1,14 +1,14 @@
 package cc.blynk.server.notifications.mail;
 
+import cc.blynk.utils.AppNameUtil;
+import cc.blynk.utils.properties.MailProperties;
 import net.glxn.qrgen.core.image.ImageType;
 import net.glxn.qrgen.javase.QRCode;
-import org.asynchttpclient.DefaultAsyncHttpClient;
-import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.InputStream;
-import java.util.Properties;
+import java.util.Collections;
 
 /**
  * The Blynk Project.
@@ -16,13 +16,6 @@ import java.util.Properties;
  * Created on 06.04.15.
  */
 public class MailWrapperTest {
-
-    private DefaultAsyncHttpClient httpclient = new DefaultAsyncHttpClient(
-            new DefaultAsyncHttpClientConfig.Builder()
-    .setUserAgent(null)
-    .setKeepAlive(false)
-    .build()
-    );
 
     @Test
     @Ignore
@@ -56,21 +49,21 @@ public class MailWrapperTest {
                 new QrHolder(1, 1, "My device2", "12345678902", QRCode.from("21321321").to(ImageType.JPG).stream().toByteArray())
         };
 
-        Properties properties = new Properties();
+        MailProperties properties = new MailProperties(Collections.emptyMap());
         try (InputStream classPath = MailWrapperTest.class.getResourceAsStream("/mail.properties")) {
             if (classPath != null) {
                 properties.load(classPath);
             }
         }
 
-        MailWrapper mailWrapper = new MailWrapper(properties);
+        MailWrapper mailWrapper = new MailWrapper(properties, AppNameUtil.BLYNK);
         mailWrapper.sendWithAttachment("dmitriy@blynk.cc", "yo", body, qrHolders);
     }
 
     @Test
     @Ignore
     public void sendMailWithAttachments() throws Exception {
-        Properties properties = new Properties();
+        MailProperties properties = new MailProperties(Collections.emptyMap());
         try (InputStream classPath = MailWrapperTest.class.getResourceAsStream("/mail.properties")) {
             if (classPath != null) {
                 properties.load(classPath);
@@ -81,14 +74,14 @@ public class MailWrapperTest {
         QrHolder qrHolder2 = new QrHolder(1, 1, "device name", "123",  QRCode.from("124").to(ImageType.JPG).stream().toByteArray());
 
         String to = "doom369@gmail.com";
-        MailWrapper mailWrapper = new MailWrapper(properties);
+        MailWrapper mailWrapper = new MailWrapper(properties, AppNameUtil.BLYNK);
         mailWrapper.sendWithAttachment(to, "Hello", "Body!", new QrHolder[]{qrHolder, qrHolder2});
     }
 
     @Test
     @Ignore
     public void sendMail() throws Exception {
-        Properties properties = new Properties();
+        MailProperties properties = new MailProperties(Collections.emptyMap());
         try (InputStream classPath = MailWrapperTest.class.getResourceAsStream("/mail.properties")) {
             if (classPath != null) {
                 properties.load(classPath);
@@ -96,14 +89,14 @@ public class MailWrapperTest {
         }
 
         String to = "";
-        MailWrapper mailWrapper = new MailWrapper(properties);
+        MailWrapper mailWrapper = new MailWrapper(properties, AppNameUtil.BLYNK);
         mailWrapper.sendText(to, "Hello", "Body!");
     }
 
     @Test
     @Ignore
     public void sendMail2() throws Exception {
-        Properties properties = new Properties();
+        MailProperties properties = new MailProperties(Collections.emptyMap());
         try (InputStream classPath = MailWrapperTest.class.getResourceAsStream("/mail.properties")) {
             if (classPath != null) {
                 properties.load(classPath);
@@ -111,7 +104,7 @@ public class MailWrapperTest {
         }
 
         String to = "doom369@gmail.com";
-        MailWrapper mailWrapper = new MailWrapper(properties);
+        MailWrapper mailWrapper = new MailWrapper(properties, AppNameUtil.BLYNK);
 
         mailWrapper.sendText(to, "Hello", "Body!");
     }
@@ -119,7 +112,7 @@ public class MailWrapperTest {
     @Test
     @Ignore
     public void sendMailWithHttpProvider() throws Exception {
-        Properties properties = new Properties();
+        MailProperties properties = new MailProperties(Collections.emptyMap());
         try (InputStream classPath = MailWrapperTest.class.getResourceAsStream("/mail.properties")) {
             if (classPath != null) {
                 properties.load(classPath);
@@ -128,7 +121,7 @@ public class MailWrapperTest {
 
         String to = "";
 
-        MailWrapper mailWrapper = new MailWrapper(properties);
+        MailWrapper mailWrapper = new MailWrapper(properties, AppNameUtil.BLYNK);
 
         mailWrapper.sendText(to, "Hello", "Happy Blynking!\n" +
                 "-\n" +

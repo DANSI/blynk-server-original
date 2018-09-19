@@ -10,6 +10,8 @@ import java.util.regex.Pattern;
  */
 public final class StringUtils {
 
+    public final static String BLYNK_LANDING = "https://www.blynk.cc";
+
     public static final char BODY_SEPARATOR = '\0';
     public static final String BODY_SEPARATOR_STRING = String.valueOf(BODY_SEPARATOR);
     public static final char DEVICE_SEPARATOR = '-';
@@ -26,8 +28,11 @@ public final class StringUtils {
     public static final Pattern PIN_PATTERN_8 =  Pattern.compile("/pin[8]/", Pattern.LITERAL);
     public static final Pattern PIN_PATTERN_9 =  Pattern.compile("/pin[9]/", Pattern.LITERAL);
     public static final Pattern GENERIC_PLACEHOLDER = Pattern.compile("%s", Pattern.LITERAL);
+    private static final Pattern NOT_SUPPORTED_CHARS = Pattern.compile("[\\\\/:*?\"<>| ]");
 
     public static final Pattern DATETIME_PATTERN =  Pattern.compile("/datetime_iso/", Pattern.LITERAL);
+    public static final String WEBSOCKET_PATH = "/websocket";
+    public static final String WEBSOCKET_WEB_PATH = "/dashws";
 
     private StringUtils() {
     }
@@ -38,7 +43,7 @@ public final class StringUtils {
      */
     private static final int START_INDEX = 3;
 
-    private static final String IN_DATA = "abcdefghijklmnopqrstuvwxyz";
+    private static final String IN_DATA = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     /**
@@ -51,7 +56,7 @@ public final class StringUtils {
      * @throws java.lang.NumberFormatException in case parsed pin not a Number.
      *
      */
-    static String fetchPin(String body) {
+    public static String fetchPin(String body) {
         int i = START_INDEX;
         while (i < body.length()) {
             if (body.charAt(i) == BODY_SEPARATOR) {
@@ -109,7 +114,7 @@ public final class StringUtils {
         return split2(DEVICE_SEPARATOR, body);
     }
 
-    private static String[] split2(char separator, String body) {
+    public static String[] split2(char separator, String body) {
         final int i1 = body.indexOf(separator, 1);
         if (i1 == -1) {
             return new String[] {body};
@@ -123,19 +128,45 @@ public final class StringUtils {
     }
 
     public static String prependDashIdAndDeviceId(int dashId, int deviceId, String body) {
-        //todo this is back compatibility code. remove in future versions
-        if (deviceId == 0) {
-            return "" + dashId + BODY_SEPARATOR + body;
-        }
         return "" + dashId + DEVICE_SEPARATOR + deviceId + BODY_SEPARATOR + body;
     }
 
+    public static String randomPassword(int len) {
+        return randomString(IN_DATA, len);
+    }
+
     public static String randomString(int len) {
+        //using only lowercase chars for app id.
+        String dataForId = IN_DATA.substring(0, 26);
+        return randomString(dataForId, len);
+    }
+
+    private static String randomString(String inData, int len) {
         StringBuilder sb = new StringBuilder(len);
-        int inDataLen = IN_DATA.length();
+        int inDataLength = inData.length();
         for (int i = 0; i < len; i++) {
-            sb.append(IN_DATA.charAt(SECURE_RANDOM.nextInt(inDataLen)));
+            sb.append(inData.charAt(SECURE_RANDOM.nextInt(inDataLength)));
         }
         return sb.toString();
+    }
+
+    public static String removeUnsupportedChars(String name) {
+        return NOT_SUPPORTED_CHARS.matcher(name).replaceAll("");
+    }
+
+    public static String truncate(String name, int size) {
+        return name.length() <= size ? name : name.substring(0, size);
+    }
+
+    public static String escapeCSV(String name) {
+        name = name.replace("\"", "\"\"");
+        if (name.contains(",") || name.contains(";") || name.contains("\"")) {
+            return "\"" + name + "\"";
+        }
+        return name;
+    }
+
+    public static boolean isReadOperation(String body) {
+        return body.length() > 1 && body.charAt(1) == 'r';
     }
 }

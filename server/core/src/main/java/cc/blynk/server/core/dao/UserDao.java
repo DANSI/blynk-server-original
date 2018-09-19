@@ -96,8 +96,11 @@ public class UserDao {
         for (User user : users.values()) {
             for (DashBoard dashBoard : user.profile.dashBoards) {
                 for (Device device : dashBoard.devices) {
-                    Integer i = boards.getOrDefault(device.boardType, 0);
-                    boards.put(device.boardType, ++i);
+                    if (device.boardType != null) {
+                        String label = device.boardType.label;
+                        Integer i = boards.getOrDefault(label, 0);
+                        boards.put(label, ++i);
+                    }
                 }
             }
         }
@@ -146,8 +149,8 @@ public class UserDao {
         for (User user : users.values()) {
             for (DashBoard dashBoard : user.profile.dashBoards) {
                 for (Device device : dashBoard.devices) {
-                    if (device.hardwareInfo != null && device.hardwareInfo.version != null) {
-                        String key = device.hardwareInfo.version;
+                    if (device.hardwareInfo != null && device.hardwareInfo.blynkVersion != null) {
+                        String key = device.hardwareInfo.blynkVersion;
                         Integer i = data.getOrDefault(key, 0);
                         data.put(key, ++i);
                     }

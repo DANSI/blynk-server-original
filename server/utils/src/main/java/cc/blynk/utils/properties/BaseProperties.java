@@ -1,13 +1,9 @@
 package cc.blynk.utils.properties;
 
-import cc.blynk.utils.IPUtils;
-
 import java.io.File;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.CodeSource;
 import java.util.Map;
 import java.util.Properties;
 
@@ -28,7 +24,7 @@ public abstract class BaseProperties extends Properties {
 
     BaseProperties(Map<String, String> cmdProperties, String serverConfig) {
         this.jarPath = getJarPath();
-        String propertiesFileName = cmdProperties.get(serverConfig);
+        var propertiesFileName = cmdProperties.get(serverConfig);
         if (propertiesFileName == null) {
             initProperties(serverConfig);
         } else {
@@ -37,15 +33,10 @@ public abstract class BaseProperties extends Properties {
         putAll(cmdProperties);
     }
 
-    BaseProperties(String propertiesFileName) {
-        this.jarPath = getJarPath();
-        initProperties(propertiesFileName);
-    }
-
     private static String getJarPath() {
         try {
-            CodeSource codeSource = BaseProperties.class.getProtectionDomain().getCodeSource();
-            File jarFile = new File(codeSource.getLocation().toURI().getPath());
+            var codeSource = BaseProperties.class.getProtectionDomain().getCodeSource();
+            var jarFile = new File(codeSource.getLocation().toURI().getPath());
             return jarFile.getParentFile().getPath();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -61,9 +52,9 @@ public abstract class BaseProperties extends Properties {
     private void initProperties(String filePropertiesName) {
         readFromClassPath(filePropertiesName);
 
-        Path curDirPath = Paths.get(jarPath, filePropertiesName);
+        var curDirPath = Paths.get(jarPath, filePropertiesName);
         if (Files.exists(curDirPath)) {
-            try (InputStream curFolder = Files.newInputStream(curDirPath)) {
+            try (var curFolder = Files.newInputStream(curDirPath)) {
                 load(curFolder);
             } catch (Exception e) {
                 throw new RuntimeException("Error getting properties file : " + filePropertiesName, e);
@@ -77,7 +68,7 @@ public abstract class BaseProperties extends Properties {
             filePropertiesName = "/" + filePropertiesName;
         }
 
-        try (InputStream classPath = BaseProperties.class.getResourceAsStream(filePropertiesName)) {
+        try (var classPath = BaseProperties.class.getResourceAsStream(filePropertiesName)) {
             if (classPath != null) {
                 load(classPath);
             }
@@ -94,7 +85,7 @@ public abstract class BaseProperties extends Properties {
 
         readFromClassPath(SERVER_PROPERTIES_FILENAME);
 
-        try (InputStream curFolder = Files.newInputStream(path)) {
+        try (var curFolder = Files.newInputStream(path)) {
             load(curFolder);
         } catch (Exception e) {
             System.out.println("Error reading properties file : '" + path + "'. Reason : " + e.getMessage());
@@ -107,15 +98,11 @@ public abstract class BaseProperties extends Properties {
     }
 
     public int getIntProperty(String propertyName, int defaultValue) {
-        String prop = getProperty(propertyName);
+        var prop = getProperty(propertyName);
         if (prop == null || prop.isEmpty()) {
             return defaultValue;
         }
-        return Integer.parseInt(getProperty(propertyName));
-    }
-
-    public boolean isRawDBEnabled() {
-        return getBoolProperty("enable.raw.db.data.store");
+        return Integer.parseInt(prop);
     }
 
     public boolean getBoolProperty(String propertyName) {
@@ -126,18 +113,12 @@ public abstract class BaseProperties extends Properties {
         return Long.parseLong(getProperty(propertyName));
     }
 
-    public String getServerHost() {
-        final String host = getProperty("server.host");
-        if (host == null || host.isEmpty()) {
-            final String netInterface = getProperty("net.interface", "eth");
-            return IPUtils.resolveHostIP(netInterface);
-        } else {
-            return host;
-        }
+    public String getAdminRootPath() {
+        return getProperty("admin.rootPath", "/admin");
     }
 
     public long getLongProperty(String propertyName, long defaultValue) {
-        String prop = getProperty(propertyName);
+        var prop = getProperty(propertyName);
         if (prop == null || prop.isEmpty()) {
             return defaultValue;
         }
@@ -145,11 +126,15 @@ public abstract class BaseProperties extends Properties {
     }
 
     public String[] getCommaSeparatedValueAsArray(String propertyName) {
-        String val = getProperty(propertyName);
+        var val = getProperty(propertyName);
         if (val == null) {
             return null;
         }
-        return val.toLowerCase().split(",");
+        return val.trim().toLowerCase().split(",");
+    }
+
+    public boolean getAllowWithoutActiveApp() {
+        return getBoolProperty("allow.reading.widget.without.active.app");
     }
 
 }

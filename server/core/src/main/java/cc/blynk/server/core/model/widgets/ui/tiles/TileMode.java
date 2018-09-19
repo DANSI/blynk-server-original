@@ -7,6 +7,6 @@ package cc.blynk.server.core.model.widgets.ui.tiles;
  */
 public enum TileMode {
 
-    PAGE, BUTTON, LEVEL;
+    PAGE, BUTTON, ICON, DIMMER
 
 }

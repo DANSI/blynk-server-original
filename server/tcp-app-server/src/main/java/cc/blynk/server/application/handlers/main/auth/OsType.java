@@ -7,10 +7,16 @@ package cc.blynk.server.application.handlers.main.auth;
  */
 public enum OsType {
 
-    ANDROID,
-    IOS,
-    //3d party clients
-    OTHER;
+    ANDROID("android"),
+    IOS("iOS"),
+    //3d party clients or unknown clients
+    OTHER("unknown");
+
+    public final String label;
+
+    OsType(String label) {
+        this.label = label;
+    }
 
     public static OsType parse(String type) {
         switch (type.toLowerCase()) {

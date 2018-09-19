@@ -42,7 +42,7 @@ public class Option implements Cloneable {
     /**
      * description of the option
      */
-    private String description;
+    private final String description;
 
     /**
      * specifies whether this option is required to be present
@@ -342,7 +342,7 @@ public class Option implements Cloneable {
      * or null if there are no values
      */
     public String[] getValues() {
-        return hasNoValues() ? null : values.toArray(new String[values.size()]);
+        return hasNoValues() ? null : values.toArray(new String[0]);
     }
 
     /**
@@ -351,40 +351,6 @@ public class Option implements Cloneable {
      */
     List<String> getValuesList() {
         return values;
-    }
-
-    /**
-     * Dump state, suitable for debugging.
-     *
-     * @return Stringified form of this object
-     */
-    @Override
-    public String toString() {
-        StringBuilder buf = new StringBuilder().append("[ option: ");
-
-        buf.append(opt);
-
-        if (longOpt != null) {
-            buf.append(" ").append(longOpt);
-        }
-
-        buf.append(" ");
-
-        if (hasArgs()) {
-            buf.append("[ARG...]");
-        } else if (hasArg()) {
-            buf.append(" [ARG]");
-        }
-
-        buf.append(" :: ").append(description);
-
-        if (type != null) {
-            buf.append(" :: ").append(type);
-        }
-
-        buf.append(" ]");
-
-        return buf.toString();
     }
 
     /**
@@ -411,11 +377,7 @@ public class Option implements Cloneable {
         if (opt != null ? !opt.equals(option.opt) : option.opt != null) {
             return false;
         }
-        if (longOpt != null ? !longOpt.equals(option.longOpt) : option.longOpt != null) {
-            return false;
-        }
-
-        return true;
+        return longOpt != null ? longOpt.equals(option.longOpt) : option.longOpt == null;
     }
 
     @Override

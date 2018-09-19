@@ -16,7 +16,7 @@ public class Tab {
 
     @JsonCreator
     public Tab(@JsonProperty("id") int id,
-            @JsonProperty("label") String label) {
+               @JsonProperty("label") String label) {
         this.id = id;
         this.label = label;
     }

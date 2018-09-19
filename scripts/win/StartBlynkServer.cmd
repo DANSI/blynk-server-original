@@ -13,8 +13,8 @@ set ip_address_string="IPv4 Address"
 echo **************************
 for /f "usebackq tokens=2 delims=:" %%f in (`ipconfig ^| findstr /c:%ip_address_string%`) do (
     echo Local Server IP Address is: %%f
-    echo Hardware Port : 8442
-	echo Application Port : 8443
+    echo Hardware Port : 8080
+	echo Application Port : 9443
 )
 echo **************************
 

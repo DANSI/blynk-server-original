@@ -32,9 +32,9 @@ public class GraphDataStream {
 
     private final String mathFormula;
 
-    private final int yAxisMin;
+    private final float yAxisMin;
 
-    private final int yAxisMax;
+    private final float yAxisMax;
 
     private final boolean showYAxis;
 
@@ -45,6 +45,14 @@ public class GraphDataStream {
     private final boolean connectMissingPointsEnabled;
 
     private final boolean isPercentMaxMin;
+
+    private final YAxisScale yAxisScale;
+
+    private final float delta;
+
+    private final boolean userDeltaModifyAllowed;
+
+    private final int maximumFractionDigits;
 
     @JsonCreator
     public GraphDataStream(@JsonProperty("title") String title,
@@ -57,13 +65,17 @@ public class GraphDataStream {
                            @JsonProperty("low") String low,
                            @JsonProperty("high") String high,
                            @JsonProperty("mathFormula") String mathFormula,
-                           @JsonProperty("yAxisMin") int yAxisMin,
-                           @JsonProperty("yAxisMax") int yAxisMax,
+                           @JsonProperty("yAxisMin") float yAxisMin,
+                           @JsonProperty("yAxisMax") float yAxisMax,
                            @JsonProperty("showYAxis") boolean showYAxis,
                            @JsonProperty("suffix") String suffix,
                            @JsonProperty("cubicSmoothingEnabled") boolean cubicSmoothingEnabled,
                            @JsonProperty("connectMissingPointsEnabled") boolean connectMissingPointsEnabled,
-                           @JsonProperty("isPercentMaxMin") boolean isPercentMaxMin) {
+                           @JsonProperty("isPercentMaxMin") boolean isPercentMaxMin,
+                           @JsonProperty("yAxisScale") YAxisScale yAxisScale,
+                           @JsonProperty("delta") float delta,
+                           @JsonProperty("userDeltaModifyAllowed") boolean userDeltaModifyAllowed,
+                           @JsonProperty("maximumFractionDigits") int maximumFractionDigits) {
         this.title = title;
         this.graphType = graphType;
         this.color = color;
@@ -81,6 +93,10 @@ public class GraphDataStream {
         this.cubicSmoothingEnabled = cubicSmoothingEnabled;
         this.connectMissingPointsEnabled = connectMissingPointsEnabled;
         this.isPercentMaxMin = isPercentMaxMin;
+        this.yAxisScale = yAxisScale == null ? YAxisScale.UNSET : yAxisScale;
+        this.delta = delta;
+        this.userDeltaModifyAllowed = userDeltaModifyAllowed;
+        this.maximumFractionDigits = maximumFractionDigits;
     }
 
     public int getTargetId(int targetIdOverride) {

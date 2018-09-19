@@ -24,12 +24,12 @@ public class WebHook extends OnePinWidget {
 
     public transient volatile int failureCounter = 0;
 
-    private boolean isValidUrl() {
+    public static boolean isValidUrl(String url) {
         return url != null && !url.isEmpty() && url.regionMatches(true, 0, "http", 0, 4);
     }
 
-    public boolean isValid(int webhookFailureLimit) {
-        return isValidUrl() && failureCounter < webhookFailureLimit;
+    public boolean isNotFailed(int webhookFailureLimit) {
+        return failureCounter < webhookFailureLimit;
     }
 
     //a bit ugly but as quick fix ok
@@ -38,7 +38,7 @@ public class WebHook extends OnePinWidget {
     }
 
     @Override
-    public void sendAppSync(Channel appChannel, int dashId, int targetId) {
+    public void sendAppSync(Channel appChannel, int dashId, int targetId, boolean useNewSyncFormat) {
     }
 
     @Override

@@ -13,6 +13,6 @@ public enum Theme {
     SparkFun,
     AppTheme, //should be removed in future
     CustomTheme, //should be removed in future
-    AppExport; //should be removed in future
+    AppExport //should be removed in future
 
 }

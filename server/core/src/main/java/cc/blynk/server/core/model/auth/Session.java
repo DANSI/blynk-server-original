@@ -1,13 +1,14 @@
 package cc.blynk.server.core.model.auth;
 
-import cc.blynk.server.core.protocol.model.messages.appllication.DeviceOfflineMessage;
+import cc.blynk.server.common.BaseSimpleChannelInboundHandler;
+import cc.blynk.server.core.protocol.handlers.decoders.AppMessageDecoder;
+import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
-import cc.blynk.server.core.stats.metrics.InstanceLoadMeter;
-import cc.blynk.server.handlers.BaseSimpleChannelInboundHandler;
 import cc.blynk.utils.ArrayUtil;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.EventLoop;
 import io.netty.util.internal.ConcurrentSet;
 import org.apache.logging.log4j.LogManager;
@@ -16,11 +17,11 @@ import org.apache.logging.log4j.Logger;
 import java.util.HashSet;
 import java.util.Set;
 
-import static cc.blynk.server.internal.BlynkByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.server.internal.CommonByteBufUtil.deviceOffline;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.server.internal.StateHolderUtil.getHardState;
 import static cc.blynk.server.internal.StateHolderUtil.isSameDash;
 import static cc.blynk.server.internal.StateHolderUtil.isSameDashAndDeviceId;
-import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
 import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
 
 /**
@@ -38,20 +39,32 @@ public class Session {
     public final Set<Channel> appChannels = new ConcurrentSet<>();
     public final Set<Channel> hardwareChannels = new ConcurrentSet<>();
 
-    private final ChannelFutureListener appRemover = future -> removeAppChannel(future.channel());
-    private final ChannelFutureListener hardRemover = future -> removeHardChannel(future.channel());
+    private final ChannelFutureListener appRemover = future -> appChannels.remove(future.channel());
+    private final ChannelFutureListener hardRemover = future -> hardwareChannels.remove(future.channel());
 
     public Session(EventLoop initialEventLoop) {
         this.initialEventLoop = initialEventLoop;
     }
 
+    public boolean isSameEventLoop(ChannelHandlerContext ctx) {
+        return isSameEventLoop(ctx.channel());
+    }
+
+    public boolean isSameEventLoop(Channel channel) {
+        return initialEventLoop == channel.eventLoop();
+    }
+
     private static int getRequestRate(Set<Channel> channels) {
         double sum = 0;
-        for (Channel c : channels) {
-            BaseSimpleChannelInboundHandler handler = c.pipeline().get(BaseSimpleChannelInboundHandler.class);
-            if (handler != null) {
-                InstanceLoadMeter loadMeter = handler.getQuotaMeter();
-                sum += loadMeter.getOneMinuteRateNoTick();
+        for (Channel ch : channels) {
+            MessageDecoder messageDecoder = ch.pipeline().get(MessageDecoder.class);
+            if (messageDecoder != null) {
+                sum += messageDecoder.getQuotaMeter().getOneMinuteRateNoTick();
+            } else {
+                AppMessageDecoder appMessageDecoder = ch.pipeline().get(AppMessageDecoder.class);
+                if (appMessageDecoder != null) {
+                    sum += appMessageDecoder.getQuotaMeter().getOneMinuteRateNoTick();
+                }
             }
         }
         return (int) sum;
@@ -68,52 +81,51 @@ public class Session {
         }
     }
 
-    public void removeAppChannel(Channel appChannel) {
-        if (appChannels.remove(appChannel)) {
-            appChannel.closeFuture().removeListener(appRemover);
-        }
-    }
-
     public void addHardChannel(Channel hardChannel) {
         if (hardwareChannels.add(hardChannel)) {
             hardChannel.closeFuture().addListener(hardRemover);
         }
     }
 
-    public void removeHardChannel(Channel hardChannel) {
-        if (hardwareChannels.remove(hardChannel)) {
-            hardChannel.closeFuture().removeListener(hardRemover);
-        }
-    }
-
-    private Set<Channel> filter(int activeDashId, int[] deviceIds) {
+    private Set<Channel> filter(int bodySize, int activeDashId, int[] deviceIds) {
         Set<Channel> targetChannels = new HashSet<>();
         for (Channel channel : hardwareChannels) {
             HardwareStateHolder hardwareState = getHardState(channel);
             if (hardwareState != null && hardwareState.dash.id == activeDashId
                     && (deviceIds.length == 0 || ArrayUtil.contains(deviceIds, hardwareState.device.id))) {
-                targetChannels.add(channel);
+                if (hardwareState.device.fitsBufferSize(bodySize)) {
+                    targetChannels.add(channel);
+                } else {
+                    log.trace("Message is to large. Size {}.", bodySize);
+                }
             }
         }
         return targetChannels;
     }
 
-    private Set<Channel> filter(int activeDashId, int deviceId) {
+    private Set<Channel> filter(int bodySize, int activeDashId, int deviceId) {
         Set<Channel> targetChannels = new HashSet<>();
         for (Channel channel : hardwareChannels) {
-            if (isSameDashAndDeviceId(channel, activeDashId, deviceId)) {
-                targetChannels.add(channel);
+            HardwareStateHolder hardwareState = getHardState(channel);
+            if (hardwareState != null && hardwareState.isSameDashAndDeviceId(activeDashId, deviceId)) {
+                if (hardwareState.device.fitsBufferSize(bodySize)) {
+                    targetChannels.add(channel);
+                } else {
+                    log.trace("Message is to large. Size {}.", bodySize);
+                }
             }
         }
         return targetChannels;
     }
 
     public boolean sendMessageToHardware(int activeDashId, short cmd, int msgId, String body, int deviceId) {
-        return hardwareChannels.size() == 0 || sendMessageToHardware(filter(activeDashId, deviceId), cmd, msgId, body);
+        return hardwareChannels.size() == 0
+                || sendMessageToHardware(filter(body.length(), activeDashId, deviceId), cmd, msgId, body);
     }
 
     public boolean sendMessageToHardware(int activeDashId, short cmd, int msgId, String body, int... deviceIds) {
-        return hardwareChannels.size() == 0 || sendMessageToHardware(filter(activeDashId, deviceIds), cmd, msgId, body);
+        return hardwareChannels.size() == 0
+                || sendMessageToHardware(filter(body.length(), activeDashId, deviceIds), cmd, msgId, body);
     }
 
     public boolean sendMessageToHardware(short cmd, int msgId, String body) {
@@ -126,7 +138,7 @@ public class Session {
             return true; // -> no active hardware
         }
 
-        send(targetChannels, channelsNum, cmd, msgId, body);
+        send(targetChannels, cmd, msgId, body);
 
         return false; // -> there is active hardware
     }
@@ -154,24 +166,12 @@ public class Session {
     }
 
     public void sendOfflineMessageToApps(int dashId, int deviceId) {
-        if (isAppConnected()) {
+        int targetsNum = appChannels.size();
+        if (targetsNum > 0) {
             log.trace("Sending device offline message.");
 
-            //todo could be optimized. don't forget about retain
-            DeviceOfflineMessage deviceOfflineMessage =
-                    new DeviceOfflineMessage(0, String.valueOf(dashId) + DEVICE_SEPARATOR + deviceId);
-            for (Channel appChannel : appChannels) {
-                if (appChannel.isWritable()) {
-                    appChannel.writeAndFlush(deviceOfflineMessage, appChannel.voidPromise());
-                }
-            }
-        }
-    }
-
-    public void sendToApps(short cmd, int msgId, int dashId, int deviceId) {
-        if (isAppConnected()) {
-            String finalBody = "" + dashId + DEVICE_SEPARATOR + deviceId;
-            sendToApps(cmd, msgId, dashId, finalBody);
+            StringMessage deviceOfflineMessage = deviceOffline(dashId, deviceId);
+            sendMessageToMultipleReceivers(appChannels, deviceOfflineMessage);
         }
     }
 
@@ -182,12 +182,12 @@ public class Session {
         }
     }
 
-    private void sendToApps(short cmd, int msgId, int dashId, String finalBody) {
+    public void sendToApps(short cmd, int msgId, int dashId, String finalBody) {
         Set<Channel> targetChannels = filterByDash(dashId);
 
         int targetsNum = targetChannels.size();
         if (targetsNum > 0) {
-            send(targetChannels, targetsNum, cmd, msgId, finalBody);
+            send(targetChannels, cmd, msgId, finalBody);
         }
     }
 
@@ -201,21 +201,17 @@ public class Session {
         return targetChannels;
     }
 
-    private void send(Set<Channel> targets, int targetsNum, short cmd, int msgId, String body) {
-        ByteBuf msg = makeUTF8StringMessage(cmd, msgId, body);
-        if (targetsNum > 1) {
-            msg.retain(targetsNum - 1);
-        }
-
+    private static void sendMessageToMultipleReceivers(Set<Channel> targets, StringMessage msg) {
         for (Channel channel : targets) {
             if (channel.isWritable()) {
-                log.trace("Sending {} to channel {}", body, channel);
                 channel.writeAndFlush(msg, channel.voidPromise());
-            } else {
-                msg.release();
             }
-            msg.resetReaderIndex();
         }
+    }
+
+    private static void send(Set<Channel> targets, short cmd, int msgId, String body) {
+        StringMessage msg = makeUTF8StringMessage(cmd, msgId, body);
+        sendMessageToMultipleReceivers(targets, msg);
     }
 
     public void sendToSharedApps(Channel sendingChannel, String sharedToken, short cmd, int msgId, String body) {
@@ -228,7 +224,7 @@ public class Session {
 
         int channelsNum = targetChannels.size();
         if (channelsNum > 0) {
-            send(targetChannels, channelsNum, cmd, msgId, body);
+            send(targetChannels, cmd, msgId, body);
         }
     }
 

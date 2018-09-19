@@ -83,20 +83,17 @@ public class Options {
      * @param longOpt     Long multi-character name of the option.
      * @param hasArg      flag signally if an argument is required after this option
      * @param description Self-documenting description
-     * @return the resulting Options instance
      */
-    private Options addOption(String opt, String longOpt, boolean hasArg, String description) {
+    private void addOption(String opt, String longOpt, boolean hasArg, String description) {
         addOption(new Option(opt, longOpt, hasArg, description));
-        return this;
     }
 
     /**
      * Adds an option instance
      *
      * @param opt the option that is to be added
-     * @return the resulting Options instance
      */
-    private Options addOption(Option opt) {
+    private void addOption(Option opt) {
         String key = opt.getKey();
 
         // add it to the long option list
@@ -106,15 +103,11 @@ public class Options {
 
         // if the option is required add it to the required list
         if (opt.isRequired()) {
-            if (requiredOpts.contains(key)) {
-                requiredOpts.remove(requiredOpts.indexOf(key));
-            }
+            requiredOpts.remove(key);
             requiredOpts.add(key);
         }
 
         shortOpts.put(key, opt);
-
-        return this;
     }
 
     /**
@@ -220,21 +213,4 @@ public class Options {
         return optionGroups.get(opt.getKey());
     }
 
-    /**
-     * Dump state, suitable for debugging.
-     *
-     * @return Stringified form of this object
-     */
-    @Override
-    public String toString() {
-        StringBuilder buf = new StringBuilder();
-
-        buf.append("[ Options: [ short ");
-        buf.append(shortOpts.toString());
-        buf.append(" ] [ long ");
-        buf.append(longOpts);
-        buf.append(" ]");
-
-        return buf.toString();
-    }
 }

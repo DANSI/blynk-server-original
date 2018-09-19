@@ -58,7 +58,7 @@ public class LetsEncryptHandler extends ChannelInboundHandlerAdapter {
     }
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
         if (!(msg instanceof FullHttpRequest)) {
             return;
         }
@@ -77,7 +77,7 @@ public class LetsEncryptHandler extends ChannelInboundHandlerAdapter {
         ctx.fireChannelRead(req);
     }
 
-    private void serveContent(ChannelHandlerContext ctx, FullHttpRequest request) throws Exception {
+    private void serveContent(ChannelHandlerContext ctx, FullHttpRequest request) {
         if (!request.decoderResult().isSuccess()) {
             sendError(ctx, BAD_REQUEST);
             return;

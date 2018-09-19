@@ -1,15 +1,13 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
-import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.widgets.AppSyncWidget;
-import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.internal.ParseUtil;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.CommonByteBufUtil.ok;
+import static cc.blynk.utils.AppStateHolderUtil.getAppState;
 import static cc.blynk.utils.StringUtils.split2Device;
 
 /**
@@ -27,27 +25,21 @@ public final class AppSyncLogic {
     }
 
     public static void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
-        String[] dashIdAndTargetIdString = split2Device(message.body);
-        int dashId = ParseUtil.parseInt(dashIdAndTargetIdString[0]);
-        int targetId = AppSyncWidget.ANY_TARGET;
+        var dashIdAndTargetIdString = split2Device(message.body);
+        var dashId = Integer.parseInt(dashIdAndTargetIdString[0]);
+        var targetId = AppSyncWidget.ANY_TARGET;
 
-        DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
+        var dash = state.user.profile.getDashByIdOrThrow(dashId);
 
         if (dashIdAndTargetIdString.length == 2) {
-            targetId = ParseUtil.parseInt(dashIdAndTargetIdString[1]);
-
-            //special case. app sync with targetId most probably comes from DeviceTiles widget
-            //so we do update for it.
-            //we actually don't care what DeviceTiles is opened on UI, just update all
-            for (Widget widget : dash.widgets) {
-                if (widget instanceof DeviceTiles) {
-                    ((DeviceTiles) widget).selectedDeviceId = targetId;
-                }
-            }
+            targetId = Integer.parseInt(dashIdAndTargetIdString[1]);
         }
 
         ctx.write(ok(message.id), ctx.voidPromise());
-        dash.sendSyncs(ctx.channel(), targetId);
+        Channel appChannel = ctx.channel();
+        AppStateHolder appStateHolder = getAppState(appChannel);
+        boolean isNewSyncFormat = appStateHolder != null && appStateHolder.isNewSyncFormat();
+        dash.sendAppSyncs(appChannel, targetId, isNewSyncFormat);
         ctx.flush();
     }
 

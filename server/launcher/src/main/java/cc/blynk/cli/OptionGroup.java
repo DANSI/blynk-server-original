@@ -1,7 +1,5 @@
 package cc.blynk.cli;
 
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -26,15 +24,6 @@ public class OptionGroup {
      * specified whether this group is required
      */
     private boolean required;
-
-
-    /**
-     * @return the options in this group as a <code>Collection</code>
-     */
-    private Collection<Option> getOptions() {
-        // the values are the collection of options
-        return optionMap.values();
-    }
 
     /**
      * Set the selected option of this group to <code>name</code>.
@@ -76,42 +65,4 @@ public class OptionGroup {
         return required;
     }
 
-    /**
-     * Returns the stringified version of this OptionGroup.
-     *
-     * @return the stringified representation of this group
-     */
-    @Override
-    public String toString() {
-        StringBuilder buff = new StringBuilder();
-
-        Iterator<Option> iter = getOptions().iterator();
-
-        buff.append("[");
-
-        while (iter.hasNext()) {
-            Option option = iter.next();
-
-            if (option.getOpt() != null) {
-                buff.append("-");
-                buff.append(option.getOpt());
-            } else {
-                buff.append("--");
-                buff.append(option.getLongOpt());
-            }
-
-            if (option.getDescription() != null) {
-                buff.append(" ");
-                buff.append(option.getDescription());
-            }
-
-            if (iter.hasNext()) {
-                buff.append(", ");
-            }
-        }
-
-        buff.append("]");
-
-        return buff.toString();
-    }
 }

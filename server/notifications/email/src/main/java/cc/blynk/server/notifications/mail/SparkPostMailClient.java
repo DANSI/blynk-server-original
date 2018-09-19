@@ -1,5 +1,7 @@
 package cc.blynk.server.notifications.mail;
 
+import cc.blynk.utils.properties.MailProperties;
+import cc.blynk.utils.properties.Placeholders;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -14,7 +16,6 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
-import java.util.Properties;
 
 /**
  * The Blynk Project.
@@ -31,17 +32,21 @@ public class SparkPostMailClient implements MailClient {
     private final String username;
     private final String password;
 
-    SparkPostMailClient(Properties mailProperties) {
-        this.username = mailProperties.getProperty("mail.smtp.username");
-        this.password = mailProperties.getProperty("mail.smtp.password");
-        this.host = mailProperties.getProperty("mail.smtp.host");
+    SparkPostMailClient(MailProperties mailProperties, String productName) {
+        this.username = mailProperties.getSMTPUsername();
+        this.password = mailProperties.getSMTPPassword();
+        this.host = mailProperties.getSMTPHost();
 
         log.info("Initializing SparkPost smtp mail transport. Username : {}. SMTP host : {}:{}",
-                username, host, mailProperties.getProperty("mail.smtp.port"));
+                username, host, mailProperties.getSMTPort());
 
         this.session = Session.getInstance(mailProperties);
         try {
-            this.from = new InternetAddress(mailProperties.getProperty("mail.from"));
+            String mailFrom = mailProperties.getProperty("mail.from");
+            if (mailFrom != null) {
+                mailFrom = mailFrom.replace(Placeholders.PRODUCT_NAME, productName);
+            }
+            this.from = new InternetAddress(mailFrom);
         } catch (AddressException e) {
             throw new RuntimeException("Error initializing MailWrapper.");
         }
@@ -49,12 +54,12 @@ public class SparkPostMailClient implements MailClient {
 
     @Override
     public void sendText(String to, String subj, String body) throws Exception {
-        send(to, subj, body, "text/plain; charset=UTF-8");
+        send(to, subj, body, TEXT_PLAIN_CHARSET_UTF_8);
     }
 
     @Override
     public void sendHtml(String to, String subj, String body) throws Exception {
-        send(to, subj, body, "text/html; charset=UTF-8");
+        send(to, subj, body, TEXT_HTML_CHARSET_UTF_8);
     }
 
     private void send(String to, String subj, String body, String contentType) throws Exception {
@@ -83,7 +88,7 @@ public class SparkPostMailClient implements MailClient {
         Multipart multipart = new MimeMultipart();
 
         MimeBodyPart bodyMessagePart = new MimeBodyPart();
-        bodyMessagePart.setContent(body, "text/html; charset=UTF-8");
+        bodyMessagePart.setContent(body, TEXT_HTML_CHARSET_UTF_8);
         multipart.addBodyPart(bodyMessagePart);
 
         for (QrHolder qrHolder : attachments) {

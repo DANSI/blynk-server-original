@@ -9,13 +9,24 @@ public enum WidgetProperty {
 
     LABEL("label"),
     COLOR("color"),
+    ON_BACK_COLOR("onBackColor"),
+    OFF_BACK_COLOR("offBackColor"),
+    ON_COLOR("onColor"),
+    OFF_COLOR("offColor"),
     ON_LABEL("onLabel"),
     OFF_LABEL("offLabel"),
     LABELS("labels"),
     MIN("min"),
     MAX("max"),
     IS_ON_PLAY("isOnPlay"),
-    URL("url");
+    URL("url"),
+    STEP("step"),
+    VALUE_FORMATTING("valueFormatting"),
+    SUFFIX("suffix"),
+    FRACTION("maximumFractionDigits"),
+    OPACITY("opacity"),
+    SCALE("scale"),
+    ROTATION("rotation");
 
     public final String label;
 
@@ -31,8 +42,16 @@ public enum WidgetProperty {
                 return COLOR;
             case "onLabel" :
                 return ON_LABEL;
+            case "onColor" :
+                return ON_COLOR;
+            case "onBackColor" :
+                return ON_BACK_COLOR;
             case "offLabel" :
                 return OFF_LABEL;
+            case "offColor" :
+                return OFF_COLOR;
+            case "offBackColor" :
+                return OFF_BACK_COLOR;
             case "labels" :
                 return LABELS;
             case "min" :
@@ -43,9 +62,21 @@ public enum WidgetProperty {
                 return IS_ON_PLAY;
             case "url" :
                 return URL;
+            case "step" :
+                return STEP;
+            case "valueFormatting" :
+                return VALUE_FORMATTING;
+            case "suffix" :
+                return SUFFIX;
+            case "maximumFractionDigits" :
+                return FRACTION;
             default:
                 return null;
         }
     }
 
+    @Override
+    public String toString() {
+        return label;
+    }
 }

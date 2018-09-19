@@ -17,28 +17,28 @@ import java.lang.annotation.Target;
  *
  * The type of the annotated parameter, field or property must either:
  * <ul>
- * <li>Be {@link javax.ws.rs.core.PathSegment}, the value will be the final
+ * <li>Be { javax.ws.rs.core.PathSegment}, the value will be the final
  * segment of the matching part of the path.
- * See {@link javax.ws.rs.core.UriInfo} for a means of retrieving all request
+ * See { javax.ws.rs.core.UriInfo} for a means of retrieving all request
  * path segments.</li>
  * <li>Be {@code List<javax.ws.rs.core.PathSegment>}, the
  * value will be a list of {@code PathSegment} corresponding to the path
  * segment(s) that matched the named template parameter.
- * See {@link javax.ws.rs.core.UriInfo} for a means of retrieving all request
+ * See {javax.ws.rs.core.UriInfo} for a means of retrieving all request
  * path segments.</li>
  * <li>Be a primitive type.</li>
  * <li>Have a constructor that accepts a single String argument.</li>
  * <li>Have a static classMethod named {@code valueOf} or {@code fromString}
  * that accepts a single
  * String argument (see, for example, {@link Integer#valueOf(String)}).</li>
- * <li>Have a registered implementation of {@link javax.ws.rs.ext.ParamConverterProvider}
- * JAX-RS extension SPI that returns a {@link javax.ws.rs.ext.ParamConverter}
+ * <li>Have a registered implementation of { javax.ws.rs.ext.ParamConverterProvider}
+ * JAX-RS extension SPI that returns a { javax.ws.rs.ext.ParamConverter}
  * instance capable of a "from string" conversion for the type.</li>
  * </ul>
  *
  * <p>The injected value corresponds to the latest use (in terms of scope) of
  * the path parameter. E.g. if a class and a sub-resource classMethod are both
- * annotated with a {@link javax.ws.rs.Path &#64;Path} containing the same URI template
+ * annotated with a { javax.ws.rs.Path &#64;Path} containing the same URI template
  * parameter, use of {@code @PathParam} on a sub-resource classMethod parameter
  * will bind the value matching URI template parameter in the classMethod's
  * {@code @Path} annotation.</p>
@@ -51,8 +51,6 @@ import java.lang.annotation.Target;
  *
  * @author Paul Sandoz
  * @author Marc Hadley
- * @see javax.ws.rs.core.PathSegment
- * @see javax.ws.rs.core.UriInfo
  * @since 1.0
  */
 @Target({ElementType.PARAMETER, ElementType.METHOD, ElementType.FIELD})
@@ -63,7 +61,7 @@ public @interface PathParam {
     /**
      * Defines the name of the URI template parameter whose value will be used
      * to initialize the value of the annotated classMethod parameter, class field or
-     * property. See {@link javax.ws.rs.Path#value()} for a description of the syntax of
+     * property. See { javax.ws.rs.Path#value()} for a description of the syntax of
      * template parameters.
      *
      * <p>E.g. a class annotated with: {@code @Path("widgets/{id}")}

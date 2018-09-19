@@ -19,7 +19,7 @@
 
     <groupId>cc.blynk</groupId>
     <artifactId>blynk</artifactId>
-    <version>0.29.1-SNAPSHOT</version>
+    <version>0.39.7-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <scm>
@@ -60,35 +60,6 @@
     </repositories>
 
     <profiles>
-
-        <profile>
-            <id>java9</id>
-            <activation>
-                <jdk>9</jdk>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <jarClassifier>java9</jarClassifier>
-                <source>9</source>
-                <target>9</target>
-                <!-- just fake property. means do not exclude anything -->
-                <version.specific.exclusions>**/ccxxyy.java</version.specific.exclusions>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>java8</id>
-            <activation>
-                <jdk>1.8</jdk>
-            </activation>
-            <properties>
-                <jarClassifier>java8</jarClassifier>
-                <source>1.8</source>
-                <target>1.8</target>
-                <version.specific.exclusions>**/module-info.java</version.specific.exclusions>
-            </properties>
-        </profile>
-
         <profile>
             <id>win</id>
             <activation>
@@ -125,12 +96,17 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler-plugin.version}</version>
                 <configuration>
-                    <source>${source}</source>
-                    <target>${target}</target>
-                    <excludes>
-                        <exclude>${version.specific.exclusions}</exclude>
-                    </excludes>
+                    <source>10</source>
+                    <target>10</target>
+                    <release>10</release>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>asm</artifactId>
+                        <version>6.1.1</version>
+                    </dependency>
+                </dependencies>
             </plugin>
 
             <plugin>
@@ -140,15 +116,6 @@
                 <configuration>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <tagNameFormat>v@{project.version}</tagNameFormat>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven-surefire-plugin.version}</version>
-                <configuration>
-                    <argLine>-Xmx1024m</argLine>
                 </configuration>
             </plugin>
 
@@ -191,35 +158,33 @@
     <properties>
         <!-- maven plugins -->
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
-        <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
-        <maven-shade-plugin.version>3.1.0</maven-shade-plugin.version>
-        <maven-surefire-plugin.version>2.20.1</maven-surefire-plugin.version>
+        <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
+        <maven-shade-plugin.version>3.1.1</maven-shade-plugin.version>
+        <maven-surefire-plugin.version>2.22.0</maven-surefire-plugin.version>
         <maven-checkstyle-plugin.version>2.17</maven-checkstyle-plugin.version>
 
         <!-- dependencies -->
-        <netty.version>4.1.18.Final</netty.version>
-        <netty.boring.ssl.version>2.0.7.Final</netty.boring.ssl.version>
-        <log4j2.version>2.9.1</log4j2.version>
-        <jackson-databind.version>2.9.2</jackson-databind.version>
-        <disruptor.version>3.3.7</disruptor.version>
-        <async-http-client.version>2.1.0-RC2</async-http-client.version>
-        <twitter4j-core.version>4.0.2</twitter4j-core.version>
-        <postgresql.version>42.1.4</postgresql.version>
-        <HikariCP.version>2.7.3</HikariCP.version>
+        <netty.version>4.1.29.Final</netty.version>
+        <netty.boring.ssl.version>2.0.14.Final</netty.boring.ssl.version>
+        <log4j2.version>2.11.1</log4j2.version>
+        <jackson-databind.version>2.9.6</jackson-databind.version>
+        <disruptor.version>3.4.2</disruptor.version>
+        <async-http-client.version>2.5.3</async-http-client.version>
+        <postgresql.version>42.2.5</postgresql.version>
+        <HikariCP.version>3.2.0</HikariCP.version>
         <qrgen.version>2.2.0</qrgen.version>
-        <bcpg-jdk15on.version>1.58</bcpg-jdk15on.version>
-        <acme4j-client.version>0.13</acme4j-client.version>
-        <javaee-api.version>8.0</javaee-api.version>
-        <javax.mail.version>1.6.0</javax.mail.version>
+        <bcpg-jdk15on.version>1.60</bcpg-jdk15on.version>
+        <acme4j-client.version>2.3</acme4j-client.version>
+        <javax.mail.version>1.6.1</javax.mail.version>
         <javax.activation.version>1.2.0</javax.activation.version>
 
         <!-- test dependencies -->
         <httpclient.version>4.5.2</httpclient.version>
         <commons-lang3.version>3.4</commons-lang3.version>
         <junit.version>4.12</junit.version>
-        <mockito-core.version>2.10.0</mockito-core.version>
+        <mockito-core.version>2.18.3</mockito-core.version>
         <commons-io.version>2.5</commons-io.version>
-        <commons-lang.version>2.6</commons-lang.version>
+        <commons-lang.version>3.7</commons-lang.version>
         <jmh-core.version>1.19</jmh-core.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

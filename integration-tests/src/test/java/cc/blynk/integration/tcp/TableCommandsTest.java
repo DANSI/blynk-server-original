@@ -1,21 +1,16 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.IntegrationBase;
-import cc.blynk.integration.model.tcp.ClientPair;
-import cc.blynk.server.application.AppServer;
-import cc.blynk.server.core.BaseServer;
+import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.ui.table.Row;
 import cc.blynk.server.core.model.widgets.ui.table.Table;
-import cc.blynk.server.hardware.HardwareServer;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static cc.blynk.integration.TestUtil.b;
+import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertEquals;
@@ -34,30 +29,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class TableCommandsTest extends IntegrationBase {
-
-    private BaseServer appServer;
-    private BaseServer hardwareServer;
-    private ClientPair clientPair;
-
-    @Before
-    public void init() throws Exception {
-        hardwareServer = new HardwareServer(holder).start();
-        appServer = new AppServer(holder).start();
-
-        if (clientPair == null) {
-            clientPair = initAppAndHardPair(tcpAppPort, tcpHardPort, properties);
-        }
-        clientPair.hardwareClient.reset();
-        clientPair.appClient.reset();
-    }
-
-    @After
-    public void shutdown() {
-        appServer.close();
-        hardwareServer.close();
-        clientPair.stop();
-    }
+public class TableCommandsTest extends SingleServerInstancePerTest {
 
     @Test
     public void testAllTableCommands() throws Exception {
@@ -69,15 +41,15 @@ public class TableCommandsTest extends IntegrationBase {
         table.height = 2;
         table.width = 2;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(table));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.createWidget(1, table);
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 123 clr");
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(0)).channelRead(any(), any());
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 123 clr"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1-0 vw 123 clr"))));
 
         clientPair.hardwareClient.send("hardware vw 123 add 0 Row0 row0");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("1 vw 123 add 0 Row0 row0"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("1-0 vw 123 add 0 Row0 row0"))));
 
         table = loadTable();
         Row row;
@@ -85,7 +57,7 @@ public class TableCommandsTest extends IntegrationBase {
         assertNotNull(table);
         assertNotNull(table.rows);
         assertEquals(1, table.rows.size());
-        row = table.rows.get(0);
+        row = table.rows.poll();
         assertNotNull(row);
         assertEquals(0, row.id);
         assertEquals("Row0", row.name);
@@ -94,67 +66,71 @@ public class TableCommandsTest extends IntegrationBase {
         assertEquals(0, table.currentRowIndex);
 
         clientPair.hardwareClient.send("hardware vw 123 pick 2");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, HARDWARE, b("1 vw 123 pick 2"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, HARDWARE, b("1-0 vw 123 pick 2"))));
 
         table = loadTable();
         assertNotNull(table);
         assertNotNull(table.rows);
         assertEquals(1, table.rows.size());
-        row = table.rows.get(0);
+        row = table.rows.poll();
         assertNotNull(row);
-        assertEquals(0, table.currentRowIndex);
+        assertEquals(2, table.currentRowIndex);
 
         clientPair.hardwareClient.send("hardware vw 123 add 1 Row1 row1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(4, HARDWARE, b("1 vw 123 add 1 Row1 row1"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(4, HARDWARE, b("1-0 vw 123 add 1 Row1 row1"))));
         clientPair.hardwareClient.send("hardware vw 123 add 2 Row2 row2");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(5, HARDWARE, b("1 vw 123 add 2 Row2 row2"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(5, HARDWARE, b("1-0 vw 123 add 2 Row2 row2"))));
         clientPair.hardwareClient.send("hardware vw 123 pick 2");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(6, HARDWARE, b("1 vw 123 pick 2"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(6, HARDWARE, b("1-0 vw 123 pick 2"))));
 
         table = loadTable();
         assertNotNull(table);
         assertNotNull(table.rows);
         assertEquals(3, table.rows.size());
-        row = table.rows.get(0);
+        row = table.rows.poll();
         assertNotNull(row);
         assertEquals(2, table.currentRowIndex);
 
         clientPair.hardwareClient.send("hardware vw 123 deselect 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7, HARDWARE, b("1 vw 123 deselect 1"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7, HARDWARE, b("1-0 vw 123 deselect 1"))));
 
         table = loadTable();
         assertNotNull(table);
         assertNotNull(table.rows);
         assertEquals(3, table.rows.size());
-        row = table.rows.get(1);
+        table.rows.poll();
+        row = table.rows.poll();
         assertNotNull(row);
         assertFalse(row.isSelected);
 
         clientPair.hardwareClient.send("hardware vw 123 select 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(8, HARDWARE, b("1 vw 123 select 1"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(8, HARDWARE, b("1-0 vw 123 select 1"))));
 
         table = loadTable();
         assertNotNull(table);
         assertNotNull(table.rows);
         assertEquals(3, table.rows.size());
-        row = table.rows.get(1);
+        table.rows.poll();
+        row = table.rows.poll();
         assertNotNull(row);
         assertTrue(row.isSelected);
 
+        /*
         clientPair.hardwareClient.send("hardware vw 123 order 0 2");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(9, HARDWARE, b("1 vw 123 order 0 2"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(9, HARDWARE, b("1-0 vw 123 order 0 2"))));
 
         table = loadTable();
         assertNotNull(table);
         assertNotNull(table.rows);
         assertEquals(3, table.rows.size());
 
-        assertEquals(1, table.rows.get(0).id);
-        assertEquals(2, table.rows.get(1).id);
-        assertEquals(0, table.rows.get(2).id);
+        assertEquals(1, table.rows.poll().id);
+        assertEquals(2, table.rows.poll().id);
+        assertEquals(0, table.rows.poll().id);
+        */
 
         clientPair.hardwareClient.send("hardware vw 123 clr");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(10, HARDWARE, b("1 vw 123 clr"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(9, HARDWARE, b("1-0 vw 123 clr"))));
         table = loadTable();
         assertNotNull(table);
         assertNotNull(table.rows);
@@ -171,15 +147,15 @@ public class TableCommandsTest extends IntegrationBase {
         table.height = 2;
         table.width = 2;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(table));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.createWidget(1, table);
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 123 clr");
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(0)).channelRead(any(), any());
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 123 clr"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1-0 vw 123 clr"))));
 
         clientPair.hardwareClient.send("hardware vw 123 add 0 Row0 row0");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("1 vw 123 add 0 Row0 row0"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("1-0 vw 123 add 0 Row0 row0"))));
 
         table = loadTable();
         Row row;
@@ -187,7 +163,7 @@ public class TableCommandsTest extends IntegrationBase {
         assertNotNull(table);
         assertNotNull(table.rows);
         assertEquals(1, table.rows.size());
-        row = table.rows.get(0);
+        row = table.rows.poll();
         assertNotNull(row);
         assertEquals(0, row.id);
         assertEquals("Row0", row.name);
@@ -196,14 +172,14 @@ public class TableCommandsTest extends IntegrationBase {
         assertEquals(0, table.currentRowIndex);
 
         clientPair.hardwareClient.send("hardware vw 123 update 0 Row0Updated row0Updated");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, HARDWARE, b("1 vw 123 update 0 Row0Updated row0Updated"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, HARDWARE, b("1-0 vw 123 update 0 Row0Updated row0Updated"))));
 
         table = loadTable();
 
         assertNotNull(table);
         assertNotNull(table.rows);
         assertEquals(1, table.rows.size());
-        row = table.rows.get(0);
+        row = table.rows.poll();
         assertNotNull(row);
         assertEquals(0, row.id);
         assertEquals("Row0Updated", row.name);
@@ -222,17 +198,17 @@ public class TableCommandsTest extends IntegrationBase {
         table.width = 2;
         table.height = 2;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(table));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.createWidget(1, table);
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 123 clr");
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(0)).channelRead(any(), any());
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 123 clr"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1-0 vw 123 clr"))));
 
         for (int i = 1; i <= 101; i++) {
             String cmd = "vw 123 add " + i + " Row0 row0";
             clientPair.hardwareClient.send("hardware " + cmd);
-            verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(i + 1, HARDWARE, b("1 " + cmd))));
+            verify(clientPair.appClient.responseMock, timeout(700)).channelRead(any(), eq(produce(i + 1, HARDWARE, b("1-0 " + cmd))));
         }
 
 
@@ -243,7 +219,7 @@ public class TableCommandsTest extends IntegrationBase {
         assertNotNull(table.rows);
         assertEquals(100, table.rows.size());
         for (int i = 2; i <= 101; i++) {
-            row = table.rows.get(i - 2);
+            row = table.rows.poll();
             assertNotNull(row);
             assertEquals(i, row.id);
         }
@@ -259,30 +235,30 @@ public class TableCommandsTest extends IntegrationBase {
         table.width = 2;
         table.height = 2;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(table));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.createWidget(1, table);
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 123 clr");
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(0)).channelRead(any(), any());
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 123 clr"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1-0 vw 123 clr"))));
 
         clientPair.hardwareClient.send("hardware vw 123 add 0 row0 val0");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("1 vw 123 add 0 row0 val0"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("1-0 vw 123 add 0 row0 val0"))));
 
         clientPair.hardwareClient.send("hardware vw 123 add 0 row1 val1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, HARDWARE, b("1 vw 123 add 0 row1 val1"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, HARDWARE, b("1-0 vw 123 add 0 row1 val1"))));
 
         table = loadTable();
 
         assertEquals(1, table.rows.size());
-        assertEquals("row1", table.rows.get(0).name);
-        assertEquals("val1", table.rows.get(0).value);
+        assertEquals("row1", table.rows.peek().name);
+        assertEquals("val1", table.rows.peek().value);
     }
 
     private Table loadTable() throws Exception {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = parseProfile(clientPair.appClient.getBody());
+        Profile profile = clientPair.appClient.parseProfile(1);
         return (Table) profile.dashBoards[0].findWidgetByPin(0, (byte) 123, PinType.VIRTUAL);
     }
 

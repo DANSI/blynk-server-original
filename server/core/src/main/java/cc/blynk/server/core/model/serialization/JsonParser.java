@@ -8,9 +8,9 @@ import cc.blynk.server.core.model.auth.FacebookTokenResponse;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
+import cc.blynk.server.core.model.storage.SinglePinStorageValue;
 import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.model.widgets.notifications.Notification;
-import cc.blynk.server.core.model.widgets.notifications.Twitter;
+import cc.blynk.server.core.model.widgets.ui.reporting.Report;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
 import cc.blynk.server.core.stats.model.Stat;
@@ -27,9 +27,15 @@ import org.apache.logging.log4j.Logger;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Collection;
 import java.util.StringJoiner;
 import java.util.zip.DeflaterOutputStream;
+
+import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 
 /**
  * User: ddumanskiy
@@ -56,31 +62,26 @@ public final class JsonParser {
     private static final ObjectReader deviceReader = MAPPER.readerFor(Device.class);
     private static final ObjectReader tagReader = MAPPER.readerFor(Tag.class);
     private static final ObjectReader facebookTokenReader = MAPPER.readerFor(FacebookTokenResponse.class);
+    private static final ObjectReader reportReader = MAPPER.readerFor(Report.class);
 
     private static final ObjectWriter userWriter = MAPPER.writerFor(User.class);
     private static final ObjectWriter profileWriter = MAPPER.writerFor(Profile.class);
     private static final ObjectWriter dashboardWriter = MAPPER.writerFor(DashBoard.class);
     private static final ObjectWriter deviceWriter = MAPPER.writerFor(Device.class);
     private static final ObjectWriter appWriter = MAPPER.writerFor(App.class);
+    private static final ObjectWriter reportWriter = MAPPER.writerFor(Report.class);
 
     public static final ObjectWriter restrictiveDashWriter = init()
-            .addMixIn(Twitter.class, TwitterIgnoreMixIn.class)
-            .addMixIn(Notification.class, NotificationIgnoreMixIn.class)
-            .addMixIn(Device.class, DeviceIgnoreMixIn.class)
-            .addMixIn(DashBoard.class, DashboardMixIn.class)
-            .writerFor(DashBoard.class);
+            .writerFor(DashBoard.class).withView(View.PublicOnly.class);
 
-    public static final ObjectWriter restrictiveProfileWriter = init()
-            .addMixIn(Twitter.class, TwitterIgnoreMixIn.class)
-            .addMixIn(Notification.class, NotificationIgnoreMixIn.class)
-            .addMixIn(Device.class, DeviceIgnoreMixIn.class)
-            .addMixIn(DashBoard.class, DashboardMixIn.class)
-            .writerFor(Profile.class);
+    private static final ObjectWriter restrictiveDashWriterForHttp = init()
+            .writerFor(DashBoard.class).withView(View.PublicOnly.class).withView(View.HttpAPIField.class);
+
+    private static final ObjectWriter restrictiveProfileWriter = init()
+            .writerFor(Profile.class).withView(View.PublicOnly.class);
 
     private static final ObjectWriter restrictiveWidgetWriter = init()
-            .addMixIn(Twitter.class, TwitterIgnoreMixIn.class)
-            .addMixIn(Notification.class, NotificationIgnoreMixIn.class)
-            .writerFor(Widget.class);
+            .writerFor(Widget.class).withView(View.PublicOnly.class);
 
     private static final ObjectWriter statWriter = init().writerWithDefaultPrettyPrinter().forType(Stat.class);
 
@@ -136,12 +137,20 @@ public final class JsonParser {
         return toJson(restrictiveDashWriter, dashBoard);
     }
 
+    public static String toJsonRestrictiveDashboardForHTTP(DashBoard dashBoard) {
+        return toJson(restrictiveDashWriterForHttp, dashBoard);
+    }
+
     public static String toJson(Device device) {
         return toJson(deviceWriter, device);
     }
 
     public static String toJson(App app) {
         return toJson(appWriter, app);
+    }
+
+    public static String toJson(Report report) {
+        return toJson(reportWriter, report);
     }
 
     public static String toJson(Stat stat) {
@@ -188,6 +197,12 @@ public final class JsonParser {
         return null;
     }
 
+    public static User parseUserFromFile(Path path) throws IOException {
+        try (InputStream is = Files.newInputStream(path)) {
+            return userReader.readValue(is);
+        }
+    }
+
     public static User parseUserFromFile(File userFile) throws IOException {
         return userReader.readValue(userFile);
     }
@@ -204,71 +219,69 @@ public final class JsonParser {
         return facebookTokenReader.readValue(response);
     }
 
-    public static DashboardSettings parseDashboardSettings(String reader) {
+    public static DashboardSettings parseDashboardSettings(String json, int msgId) {
+        return parse(dashboardSettingsReader, json, "Error parsing dashboard settings.", msgId);
+    }
+
+    public static DashBoard parseDashboard(String json, int msgId) {
+        return parse(dashboardReader, json, "Error parsing dashboard.", msgId);
+    }
+
+    public static TileTemplate parseTileTemplate(String json, int msgId) {
+        return parse(tileTemplateReader, json, "Error parsing tile template.", msgId);
+    }
+
+    public static Widget parseWidget(String reader) throws IOException {
+        return widgetReader.readValue(reader);
+    }
+
+    public static Report parseReport(String json, int msgId) {
+        return parse(reportReader, json, "Error parsing report.", msgId);
+    }
+
+    public static Widget parseWidget(String json, int msgId) {
+        return parse(widgetReader, json, "Error parsing widget.", msgId);
+    }
+
+    public static App parseApp(String json, int msgId) {
+        return parse(appReader, json, "Error parsing app.", msgId);
+    }
+
+    public static Device parseDevice(String json, int msgId) {
+        return parse(deviceReader, json, "Error parsing device.", msgId);
+    }
+
+    public static Tag parseTag(String json, int msgId) {
+        return parse(tagReader, json, "Error parsing tag.", msgId);
+    }
+
+    private static <T> T parse(ObjectReader objectReader, String json, String errorMessage, int msgId) {
         try {
-            return dashboardSettingsReader.readValue(reader);
+            return objectReader.readValue(json);
         } catch (IOException e) {
             log.error(e.getMessage());
-            throw new IllegalCommandBodyException("Error parsing dashboard settings.");
+            throw new IllegalCommandBodyException(errorMessage, msgId);
         }
     }
 
-    public static DashBoard parseDashboard(String reader) {
-        try {
-            return dashboardReader.readValue(reader);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            throw new IllegalCommandBodyException("Error parsing dashboard.");
+    public static String valueToJsonAsString(Collection<String> values) {
+        StringJoiner sj = new StringJoiner(",", "[", "]");
+        for (String value : values) {
+            sj.add(makeJsonStringValue(value));
         }
+        return sj.toString();
     }
 
-    public static TileTemplate parseTileTemplate(String reader) {
-        try {
-            return tileTemplateReader.readValue(reader);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            throw new IllegalCommandBodyException("Error parsing tile template.");
+    public static String valueToJsonAsString(SinglePinStorageValue singlePinStorageValue) {
+        Collection<String> singleValueList = singlePinStorageValue.values();
+        if (singleValueList.size() == 0) {
+            return "[]";
         }
+        String[] values = singleValueList.iterator().next().split(BODY_SEPARATOR_STRING);
+        return valueToJsonAsString(values);
     }
 
-    public static Widget parseWidget(String reader) {
-        try {
-            return widgetReader.readValue(reader);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            throw new IllegalCommandBodyException("Error parsing widget.");
-        }
-    }
-
-    public static App parseApp(String reader) {
-        try {
-            return appReader.readValue(reader);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            throw new IllegalCommandBodyException("Error parsing app.");
-        }
-    }
-
-    public static Device parseDevice(String reader) {
-        try {
-            return deviceReader.readValue(reader);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            throw new IllegalCommandBodyException("Error parsing device.");
-        }
-    }
-
-    public static Tag parseTag(String reader) {
-        try {
-            return tagReader.readValue(reader);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            throw new IllegalCommandBodyException("Error parsing tag.");
-        }
-    }
-
-
-    public static String valueToJsonAsString(String[] values) {
+    private static String valueToJsonAsString(String[] values) {
         StringJoiner sj = new StringJoiner(",", "[", "]");
         for (String value : values) {
             sj.add(makeJsonStringValue(value));

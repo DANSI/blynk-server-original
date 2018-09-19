@@ -23,7 +23,7 @@ public final class LoggerUtil {
      */
     public static void configureLogging(BaseProperties serverProperties) {
         //required to make all loggers async with LMAX disruptor
-        System.setProperty("Log4jContextSelector", "org.apache.logging.log4j.core.async.AsyncLoggerContextSelector");
+        System.setProperty("log4j2.contextSelector", "org.apache.logging.log4j.core.async.AsyncLoggerContextSelector");
         System.setProperty("AsyncLogger.RingBufferSize",
                 serverProperties.getProperty("async.logger.ring.buffer.size", "2048"));
 

@@ -4,7 +4,6 @@ import cc.blynk.cli.CommandLine;
 import cc.blynk.cli.DefaultParser;
 import cc.blynk.cli.Options;
 import cc.blynk.cli.ParseException;
-import cc.blynk.server.internal.ParseUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,8 +33,8 @@ final class ArgumentsParser {
     static final String RESTORE_OPTION = "restore";
 
     static  {
-        options = new Options();
-        options.addOption(HARDWARE_PORT_OPTION, true, "Hardware server port.")
+        options = new Options()
+               .addOption(HARDWARE_PORT_OPTION, true, "Hardware server port.")
                .addOption(APPLICATION_PORT_OPTION, true, "Application server port.")
                .addOption(WORKER_THREADS_OPTION, true, "Server worker threads.")
                .addOption(DATA_FOLDER_OPTION, true, "Folder where user profiles will be stored.")
@@ -53,6 +52,7 @@ final class ArgumentsParser {
      *
      * @param args - command line arguments
      */
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     static Map<String, String> parse(String[] args) throws ParseException {
         CommandLine cmd = new DefaultParser().parse(options, args);
 
@@ -68,15 +68,17 @@ final class ArgumentsParser {
         Map<String, String> properties = new HashMap<>();
 
         if (hardPort != null) {
-            ParseUtil.parseInt(hardPort);
-            properties.put("hardware.default.port", hardPort);
+            Integer.parseInt(hardPort);
+            properties.put("http.port", hardPort);
         }
+
         if (appPort != null) {
-            ParseUtil.parseInt(appPort);
-            properties.put("app.ssl.port", appPort);
+            Integer.parseInt(appPort);
+            properties.put("https.port", appPort);
         }
+
         if (workerThreadsString != null) {
-            ParseUtil.parseInt(workerThreadsString);
+            Integer.parseInt(workerThreadsString);
             properties.put("server.worker.threads", workerThreadsString);
         }
         if (dataFolder != null) {

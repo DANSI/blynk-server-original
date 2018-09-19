@@ -12,7 +12,7 @@ import static cc.blynk.server.core.protocol.enums.Command.SHARE_LOGIN;
 public class ShareLoginMessage extends StringMessage {
 
     public ShareLoginMessage(int messageId, String body) {
-        super(messageId, SHARE_LOGIN, body.length(), body);
+        super(messageId, SHARE_LOGIN, body);
     }
 
     @Override

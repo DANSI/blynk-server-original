@@ -1,12 +1,11 @@
 package cc.blynk.server.hardware.handlers.hardware.mqtt.logic;
 
-import cc.blynk.server.core.dao.ReportingDao;
+import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.session.HardwareStateHolder;
-import cc.blynk.server.internal.ParseUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.mqtt.MqttPublishMessage;
 import org.apache.logging.log4j.LogManager;
@@ -31,10 +30,10 @@ public class MqttHardwareLogic {
 
     private static final Logger log = LogManager.getLogger(MqttHardwareLogic.class);
 
-    private final ReportingDao reportingDao;
+    private final ReportingDiskDao reportingDao;
     private final SessionDao sessionDao;
 
-    public MqttHardwareLogic(SessionDao sessionDao, ReportingDao reportingDao) {
+    public MqttHardwareLogic(SessionDao sessionDao, ReportingDiskDao reportingDao) {
         this.sessionDao = sessionDao;
         this.reportingDao = reportingDao;
     }
@@ -72,7 +71,7 @@ public class MqttHardwareLogic {
             }
 
             PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
-            byte pin = ParseUtil.parseByte(splitBody[1]);
+            byte pin = Byte.parseByte(splitBody[1]);
             String value = splitBody[2];
 
             if (value.length() == 0) {

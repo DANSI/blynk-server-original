@@ -5,7 +5,6 @@ import cc.blynk.server.core.reporting.GraphPinRequest;
 import cc.blynk.utils.structure.LimitedArrayDeque;
 
 import java.nio.ByteBuffer;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static cc.blynk.utils.FileUtils.SIZE_OF_REPORT_ENTRY;
@@ -21,7 +20,7 @@ public class RawDataCacheForGraphProcessor {
 
     private static final int GRAPH_CACHE_SIZE = 60;
 
-    private final Map<BaseReportingKey, LimitedArrayDeque<GraphValue>> rawStorage;
+    public final ConcurrentHashMap<BaseReportingKey, LimitedArrayDeque<GraphValue>> rawStorage;
 
     public RawDataCacheForGraphProcessor() {
         rawStorage = new ConcurrentHashMap<>();

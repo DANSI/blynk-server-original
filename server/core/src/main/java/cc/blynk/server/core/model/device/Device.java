@@ -1,7 +1,11 @@
 package cc.blynk.server.core.model.device;
 
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.serialization.View;
 import cc.blynk.server.core.model.widgets.Target;
+import com.fasterxml.jackson.annotation.JsonView;
+
+import static cc.blynk.server.core.model.device.HardwareInfo.DEFAULT_HARDWARE_BUFFER_SIZE;
 
 /**
  * The Blynk Project.
@@ -14,40 +18,68 @@ public class Device implements Target {
 
     public volatile String name;
 
-    public volatile String boardType;
+    public volatile BoardType boardType;
 
+    @JsonView(View.Private.class)
     public volatile String token;
+
+    public volatile String vendor;
 
     public volatile ConnectionType connectionType;
 
+    @JsonView(View.Private.class)
     public volatile Status status = Status.OFFLINE;
 
+    @JsonView(View.Private.class)
     public volatile long disconnectTime;
 
+    @JsonView(View.Private.class)
     public volatile long connectTime;
 
+    @JsonView(View.Private.class)
+    public volatile long firstConnectTime;
+
+    @JsonView(View.Private.class)
+    public volatile long dataReceivedAt;
+
+    @JsonView(View.Private.class)
     public volatile String lastLoggedIP;
 
+    @JsonView(View.Private.class)
     public volatile HardwareInfo hardwareInfo;
 
+    @JsonView(View.Private.class)
     public volatile DeviceOtaInfo deviceOtaInfo;
 
-    public boolean isNotValid() {
-        return boardType == null || boardType.isEmpty() || boardType.length() > 50
-                || (name != null && name.length() > 50);
-    }
+    public volatile String iconName;
 
-    public Device() {
-    }
+    public volatile boolean isUserIcon;
 
-    public Device(int id, String name, String boardType) {
+    public Device(int id, String name, BoardType boardType) {
         this.id = id;
         this.name = name;
         this.boardType = boardType;
     }
 
+    public Device() {
+    }
+
+    public boolean isNotValid() {
+        return boardType == null || (name != null && name.length() > 50);
+    }
+
     @Override
     public int[] getDeviceIds() {
+        return new int[] {id};
+    }
+
+    @Override
+    public boolean isSelected(int deviceId) {
+        return id == deviceId;
+    }
+
+    @Override
+    public int[] getAssignedDeviceIds() {
         return new int[] {id};
     }
 
@@ -58,8 +90,11 @@ public class Device implements Target {
 
     public void update(Device newDevice) {
         this.name = newDevice.name;
+        this.vendor = newDevice.vendor;
         this.boardType = newDevice.boardType;
         this.connectionType = newDevice.connectionType;
+        this.iconName = newDevice.iconName;
+        this.isUserIcon = newDevice.isUserIcon;
         //that's fine. leave this fields as it is. It cannot be update from app client.
         //this.hardwareInfo = newDevice.hardwareInfo;
         //this.deviceOtaInfo = newDevice.deviceOtaInfo;
@@ -79,16 +114,29 @@ public class Device implements Target {
         this.token = null;
         this.disconnectTime = 0;
         this.connectTime = 0;
+        this.firstConnectTime = 0;
+        this.dataReceivedAt = 0;
         this.lastLoggedIP = null;
         this.status = Status.OFFLINE;
         this.hardwareInfo = null;
         this.deviceOtaInfo = null;
     }
 
+    public String getNameOrDefault() {
+        return name == null ? "New Device" : name;
+    }
+
     //for single device update device always updated when ota is initiated.
     public void updateOTAInfo(String initiatedBy) {
         long now = System.currentTimeMillis();
         this.deviceOtaInfo = new DeviceOtaInfo(initiatedBy, now, now);
+    }
+
+    public boolean fitsBufferSize(int bodySize) {
+        if (hardwareInfo == null) {
+            return bodySize <= DEFAULT_HARDWARE_BUFFER_SIZE;
+        }
+        return bodySize + 5 <= hardwareInfo.buffIn;
     }
 
     @Override

@@ -1,16 +1,11 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.IntegrationBase;
-import cc.blynk.integration.model.tcp.ClientPair;
-import cc.blynk.server.application.AppServer;
-import cc.blynk.server.core.BaseServer;
+import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.enums.ProvisionType;
 import cc.blynk.server.core.model.enums.Theme;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.hardware.HardwareServer;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,14 +14,11 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import static cc.blynk.integration.TestUtil.ok;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -35,26 +27,11 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class AppWorkflowTest extends IntegrationBase {
-
-    private BaseServer appServer;
-    private BaseServer hardwareServer;
-    private ClientPair clientPair;
+public class AppWorkflowTest extends SingleServerInstancePerTest {
 
     @Before
-    public void init() throws Exception {
-        this.hardwareServer = new HardwareServer(holder).start();
-        this.appServer = new AppServer(holder).start();
-
-        this.clientPair = initAppAndHardPair();
+    public void deleteFolder() throws Exception {
         Files.deleteIfExists(Paths.get(getDataFolder(), "blynk", "userProfiles"));
-    }
-
-    @After
-    public void shutdown() {
-        this.appServer.close();
-        this.hardwareServer.close();
-        this.clientPair.stop();
     }
 
     @Test
@@ -66,7 +43,7 @@ public class AppWorkflowTest extends IntegrationBase {
     @Test
     public void testAppCreated() throws Exception {
         clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"isMultiFace\":true,\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"My App\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
-        App app = JsonParser.parseApp(clientPair.appClient.getBody());
+        App app = clientPair.appClient.parseApp(1);
         assertNotNull(app);
         assertNotNull(app.id);
         assertEquals(13, app.id.length());
@@ -82,12 +59,12 @@ public class AppWorkflowTest extends IntegrationBase {
     @Test
     public void testAppCreated2() throws Exception {
         clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"My App\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
-        App app = JsonParser.parseApp(clientPair.appClient.getBody());
+        App app = clientPair.appClient.parseApp(1);
         assertNotNull(app);
         assertNotNull(app.id);
 
         clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"My App\",\"icon\":\"myIcon\",\"projectIds\":[2]}");
-        app = JsonParser.parseApp(clientPair.appClient.getBody(2));
+        app = clientPair.appClient.parseApp(2);
         assertNotNull(app);
         assertNotNull(app.id);
     }
@@ -95,7 +72,7 @@ public class AppWorkflowTest extends IntegrationBase {
     @Test
     public void testUnicodeName() throws Exception {
         clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"Моя апка\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
-        App app = JsonParser.parseApp(clientPair.appClient.getBody());
+        App app = clientPair.appClient.parseApp(1);
         assertNotNull(app);
         assertNotNull(app.id);
         assertEquals("Моя апка", app.name);
@@ -104,12 +81,12 @@ public class AppWorkflowTest extends IntegrationBase {
     @Test
     public void testCantCreateWithSameId() throws Exception {
         clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"My App\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
-        App app = JsonParser.parseApp(clientPair.appClient.getBody());
+        App app = clientPair.appClient.parseApp(1);
         assertNotNull(app);
         assertNotNull(app.id);
 
         clientPair.appClient.send("createApp {\"id\":\"" + app.id + "\",\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"My App\",\"icon\":\"myIcon\",\"projectIds\":[2]}");
-        app = JsonParser.parseApp(clientPair.appClient.getBody(2));
+        app = clientPair.appClient.parseApp(2);
         assertNotNull(app);
         assertNotNull(app.id);
     }
@@ -117,17 +94,15 @@ public class AppWorkflowTest extends IntegrationBase {
     @Test
     public void testAppUpdated() throws Exception {
         clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"My App\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
-        App app = JsonParser.parseApp(clientPair.appClient.getBody());
+        App app = clientPair.appClient.parseApp(1);
         assertNotNull(app);
         assertNotNull(app.id);
 
         clientPair.appClient.send("updateApp {\"id\":\"" + app.id  + "\",\"theme\":\"BlynkLight\",\"provisionType\":\"DYNAMIC\",\"color\":1,\"name\":\"My App 2\",\"icon\":\"myIcon2\",\"projectIds\":[1,2]}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         clientPair.appClient.send("loadProfileGzipped");
-        String s = clientPair.appClient.getBody(3);
-
-        Profile profile = parseProfile(s);
+        Profile profile = clientPair.appClient.parseProfile(3);
         assertNotNull(profile);
 
         assertNotNull(profile.apps);
@@ -145,20 +120,19 @@ public class AppWorkflowTest extends IntegrationBase {
     @Test
     public void testAppDelete() throws Exception {
         clientPair.appClient.send("createApp {\"id\":1,\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"My App\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
-        App app = JsonParser.parseApp(clientPair.appClient.getBody());
+        App app = clientPair.appClient.parseApp(1);
         assertNotNull(app);
         assertNotNull(app.id);
 
         clientPair.appClient.send("deleteApp " + app.id);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
+        clientPair.appClient.verifyResult(ok(2));
 
         clientPair.appClient.send("loadProfileGzipped");
-        String s = clientPair.appClient.getBody(3);
-
-        Profile profile = parseProfile(s);
+        Profile profile = clientPair.appClient.parseProfile(3);
         assertNotNull(profile);
 
         assertNotNull(profile.apps);
         assertEquals(0, profile.apps.length);
+        assertEquals(0, profile.dashBoards.length);
     }
 }

@@ -2,7 +2,6 @@ package cc.blynk.server.core.model.widgets.others.eventor.model.action;
 
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.utils.StringUtils;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -31,15 +30,7 @@ public class SetPinAction extends BaseAction {
 
     public SetPinAction(byte pin, PinType pinType, String value) {
         this.dataStream = new DataStream(pin, pinType);
-        //this is dirty hack for back compatibility.
-        //this is mistakes of our youth. sorry for that :).
-        //todo remove some day in future.
-        if (value.contains(StringUtils.BODY_SEPARATOR_STRING)) {
-            String[] split = StringUtils.split3(value);
-            this.value = split[2];
-        } else {
-            this.value = value;
-        }
+        this.value = value;
         this.setPinType = SetPinActionType.CUSTOM;
     }
 

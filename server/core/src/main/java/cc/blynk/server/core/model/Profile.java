@@ -81,11 +81,7 @@ public class Profile {
 
         Profile that = (Profile) o;
 
-        if (!Arrays.equals(dashBoards, that.dashBoards)) {
-            return false;
-        }
-
-        return true;
+        return Arrays.equals(dashBoards, that.dashBoards);
     }
 
     @Override

@@ -137,9 +137,9 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
         );
 
 
-    var libraryVersion = nga.entity('libraryVersion').identifier(nga.field('name')).url('hardwareInfo/version').readOnly();
+    var libraryVersion = nga.entity('libraryVersion').identifier(nga.field('name')).url('hardwareInfo/blynkVersion').readOnly();
     libraryVersion.listView()
-        .title('Library versions')
+        .title('Blynk library versions')
         .perPage(50)
         .batchActions([])
         .sortField('count')
@@ -299,15 +299,17 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
             nga.field('count').label('Number')
         ]);
 
-    var ips = nga.entity('ips').identifier(nga.field('name')).url('stats/ips').readOnly();
+    var ips = nga.entity('ips').identifier(nga.field('id')).url('stats/ips').readOnly();
     ips.listView()
         .title('IP List')
         .perPage(50)
         .batchActions([])
-        .sortField('ip')
+        .sortField('id')
         .fields([
+            nga.field('id'),
             nga.field('ip'),
-            nga.field('name')
+            nga.field('name'),
+            nga.field('type')
         ])
         .filters([
             nga.field('ip').label('').pinned(true)
@@ -317,6 +319,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
     var config = nga.entity('config').identifier(nga.field('name'));
     config.listView()
         .title('Configurations')
+        .sortField('name')
         .batchActions([])
         .fields([
             nga.field('name').isDetailLink(true)
@@ -347,7 +350,7 @@ app.config(['NgAdminConfigurationProvider', function (nga) {
                 .addChild(nga.menu(ips).title('IPs').icon(''))
             )
             .addChild(nga.menu().title('Hardware Info')
-                .addChild(nga.menu(libraryVersion).title('Library versions').icon(''))
+                .addChild(nga.menu(libraryVersion).title('Blynk library versions').icon(''))
                 .addChild(nga.menu(cpuType).title('CPU types').icon(''))
                 .addChild(nga.menu(hardwareBoards).title('Hardware boards').icon(''))
                 .addChild(nga.menu(connectionType).title('Connection types').icon(''))

@@ -15,7 +15,7 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V> {
 
     //size hardcoded for now
     public static final Map<String, CacheEntry> LOGIN_TOKENS_CACHE =
-            Collections.synchronizedMap(new LRUCache<String, CacheEntry>(1000));
+            Collections.synchronizedMap(new LRUCache<>(1000));
 
     public LRUCache(int maxSize) {
         this.maxSize = maxSize;

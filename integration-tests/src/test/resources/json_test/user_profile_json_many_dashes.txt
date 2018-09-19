@@ -13,9 +13,9 @@
                 {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"TIMER",          "pinType":"DIGITAL", "pin":5, "value":"1", "startTime":0},
                 {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"LED",            "pinType":"DIGITAL", "pin":6},
                 {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"DIGIT4_DISPLAY", "pinType":"DIGITAL", "pin":7},
-                {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"GRAPH",          "pinType":"DIGITAL", "pin":8}
+                {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"LABELED_VALUE_DISPLAY",          "pinType":"DIGITAL", "pin":8}
              ],
-             "settings" : {"boardType":"UNO", "someParam":"someValue"}
+             "settings" : {"boardType":"Arduino UNO", "someParam":"someValue"}
             },
             {
                "id":2,

@@ -12,7 +12,7 @@ import static cc.blynk.server.core.protocol.enums.Command.GET_SERVER;
 public class GetServerMessage extends StringMessage {
 
     public GetServerMessage(int messageId, String body) {
-        super(messageId, GET_SERVER, body.length(), body);
+        super(messageId, GET_SERVER, body);
     }
 
     @Override

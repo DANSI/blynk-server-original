@@ -1,6 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic.sharing;
 
-import cc.blynk.server.core.dao.TokenManager;
+import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
@@ -8,7 +8,8 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_SHARE_TOKEN;
-import static cc.blynk.server.internal.BlynkByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.server.internal.CommonByteBufUtil.energyLimit;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 
 /**
  * The Blynk Project.
@@ -16,24 +17,22 @@ import static cc.blynk.server.internal.BlynkByteBufUtil.makeUTF8StringMessage;
  * Created on 2/1/2015.
  *
  */
-public class GetShareTokenLogic {
+public final class GetShareTokenLogic {
 
     private static final int PRIVATE_TOKEN_PRICE = 1000;
 
-    private final TokenManager tokenManager;
-
-    public GetShareTokenLogic(TokenManager tokenManager) {
-        this.tokenManager = tokenManager;
+    private GetShareTokenLogic() {
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
+                                       User user, StringMessage message) {
         String dashBoardIdString = message.body;
 
         int dashId;
         try {
             dashId = Integer.parseInt(dashBoardIdString);
         } catch (NumberFormatException ex) {
-            throw new NotAllowedException("Dash board id not valid. Id : " + dashBoardIdString);
+            throw new NotAllowedException("Dash board id not valid. Id : " + dashBoardIdString, message.id);
         }
 
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
@@ -41,8 +40,13 @@ public class GetShareTokenLogic {
 
         //if token not exists. generate new one
         if (token == null) {
-            token = tokenManager.refreshSharedToken(user, dash);
+            if (user.notEnoughEnergy(PRIVATE_TOKEN_PRICE)) {
+                ctx.writeAndFlush(energyLimit(message.id), ctx.voidPromise());
+                return;
+            }
+            token = holder.tokenManager.refreshSharedToken(user, dash);
             user.subtractEnergy(PRIVATE_TOKEN_PRICE);
+            user.lastModifiedTs = System.currentTimeMillis();
         }
 
         if (ctx.channel().isWritable()) {

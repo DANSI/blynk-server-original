@@ -9,7 +9,7 @@ import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.internal.BlynkByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
 
 /**
@@ -32,13 +32,13 @@ public class RGB extends MultiPinWidget implements HardwareSyncWidget {
         }
         if (isSplitMode()) {
             for (DataStream dataStream : dataStreams) {
-                if (dataStream.notEmpty()) {
+                if (dataStream.notEmptyAndIsValid()) {
                     ctx.write(makeUTF8StringMessage(HARDWARE, msgId,
                             dataStream.makeHardwareBody()), ctx.voidPromise());
                 }
             }
         } else {
-            if (dataStreams[0].notEmpty()) {
+            if (dataStreams[0].notEmptyAndIsValid()) {
                 ctx.write(makeUTF8StringMessage(HARDWARE, msgId,
                         dataStreams[0].makeHardwareBody()), ctx.voidPromise());
             }
@@ -46,21 +46,21 @@ public class RGB extends MultiPinWidget implements HardwareSyncWidget {
     }
 
     @Override
-    public void sendAppSync(Channel appChannel, int dashId, int targetId) {
+    public void sendAppSync(Channel appChannel, int dashId, int targetId, boolean useNewSyncFormat) {
         if (dataStreams == null) {
             return;
         }
         if (targetId == ANY_TARGET || this.deviceId == targetId) {
             if (isSplitMode()) {
                 for (DataStream dataStream : dataStreams) {
-                    if (dataStream.notEmpty()) {
+                    if (dataStream.notEmptyAndIsValid()) {
                         String body = prependDashIdAndDeviceId(dashId, deviceId, dataStream.makeHardwareBody());
                         appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body),
                                 appChannel.voidPromise());
                     }
                 }
             } else {
-                if (dataStreams[0].notEmpty()) {
+                if (dataStreams[0].notEmptyAndIsValid()) {
                     String body = prependDashIdAndDeviceId(dashId, deviceId, dataStreams[0].makeHardwareBody());
                     appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body),
                             appChannel.voidPromise());

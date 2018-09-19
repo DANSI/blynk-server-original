@@ -1,7 +1,6 @@
 package cc.blynk.core.http.handlers;
 
-import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
-import cc.blynk.utils.ContentTypeUtil;
+import cc.blynk.core.http.utils.ContentTypeUtil;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.properties.ServerProperties;
 import io.netty.buffer.Unpooled;
@@ -41,6 +40,7 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import static cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler.handleGeneralException;
 import static io.netty.handler.codec.http.HttpHeaderNames.ACCESS_CONTROL_ALLOW_ORIGIN;
 import static io.netty.handler.codec.http.HttpHeaderNames.CACHE_CONTROL;
 import static io.netty.handler.codec.http.HttpHeaderNames.CONNECTION;
@@ -61,7 +61,7 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  * Created by Dmitriy Dumanskiy.
  * Created on 10.12.15.
  */
-public class StaticFileHandler extends ChannelInboundHandlerAdapter implements DefaultExceptionHandler {
+public class StaticFileHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger log = LogManager.getLogger(StaticFileHandler.class);
 
@@ -188,7 +188,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
         String uri = request.uri();
         //running from jar
         if (isUnpacked) {
-            log.debug("Is unpacked.");
+            log.trace("Is unpacked.");
             if (staticFile instanceof StaticFileEdsWith) {
                 StaticFileEdsWith staticFileEdsWith = (StaticFileEdsWith) staticFile;
                 path = Paths.get(staticFileEdsWith.folderPathForStatic, uri);
@@ -200,7 +200,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
             path = FileUtils.getPathForLocalRun(uri);
         }
 
-        log.debug("Getting file from path {}", path);
+        log.trace("Getting file from path {}", path);
 
         if (path == null || Files.notExists(path) || Files.isDirectory(path)) {
             sendError(ctx, NOT_FOUND);
@@ -258,7 +258,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
             lastContentFuture = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
         } else {
             sendFileFuture =
-                    ctx.writeAndFlush(new HttpChunkedInput(new ChunkedFile(raf, 0, fileLength, 8192)),
+                    ctx.writeAndFlush(new HttpChunkedInput(new ChunkedFile(raf, 128 * 1024)),
                             ctx.newProgressivePromise());
             // HttpChunkedInput will write the end marker (LastHttpContent) for us.
             lastContentFuture = sendFileFuture;
@@ -272,7 +272,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter implements D
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         if (cause.getMessage() != null && cause.getMessage().contains("unknown_ca")) {
             log.warn("Self-generated certificate.");
         } else {

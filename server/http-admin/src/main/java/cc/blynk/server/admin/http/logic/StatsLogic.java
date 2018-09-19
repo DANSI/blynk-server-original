@@ -17,20 +17,23 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.widgets.ui.reporting.ReportScheduler;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.core.stats.model.Stat;
 import io.netty.channel.ChannelHandler;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static cc.blynk.core.http.Response.ok;
-import static cc.blynk.utils.AdminHttpUtil.convertMapToPair;
-import static cc.blynk.utils.AdminHttpUtil.convertObjectToMap;
-import static cc.blynk.utils.AdminHttpUtil.sort;
-import static cc.blynk.utils.AdminHttpUtil.sortStringAsInt;
+import static cc.blynk.core.http.utils.AdminHttpUtil.convertMapToPair;
+import static cc.blynk.core.http.utils.AdminHttpUtil.convertObjectToMap;
+import static cc.blynk.core.http.utils.AdminHttpUtil.sort;
+import static cc.blynk.core.http.utils.AdminHttpUtil.sortStringAsInt;
 
 /**
  * The Blynk Project.
@@ -45,6 +48,7 @@ public class StatsLogic extends CookiesBaseHttpHandler {
     private final FileManager fileManager;
     private final BlockingIOProcessor blockingIOProcessor;
     private final GlobalStats globalStats;
+    private final ReportScheduler reportScheduler;
 
     public StatsLogic(Holder holder, String rootPath) {
         super(holder, rootPath);
@@ -52,12 +56,14 @@ public class StatsLogic extends CookiesBaseHttpHandler {
         this.fileManager = holder.fileManager;
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.globalStats = holder.stats;
+        this.reportScheduler = holder.reportScheduler;
     }
 
     @GET
     @Path("/realtime")
     public Response getReatime() {
-       return ok(Collections.singletonList(new Stat(sessionDao, userDao, blockingIOProcessor, globalStats, false)));
+       return ok(Collections.singletonList(
+               new Stat(sessionDao, userDao, blockingIOProcessor, globalStats, reportScheduler, false)));
     }
 
     @GET
@@ -83,7 +89,7 @@ public class StatsLogic extends CookiesBaseHttpHandler {
     public Response getMessages(@QueryParam("_sortField") String sortField,
                                     @QueryParam("_sortDir") String sortOrder) {
         return ok(sort(convertObjectToMap(
-                new Stat(sessionDao, userDao, blockingIOProcessor, globalStats, false).commands),
+                new Stat(sessionDao, userDao, blockingIOProcessor, globalStats, reportScheduler, false).commands),
                 sortField, sortOrder));
     }
 
@@ -97,35 +103,35 @@ public class StatsLogic extends CookiesBaseHttpHandler {
     @GET
     @Path("/projectsPerUser")
     public Response getProjectsPerUser(@QueryParam("_sortField") String sortField,
-                                           @QueryParam("_sortDir") String sortOrder) {
+                                       @QueryParam("_sortDir") String sortOrder) {
         return ok(sortStringAsInt(convertMapToPair(userDao.getProjectsPerUser()), sortField, sortOrder));
     }
 
     @GET
     @Path("/boards")
     public Response getBoards(@QueryParam("_sortField") String sortField,
-                                    @QueryParam("_sortDir") String sortOrder) {
+                              @QueryParam("_sortDir") String sortOrder) {
         return ok(sort(convertMapToPair(userDao.getBoardsUsage()), sortField, sortOrder));
     }
 
     @GET
     @Path("/facebookLogins")
     public Response getFacebookLogins(@QueryParam("_sortField") String sortField,
-                              @QueryParam("_sortDir") String sortOrder) {
+                                      @QueryParam("_sortDir") String sortOrder) {
         return ok(sort(convertMapToPair(userDao.getFacebookLogin()), sortField, sortOrder));
     }
 
     @GET
     @Path("/filledSpace")
     public Response getFilledSpace(@QueryParam("_sortField") String sortField,
-                                  @QueryParam("_sortDir") String sortOrder) {
+                                   @QueryParam("_sortDir") String sortOrder) {
         return ok(sortStringAsInt(convertMapToPair(userDao.getFilledSpace()), sortField, sortOrder));
     }
 
     @GET
     @Path("/userProfileSize")
     public Response getUserProfileSize(@QueryParam("_sortField") String sortField,
-                                   @QueryParam("_sortDir") String sortOrder) {
+                                       @QueryParam("_sortDir") String sortOrder) {
         return ok(sortStringAsInt(convertMapToPair(fileManager.getUserProfilesSize()), sortField, sortOrder));
     }
 
@@ -133,7 +139,7 @@ public class StatsLogic extends CookiesBaseHttpHandler {
     @GET
     @Path("/webHookHosts")
     public Response getWebHookHosts(@QueryParam("_sortField") String sortField,
-                                       @QueryParam("_sortDir") String sortOrder) {
+                                    @QueryParam("_sortDir") String sortOrder) {
         return ok(sortStringAsInt(convertMapToPair(userDao.getWebHookHosts()), sortField, sortOrder));
     }
 
@@ -158,29 +164,30 @@ public class StatsLogic extends CookiesBaseHttpHandler {
     }
 
     private List<IpNameResponse> searchByIP(String ip) {
-        List<IpNameResponse> res = new ArrayList<>();
+        Set<IpNameResponse> res = new HashSet<>();
+        int counter = 0;
 
         for (User user : userDao.users.values()) {
             if (user.lastLoggedIP != null) {
-                final String name = user.email + "-" + user.appName;
+                String name = user.email + "-" + user.appName;
                 if (ip == null) {
-                    res.add(new IpNameResponse(name, user.lastLoggedIP));
+                    res.add(new IpNameResponse(counter++, name, user.lastLoggedIP, "app"));
                     for (DashBoard dashBoard : user.profile.dashBoards) {
                         for (Device device : dashBoard.devices) {
                             if (device.lastLoggedIP != null) {
-                                res.add(new IpNameResponse(name, device.lastLoggedIP));
+                                res.add(new IpNameResponse(counter++, name, device.lastLoggedIP, "hard"));
                             }
                         }
                     }
                 } else {
                     if (user.lastLoggedIP.contains(ip) || deviceContains(user, ip)) {
-                        res.add(new IpNameResponse(name, user.lastLoggedIP));
+                        res.add(new IpNameResponse(counter++, name, user.lastLoggedIP, "hard"));
                     }
                 }
             }
         }
 
-        return res;
+        return new ArrayList<>(res);
     }
 
     private boolean deviceContains(User user, String ip) {

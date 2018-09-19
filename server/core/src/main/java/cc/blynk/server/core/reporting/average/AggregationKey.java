@@ -52,7 +52,7 @@ public final class AggregationKey implements Serializable {
         return baseReportingKey.deviceId;
     }
 
-    public char getPinType() {
+    public PinType getPinType() {
         return baseReportingKey.pinType;
     }
 

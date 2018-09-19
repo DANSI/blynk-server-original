@@ -6,6 +6,7 @@ import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction
 import cc.blynk.server.core.model.widgets.others.eventor.model.condition.BaseCondition;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import cc.blynk.server.core.model.widgets.controls.Timer;
 
 /**
  * The Blynk Project.
@@ -49,11 +50,12 @@ public class Rule {
     }
 
     public boolean isValidTimerRule() {
-        return isActive && triggerTime != null && actions != null && actions.length > 0 && actions[0].isValid();
+        return isActive && triggerTime != null && Timer.isValidTime(triggerTime.time)
+         && actions != null && actions.length > 0 && actions[0].isValid();
     }
 
-    public boolean isValid(double value) {
-        return condition.isValid(value);
+    public boolean matchesCondition(String inValue, double parsedInValueToDouble) {
+        return condition.matches(inValue, parsedInValueToDouble);
     }
 
 }

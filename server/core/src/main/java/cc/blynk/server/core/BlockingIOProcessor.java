@@ -1,5 +1,7 @@
 package cc.blynk.server.core;
 
+import cc.blynk.utils.BlynkTPFactory;
+
 import java.io.Closeable;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -17,29 +19,45 @@ import java.util.concurrent.TimeUnit;
  */
 public class BlockingIOProcessor implements Closeable {
 
+    private static final int MINIMUM_ALLOWED_POOL_SIZE = 3;
+
     //pool for messaging
-    private final ThreadPoolExecutor messagingExecutor;
+    public final ThreadPoolExecutor messagingExecutor;
 
     //DB pool is needed as in case DB goes down messaging still should work
-    private final ThreadPoolExecutor dbExecutor;
+    public final ThreadPoolExecutor dbExecutor;
+
+    public final ThreadPoolExecutor dbGetServerExecutor;
 
     //separate pool for history graph data
-    private final ThreadPoolExecutor historyExecutor;
+    public final ThreadPoolExecutor historyExecutor;
 
     public BlockingIOProcessor(int poolSize, int maxQueueSize) {
+        //pool size can't be less than 3.
+        poolSize = Math.max(MINIMUM_ALLOWED_POOL_SIZE, poolSize);
         this.messagingExecutor = new ThreadPoolExecutor(
                 poolSize / 4, poolSize / 3,
                 2L, TimeUnit.MINUTES,
-                new ArrayBlockingQueue<>(maxQueueSize)
+                new ArrayBlockingQueue<>(maxQueueSize),
+                BlynkTPFactory.build("Messaging")
         );
 
-        this.dbExecutor = new ThreadPoolExecutor(poolSize / 3, poolSize / 2, 2L,
-                TimeUnit.MINUTES, new ArrayBlockingQueue<>(250));
+        this.dbExecutor = new ThreadPoolExecutor(
+                poolSize / 3,
+                poolSize / 2, 2L,
+                TimeUnit.MINUTES,
+                new ArrayBlockingQueue<>(250),
+                BlynkTPFactory.build("db"));
         //local server doesn't use DB usually, so this thread may be not necessary
         this.dbExecutor.allowCoreThreadTimeOut(true);
 
-        this.historyExecutor = new ThreadPoolExecutor(poolSize / 2, poolSize, 2L,
-                TimeUnit.MINUTES, new ArrayBlockingQueue<>(250));
+        this.dbGetServerExecutor = new ThreadPoolExecutor(poolSize / 3, poolSize / 3, 2L,
+                TimeUnit.MINUTES, new ArrayBlockingQueue<>(250),
+                BlynkTPFactory.build("getServer"));
+
+        this.historyExecutor = new ThreadPoolExecutor(poolSize / 4, poolSize / 2, 2L,
+                TimeUnit.MINUTES, new ArrayBlockingQueue<>(250),
+                BlynkTPFactory.build("history"));
     }
 
     public void execute(Runnable task) {
@@ -54,42 +72,15 @@ public class BlockingIOProcessor implements Closeable {
         historyExecutor.execute(task);
     }
 
+    public void executeDBGetServer(Runnable task) {
+        dbGetServerExecutor.execute(task);
+    }
+
     @Override
     public void close() {
         dbExecutor.shutdown();
         messagingExecutor.shutdown();
         historyExecutor.shutdown();
-    }
-
-    public int getActiveCount() {
-        return messagingExecutor.getActiveCount();
-    }
-
-
-
-    public int messagingActiveTasks() {
-        return messagingExecutor.getQueue().size();
-    }
-
-    public long messagingExecutedTasks() {
-        return messagingExecutor.getCompletedTaskCount();
-    }
-
-
-    public int historyActiveTasks() {
-        return historyExecutor.getQueue().size();
-    }
-
-    public long historyExecutedTasks() {
-        return historyExecutor.getCompletedTaskCount();
-    }
-
-
-    public int dbActiveTasks() {
-        return dbExecutor.getQueue().size();
-    }
-
-    public long dbExecutedTasks() {
-        return dbExecutor.getCompletedTaskCount();
+        dbGetServerExecutor.shutdown();
     }
 }

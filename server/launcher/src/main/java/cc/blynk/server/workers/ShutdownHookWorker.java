@@ -1,7 +1,7 @@
 package cc.blynk.server.workers;
 
 import cc.blynk.server.Holder;
-import cc.blynk.server.core.BaseServer;
+import cc.blynk.server.servers.BaseServer;
 
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -31,24 +31,27 @@ public class ShutdownHookWorker implements Runnable {
     @Override
     public void run() {
         System.out.println("Catch shutdown hook.");
-
         System.out.println("Stopping servers...");
-        for (BaseServer server : servers) {
+
+        for (var server : servers) {
             try {
-                server.close();
+                server.close().sync();
             } catch (Throwable t) {
-                System.out.println("Error on serve shutdown : " + t.getCause());
+                System.out.println("Error on server shutdown : " + t.getCause());
             }
         }
 
         System.out.println("Stopping scheduler...");
         scheduler.shutdown();
 
+        try {
+            holder.close();
+        } catch (Exception e) {
+            System.out.println("Error stopping holder...");
+        }
+
         System.out.println("Saving user profiles...");
         profileSaverWorker.close();
-
-        System.out.println("Stopping aggregator...");
-        holder.close();
 
         System.out.println("Done.");
     }

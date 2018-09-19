@@ -9,27 +9,31 @@ import cc.blynk.core.http.annotation.Path;
 import cc.blynk.core.http.annotation.PathParam;
 import cc.blynk.core.http.annotation.QueryParam;
 import cc.blynk.server.Holder;
-import cc.blynk.server.Limits;
-import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.TextHolder;
 import cc.blynk.utils.http.MediaType;
+import cc.blynk.utils.properties.GCMProperties;
+import cc.blynk.utils.properties.MailProperties;
 import cc.blynk.utils.properties.ServerProperties;
+import cc.blynk.utils.properties.TwitterProperties;
 import io.netty.channel.ChannelHandler;
 
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
 import static cc.blynk.core.http.Response.appendTotalCountHeader;
 import static cc.blynk.core.http.Response.badRequest;
 import static cc.blynk.core.http.Response.ok;
-import static cc.blynk.server.db.DBManager.DB_PROPERTIES_FILENAME;
-import static cc.blynk.utils.AdminHttpUtil.sort;
+import static cc.blynk.core.http.utils.AdminHttpUtil.sort;
 import static cc.blynk.utils.FileLoaderUtil.TOKEN_MAIL_BODY;
+import static cc.blynk.utils.properties.DBProperties.DB_PROPERTIES_FILENAME;
 import static cc.blynk.utils.properties.GCMProperties.GCM_PROPERTIES_FILENAME;
 import static cc.blynk.utils.properties.MailProperties.MAIL_PROPERTIES_FILENAME;
 import static cc.blynk.utils.properties.ServerProperties.SERVER_PROPERTIES_FILENAME;
+import static cc.blynk.utils.properties.TwitterProperties.TWITTER_PROPERTIES_FILENAME;
 
 /**
  * The Blynk Project.
@@ -40,12 +44,12 @@ import static cc.blynk.utils.properties.ServerProperties.SERVER_PROPERTIES_FILEN
 @ChannelHandler.Sharable
 public class ConfigsLogic extends CookiesBaseHttpHandler {
 
-    private final Limits limits;
+    private final TextHolder textHolder;
     private final ServerProperties serverProperties;
 
     public ConfigsLogic(Holder holder, String rootPath) {
         super(holder, rootPath);
-        this.limits = holder.limits;
+        this.textHolder = holder.textHolder;
         this.serverProperties = holder.props;
     }
 
@@ -62,7 +66,7 @@ public class ConfigsLogic extends CookiesBaseHttpHandler {
         configs.add(new Config(MAIL_PROPERTIES_FILENAME));
         configs.add(new Config(GCM_PROPERTIES_FILENAME));
         configs.add(new Config(DB_PROPERTIES_FILENAME));
-        configs.add(new Config("twitter4j.properties"));
+        configs.add(new Config(TWITTER_PROPERTIES_FILENAME));
         configs.add(new Config(TOKEN_MAIL_BODY));
 
         return appendTotalCountHeader(
@@ -74,10 +78,16 @@ public class ConfigsLogic extends CookiesBaseHttpHandler {
     @Path("/{name}")
     public Response getConfigByName(@PathParam("name") String name) {
         switch (name) {
-            case TOKEN_MAIL_BODY:
-                return ok(new Config(name, limits.tokenBody).toString());
+            case TOKEN_MAIL_BODY :
+                return ok(new Config(name, textHolder.tokenBody).toString());
             case SERVER_PROPERTIES_FILENAME :
                 return ok(new Config(name, serverProperties).toString());
+            case MAIL_PROPERTIES_FILENAME :
+                return ok(new Config(name, new MailProperties(Collections.emptyMap())).toString());
+            case GCM_PROPERTIES_FILENAME :
+                return ok(new Config(name, new GCMProperties(Collections.emptyMap())).toString());
+            case TWITTER_PROPERTIES_FILENAME :
+                return ok(new Config(name, new TwitterProperties(Collections.emptyMap())).toString());
             default :
                 return badRequest();
         }
@@ -95,7 +105,7 @@ public class ConfigsLogic extends CookiesBaseHttpHandler {
 
         switch (name) {
             case TOKEN_MAIL_BODY:
-                limits.tokenBody = updatedConfig.body;
+                textHolder.tokenBody = updatedConfig.body;
                 break;
             case SERVER_PROPERTIES_FILENAME :
                 Properties properties = readPropertiesFromString(updatedConfig.body);
@@ -116,52 +126,4 @@ public class ConfigsLogic extends CookiesBaseHttpHandler {
         return properties;
     }
 
-    /**
-     * The Blynk Project.
-     * Created by Dmitriy Dumanskiy.
-     * Created on 04.04.16.
-     */
-    private static class Config {
-
-        String name;
-        String body;
-
-        Config() {
-        }
-
-        Config(String name) {
-            this.name = name;
-        }
-
-        Config(String name, String body) {
-            this.name = name;
-            this.body = body;
-        }
-
-        Config(String name, ServerProperties serverProperties) {
-            this.name = name;
-            //return only editable options
-            this.body = makeProperties(serverProperties,
-                    "allowed.administrator.ips",
-                    "user.dashboard.max.limit",
-                    "user.profile.max.size");
-        }
-
-        private static String makeProperties(ServerProperties properties, String... propertyNames) {
-            StringBuilder sb = new StringBuilder();
-            for (String name : propertyNames) {
-                sb.append(name).append(" = ").append(properties.getProperty(name)).append("\n");
-            }
-            return sb.toString();
-        }
-
-        @Override
-        public String toString() {
-            try {
-                return JsonParser.MAPPER.writeValueAsString(this);
-            } catch (Exception e) {
-                return "{}";
-            }
-        }
-    }
 }

@@ -14,13 +14,13 @@ public class Redeem {
 
     public String company;
 
-    public boolean isRedeemed;
+    public final boolean isRedeemed;
 
     public String email;
 
     public int reward;
 
-    public int version;
+    public final int version;
 
     public Date ts;
 

@@ -2,13 +2,17 @@ package cc.blynk.server.core.model.widgets.others.eventor;
 
 import cc.blynk.server.core.model.widgets.others.rtc.StringToZoneId;
 import cc.blynk.server.core.model.widgets.others.rtc.ZoneIdToString;
+import cc.blynk.server.internal.EmptyArraysUtil;
+import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.DateTimeUtils;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 
 /**
@@ -36,18 +40,19 @@ public class TimerTime {
                      @JsonProperty("time") int time,
                      @JsonProperty("tzName") ZoneId tzName) {
         this.id = id;
-        this.days = days;
+        this.days = days == null ? EmptyArraysUtil.EMPTY_INTS : days;
         this.time = time;
         this.tzName = tzName;
     }
 
-    //this is special constructor for Timer back compatibility.
-    //todo remove in future versions.
     public TimerTime(int time) {
-        this.id = 0;
-        this.time = time;
-        this.days = ALL_DAYS;
-        this.tzName = DateTimeUtils.UTC;
+        this(0, ALL_DAYS, time, DateTimeUtils.UTC);
+    }
+
+    public boolean isTickTime(ZonedDateTime currentDateTime) {
+        LocalDate userDate = currentDateTime.withZoneSameInstant(tzName).toLocalDate();
+        int dayOfWeek = userDate.getDayOfWeek().getValue();
+        return ArrayUtil.contains(days, dayOfWeek);
     }
 
     @Override

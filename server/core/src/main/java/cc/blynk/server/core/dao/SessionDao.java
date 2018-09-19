@@ -2,19 +2,21 @@ package cc.blynk.server.core.dao;
 
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
+import io.netty.channel.Channel;
 import io.netty.channel.EventLoop;
+import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
 import io.netty.util.AttributeKey;
+import io.netty.util.concurrent.GlobalEventExecutor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * Holds session info related to specific user.
@@ -28,7 +30,7 @@ public class SessionDao {
     public final static AttributeKey<User> userAttributeKey = AttributeKey.valueOf("user");
     private static final Logger log = LogManager.getLogger(SessionDao.class);
 
-    public final ConcurrentMap<UserKey, Session> userSession = new ConcurrentHashMap<>();
+    public final ConcurrentHashMap<UserKey, Session> userSession = new ConcurrentHashMap<>();
 
     //threadsafe
     public Session getOrCreateSessionByUser(UserKey key, EventLoop initialEventLoop) {
@@ -50,7 +52,7 @@ public class SessionDao {
 
 
     public static final String SESSION_COOKIE = "session";
-    private final ConcurrentMap<String, User> httpSession = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, User> httpSession = new ConcurrentHashMap<>();
 
     public String generateNewSession(User user) {
         String sessionId = UUID.randomUUID().toString();
@@ -78,5 +80,29 @@ public class SessionDao {
         }
 
         return null;
+    }
+
+    public void closeHardwareChannelByDashId(UserKey userKey, int dashId) {
+        Session session = userSession.get(userKey);
+        session.closeHardwareChannelByDashId(dashId);
+    }
+
+    public void close() {
+        System.out.println("Closing all sockets...");
+        DefaultChannelGroup allChannels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
+        userSession.forEach((userKey, session) -> {
+            allChannels.addAll(session.appChannels);
+            allChannels.addAll(session.hardwareChannels);
+        });
+        allChannels.close().awaitUninterruptibly();
+    }
+
+    public void closeAppChannelsByUser(UserKey userKey) {
+        Session session = userSession.get(userKey);
+        if (session != null) {
+            for (Channel appChannel : session.appChannels) {
+                appChannel.close();
+            }
+        }
     }
 }

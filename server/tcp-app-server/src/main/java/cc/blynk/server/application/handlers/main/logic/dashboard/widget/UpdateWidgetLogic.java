@@ -1,27 +1,26 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.widget;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
-import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.ui.Tabs;
+import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
+import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.server.workers.timer.TimerWorker;
+import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Arrays;
-
-import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.split2;
 
 /**
@@ -29,57 +28,79 @@ import static cc.blynk.utils.StringUtils.split2;
  * Created by Dmitriy Dumanskiy.
  * Created on 01.02.16.
  */
-public class UpdateWidgetLogic {
+public final class UpdateWidgetLogic {
 
     private static final Logger log = LogManager.getLogger(UpdateWidgetLogic.class);
 
-    private final int maxWidgetSize;
-    private final TimerWorker timerWorker;
-
-    public UpdateWidgetLogic(int maxWidgetSize, TimerWorker timerWorker) {
-        this.maxWidgetSize = maxWidgetSize;
-        this.timerWorker = timerWorker;
+    private UpdateWidgetLogic() {
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
-        String[] split = split2(message.body);
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
+                                       AppStateHolder state, StringMessage message) {
+        var split = split2(message.body);
 
         if (split.length < 2) {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        int dashId = ParseUtil.parseInt(split[0]);
-        String widgetString = split[1];
+        var dashId = Integer.parseInt(split[0]);
+        var widgetString = split[1];
 
         if (widgetString == null || widgetString.isEmpty()) {
             throw new IllegalCommandException("Income widget message is empty.");
         }
 
-        if (widgetString.length() > maxWidgetSize) {
-            throw new NotAllowedException("Widget is larger then limit.");
+        if (widgetString.length() > holder.limits.widgetSizeLimitBytes) {
+            throw new NotAllowedException("Widget is larger then limit.", message.id);
         }
 
-        User user = state.user;
-        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
+        var user = state.user;
+        var dash = user.profile.getDashByIdOrThrow(dashId);
 
-        Widget newWidget = JsonParser.parseWidget(widgetString);
+        var newWidget = JsonParser.parseWidget(widgetString, message.id);
 
         if (newWidget.width < 1 || newWidget.height < 1) {
-            throw new NotAllowedException("Widget has wrong dimensions.");
+            throw new NotAllowedException("Widget has wrong dimensions.", message.id);
         }
 
         log.debug("Updating widget {}.", widgetString);
 
-        int existingWidgetIndex = dash.getWidgetIndexByIdOrThrow(newWidget.id);
+        Widget prevWidget = null;
+        DeviceTiles deviceTiles = null;
 
-        if (newWidget instanceof Tabs) {
-            Tabs newTabs = (Tabs) newWidget;
-            DeleteWidgetLogic.deleteTabs(timerWorker, user, state.userKey, dash, newTabs.tabs.length - 1);
+        long deviceTilesId = -1;
+        long deviceTilesTemplateId = -1;
+
+        long widgetId = newWidget.id;
+        for (Widget widget : dash.widgets) {
+            if (widget.id == widgetId) {
+                prevWidget = widget;
+                break;
+            }
+            if (widget instanceof DeviceTiles) {
+                deviceTiles = (DeviceTiles) widget;
+                for (TileTemplate tileTemplate : deviceTiles.templates) {
+                    for (Widget tileTemplateWidget : tileTemplate.widgets) {
+                        if (tileTemplateWidget.id == widgetId) {
+                            prevWidget = tileTemplateWidget;
+                            deviceTilesId = deviceTiles.id;
+                            deviceTilesTemplateId = tileTemplate.id;
+                            break;
+                        }
+                    }
+                }
+            }
         }
 
-        Widget prevWidget = dash.widgets[existingWidgetIndex];
+        if (prevWidget == null) {
+            throw new IllegalCommandException("Widget with passed id not found.");
+        }
 
-        if (prevWidget instanceof Notification && newWidget instanceof Notification) {
+        if (!prevWidget.getClass().equals(newWidget.getClass())) {
+            throw new IllegalCommandException("Widget class was changed.");
+        }
+
+        if (prevWidget instanceof Notification) {
             Notification prevNotif = (Notification) prevWidget;
             Notification newNotif = (Notification) newWidget;
             newNotif.iOSTokens.putAll(prevNotif.iOSTokens);
@@ -87,29 +108,52 @@ public class UpdateWidgetLogic {
         }
 
         //do not update template, tile fields for DeviceTiles.
-        if (newWidget instanceof DeviceTiles && prevWidget instanceof DeviceTiles) {
+        if (newWidget instanceof DeviceTiles) {
             DeviceTiles prevDeviceTiles = (DeviceTiles) prevWidget;
             DeviceTiles newDeviceTiles = (DeviceTiles) newWidget;
             newDeviceTiles.tiles = prevDeviceTiles.tiles;
             newDeviceTiles.templates = prevDeviceTiles.templates;
         }
 
-        Widget[] newArray = Arrays.copyOf(dash.widgets, dash.widgets.length);
-        newArray[existingWidgetIndex] = newWidget;
+        if (newWidget instanceof ReportingWidget) {
+            ReportingWidget prevReporting = (ReportingWidget) prevWidget;
+            ReportingWidget newReporting = (ReportingWidget) newWidget;
+            newReporting.reports = prevReporting.reports;
+        }
 
-        dash.widgets = newArray;
+        TimerWorker timerWorker = holder.timerWorker;
+        if (deviceTilesId != -1) {
+            TileTemplate tileTemplate = deviceTiles.getTileTemplateByWidgetIdOrThrow(newWidget.id);
+            if (newWidget instanceof Tabs) {
+                Tabs newTabs = (Tabs) newWidget;
+                tileTemplate.widgets = DeleteWidgetLogic.deleteTabs(timerWorker,
+                        user, state.userKey, dash.id, deviceTilesId, deviceTilesTemplateId,
+                        tileTemplate.widgets, newTabs.tabs.length - 1);
+            }
+            tileTemplate.widgets = ArrayUtil.copyAndReplace(
+                    tileTemplate.widgets, newWidget, tileTemplate.getWidgetIndexByIdOrThrow(newWidget.id));
+        } else {
+            if (newWidget instanceof Tabs) {
+                Tabs newTabs = (Tabs) newWidget;
+                dash.widgets = DeleteWidgetLogic.deleteTabs(timerWorker,
+                        user, state.userKey, dash.id, deviceTilesId, deviceTilesTemplateId,
+                        dash.widgets, newTabs.tabs.length - 1);
+            }
+            dash.widgets = ArrayUtil.copyAndReplace(
+                    dash.widgets, newWidget, dash.getWidgetIndexByIdOrThrow(newWidget.id));
+        }
+
         dash.cleanPinStorage(newWidget, true);
-        dash.updatedAt = System.currentTimeMillis();
         user.lastModifiedTs = dash.updatedAt;
 
         if (prevWidget instanceof Timer) {
-            timerWorker.delete(state.userKey, (Timer) prevWidget, dashId);
+            timerWorker.delete(state.userKey, (Timer) prevWidget, dashId, deviceTilesId, deviceTilesTemplateId);
         } else if (prevWidget instanceof Eventor) {
             timerWorker.delete(state.userKey, (Eventor) prevWidget, dashId);
         }
 
         if (newWidget instanceof Timer) {
-            timerWorker.add(state.userKey, (Timer) newWidget, dashId);
+            timerWorker.add(state.userKey, (Timer) newWidget, dashId, deviceTilesId, deviceTilesTemplateId);
         } else if (newWidget instanceof Eventor) {
             timerWorker.add(state.userKey, (Eventor) newWidget, dashId);
         }

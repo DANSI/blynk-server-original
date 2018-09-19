@@ -1,14 +1,15 @@
 package cc.blynk.server.core.model.widgets.notifications;
 
+import cc.blynk.server.core.model.serialization.View;
 import cc.blynk.server.core.model.widgets.NoPinWidget;
 import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.enums.Priority;
 import cc.blynk.server.notifications.push.ios.IOSGCMMessage;
+import com.fasterxml.jackson.annotation.JsonView;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * The Blynk Project.
@@ -19,9 +20,11 @@ public class Notification extends NoPinWidget {
 
     private static final int MAX_PUSH_BODY_SIZE = 255;
 
-    public volatile ConcurrentMap<String, String> androidTokens = new ConcurrentHashMap<>();
+    @JsonView({View.Private.class, View.HttpAPIField.class})
+    public volatile ConcurrentHashMap<String, String> androidTokens = new ConcurrentHashMap<>();
 
-    public volatile ConcurrentMap<String, String> iOSTokens = new ConcurrentHashMap<>();
+    @JsonView({View.Private.class, View.HttpAPIField.class})
+    public volatile ConcurrentHashMap<String, String> iOSTokens = new ConcurrentHashMap<>();
 
     public boolean notifyWhenOffline;
 

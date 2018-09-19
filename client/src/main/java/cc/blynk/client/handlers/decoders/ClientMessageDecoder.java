@@ -2,13 +2,9 @@ package cc.blynk.client.handlers.decoders;
 
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
+import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
-import cc.blynk.server.core.protocol.model.messages.appllication.GetEnhancedGraphDataBinaryMessage;
-import cc.blynk.server.core.protocol.model.messages.appllication.GetGraphDataBinaryMessage;
-import cc.blynk.server.core.protocol.model.messages.appllication.GetProjectByCloneCodeBinaryMessage;
-import cc.blynk.server.core.protocol.model.messages.appllication.GetProjectByTokenBinaryMessage;
-import cc.blynk.server.core.protocol.model.messages.appllication.LoadProfileGzippedBinaryMessage;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -18,6 +14,10 @@ import org.apache.logging.log4j.Logger;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
+import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_CLONE_CODE;
+import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_TOKEN;
+import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 
 /**
@@ -27,12 +27,12 @@ import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produc
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
  */
-public class ClientMessageDecoder extends ByteToMessageDecoder implements DefaultExceptionHandler {
+public class ClientMessageDecoder extends ByteToMessageDecoder {
 
     protected static final Logger log = LogManager.getLogger(ClientMessageDecoder.class);
 
     @Override
-    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
         if (in.readableBytes() < 5) {
             return;
         }
@@ -56,32 +56,14 @@ public class ClientMessageDecoder extends ByteToMessageDecoder implements Defaul
 
             ByteBuf buf = in.readSlice(length);
             switch (command) {
-                case Command.GET_GRAPH_DATA_RESPONSE :
+                case GET_ENHANCED_GRAPH_DATA :
+                case GET_PROJECT_BY_CLONE_CODE :
+                case LOAD_PROFILE_GZIPPED :
+                case GET_PROJECT_BY_TOKEN :
                     byte[] bytes = new byte[buf.readableBytes()];
                     buf.readBytes(bytes);
-                    message = new GetGraphDataBinaryMessage(messageId, bytes);
+                    message = new BinaryMessage(messageId, command, bytes);
                     break;
-                case Command.GET_ENHANCED_GRAPH_DATA :
-                    bytes = new byte[buf.readableBytes()];
-                    buf.readBytes(bytes);
-                    message = new GetEnhancedGraphDataBinaryMessage(messageId, bytes);
-                    break;
-                case Command.LOAD_PROFILE_GZIPPED :
-                    bytes = new byte[buf.readableBytes()];
-                    buf.readBytes(bytes);
-                    message = new LoadProfileGzippedBinaryMessage(messageId, bytes);
-                    break;
-                case Command.GET_PROJECT_BY_TOKEN :
-                    bytes = new byte[buf.readableBytes()];
-                    buf.readBytes(bytes);
-                    message = new GetProjectByTokenBinaryMessage(messageId, bytes);
-                    break;
-                case Command.GET_PROJECT_BY_CLONE_CODE :
-                    bytes = new byte[buf.readableBytes()];
-                    buf.readBytes(bytes);
-                    message = new GetProjectByCloneCodeBinaryMessage(messageId, bytes);
-                    break;
-
                 default:
                     message = produce(messageId, command, buf.toString(StandardCharsets.UTF_8));
             }
@@ -94,7 +76,7 @@ public class ClientMessageDecoder extends ByteToMessageDecoder implements Defaul
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        handleGeneralException(ctx, cause);
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        DefaultExceptionHandler.handleGeneralException(ctx, cause);
     }
 }

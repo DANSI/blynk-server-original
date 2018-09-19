@@ -71,9 +71,9 @@ public class AppClient extends BaseClient {
 
     @Override
     public ChannelInitializer<SocketChannel> getChannelInitializer() {
-        return new ChannelInitializer<SocketChannel>() {
+        return new ChannelInitializer<>() {
             @Override
-            public void initChannel(SocketChannel ch) throws Exception {
+            public void initChannel(SocketChannel ch) {
                 ChannelPipeline pipeline = ch.pipeline();
                 if (sslCtx != null) {
                     pipeline.addLast(sslCtx.newHandler(ch.alloc(), host, port));

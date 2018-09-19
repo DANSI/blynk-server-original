@@ -3,7 +3,7 @@
     <parent>
         <artifactId>notifications</artifactId>
         <groupId>cc.blynk.server.notifications</groupId>
-        <version>0.29.1-SNAPSHOT</version>
+        <version>0.39.7-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -11,9 +11,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.twitter4j</groupId>
-            <artifactId>twitter4j-core</artifactId>
-            <version>${twitter4j-core.version}</version>
+            <groupId>cc.blynk.utils</groupId>
+            <artifactId>utils</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

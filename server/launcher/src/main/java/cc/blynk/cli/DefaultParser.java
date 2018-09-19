@@ -1,9 +1,7 @@
 package cc.blynk.cli;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * Default parser.
@@ -49,31 +47,11 @@ public class DefaultParser {
      */
     private List expectedOpts;
 
-    public CommandLine parse(Options options, String[] arguments) throws ParseException {
-        return parse(options, arguments, null);
-    }
-
-    /**
-     * Parse the arguments according to the specified options and properties.
-     *
-     * @param options    the specified Options
-     * @param arguments  the command line arguments
-     * @param properties command line option name-value pairs
-     * @return the list of atomic option and value tokens
-     * @throws ParseException if there are any problems encountered
-     *                        while parsing the command line tokens.
-     */
-    private CommandLine parse(Options options, String[] arguments, Properties properties) throws ParseException {
-        return parse(options, arguments, properties, false);
-    }
-
     /**
      * Parse the arguments according to the specified options and properties.
      *
      * @param options         the specified Options
      * @param arguments       the command line arguments
-     * @param properties      command line option name-value pairs
-     * @param stopAtNonOption if <tt>true</tt> an unrecognized argument stops
      *                        the parsing and the remaining arguments are added to the
      *                        {@link CommandLine}s args list. If <tt>false</tt> an unrecognized
      *                        argument triggers a ParseException.
@@ -82,10 +60,10 @@ public class DefaultParser {
      *                        while parsing the command line tokens.
      */
     @SuppressWarnings("unchecked")
-    private CommandLine parse(Options options, String[] arguments, Properties properties, boolean stopAtNonOption)
+    public CommandLine parse(Options options, String[] arguments)
             throws ParseException {
         this.options = options;
-        this.stopAtNonOption = stopAtNonOption;
+        this.stopAtNonOption = false;
         skipParsing = false;
         currentOption = null;
         expectedOpts = new ArrayList(options.getRequiredOptions());
@@ -106,55 +84,9 @@ public class DefaultParser {
         // check the arguments of the last option
         checkRequiredArgs();
 
-        // add the default options
-        handleProperties(properties);
-
         checkRequiredOptions();
 
         return cmd;
-    }
-
-    /**
-     * Sets the values of Options using the values in <code>properties</code>.
-     *
-     * @param properties The value properties to be processed.
-     */
-    private void handleProperties(Properties properties) throws ParseException {
-        if (properties == null) {
-            return;
-        }
-
-        for (Enumeration<?> e = properties.propertyNames(); e.hasMoreElements();) {
-            String option = e.nextElement().toString();
-
-            Option opt = options.getOption(option);
-            if (opt == null) {
-                throw new UnrecognizedOptionException("Default option wasn't defined", option);
-            }
-
-            // if the option is part of a group, check if another option of the group has been selected
-            OptionGroup group = options.getOptionGroup(opt);
-            boolean selected = group != null && group.getSelected() != null;
-
-            if (!cmd.hasOption(option) && !selected) {
-                // get the value from the properties
-                String value = properties.getProperty(option);
-
-                if (opt.hasArg()) {
-                    if (opt.getValues() == null || opt.getValues().length == 0) {
-                        opt.addValueForProcessing(value);
-                    }
-                } else if (!("yes".equalsIgnoreCase(value)
-                        || "true".equalsIgnoreCase(value)
-                        || "1".equalsIgnoreCase(value))) {
-                    // if the value is not yes, true or 1 then don't add the option to the CommandLine
-                    continue;
-                }
-
-                handleOption(opt);
-                currentOption = null;
-            }
-        }
     }
 
     /**
@@ -189,18 +121,18 @@ public class DefaultParser {
     private void handleToken(String token) throws ParseException {
         currentToken = token;
 
-        if (skipParsing) {
-            cmd.addArg(token);
-        } else if ("--".equals(token)) {
-            skipParsing = true;
-        } else if (currentOption != null && currentOption.acceptsArg() && isArgument(token)) {
-            currentOption.addValueForProcessing(Util.stripLeadingAndTrailingQuotes(token));
-        } else if (token.startsWith("--")) {
-            handleLongOption(token);
-        } else if (token.startsWith("-") && !"-".equals(token)) {
-            handleShortAndLongOption(token);
-        } else {
-            handleUnknownToken(token);
+        if (!skipParsing) {
+            if ("--".equals(token)) {
+                skipParsing = true;
+            } else if (currentOption != null && currentOption.acceptsArg() && isArgument(token)) {
+                currentOption.addValueForProcessing(Util.stripLeadingAndTrailingQuotes(token));
+            } else if (token.startsWith("--")) {
+                handleLongOption(token);
+            } else if (token.startsWith("-") && !"-".equals(token)) {
+                handleShortAndLongOption(token);
+            } else {
+                handleUnknownToken(token);
+            }
         }
 
         if (currentOption != null && !currentOption.acceptsArg()) {
@@ -267,12 +199,8 @@ public class DefaultParser {
         if (!options.getMatchingOptions(t).isEmpty()) {
             // long or partial long options (--L, -L, --L=V, -L=V, --l, --l=V)
             return true;
-        } else if (getLongPrefix(token) != null && !token.startsWith("--")) {
-            // -LV
-            return true;
         }
-
-        return false;
+        return getLongPrefix(token) != null && !token.startsWith("--");
     }
 
     /**
@@ -289,7 +217,6 @@ public class DefaultParser {
             throw new UnrecognizedOptionException("Unrecognized option: " + token, token);
         }
 
-        cmd.addArg(token);
         if (stopAtNonOption) {
             skipParsing = true;
         }

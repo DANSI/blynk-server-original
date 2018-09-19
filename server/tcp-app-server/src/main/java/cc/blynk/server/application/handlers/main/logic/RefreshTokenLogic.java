@@ -2,19 +2,17 @@ package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
-import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.server.internal.ParseUtil;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_TOKEN;
-import static cc.blynk.server.internal.BlynkByteBufUtil.makeUTF8StringMessage;
+import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 
 /**
  * The Blynk Project.
@@ -22,25 +20,21 @@ import static cc.blynk.server.internal.BlynkByteBufUtil.makeUTF8StringMessage;
  * Created on 2/1/2015.
  *
  */
-public class RefreshTokenLogic {
+public final class RefreshTokenLogic {
 
-    private final TokenManager tokenManager;
-    private final SessionDao sessionDao;
-
-    public RefreshTokenLogic(Holder holder) {
-        this.tokenManager = holder.tokenManager;
-        this.sessionDao = holder.sessionDao;
+    private RefreshTokenLogic() {
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
+                                       AppStateHolder state, StringMessage message) {
         String[] split = StringUtils.split2(message.body);
 
-        int dashId = ParseUtil.parseInt(split[0]);
+        int dashId = Integer.parseInt(split[0]);
         int deviceId = 0;
 
         //new value for multi devices
         if (split.length == 2) {
-            deviceId = ParseUtil.parseInt(split[1]);
+            deviceId = Integer.parseInt(split[1]);
         }
 
         User user = state.user;
@@ -48,9 +42,14 @@ public class RefreshTokenLogic {
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
         Device device = dash.getDeviceById(deviceId);
 
-        String token = tokenManager.refreshToken(user, dash, device);
+        if (device == null) {
+            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+            return;
+        }
 
-        Session session = sessionDao.userSession.get(state.userKey);
+        String token = holder.tokenManager.refreshToken(user, dash, device);
+
+        Session session = holder.sessionDao.userSession.get(state.userKey);
         session.closeHardwareChannelByDeviceId(dashId, deviceId);
 
         if (ctx.channel().isWritable()) {

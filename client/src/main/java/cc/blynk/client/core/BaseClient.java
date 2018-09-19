@@ -1,9 +1,7 @@
 package cc.blynk.client.core;
 
 import cc.blynk.client.CommandParserUtil;
-import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
-import cc.blynk.utils.SHA256Util;
 import cc.blynk.utils.properties.ServerProperties;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -24,14 +22,16 @@ import java.util.Collections;
 import java.util.Random;
 
 import static cc.blynk.server.core.protocol.enums.Command.BRIDGE;
+import static cc.blynk.server.core.protocol.enums.Command.DELETE_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.EMAIL;
 import static cc.blynk.server.core.protocol.enums.Command.EXPORT_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_RESEND_FROM_BLUETOOTH;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_SYNC;
-import static cc.blynk.server.core.protocol.enums.Command.LOGIN;
-import static cc.blynk.server.core.protocol.enums.Command.REGISTER;
+import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
+import static cc.blynk.server.core.protocol.enums.Command.RESET_PASSWORD;
 import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
+import static cc.blynk.server.core.protocol.enums.Command.SHARE_LOGIN;
 import static cc.blynk.server.core.protocol.enums.Command.SHARING;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 
@@ -84,27 +84,20 @@ public abstract class BaseClient {
         }
 
         String body = input.length == 1 ? "" : input[1];
-        if (command == REGISTER || command == LOGIN) {
-            String[] userPass = body.split(" ", 3);
-            if (userPass.length > 1) {
-                String email = userPass[0];
-                String pass = userPass[1];
-                body = email + "\0" + SHA256Util.makeHash(pass, email)
-                        + (userPass.length == 3 ? "\0" + userPass[2].replaceAll(" ", "\0") : "");
-            }
-        }
-        if (command == Command.SHARE_LOGIN || command == Command.GET_GRAPH_DATA) {
-            body = body.replaceAll(" ", "\0");
-        }
+
         if (command == HARDWARE
+                || command == SHARE_LOGIN
+                || command == LOAD_PROFILE_GZIPPED
                 || command == HARDWARE_RESEND_FROM_BLUETOOTH
                 || command == BRIDGE
                 || command == EMAIL
                 || command == SHARING
                 || command == EXPORT_GRAPH_DATA
                 || command == SET_WIDGET_PROPERTY
-                || command == HARDWARE_SYNC) {
-            body = body.replaceAll(" ", "\0");
+                || command == HARDWARE_SYNC
+                || command == RESET_PASSWORD
+                || command == DELETE_WIDGET) {
+            body = body.replace(" ", "\0");
         }
         return produce(msgId, command, body);
     }
@@ -178,6 +171,9 @@ public abstract class BaseClient {
     }
 
     public ChannelFuture stop() {
+        if (nioEventLoopGroup.isTerminated()) {
+            return channel.voidPromise();
+        }
         ChannelFuture channelFuture = channel.close().awaitUninterruptibly();
         nioEventLoopGroup.shutdownGracefully();
         return channelFuture;

@@ -1,5 +1,6 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
+import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
@@ -8,14 +9,13 @@ import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
-import cc.blynk.server.internal.ParseUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
-import static cc.blynk.server.internal.BlynkByteBufUtil.illegalCommandBody;
-import static cc.blynk.server.internal.BlynkByteBufUtil.ok;
+import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
+import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.split3;
 
 /**
@@ -26,17 +26,17 @@ import static cc.blynk.utils.StringUtils.split3;
  * Created on 2/1/2015.
  *
  */
-public class SetWidgetPropertyLogic {
+public final class SetWidgetPropertyLogic {
 
     private static final Logger log = LogManager.getLogger(SetWidgetPropertyLogic.class);
 
-    private final SessionDao sessionDao;
-
-    public SetWidgetPropertyLogic(SessionDao sessionDao) {
-        this.sessionDao = sessionDao;
+    private SetWidgetPropertyLogic() {
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
+    public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
+                                       HardwareStateHolder state, StringMessage message) {
+        SessionDao sessionDao = holder.sessionDao;
+
         String[] bodyParts = split3(message.body);
 
         if (bodyParts.length != 3) {
@@ -69,23 +69,26 @@ public class SetWidgetPropertyLogic {
         }
 
         int deviceId = state.device.id;
-        byte pin = ParseUtil.parseByte(bodyParts[0]);
+        byte pin = Byte.parseByte(bodyParts[0]);
 
-        //for now supporting only virtual pins
-        Widget widget = dash.findWidgetByPin(deviceId, pin, PinType.VIRTUAL);
-
-        if (widget != null) {
-            try {
-                widget.setProperty(widgetProperty, propertyValue);
-                dash.updatedAt = System.currentTimeMillis();
-            } catch (Exception e) {
-                log.debug("Error setting widget property. Reason : {}", e.getMessage());
-                ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
-                return;
+        Widget widget = null;
+        for (Widget dashWidget : dash.widgets) {
+            if (dashWidget.isSame(deviceId, pin, PinType.VIRTUAL)) {
+                try {
+                    dashWidget.setProperty(widgetProperty, propertyValue);
+                    dash.updatedAt = System.currentTimeMillis();
+                } catch (Exception e) {
+                    log.debug("Error setting widget property. Reason : {}", e.getMessage());
+                    ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+                    return;
+                }
+                widget = dashWidget;
             }
-        } else {
-            //this is possible case for device selector
-            dash.putPinPropertyStorageValue(deviceId, PinType.VIRTUAL, pin, widgetProperty.label, propertyValue);
+        }
+
+        //this is possible case for device selector
+        if (widget == null) {
+            dash.putPinPropertyStorageValue(deviceId, PinType.VIRTUAL, pin, widgetProperty, propertyValue);
         }
 
         Session session = sessionDao.userSession.get(state.userKey);

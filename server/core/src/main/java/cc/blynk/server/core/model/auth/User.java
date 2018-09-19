@@ -1,9 +1,9 @@
 package cc.blynk.server.core.model.auth;
 
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.processors.NotificationBase;
-import cc.blynk.server.core.protocol.exceptions.EnergyLimitException;
 import cc.blynk.utils.AppNameUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -91,21 +91,19 @@ public class User {
         return email + "-" + appName;
     }
 
+    public boolean notEnoughEnergy(int price) {
+        return price > energy && AppNameUtil.BLYNK.equals(appName);
+    }
+
+    @SuppressWarnings("NonAtomicOperationOnVolatileField")
     public void subtractEnergy(int price) {
-        if (AppNameUtil.BLYNK.equals(appName) && price > energy) {
-            throw new EnergyLimitException("Not enough energy.");
-        }
-        //non-atomic. we are fine with that
+        //non-atomic. we are fine with that, always updated from 1 thread
         this.energy -= price;
-        this.lastModifiedTs = System.currentTimeMillis();
     }
 
-    public void recycleEnergy(int price) {
-        purchaseEnergy(price);
-    }
-
-    public void purchaseEnergy(int price) {
-        //non-atomic. we are fine with that
+    @SuppressWarnings("NonAtomicOperationOnVolatileField")
+    public void addEnergy(int price) {
+        //non-atomic. we are fine with that, always updated from 1 thread
         this.energy += price;
         this.lastModifiedTs = System.currentTimeMillis();
     }
@@ -123,6 +121,24 @@ public class User {
             this.emailMessages = 0;
             this.emailSentTs = now;
         }
+    }
+
+    public boolean isUpdated(long lastStart) {
+        return (lastStart <= lastModifiedTs) || isDashUpdated(lastStart);
+    }
+
+    public void resetPass(String hash) {
+        this.pass = hash;
+        this.lastModifiedTs = System.currentTimeMillis();
+    }
+
+    private boolean isDashUpdated(long lastStart) {
+        for (DashBoard dashBoard : profile.dashBoards) {
+            if (lastStart <= dashBoard.updatedAt) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

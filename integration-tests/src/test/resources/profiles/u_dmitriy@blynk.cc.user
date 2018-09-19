@@ -256,7 +256,7 @@
                   "value":"87"
                },
                {
-                  "type":"GRAPH",
+                  "type":"LOGGER",
                   "id":1036300905,
                   "x":0,
                   "y":2,
@@ -657,6 +657,8 @@
                   "x":0,
                   "y":5,
                   "color":-1,
+                  "pinType":"VIRTUAL",
+                  "pin":17,
                   "width":8,
                   "height":3,
                   "pwmMode":false,
@@ -723,7 +725,7 @@
                   "frequency":0
                },
                {
-                  "type":"GRAPH",
+                  "type":"LABELED_VALUE_DISPLAY",
                   "id":5,
                   "x":0,
                   "y":3,

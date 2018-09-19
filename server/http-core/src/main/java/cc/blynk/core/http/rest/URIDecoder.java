@@ -11,6 +11,7 @@ import io.netty.handler.codec.http.multipart.DefaultHttpDataFactory;
 import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
 import io.netty.handler.codec.http.multipart.InterfaceHttpData;
 
+import java.io.Closeable;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
@@ -20,20 +21,18 @@ import java.util.Map;
  * Created by Dmitriy Dumanskiy.
  * Created on 06.12.15.
  */
-public class URIDecoder extends QueryStringDecoder {
+public class URIDecoder extends QueryStringDecoder implements Closeable {
 
     public final String[] paths;
     public final Map<String, String> pathData;
     public String contentType;
     public Map<String, String> headers;
-    public final HttpRequest httpRequest;
 
     private HttpPostRequestDecoder decoder;
     private ByteBuf bodyData;
 
     public URIDecoder(HttpRequest httpRequest, Map<String, String> extractedParams) {
         super(httpRequest.uri());
-        this.httpRequest = httpRequest;
         this.paths = path().split("/");
         if (httpRequest.method() == HttpMethod.PUT || httpRequest.method() == HttpMethod.POST) {
             if (httpRequest instanceof HttpContent) {
@@ -56,4 +55,10 @@ public class URIDecoder extends QueryStringDecoder {
         return bodyData.toString(StandardCharsets.UTF_8);
     }
 
+    @Override
+    public void close() {
+        if (decoder != null) {
+            decoder.destroy();
+        }
+    }
 }

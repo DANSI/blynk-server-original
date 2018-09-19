@@ -2,6 +2,7 @@ package cc.blynk.server.db.dao;
 
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
+import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
 import cc.blynk.server.core.reporting.average.AggregationKey;
 import cc.blynk.server.core.reporting.average.AggregationValue;
 import cc.blynk.server.core.reporting.average.AverageAggregatorProcessor;
@@ -31,13 +32,13 @@ import java.util.Map;
 public class ReportingDBDao {
 
     public static final String insertMinute =
-            "INSERT INTO reporting_average_minute (email, project_id, device_id, pin, pinType, ts, value) "
+            "INSERT INTO reporting_average_minute (email, project_id, device_id, pin, pin_type, ts, value) "
                     + "VALUES (?, ?, ?, ?, ?, ?, ?)";
     private static final String insertHourly =
-            "INSERT INTO reporting_average_hourly (email, project_id, device_id, pin, pinType, ts, value) "
+            "INSERT INTO reporting_average_hourly (email, project_id, device_id, pin, pin_type, ts, value) "
                     + "VALUES (?, ?, ?, ?, ?, ?, ?)";
     private static final String insertDaily =
-            "INSERT INTO reporting_average_daily (email, project_id, device_id, pin, pinType, ts, value) "
+            "INSERT INTO reporting_average_daily (email, project_id, device_id, pin, pin_type, ts, value) "
                     + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
     private static final String insertRawData =
@@ -108,14 +109,14 @@ public class ReportingDBDao {
                                                  int dashId,
                                                  int deviceId,
                                                  byte pin,
-                                                 char pinType,
+                                                 PinType pinType,
                                                  long ts,
                                                  double value) throws SQLException {
         ps.setString(1, email);
         ps.setInt(2, dashId);
         ps.setInt(3, deviceId);
         ps.setByte(4, pin);
-        ps.setString(5, PinType.getPinTypeString(pinType));
+        ps.setInt(5, pinType.ordinal());
         ps.setTimestamp(6, new Timestamp(ts), DateTimeUtils.UTC_CALENDAR);
         ps.setDouble(7, value);
     }
@@ -150,7 +151,7 @@ public class ReportingDBDao {
                 ps.setInt(2, key.getDashId());
                 ps.setInt(3, key.getDeviceId());
                 ps.setByte(4, key.getPin());
-                ps.setString(5, PinType.getPinTypeString(key.getPinType()));
+                ps.setString(5, key.getPinType().pinTypeString);
                 ps.setTimestamp(6, new Timestamp(key.ts), DateTimeUtils.UTC_CALENDAR);
 
                 if (value instanceof String) {
@@ -311,9 +312,12 @@ public class ReportingDBDao {
              PreparedStatement psMinute = connection.prepareStatement(deleteMinute);
              PreparedStatement psHour = connection.prepareStatement(deleteHour)) {
 
-            psMinute.setTimestamp(1, new Timestamp(now.minus(360 + 1,
+            //for minute table we store only data for last 24 hours
+            psMinute.setTimestamp(1, new Timestamp(now.minus(GraphPeriod.DAY.numberOfPoints + 1,
                     ChronoUnit.MINUTES).toEpochMilli()), DateTimeUtils.UTC_CALENDAR);
-            psHour.setTimestamp(1, new Timestamp(now.minus(168 + 1,
+
+            //for hour table we store only data for last 3 months
+            psHour.setTimestamp(1, new Timestamp(now.minus(GraphPeriod.THREE_MONTHS.numberOfPoints + 1,
                     ChronoUnit.HOURS).toEpochMilli()), DateTimeUtils.UTC_CALENDAR);
 
             minuteRecordsRemoved = psMinute.executeUpdate();

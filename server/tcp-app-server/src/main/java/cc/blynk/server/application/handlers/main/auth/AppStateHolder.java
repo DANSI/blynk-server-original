@@ -10,12 +10,10 @@ import cc.blynk.server.core.session.StateHolderBase;
  */
 public class AppStateHolder extends StateHolderBase {
 
-    public final OsType osType;
-    public final String version;
+    public final Version version;
 
-    public AppStateHolder(User user, OsType osType, String version) {
+    public AppStateHolder(User user, Version version) {
         super(user);
-        this.osType = osType;
         this.version = version;
     }
 
@@ -27,5 +25,19 @@ public class AppStateHolder extends StateHolderBase {
     @Override
     public boolean isSameDash(int inDashId) {
         return true;
+    }
+
+    @Override
+    public boolean isSameDevice(int deviceId) {
+        return true;
+    }
+
+    @Override
+    public boolean isSameDashAndDeviceId(int inDashId, int deviceId) {
+        return true;
+    }
+
+    public boolean isNewSyncFormat() {
+        return version.versionSingleNumber >= 22600;
     }
 }

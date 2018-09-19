@@ -4,7 +4,8 @@
  * Created on 29.09.17.
  */
 module cc.blynk.server.notifications.twitter {
-    requires twitter4j.core;
+    requires async.http.client;
+    requires cc.blynk.utils;
 
     exports cc.blynk.server.notifications.twitter;
 }

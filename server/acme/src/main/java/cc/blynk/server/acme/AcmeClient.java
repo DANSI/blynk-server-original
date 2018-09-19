@@ -2,26 +2,23 @@ package cc.blynk.server.acme;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.shredzone.acme4j.Account;
+import org.shredzone.acme4j.AccountBuilder;
 import org.shredzone.acme4j.Authorization;
 import org.shredzone.acme4j.Certificate;
-import org.shredzone.acme4j.Registration;
-import org.shredzone.acme4j.RegistrationBuilder;
+import org.shredzone.acme4j.Order;
 import org.shredzone.acme4j.Session;
 import org.shredzone.acme4j.Status;
 import org.shredzone.acme4j.challenge.Http01Challenge;
-import org.shredzone.acme4j.exception.AcmeConflictException;
 import org.shredzone.acme4j.exception.AcmeException;
 import org.shredzone.acme4j.util.CSRBuilder;
-import org.shredzone.acme4j.util.CertificateUtils;
 import org.shredzone.acme4j.util.KeyPairUtils;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URI;
 import java.security.KeyPair;
-import java.security.cert.X509Certificate;
 
 /**
  * A simple client test tool.
@@ -64,9 +61,9 @@ public class AcmeClient {
         this.contentHolder = contentHolder;
     }
 
-    public boolean requestCertificate() throws Exception {
+    public void requestCertificate() throws Exception {
         log.info("Starting up certificate retrieval process for host {} and email {}.", host, email);
-        return fetchCertificate(email, host);
+        fetchCertificate(email, host);
     }
 
     /**
@@ -76,23 +73,33 @@ public class AcmeClient {
      * @param domain
      *            Domains to get a common certificate for
      */
-    private boolean fetchCertificate(String contact, String domain) throws IOException, AcmeException {
+    private void fetchCertificate(String contact, String domain) throws IOException, AcmeException {
         // Load the user key file. If there is no key file, create a new one.
         // Keep this key pair in a safe place! In a production environment, you will not be
         // able to access your account again if you should lose the key pair.
         KeyPair userKeyPair = loadOrCreateKeyPair(USER_KEY_FILE);
 
-        Session session = new Session(letsEncryptUrl, userKeyPair);
+        Session session = new Session(letsEncryptUrl);
 
-        // Get the Registration to the account.
+        // Get the Account.
         // If there is no account yet, create a new one.
-        Registration reg = findOrRegisterAccount(session, contact);
-
-        // Separately authorize every requested domain.
-        authorize(reg, domain);
+        Account account = new AccountBuilder()
+                .agreeToTermsOfService()
+                .useKeyPair(userKeyPair)
+                .addEmail(contact)
+                .create(session);
+        log.info("Registered a new user, URL: {}", account.getLocation());
 
         // Load or create a key pair for the domains. This should not be the userKeyPair!
         KeyPair domainKeyPair = loadOrCreateKeyPair(DOMAIN_KEY_FILE);
+
+        // Order the certificate
+        Order order = account.newOrder().domain(domain).create();
+
+        // Perform all required authorizations
+        for (Authorization auth : order.getAuthorizations()) {
+            authorize(auth);
+        }
 
         // Generate a CSR for all of the domains, and sign it with the domain key pair.
         CSRBuilder csrb = new CSRBuilder();
@@ -100,24 +107,31 @@ public class AcmeClient {
         csrb.setOrganization("Blynk Inc.");
         csrb.sign(domainKeyPair);
 
-        // Write the CSR to a file, for later use.
-        //try (Writer out = new FileWriter(DOMAIN_CSR_FILE)) {
-        //    csrb.write(out);
-        //}
+        // Order the certificate
+        order.execute(csrb.getEncoded());
 
-        // Now request a signed certificate.
-        Certificate certificate = reg.requestCertificate(csrb.getEncoded());
-
-        // Download the leaf certificate and certificate chain.
-        X509Certificate cert = certificate.download();
-        X509Certificate[] chain = certificate.downloadChain();
-
-        // Write a combined file containing the certificate and chain.
-        try (FileWriter fw = new FileWriter(DOMAIN_CHAIN_FILE)) {
-            CertificateUtils.writeX509CertificateChain(fw, cert, chain);
+        // Wait for the order to complete
+        try {
+            int attempts = ATTEMPTS;
+            while (order.getStatus() != Status.VALID && attempts-- > 0) {
+                if (order.getStatus() == Status.INVALID) {
+                    throw new AcmeException("Order failed... Giving up.");
+                }
+                Thread.sleep(WAIT_MILLIS);
+                order.update();
+            }
+        } catch (InterruptedException ex) {
+            log.error("interrupted", ex);
         }
 
-        return true;
+        Certificate certificate = order.getCertificate();
+
+        if (certificate != null) {
+            try (FileWriter fw = new FileWriter(DOMAIN_CHAIN_FILE)) {
+                certificate.writeCertificate(fw);
+            }
+            log.info("Overriding certificate. Expiration date is : {}", certificate.getCertificate().getNotAfter());
+        }
     }
 
     /**
@@ -141,62 +155,22 @@ public class AcmeClient {
     }
 
     /**
-     * Finds your {@link Registration} at the ACME server. It will be found by your user's
-     * public key. If your key is not known to the server yet, a new registration will be
-     * created.
-     * <p>
-     * This is a simple way of finding your {@link Registration}. A better way is to get
-     * the URI of your new registration with {@link Registration#getLocation()} and store
-     * it somewhere. If you need to get access to your account later, reconnect to it via
-     * {@link Registration#bind(Session, URI)} by using the stored location.
-     *
-     * @param session
-     *            {@link Session} to bind with
-     * @return {@link Registration} connected to your account
-     */
-    private Registration findOrRegisterAccount(Session session, String contact) throws AcmeException {
-        Registration reg;
-
-        try {
-            // Try to create a new Registration.
-            reg = new RegistrationBuilder().addContact("mailto:" + contact).create(session);
-            log.info("Registered a new user, URI: " + reg.getLocation());
-
-            // This is a new account. Let the user accept the Terms of Service.
-            // We won't be able to authorize domains until the ToS is accepted.
-            URI agreement = reg.getAgreement();
-            reg.modify().setAgreement(agreement).commit();
-
-        } catch (AcmeConflictException ex) {
-            // The Key Pair is already registered. getLocation() contains the
-            // URL of the existing registration's location. Bind it to the session.
-            reg = Registration.bind(session, ex.getLocation());
-            log.info("Account does already exist, URI: " + reg.getLocation());
-            log.debug(ex);
-        }
-
-        return reg;
-    }
-
-    /**
      * Authorize a domain. It will be associated with your account, so you will be able to
      * retrieve a signed certificate for the domain later.
-     * <p>
-     * You need separate authorizations for subdomains (e.g. "www" subdomain). Wildcard
-     * certificates are not currently supported.
      *
-     * @param reg
-     *            {@link Registration} of your account
-     * @param domain
-     *            Name of the domain to authorize
+     * @param auth
+     *            {@link Authorization} to perform
      */
-    private void authorize(Registration reg, String domain) throws AcmeException {
-        // Authorize the domain.
-        Authorization auth = reg.authorizeDomain(domain);
-        log.info("Authorization for domain " + domain);
+    private void authorize(Authorization auth) throws AcmeException {
+        log.info("Starting authorization for domain {}", auth.getIdentifier().getDomain());
 
         // Find the desired challenge and prepare it.
-        Http01Challenge challenge = httpChallenge(auth, domain);
+        Http01Challenge challenge = httpChallenge(auth);
+
+        if (challenge == null) {
+            throw new AcmeException("No challenge found");
+        }
+
         contentHolder.content = challenge.getAuthorization();
 
         // If the challenge is already verified, there's no need to execute it again.
@@ -211,45 +185,25 @@ public class AcmeClient {
         try {
             int attempts = ATTEMPTS;
             while (challenge.getStatus() != Status.VALID && attempts-- > 0) {
-                // Did the authorization fail?
                 if (challenge.getStatus() == Status.INVALID) {
                     throw new AcmeException("Challenge failed... Giving up.");
                 }
-
-                // Wait for a few seconds
                 Thread.sleep(WAIT_MILLIS);
-
-                // Then update the status
                 challenge.update();
             }
         } catch (InterruptedException ex) {
             log.error("interrupted", ex);
-            Thread.currentThread().interrupt();
+            return;
         }
 
         // All reattempts are used up and there is still no valid authorization?
         if (challenge.getStatus() != Status.VALID) {
-            throw new AcmeException("Failed to pass the challenge for domain " + domain + ", ... Giving up.");
+            throw new AcmeException("Failed to pass the challenge for domain "
+                    + auth.getIdentifier().getDomain() + ", ... Giving up.");
         }
     }
 
-    /**
-     * Prepares a HTTP challenge.
-     * <p>
-     * The verification of this challenge expects a file with a certain content to be
-     * reachable at a given path under the domain to be tested.
-     * <p>
-     * This example outputs instructions that need to be executed manually. In a
-     * production environment, you would rather generate this file automatically, or maybe
-     * use a servlet that returns {@link Http01Challenge#getAuthorization()}.
-     *
-     * @param auth
-     *            {@link Authorization} to find the challenge in
-     * @param domain
-     *            Domain name to be authorized
-     * @return Challenge to verify
-     */
-    private Http01Challenge httpChallenge(Authorization auth, String domain) throws AcmeException {
+    private Http01Challenge httpChallenge(Authorization auth) throws AcmeException {
         // Find a single http-01 challenge
         Http01Challenge challenge = auth.findChallenge(Http01Challenge.TYPE);
         if (challenge == null) {
@@ -257,12 +211,10 @@ public class AcmeClient {
         }
 
         // Output the challenge, wait for acknowledge...
-        log.debug("http://{}/.well-known/acme-challenge/{}", domain, challenge.getToken());
+        log.debug("http://{}/.well-known/acme-challenge/{}", auth.getIdentifier().getDomain(), challenge.getToken());
         log.debug("Content: {}", challenge.getAuthorization());
 
         return challenge;
     }
-
-
 
 }

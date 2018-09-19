@@ -27,13 +27,20 @@ public abstract class BaseProcessorHandler {
         this.webhookProcessor = webhookProcessor;
     }
 
-    protected void process(User user, DashBoard dash, int deviceId, Session session, byte pin,
-                           PinType pinType, String value, long now) {
+    protected void processEventorAndWebhook(User user, DashBoard dash, int deviceId, Session session, byte pin,
+                                            PinType pinType, String value, long now) {
         try {
             eventorProcessor.process(user, session, dash, deviceId, pin, pinType, value, now);
             webhookProcessor.process(session, dash, deviceId, pin, pinType, value, now);
         } catch (QuotaLimitException qle) {
             log.debug("User {} reached notification limit for eventor/webhook.", user.name);
+        } catch (IllegalArgumentException iae) {
+            String errorMessage = iae.getMessage();
+            if (errorMessage != null && errorMessage.contains("missing host")) {
+                log.debug("Error processing webhook for {}. Reason : {}", user.email, errorMessage);
+            } else {
+                log.error("Error processing eventor/webhook.", iae);
+            }
         } catch (Exception e) {
             log.error("Error processing eventor/webhook.", e);
         }

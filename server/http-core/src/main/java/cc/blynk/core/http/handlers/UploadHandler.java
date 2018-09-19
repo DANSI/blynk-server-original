@@ -16,7 +16,6 @@
 package cc.blynk.core.http.handlers;
 
 import cc.blynk.core.http.Response;
-import cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.HttpContent;
@@ -43,9 +42,10 @@ import java.nio.file.StandardCopyOption;
 import static cc.blynk.core.http.Response.badRequest;
 import static cc.blynk.core.http.Response.ok;
 import static cc.blynk.core.http.Response.serverError;
+import static cc.blynk.server.core.protocol.handlers.DefaultExceptionHandler.handleGeneralException;
 
 
-public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> implements DefaultExceptionHandler {
+public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> {
 
     private static final Logger log = LogManager.getLogger(UploadHandler.class);
 
@@ -63,7 +63,7 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> imple
     }
 
     @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+    public void channelInactive(ChannelHandlerContext ctx) {
         if (decoder != null) {
             decoder.cleanFiles();
         }
@@ -74,7 +74,7 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> imple
     }
 
     @Override
-    public void channelRead0(ChannelHandlerContext ctx, HttpObject msg) throws Exception {
+    public void channelRead0(ChannelHandlerContext ctx, HttpObject msg) {
         if (msg instanceof HttpRequest) {
             HttpRequest req = (HttpRequest) msg;
 
@@ -160,7 +160,6 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> imple
                                 StandardCopyOption.REPLACE_EXISTING);
                         pathTo =  uploadFolder + finalName;
                     }
-                    data.release();
                 }
             }
         } catch (EndOfDataDecoderException endOfData) {
@@ -175,7 +174,7 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> imple
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         handleGeneralException(ctx, cause);
     }
 }

@@ -13,9 +13,9 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.server.internal.BlynkByteBufUtil.illegalCommand;
-import static cc.blynk.server.internal.BlynkByteBufUtil.illegalCommandBody;
-import static cc.blynk.server.internal.BlynkByteBufUtil.makeASCIIStringMessage;
+import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
+import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
+import static cc.blynk.server.internal.CommonByteBufUtil.makeASCIIStringMessage;
 
 
 /**
@@ -38,11 +38,11 @@ public class GetServerHandler extends SimpleChannelInboundHandler<GetServerMessa
         this.blockingIOProcessor = holder.blockingIOProcessor;
         this.dbManager = holder.dbManager;
         this.userDao = holder.userDao;
-        this.currentIp = holder.host;
+        this.currentIp = holder.props.host;
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, GetServerMessage msg) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, GetServerMessage msg) {
         String[] parts = StringUtils.split2(msg.body);
 
         if (parts.length < 2) {
@@ -50,6 +50,7 @@ public class GetServerHandler extends SimpleChannelInboundHandler<GetServerMessa
             return;
         }
 
+        //.trim() is not used for back compatibility
         String email = parts[0] == null ? null : parts[0].toLowerCase();
         String appName = parts[1];
 

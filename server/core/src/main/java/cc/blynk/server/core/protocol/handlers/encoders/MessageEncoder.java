@@ -1,7 +1,7 @@
 package cc.blynk.server.core.protocol.handlers.encoders;
 
-import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
+import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.stats.GlobalStats;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -23,12 +23,12 @@ public class MessageEncoder extends MessageToByteEncoder<MessageBase> {
     }
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, MessageBase message, ByteBuf out) throws Exception {
+    protected void encode(ChannelHandlerContext ctx, MessageBase message, ByteBuf out) {
         out.writeByte(message.command);
         out.writeShort(message.id);
 
-        if (message.command == Command.RESPONSE) {
-            out.writeShort(message.length);
+        if (message instanceof ResponseMessage) {
+            out.writeShort(((ResponseMessage) message).code);
         } else {
             stats.mark(message.command);
 

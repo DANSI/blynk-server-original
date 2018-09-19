@@ -1,5 +1,6 @@
 package cc.blynk.server.core.protocol.model.messages;
 
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -7,18 +8,24 @@ import java.nio.charset.StandardCharsets;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
  */
-public abstract class StringMessage extends MessageBase {
+public class StringMessage extends MessageBase {
 
     public final String body;
+    private final Charset charset;
 
-    public StringMessage(int messageId, short command, int length, String body) {
-        super(messageId, command, length);
+    public StringMessage(int messageId, short command, String body, Charset charset) {
+        super(messageId, command);
         this.body = body;
+        this.charset = charset;
+    }
+
+    public StringMessage(int messageId, short command, String body) {
+        this(messageId, command, body, StandardCharsets.UTF_8);
     }
 
     @Override
     public byte[] getBytes() {
-        return body.getBytes(StandardCharsets.UTF_8);
+        return body.getBytes(charset);
     }
 
     @Override

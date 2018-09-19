@@ -1,14 +1,10 @@
 package cc.blynk.integration.tcp;
 
-import cc.blynk.integration.IntegrationBase;
-import cc.blynk.integration.model.tcp.ClientPair;
+import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.model.tcp.TestHardClient;
-import cc.blynk.server.application.AppServer;
-import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.others.eventor.Rule;
@@ -19,35 +15,34 @@ import cc.blynk.server.core.model.widgets.others.eventor.model.action.notificati
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.NotifyAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.TwitAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.condition.BaseCondition;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.Between;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.Equal;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.GreaterThan;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.GreaterThanOrEqual;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.LessThan;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.LessThanOrEqual;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.NotBetween;
-import cc.blynk.server.core.model.widgets.others.eventor.model.condition.NotEqual;
-import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
-import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
-import cc.blynk.server.hardware.HardwareServer;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.ValueChanged;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.Between;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.Equal;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.GreaterThan;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.GreaterThanOrEqual;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.LessThan;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.LessThanOrEqual;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.NotBetween;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.number.NotEqual;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.string.StringEqual;
+import cc.blynk.server.core.model.widgets.others.eventor.model.condition.string.StringNotEqual;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.enums.Priority;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static cc.blynk.integration.TestUtil.b;
+import static cc.blynk.integration.TestUtil.hardware;
+import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
-import static cc.blynk.server.core.protocol.enums.Response.OK;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.after;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
@@ -59,11 +54,7 @@ import static org.mockito.Mockito.verify;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class EventorTest extends IntegrationBase {
-
-    private BaseServer appServer;
-    private BaseServer hardwareServer;
-    private ClientPair clientPair;
+public class EventorTest extends SingleServerInstancePerTest {
 
     private static Rule buildRule(String s, boolean isActive) {
         //example "if V1 > 37 then setpin V2 123"
@@ -82,7 +73,7 @@ public class EventorTest extends IntegrationBase {
             dataStream = parsePin(splitted[6]);
             //123
             value = splitted[7];
-        } catch (IllegalCommandBodyException e) {
+        } catch (Exception e) {
             value = splitted[6];
         }
 
@@ -142,101 +133,47 @@ public class EventorTest extends IntegrationBase {
         return new Eventor(new Rule[] {rule});
     }
 
-    @Before
-    public void init() throws Exception {
-        this.hardwareServer = new HardwareServer(holder).start();
-        this.appServer = new AppServer(holder).start();
-        this.clientPair = initAppAndHardPair("user_profile_json.txt");
-    }
-
-    @After
-    public void shutdown() {
-        this.appServer.close();
-        this.hardwareServer.close();
-        this.clientPair.stop();
-    }
-
-    @Test
-    @Ignore
-    public void printAllInJson() throws Exception {
-        Eventor tempEventor = oneRuleEventor("if v1 != 37 then setpin v2 123");
-        //replace with between
-        //tempEventor.rules[0].condition = new Between(10, 12);
-
-        Eventor tempEventor2 = oneRuleEventor("if v1 != 37 then setpin v2 123");
-        //replace with between
-        //tempEventor2.rules[0].condition = new NotBetween(10, 12);
-
-
-        Eventor[] eventors = new Eventor[]{
-                oneRuleEventor("if v1 > 37 then setpin v2 123"),
-         oneRuleEventor("if v1 >= 37 then setpin v2 123"),
-        oneRuleEventor("if v1 <= 37 then setpin v2 123"),
-        oneRuleEventor("if v1 = 37 then setpin v2 123"),
-        oneRuleEventor("if v1 < 37 then setpin v2 123"),
-         oneRuleEventor("if v1 != 37 then setpin v2 123"),
-                tempEventor,
-                tempEventor2
-        };
-
-        for (Eventor eventor : eventors) {
-            System.out.println(JsonParser.MAPPER.writeValueAsString(eventor));
-        }
-
-        DataStream dataStream = new DataStream((byte) 1, PinType.VIRTUAL);
-
-        BaseAction[] actions = new BaseAction[] {
-                new SetPinAction(dataStream.pin, dataStream.pinType, "pinValuetoSEt"),
-                new NotifyAction("Hello!!!"),
-                new MailAction("Subj", "Hello mail")
-        };
-
-        for (BaseAction action : actions) {
-            System.out.println(JsonParser.MAPPER.writeValueAsString(action));
-        }
-    }
-
     @Test
     public void testSimpleRule1() throws Exception {
         Eventor eventor = oneRuleEventor("if v1 > 37 then setpin v2 123");
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.createWidget(1, eventor);
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 1 38");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 38"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 123"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("1 vw 2 123"))));
+        clientPair.appClient.verifyResult(hardware(1, "1-0 vw 1 38"));
+        clientPair.hardwareClient.verifyResult(hardware(888, "vw 2 123"));
+        clientPair.appClient.verifyResult(hardware(888, "1-0 vw 2 123"));
     }
 
     @Test
     public void testInactiveEventsNotTriggered() throws Exception {
         Eventor eventor = oneRuleEventor("if v1 > 37 then setpin v2 123", false);
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.createWidget(1, eventor);
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 1 38");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 38"))));
-        verify(clientPair.hardwareClient.responseMock, after(300).never()).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 123"))));
-        verify(clientPair.appClient.responseMock, after(300).never()).channelRead(any(), eq(produce(888, HARDWARE, b("1 vw 2 123"))));
+        clientPair.appClient.verifyResult(hardware(1, "1-0 vw 1 38"));
+        clientPair.hardwareClient.never(hardware(888, "vw 2 123"));
+        clientPair.appClient.never(hardware(888, "1-0 vw 2 123"));
     }
 
     @Test
     public void testSimpleRule1AndDashUpdatedValue() throws Exception {
         Eventor eventor = oneRuleEventor("if v1 > 37 then setpin v4 123");
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.createWidget(1, eventor);
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 1 38");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 38"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("vw 4 123"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("1 vw 4 123"))));
+        clientPair.appClient.verifyResult(hardware(1, "1-0 vw 1 38"));
+        clientPair.hardwareClient.verifyResult(hardware(888, "vw 4 123"));
+        clientPair.appClient.verifyResult(hardware(888, "1-0 vw 4 123"));
 
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = parseProfile(clientPair.appClient.getBody());
+        Profile profile = clientPair.appClient.parseProfile(1);
         assertNotNull(profile);
         OnePinWidget widget = (OnePinWidget) profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
         assertNotNull(widget);
@@ -247,65 +184,65 @@ public class EventorTest extends IntegrationBase {
     public void testSimpleRule2() throws Exception {
         Eventor eventor = oneRuleEventor("if v1 >= 37 then setpin v2 123");
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.createWidget(1, eventor);
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 1 37");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 37"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 123"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("1 vw 2 123"))));
+        clientPair.appClient.verifyResult(hardware(1, "1-0 vw 1 37"));
+        clientPair.hardwareClient.verifyResult(hardware(888, "vw 2 123"));
+        clientPair.appClient.verifyResult(hardware(888, "1-0 vw 2 123"));
     }
 
     @Test
     public void testSimpleRule3() throws Exception {
         Eventor eventor = oneRuleEventor("if v1 <= 37 then setpin v2 123");
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.createWidget(1, eventor);
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 1 37");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 37"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 123"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("1 vw 2 123"))));
+        clientPair.appClient.verifyResult(hardware(1, "1-0 vw 1 37"));
+        clientPair.hardwareClient.verifyResult(hardware(888, "vw 2 123"));
+        clientPair.appClient.verifyResult(hardware(888, "1-0 vw 2 123"));
     }
 
     @Test
     public void testSimpleRule4() throws Exception {
         Eventor eventor = oneRuleEventor("if v1 = 37 then setpin v2 123");
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.createWidget(1, eventor);
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 1 37");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 37"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 123"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("1 vw 2 123"))));
+        clientPair.appClient.verifyResult(hardware(1, "1-0 vw 1 37"));
+        clientPair.hardwareClient.verifyResult(hardware(888, "vw 2 123"));
+        clientPair.appClient.verifyResult(hardware(888, "1-0 vw 2 123"));
     }
 
     @Test
     public void testSimpleRule5() throws Exception {
         Eventor eventor = oneRuleEventor("if v1 < 37 then setpin v2 123");
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.createWidget(1, eventor);
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 1 36");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 36"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 123"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("1 vw 2 123"))));
+        clientPair.appClient.verifyResult(hardware(1, "1-0 vw 1 36"));
+        clientPair.hardwareClient.verifyResult(hardware(888, "vw 2 123"));
+        clientPair.appClient.verifyResult(hardware(888, "1-0 vw 2 123"));
     }
 
     @Test
     public void testSimpleRule6() throws Exception {
         Eventor eventor = oneRuleEventor("if v1 != 37 then setpin v2 123");
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.createWidget(1, eventor);
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 1 36");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 36"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 123"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("1 vw 2 123"))));
+        clientPair.appClient.verifyResult(hardware(1, "1-0 vw 1 36"));
+        clientPair.hardwareClient.verifyResult(hardware(888, "vw 2 123"));
+        clientPair.appClient.verifyResult(hardware(888, "1-0 vw 2 123"));
     }
 
     @Test
@@ -317,13 +254,13 @@ public class EventorTest extends IntegrationBase {
 
         Eventor eventor = new Eventor(new Rule[] {rule});
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.createWidget(1, eventor);
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 1 11");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 11"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 123"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("1 vw 2 123"))));
+        clientPair.appClient.verifyResult(hardware(1, "1-0 vw 1 11"));
+        clientPair.hardwareClient.verifyResult(hardware(888, "vw 2 123"));
+        clientPair.appClient.verifyResult(hardware(888, "1-0 vw 2 123"));
     }
 
     @Test
@@ -335,27 +272,27 @@ public class EventorTest extends IntegrationBase {
 
         Eventor eventor = new Eventor(new Rule[] {rule});
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.createWidget(1, eventor);
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 1 9");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 9"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 123"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("1 vw 2 123"))));
+        clientPair.appClient.verifyResult(hardware(1, "1-0 vw 1 9"));
+        clientPair.hardwareClient.verifyResult(hardware(888, "vw 2 123"));
+        clientPair.appClient.verifyResult(hardware(888, "1-0 vw 2 123"));
     }
 
     @Test
     public void testSimpleRule8Notify() throws Exception {
         Eventor eventor = oneRuleEventor("if v1 = 37 then notify Yo!!!!!");
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.createWidget(1, eventor);
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 1 37");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 37"))));
+        clientPair.appClient.verifyResult(hardware(1, "1-0 vw 1 37"));
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
-        verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
+        verify(holder.gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
         AndroidGCMMessage message = objectArgumentCaptor.getValue();
 
         String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Yo!!!!!", 1).toJson();
@@ -366,14 +303,14 @@ public class EventorTest extends IntegrationBase {
     public void testSimpleRule8NotifyAndFormat() throws Exception {
         Eventor eventor = oneRuleEventor("if v1 = 37 then notify Temperatureis:/pin/.");
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.createWidget(1, eventor);
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 1 37");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 37"))));
+        clientPair.appClient.verifyResult(hardware(1, "1-0 vw 1 37"));
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
-        verify(gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
+        verify(holder.gcmWrapper, timeout(500).times(1)).send(objectArgumentCaptor.capture(), any(), any());
         AndroidGCMMessage message = objectArgumentCaptor.getValue();
 
         String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Temperatureis:37.", 1).toJson();
@@ -384,159 +321,157 @@ public class EventorTest extends IntegrationBase {
     public void testSimpleRule9Twit() throws Exception {
         Eventor eventor = oneRuleEventor("if v1 = 37 then twit Yo!!!!!");
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.createWidget(1, eventor);
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 1 37");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 37"))));
+        clientPair.appClient.verifyResult(hardware(1, "1-0 vw 1 37"));
 
-        verify(twitterWrapper, timeout(500)).send(eq("token"), eq("secret"), eq("Yo!!!!!"));
+        verify(holder.twitterWrapper, timeout(500)).send(eq("token"), eq("secret"), eq("Yo!!!!!"), any());
     }
 
     @Test
     public void testSimpleRule8Email() throws Exception {
         Eventor eventor = oneRuleEventor("if v1 = 37 then mail Yo!!!!!");
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.createWidget(1, eventor);
+        clientPair.appClient.verifyResult(ok(1));
 
-        clientPair.appClient.send("createWidget 1\0{\"id\":432, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"type\":\"EMAIL\"}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+        clientPair.appClient.createWidget(1, "{\"id\":432, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"type\":\"EMAIL\"}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         clientPair.hardwareClient.send("hardware vw 1 37");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 37"))));
+        clientPair.appClient.verifyResult(hardware(1, "1-0 vw 1 37"));
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
-        verify(mailWrapper, timeout(500).times(1)).sendText(eq("dima@mail.ua"), eq("Subj"), eq("Yo!!!!!"));
+        verify(holder.mailWrapper, timeout(500).times(1)).sendText(eq(getUserName()), eq("Subj"), eq("Yo!!!!!"));
     }
 
     @Test
     public void testSimpleRule8EmailAndFormat() throws Exception {
         Eventor eventor = oneRuleEventor("if v1 = 37 then mail Yo/pin/!!!!!");
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.createWidget(1, eventor);
+        clientPair.appClient.verifyResult(ok(1));
 
-        clientPair.appClient.send("createWidget 1\0{\"id\":432, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"type\":\"EMAIL\"}");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+        clientPair.appClient.createWidget(1, "{\"id\":432, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"type\":\"EMAIL\"}");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         clientPair.hardwareClient.send("hardware vw 1 37");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 37"))));
+        clientPair.appClient.verifyResult(hardware(1, "1-0 vw 1 37"));
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);
-        verify(mailWrapper, timeout(500).times(1)).sendText(eq("dima@mail.ua"), eq("Subj"), eq("Yo37!!!!!"));
+        verify(holder.mailWrapper, timeout(500).times(1)).sendText(eq(getUserName()), eq("Subj"), eq("Yo37!!!!!"));
     }
 
     @Test
     public void testSimpleRuleCreateUpdateConditionWorks() throws Exception {
         Eventor eventor = oneRuleEventor("if v1 >= 37 then setpin v2 123");
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.createWidget(1, eventor);
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 1 37");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 37"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 123"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("1 vw 2 123"))));
+        clientPair.appClient.verifyResult(hardware(1, "1-0 vw 1 37"));
+        clientPair.hardwareClient.verifyResult(hardware(888, "vw 2 123"));
+        clientPair.appClient.verifyResult(hardware(888, "1-0 vw 2 123"));
 
         eventor = oneRuleEventor("if v1 >= 37 then setpin v2 124");
-        clientPair.appClient.send("updateWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(2, OK)));
+        clientPair.appClient.updateWidget(1, eventor);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         clientPair.hardwareClient.send("hardware vw 1 36");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("1 vw 1 36"))));
+        clientPair.appClient.verifyResult(hardware(2, "1-0 vw 1 36"));
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 124"))));
-        verify(clientPair.appClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(produce(888, HARDWARE, b("1 vw 2 124"))));
+        verify(clientPair.appClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(produce(888, HARDWARE, b("1-0 vw 2 124"))));
 
         clientPair.hardwareClient.send("hardware vw 1 37");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, HARDWARE, b("1 vw 1 37"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, HARDWARE, b("1-0 vw 1 37"))));
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 124"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("1 vw 2 124"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("1-0 vw 2 124"))));
     }
 
     @Test
     public void testPinModeForEventorAndSetPinAction() throws Exception {
-        clientPair.appClient.send("activate 1");
+        clientPair.appClient.activate(1);
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("pm 1 out 2 out 3 out 5 out 6 in 7 in 30 in 8 in"))));
         reset(clientPair.hardwareClient.responseMock);
 
         Eventor eventor = oneRuleEventor("if v1 > 37 then setpin d9 1");
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.createWidget(1, eventor);
+        clientPair.appClient.verifyResult(ok(1));
 
-        clientPair.appClient.send("activate 1");
+        clientPair.appClient.activate(1);
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("pm 1 out 2 out 3 out 5 out 6 in 7 in 30 in 8 in 9 out"))));
         //reset(clientPair.hardwareClient.responseMock);
 
         clientPair.hardwareClient.send("hardware vw 1 38");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 38"))));
+        clientPair.appClient.verifyResult(hardware(1, "1-0 vw 1 38"));
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("dw 9 1"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("1 dw 9 1"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("1-0 dw 9 1"))));
     }
 
     @Test
     public void testTriggerOnlyOnceOnCondition() throws Exception {
         Eventor eventor = oneRuleEventor("if v1 < 37 then setpin v2 123");
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.createWidget(1, eventor);
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 1 36");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 36"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 123"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("1 vw 2 123"))));
+        clientPair.appClient.verifyResult(hardware(1, "1-0 vw 1 36"));
+        clientPair.hardwareClient.verifyResult(hardware(888, "vw 2 123"));
+        clientPair.appClient.verifyResult(hardware(888, "1-0 vw 2 123"));
 
         clientPair.hardwareClient.reset();
         clientPair.appClient.reset();
 
         clientPair.hardwareClient.send("hardware vw 1 36");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 36"))));
+        clientPair.appClient.verifyResult(hardware(1, "1-0 vw 1 36"));
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 123"))));
-        verify(clientPair.appClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(produce(888, HARDWARE, b("1 vw 2 123"))));
+        verify(clientPair.appClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(produce(888, HARDWARE, b("1-0 vw 2 123"))));
 
         clientPair.hardwareClient.send("hardware vw 1 36");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("1 vw 1 36"))));
+        clientPair.appClient.verifyResult(hardware(2, "1-0 vw 1 36"));
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 123"))));
-        verify(clientPair.appClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(produce(888, HARDWARE, b("1 vw 2 123"))));
+        verify(clientPair.appClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(produce(888, HARDWARE, b("1-0 vw 2 123"))));
 
         clientPair.hardwareClient.send("hardware vw 1 38");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, HARDWARE, b("1 vw 1 38"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, HARDWARE, b("1-0 vw 1 38"))));
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 123"))));
-        verify(clientPair.appClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(produce(888, HARDWARE, b("1 vw 2 123"))));
+        verify(clientPair.appClient.responseMock, timeout(500).times(0)).channelRead(any(), eq(produce(888, HARDWARE, b("1-0 vw 2 123"))));
 
         clientPair.hardwareClient.send("hardware vw 1 36");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(4, HARDWARE, b("1 vw 1 36"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 123"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("1 vw 2 123"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(4, HARDWARE, b("1-0 vw 1 36"))));
+        clientPair.hardwareClient.verifyResult(hardware(888, "vw 2 123"));
+        clientPair.appClient.verifyResult(hardware(888, "1-0 vw 2 123"));
     }
 
     @Test
     public void testEventorWorksForMultipleHardware() throws Exception {
-        TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
+        TestHardClient hardClient = new TestHardClient("localhost", properties.getHttpPort());
         hardClient.start();
 
-        clientPair.appClient.send("getToken 1");
-        String token = clientPair.appClient.getBody();
-        hardClient.send("login " + token);
-        verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        hardClient.login(clientPair.token);
+        hardClient.verifyResult(ok(1));
         clientPair.appClient.reset();
 
         Eventor eventor = oneRuleEventor("if v1 < 37 then setpin v2 123");
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.createWidget(1, eventor);
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 1 36");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 36"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 123"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("1 vw 2 123"))));
+        clientPair.appClient.verifyResult(hardware(1, "1-0 vw 1 36"));
+        clientPair.hardwareClient.verifyResult(hardware(888, "vw 2 123"));
+        clientPair.appClient.verifyResult(hardware(888, "1-0 vw 2 123"));
         verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 123"))));
     }
 
     @Test
     public void testPinModeForPWMPinForEventorAndSetPinAction() throws Exception {
-        clientPair.appClient.send("activate 1");
+        clientPair.appClient.activate(1);
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("pm 1 out 2 out 3 out 5 out 6 in 7 in 30 in 8 in"))));
         reset(clientPair.hardwareClient.responseMock);
 
@@ -551,29 +486,29 @@ public class EventorTest extends IntegrationBase {
                 SetPinActionType.CUSTOM
         );
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.createWidget(1, eventor);
+        clientPair.appClient.verifyResult(ok(1));
 
-        clientPair.appClient.send("activate 1");
+        clientPair.appClient.activate(1);
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("pm 1 out 2 out 3 out 5 out 6 in 7 in 30 in 8 in 9 out"))));
 
         clientPair.hardwareClient.send("hardware vw 1 38");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 38"))));
+        clientPair.appClient.verifyResult(hardware(1, "1-0 vw 1 38"));
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("aw 9 255"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("1 aw 9 255"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("1-0 aw 9 255"))));
     }
 
     @Test
     public void testSimpleRule2WorksFromAppSide() throws Exception {
         Eventor eventor = oneRuleEventor("if v1 >= 37 then setpin v2 123");
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.createWidget(1, eventor);
+        clientPair.appClient.verifyResult(ok(1));
 
-        clientPair.appClient.send("hardware 1 vw 1 37");
+        clientPair.appClient.send("hardware 1-0 vw 1 37");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 1 37"))));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 123"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("1 vw 2 123"))));
+        clientPair.hardwareClient.verifyResult(hardware(888, "vw 2 123"));
+        clientPair.appClient.verifyResult(hardware(888, "1-0 vw 2 123"));
     }
 
     @Test
@@ -588,16 +523,16 @@ public class EventorTest extends IntegrationBase {
 
         Eventor eventor = new Eventor(new Rule[] {rule});
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.createWidget(1, eventor);
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 1 38");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 38"))));
+        clientPair.appClient.verifyResult(hardware(1, "1-0 vw 1 38"));
 
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("vw 0 0"))));
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("vw 1 1"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("1 vw 0 0"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("1 vw 1 1"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("1-0 vw 0 0"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(888, HARDWARE, b("1-0 vw 1 1"))));
     }
 
     @Test
@@ -605,14 +540,96 @@ public class EventorTest extends IntegrationBase {
         Eventor eventor = oneRuleEventor("if v1 != 37 then setpin v2 123");
         eventor.deviceId = 1;
 
-        clientPair.appClient.send("createWidget 1\0" + JsonParser.MAPPER.writeValueAsString(eventor));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(1)));
+        clientPair.appClient.createWidget(1, eventor);
+        clientPair.appClient.verifyResult(ok(1));
 
         clientPair.hardwareClient.send("hardware vw 1 36");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1 vw 1 36"))));
-        verify(clientPair.hardwareClient.responseMock, after(300).never()).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 123"))));
-        verify(clientPair.appClient.responseMock, after(300).never()).channelRead(any(), eq(produce(888, HARDWARE, b("1 vw 2 123"))));
+        clientPair.appClient.verifyResult(hardware(1, "1-0 vw 1 36"));
+        clientPair.hardwareClient.never(hardware(888, "vw 2 123"));
+        clientPair.appClient.never(hardware(888, "1-0 vw 2 123"));
     }
 
+    @Test
+    public void testStringEqualsRule() throws Exception {
+        DataStream triggerStream = new DataStream((byte) 1, PinType.VIRTUAL);
+        SetPinAction setPinAction = new SetPinAction(new DataStream((byte) 2, PinType.VIRTUAL),
+                "123", SetPinActionType.CUSTOM);
 
+        Eventor eventor = new Eventor(new Rule[] {
+                new Rule(triggerStream, null, new StringEqual("abc"), new BaseAction[] {setPinAction}, true)
+        });
+
+        clientPair.appClient.createWidget(1, eventor);
+        clientPair.appClient.verifyResult(ok(1));
+
+        clientPair.hardwareClient.send("hardware vw 1 abc");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1-0 vw 1 abc"))));
+        clientPair.hardwareClient.verifyResult(hardware(888, "vw 2 123"));
+        clientPair.appClient.verifyResult(hardware(888, "1-0 vw 2 123"));
+    }
+
+    @Test
+    public void testValueChangedRule() throws Exception {
+        DataStream triggerStream = new DataStream((byte) 1, PinType.VIRTUAL);
+        SetPinAction setPinAction = new SetPinAction(new DataStream((byte) 2, PinType.VIRTUAL),
+                "123", SetPinActionType.CUSTOM);
+
+        Eventor eventor = new Eventor(new Rule[] {
+                new Rule(triggerStream, null, new ValueChanged("abc"), new BaseAction[] {setPinAction}, true)
+        });
+
+        clientPair.appClient.createWidget(1, eventor);
+        clientPair.appClient.verifyResult(ok(1));
+
+        clientPair.hardwareClient.send("hardware vw 1 changed");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1-0 vw 1 changed"))));
+        clientPair.hardwareClient.verifyResult(hardware(888, "vw 2 123"));
+        clientPair.appClient.verifyResult(hardware(888, "1-0 vw 2 123"));
+
+        clientPair.hardwareClient.reset();
+        clientPair.appClient.reset();
+
+        clientPair.hardwareClient.send("hardware vw 1 changed");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1-0 vw 1 changed"))));
+        clientPair.hardwareClient.never(hardware(888, "vw 2 123"));
+        clientPair.appClient.never(hardware(888, "1-0 vw 2 123"));
+    }
+
+    @Test
+    public void testStringNotEqualsRule() throws Exception {
+        DataStream triggerStream = new DataStream((byte) 1, PinType.VIRTUAL);
+        SetPinAction setPinAction = new SetPinAction(new DataStream((byte) 2, PinType.VIRTUAL),
+                "123", SetPinActionType.CUSTOM);
+
+        Eventor eventor = new Eventor(new Rule[] {
+                new Rule(triggerStream, null, new StringNotEqual("abc"), new BaseAction[] {setPinAction}, true)
+        });
+
+        clientPair.appClient.createWidget(1, eventor);
+        clientPair.appClient.verifyResult(ok(1));
+
+        clientPair.hardwareClient.send("hardware vw 1 ABC");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1-0 vw 1 ABC"))));
+        clientPair.hardwareClient.verifyResult(hardware(888, "vw 2 123"));
+        clientPair.appClient.verifyResult(hardware(888, "1-0 vw 2 123"));
+    }
+
+    @Test
+    public void testStringEqualsRuleWrongTrigger() throws Exception {
+        DataStream triggerStream = new DataStream((byte) 1, PinType.VIRTUAL);
+        SetPinAction setPinAction = new SetPinAction(new DataStream((byte) 2, PinType.VIRTUAL),
+                "123", SetPinActionType.CUSTOM);
+
+        Eventor eventor = new Eventor(new Rule[] {
+                new Rule(triggerStream, null, new StringEqual("abc"), new BaseAction[] {setPinAction}, true)
+        });
+
+        clientPair.appClient.createWidget(1, eventor);
+        clientPair.appClient.verifyResult(ok(1));
+
+        clientPair.hardwareClient.send("hardware vw 1 ABC");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1-0 vw 1 ABC"))));
+        verify(clientPair.hardwareClient.responseMock, never()).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 123"))));
+        verify(clientPair.appClient.responseMock, never()).channelRead(any(), eq(produce(888, HARDWARE, b("1-0 vw 2 123"))));
+    }
 }
