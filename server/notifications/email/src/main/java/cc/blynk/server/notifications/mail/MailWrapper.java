@@ -17,8 +17,10 @@ public class MailWrapper {
 
     public MailWrapper(MailProperties mailProperties, String productName) {
         String host = mailProperties.getProperty("mail.smtp.host");
-        if (host != null && host.contains("sparkpostmail")) {
-            client = new SparkPostMailClient(mailProperties, productName);
+        if (host != null && (host.contains("sparkpostmail") || host.contains("amazonaws.com"))) {
+            // Amazon AWS Simple Email Service uses an account (mail.from) distinct from the username,
+            // which is just like SparkPost.
+            client = new SparkPostMailClient(mailProperties);
         } else {
             client = new GMailClient(mailProperties);
         }
