@@ -22,9 +22,9 @@ import javax.mail.util.ByteArrayDataSource;
  * Created by Dmitriy Dumanskiy.
  * Created on 14.09.16.
  */
-public class SparkPostMailClient implements MailClient {
+public class ThirdPartyMailClient implements MailClient {
 
-    private static final Logger log = LogManager.getLogger(SparkPostMailClient.class);
+    private static final Logger log = LogManager.getLogger(ThirdPartyMailClient.class);
 
     private final Session session;
     private final InternetAddress from;
@@ -32,7 +32,7 @@ public class SparkPostMailClient implements MailClient {
     private final String username;
     private final String password;
 
-    SparkPostMailClient(MailProperties mailProperties, String productName) {
+    ThirdPartyMailClient(MailProperties mailProperties, String productName) {
         this.username = mailProperties.getSMTPUsername();
         this.password = mailProperties.getSMTPPassword();
         this.host = mailProperties.getSMTPHost();
