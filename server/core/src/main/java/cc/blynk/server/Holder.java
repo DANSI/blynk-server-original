@@ -159,7 +159,7 @@ public class Holder {
 
         String contactEmail = serverProperties.getProperty("contact.email", mailProperties.getSMTPUsername());
         this.sslContextHolder = new SslContextHolder(props, contactEmail);
-        this.tokensPool = new TokensPool(TimeUnit.MINUTES.toMillis(60));
+        this.tokensPool = new TokensPool(serverProperties.getReportingFolder(), TimeUnit.MINUTES.toMillis(60));
     }
 
     //for tests only
@@ -217,7 +217,7 @@ public class Holder {
         this.reportScheduler = new ReportScheduler(1, downloadUrl, mailWrapper, reportingDiskDao, userDao.users);
 
         this.sslContextHolder = new SslContextHolder(props, "test@blynk.cc");
-        this.tokensPool = new TokensPool(TimeUnit.MINUTES.toMillis(60));
+        this.tokensPool = new TokensPool(serverProperties.getReportingFolder(), TimeUnit.MINUTES.toMillis(60));
 
     }
 
@@ -243,5 +243,6 @@ public class Holder {
         System.out.println("Stopping DBManager...");
         dbManager.close();
         reportingDBManager.close();
+        tokensPool.close();
     }
 }

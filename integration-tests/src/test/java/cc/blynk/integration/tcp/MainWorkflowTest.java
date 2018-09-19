@@ -113,7 +113,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         appClient.send("resetPass start " + userName + " " + AppNameUtil.BLYNK);
         appClient.verifyResult(notAllowed(2));
 
-        String token = holder.tokensPool.getHolder().entrySet().iterator().next().getKey();
+        String token = holder.tokensPool.getTokens().entrySet().iterator().next().getKey();
         verify(holder.mailWrapper).sendWithAttachment(eq(userName), eq("Password restoration for your Blynk account."), contains("http://blynk-cloud.com/restore?token=" + token), any(QrHolder.class));
 
         appClient.send("resetPass verify 123");
