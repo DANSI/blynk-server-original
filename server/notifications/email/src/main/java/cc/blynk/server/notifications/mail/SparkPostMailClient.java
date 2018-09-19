@@ -69,7 +69,8 @@ public class SparkPostMailClient implements MailClient {
             transport.sendMessage(message, message.getAllRecipients());
         }
 
-        log.trace("Mail to {} was sent. Subj : {}, body : {}", to, subj, body);
+        log.debug("Mail sent to {}. Subj: {}", to, subj);
+        log.trace("Mail body: {}", body);
     }
 
     @Override
@@ -99,7 +100,8 @@ public class SparkPostMailClient implements MailClient {
             transport.sendMessage(message, message.getAllRecipients());
         }
 
-        log.trace("Mail to {} was sent. Subj : {}, body : {}", to, subj, body);
+        log.debug("Mail sent to {}. Subj: {}", to, subj);
+        log.trace("Mail body: {}", body);
     }
 
 }
