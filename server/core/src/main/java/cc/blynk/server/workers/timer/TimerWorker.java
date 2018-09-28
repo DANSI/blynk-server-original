@@ -20,14 +20,13 @@ import cc.blynk.server.core.model.widgets.ui.tiles.Tile;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.processors.EventorProcessor;
 import cc.blynk.server.notifications.push.GCMWrapper;
-import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.DateTimeUtils;
+import cc.blynk.utils.IntArray;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -244,15 +243,15 @@ public class TimerWorker implements Runnable {
                 if (key.isTilesTimer()) {
                     Widget widget = dash.getWidgetById(key.deviceTilesId);
                     if (widget instanceof DeviceTiles) {
-                        List<Integer> list = new ArrayList<>();
+                        IntArray intArray = new IntArray();
                         DeviceTiles deviceTiles = (DeviceTiles) widget;
                         for (Tile tile : deviceTiles.tiles) {
                             if (tile.templateId == key.templateId) {
-                                list.add(tile.deviceId);
+                                intArray.add(tile.deviceId);
                             }
                         }
-                        if (list.size() > 0) {
-                            deviceIds = ArrayUtil.convertIntegersToInt(list);
+                        if (intArray.size() > 0) {
+                            deviceIds = intArray.toArray();
                         }
                     }
                 } else {
