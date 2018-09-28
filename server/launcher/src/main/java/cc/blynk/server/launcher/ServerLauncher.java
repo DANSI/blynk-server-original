@@ -16,7 +16,6 @@ import cc.blynk.utils.properties.GCMProperties;
 import cc.blynk.utils.properties.MailProperties;
 import cc.blynk.utils.properties.Placeholders;
 import cc.blynk.utils.properties.ServerProperties;
-import cc.blynk.utils.properties.SlackProperties;
 import cc.blynk.utils.properties.SmsProperties;
 import cc.blynk.utils.properties.TwitterProperties;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -71,13 +70,12 @@ public final class ServerLauncher {
         SmsProperties smsProperties = new SmsProperties(cmdProperties);
         GCMProperties gcmProperties = new GCMProperties(cmdProperties);
         TwitterProperties twitterProperties = new TwitterProperties(cmdProperties);
-        SlackProperties slackProperties = new SlackProperties(cmdProperties);
 
         Security.addProvider(new BouncyCastleProvider());
 
         boolean restore = Boolean.parseBoolean(cmdProperties.get(ArgumentsParser.RESTORE_OPTION));
         start(serverProperties, mailProperties, smsProperties,
-                gcmProperties, twitterProperties, slackProperties, restore);
+                gcmProperties, twitterProperties, restore);
     }
 
     private static void setGlobalProperties(ServerProperties serverProperties) {
@@ -96,10 +94,10 @@ public final class ServerLauncher {
 
     private static void start(ServerProperties serverProperties, MailProperties mailProperties,
                               SmsProperties smsProperties, GCMProperties gcmProperties,
-                              TwitterProperties twitterProperties, SlackProperties slackProperties,
+                              TwitterProperties twitterProperties,
                               boolean restore) {
         Holder holder = new Holder(serverProperties,
-                mailProperties, smsProperties, gcmProperties, twitterProperties, slackProperties,
+                mailProperties, smsProperties, gcmProperties, twitterProperties,
                 restore);
 
         BaseServer[] servers = new BaseServer[] {
