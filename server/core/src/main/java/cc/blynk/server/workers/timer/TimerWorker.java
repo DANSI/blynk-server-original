@@ -250,9 +250,7 @@ public class TimerWorker implements Runnable {
                                 intArray.add(tile.deviceId);
                             }
                         }
-                        if (intArray.size() > 0) {
-                            deviceIds = intArray.toArray();
-                        }
+                        deviceIds = intArray.toArray();
                     }
                 } else {
                     Target target = dash.getTarget(key.deviceId);
