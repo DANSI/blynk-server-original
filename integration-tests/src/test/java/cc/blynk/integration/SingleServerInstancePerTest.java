@@ -55,7 +55,6 @@ public abstract class SingleServerInstancePerTest extends CounterBase {
         reset(holder.twitterWrapper);
         reset(holder.gcmWrapper);
         reset(holder.smsWrapper);
-        reset(holder.slackWrapper);
     }
 
     public ClientPair initAppAndHardPair() throws Exception {
