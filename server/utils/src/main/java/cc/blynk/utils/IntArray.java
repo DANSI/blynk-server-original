@@ -26,7 +26,7 @@ public class IntArray {
     }
 
     private static int hugeCapacity(int minCapacity) {
-        if (minCapacity < 0) {// overflow
+        if (minCapacity < 0) { // overflow
             throw new OutOfMemoryError();
         }
         return (minCapacity > MAX_ARRAY_SIZE)
