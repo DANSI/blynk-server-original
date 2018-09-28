@@ -77,6 +77,9 @@ public class IntArray {
     }
 
     public int[] toArray() {
+        if (size == 0) {
+            return EMPTY;
+        }
         return Arrays.copyOf(elementData, size);
     }
 }
