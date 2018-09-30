@@ -245,6 +245,7 @@ public final class Command {
 
             put(EVENTOR, "Eventor");
             put(WEB_HOOKS, "WebHooks");
+            put(GET_DEVICE, "GetDevice");
         }
     });
 
