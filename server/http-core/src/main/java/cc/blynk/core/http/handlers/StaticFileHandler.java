@@ -186,7 +186,7 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
 
         Path path;
         String uri = request.uri();
-        uri = uri.replaceAll("/..", "");
+        uri = uri.replace("/..", "");
         //running from jar
         if (isUnpacked) {
             log.trace("Is unpacked.");
