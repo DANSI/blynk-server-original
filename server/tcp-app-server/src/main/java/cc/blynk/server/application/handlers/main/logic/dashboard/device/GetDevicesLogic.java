@@ -2,11 +2,10 @@ package cc.blynk.server.application.handlers.main.logic.dashboard.device;
 
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.DeviceStatusDTO;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import io.netty.channel.ChannelHandlerContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICES;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
@@ -18,8 +17,6 @@ import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
  */
 public final class GetDevicesLogic {
 
-    private static final Logger log = LogManager.getLogger(GetDevicesLogic.class);
-
     private GetDevicesLogic() {
     }
 
@@ -28,15 +25,16 @@ public final class GetDevicesLogic {
 
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
-        String response = JsonParser.toJson(dash.devices);
-        if (response == null) {
-            response = "[]";
+        String devicesJson;
+        if (dash.devices == null || dash.devices.length == 0) {
+            devicesJson = "[]";
+        } else {
+            DeviceStatusDTO[] deviceStatusDTOS = DeviceStatusDTO.transform(dash.devices);
+            devicesJson = JsonParser.toJson(deviceStatusDTOS);
         }
 
-        log.debug("Returning devices : {}", response);
-
         if (ctx.channel().isWritable()) {
-            ctx.writeAndFlush(makeUTF8StringMessage(GET_DEVICES, message.id, response), ctx.voidPromise());
+            ctx.writeAndFlush(makeUTF8StringMessage(GET_DEVICES, message.id, devicesJson), ctx.voidPromise());
         }
     }
 

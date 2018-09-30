@@ -300,6 +300,10 @@ public class TestAppClient extends BaseTestAppClient {
         send("exportReport " + dashId + BODY_SEPARATOR + reportId);
     }
 
+    public void getDevice(int dashId, int deviceId) {
+        send("getDevice " + dashId + BODY_SEPARATOR + deviceId);
+    }
+
     public void send(String line) {
         send(produceMessageBaseOnUserInput(line, ++msgId));
     }

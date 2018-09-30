@@ -1,11 +1,13 @@
 package cc.blynk.server.internal;
 
+import java.io.Serializable;
+
 /**
  * The Blynk project
  * Created by Andrew Zakordonets
  * Date : 12/05/2015.
  */
-public final class TokenUser {
+public final class TokenUser implements Serializable {
 
     public final String email;
     public final String appName;

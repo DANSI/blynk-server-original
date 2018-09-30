@@ -1,7 +1,6 @@
 package cc.blynk.server;
 
 import cc.blynk.server.core.BlockingIOProcessor;
-import cc.blynk.server.core.SlackWrapper;
 import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.dao.SessionDao;
@@ -27,7 +26,6 @@ import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.properties.GCMProperties;
 import cc.blynk.utils.properties.MailProperties;
 import cc.blynk.utils.properties.ServerProperties;
-import cc.blynk.utils.properties.SlackProperties;
 import cc.blynk.utils.properties.SmsProperties;
 import cc.blynk.utils.properties.TwitterProperties;
 import io.netty.channel.epoll.Epoll;
@@ -77,7 +75,6 @@ public class Holder {
 
     public final EventorProcessor eventorProcessor;
     public final DefaultAsyncHttpClient asyncHttpClient;
-    public final SlackWrapper slackWrapper;
 
     public final OTAManager otaManager;
 
@@ -92,7 +89,7 @@ public class Holder {
 
     public Holder(ServerProperties serverProperties, MailProperties mailProperties,
                   SmsProperties smsProperties, GCMProperties gcmProperties,
-                  TwitterProperties twitterProperties, SlackProperties slackProperties,
+                  TwitterProperties twitterProperties,
                   boolean restore) {
         disableNettyLeakDetector();
         this.props = serverProperties;
@@ -140,7 +137,6 @@ public class Holder {
         this.mailWrapper = new MailWrapper(mailProperties, serverProperties.productName);
         this.gcmWrapper = new GCMWrapper(gcmProperties, asyncHttpClient, serverProperties.productName);
         this.smsWrapper = new SMSWrapper(smsProperties, asyncHttpClient);
-        this.slackWrapper = new SlackWrapper(slackProperties, asyncHttpClient, serverProperties.region);
 
         this.otaManager = new OTAManager(props);
 
@@ -159,14 +155,14 @@ public class Holder {
 
         String contactEmail = serverProperties.getProperty("contact.email", mailProperties.getSMTPUsername());
         this.sslContextHolder = new SslContextHolder(props, contactEmail);
-        this.tokensPool = new TokensPool(TimeUnit.MINUTES.toMillis(60));
+        this.tokensPool = new TokensPool(serverProperties.getReportingFolder(), TimeUnit.MINUTES.toMillis(60));
     }
 
     //for tests only
     public Holder(ServerProperties serverProperties, TwitterWrapper twitterWrapper,
                   MailWrapper mailWrapper,
                   GCMWrapper gcmWrapper, SMSWrapper smsWrapper,
-                  SlackWrapper slackWrapper, BlockingIOProcessor blockingIOProcessor,
+                  BlockingIOProcessor blockingIOProcessor,
                   String dbFileName) {
         disableNettyLeakDetector();
         this.props = serverProperties;
@@ -191,7 +187,6 @@ public class Holder {
         this.mailWrapper = mailWrapper;
         this.gcmWrapper = gcmWrapper;
         this.smsWrapper = smsWrapper;
-        this.slackWrapper = slackWrapper;
 
         this.otaManager = new OTAManager(props);
 
@@ -217,7 +212,7 @@ public class Holder {
         this.reportScheduler = new ReportScheduler(1, downloadUrl, mailWrapper, reportingDiskDao, userDao.users);
 
         this.sslContextHolder = new SslContextHolder(props, "test@blynk.cc");
-        this.tokensPool = new TokensPool(TimeUnit.MINUTES.toMillis(60));
+        this.tokensPool = new TokensPool(serverProperties.getReportingFolder(), TimeUnit.MINUTES.toMillis(60));
 
     }
 
@@ -243,5 +238,6 @@ public class Holder {
         System.out.println("Stopping DBManager...");
         dbManager.close();
         reportingDBManager.close();
+        tokensPool.close();
     }
 }

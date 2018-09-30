@@ -6,15 +6,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.Closeable;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static cc.blynk.server.internal.SerializationUtil.deserialize;
+import static cc.blynk.server.internal.SerializationUtil.serialize;
 
 /**
  * The Blynk Project.
@@ -28,29 +26,30 @@ public class AverageAggregatorProcessor implements Closeable {
     public static final long MINUTE = 1000 * 60;
     public static final long HOUR = 60 * MINUTE;
     public static final long DAY = 24 * HOUR;
-    public static final String MINUTE_TEMP_FILENAME = "minute_temp.bin";
-    public static final String HOURLY_TEMP_FILENAME = "hourly_temp.bin";
-    public static final String DAILY_TEMP_FILENAME = "daily_temp.bin";
+    static final String MINUTE_TEMP_FILENAME = "minute_temp.bin";
+    static final String HOURLY_TEMP_FILENAME = "hourly_temp.bin";
+    static final String DAILY_TEMP_FILENAME = "daily_temp.bin";
     private final String dataFolder;
     private final ConcurrentHashMap<AggregationKey, AggregationValue> minute;
     private final ConcurrentHashMap<AggregationKey, AggregationValue> hourly;
     private final ConcurrentHashMap<AggregationKey, AggregationValue> daily;
 
+    @SuppressWarnings("unchecked")
     public AverageAggregatorProcessor(String dataFolder) {
         this.dataFolder = dataFolder;
 
         Path path;
 
         path = Paths.get(dataFolder, MINUTE_TEMP_FILENAME);
-        this.minute = read(path);
+        this.minute = (ConcurrentHashMap<AggregationKey, AggregationValue>) deserialize(path);
         FileUtils.deleteQuietly(path);
 
         path = Paths.get(dataFolder, HOURLY_TEMP_FILENAME);
-        this.hourly = read(path);
+        this.hourly = (ConcurrentHashMap<AggregationKey, AggregationValue>) deserialize(path);
         FileUtils.deleteQuietly(path);
 
         path = Paths.get(dataFolder, DAILY_TEMP_FILENAME);
-        this.daily = read(path);
+        this.daily = (ConcurrentHashMap<AggregationKey, AggregationValue>) deserialize(path);
         FileUtils.deleteQuietly(path);
     }
 
@@ -90,35 +89,10 @@ public class AverageAggregatorProcessor implements Closeable {
             log.info("Too many minute records ({}). "
                     + "This may cause performance issues on server start. Skipping.", minute.size());
         } else {
-            write(Paths.get(dataFolder, MINUTE_TEMP_FILENAME), minute);
+            serialize(Paths.get(dataFolder, MINUTE_TEMP_FILENAME), minute);
         }
-        write(Paths.get(dataFolder, HOURLY_TEMP_FILENAME), hourly);
-        write(Paths.get(dataFolder, DAILY_TEMP_FILENAME), daily);
-    }
-
-    @SuppressWarnings("unchecked")
-    private static ConcurrentHashMap<AggregationKey, AggregationValue> read(Path path) {
-        if (Files.exists(path)) {
-            try (InputStream is = Files.newInputStream(path);
-                 ObjectInputStream objectinputstream = new ObjectInputStream(is)) {
-                return (ConcurrentHashMap<AggregationKey, AggregationValue>) objectinputstream.readObject();
-            } catch (Exception e) {
-                log.error(e);
-            }
-        }
-
-        return new ConcurrentHashMap<>();
-    }
-
-    private static void write(Path path, Map<AggregationKey, AggregationValue> map) {
-        if (map.size() > 0) {
-            try (OutputStream os = Files.newOutputStream(path);
-                 ObjectOutputStream oos = new ObjectOutputStream(os)) {
-                oos.writeObject(map);
-            } catch (Exception e) {
-                log.error(e);
-            }
-        }
+        serialize(Paths.get(dataFolder, HOURLY_TEMP_FILENAME), hourly);
+        serialize(Paths.get(dataFolder, DAILY_TEMP_FILENAME), daily);
     }
 
 }
