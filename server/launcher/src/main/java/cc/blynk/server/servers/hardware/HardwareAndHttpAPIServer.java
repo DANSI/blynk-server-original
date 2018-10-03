@@ -16,10 +16,12 @@ import cc.blynk.server.api.websockets.handlers.WebSocketWrapperEncoder;
 import cc.blynk.server.common.handlers.AlreadyLoggedHandler;
 import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
+import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.hardware.handlers.hardware.HardwareChannelStateHandler;
 import cc.blynk.server.hardware.handlers.hardware.auth.HardwareLoginHandler;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.utils.FileUtils;
+import cc.blynk.utils.NumberUtil;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
@@ -50,20 +52,20 @@ public class HardwareAndHttpAPIServer extends BaseServer {
         super(holder.props.getProperty("listen.address"),
                 holder.props.getIntProperty("http.port"), holder.transportTypeHolder);
 
-        var letsEncryptHandler = new LetsEncryptHandler(holder.sslContextHolder.contentHolder);
-        var hardwareLoginHandler = new HardwareLoginHandler(holder, port);
-        var hardwareChannelStateHandler = new HardwareChannelStateHandler(holder);
-        var alreadyLoggedHandler = new AlreadyLoggedHandler();
-        var maxWebLength = holder.limits.webRequestMaxSize;
-        var hardTimeoutSecs = holder.limits.hardwareIdleTimeout;
+        LetsEncryptHandler letsEncryptHandler = new LetsEncryptHandler(holder.sslContextHolder.contentHolder);
+        HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(holder, port);
+        HardwareChannelStateHandler hardwareChannelStateHandler = new HardwareChannelStateHandler(holder);
+        AlreadyLoggedHandler alreadyLoggedHandler = new AlreadyLoggedHandler();
+        int maxWebLength = holder.limits.webRequestMaxSize;
+        int hardTimeoutSecs = NumberUtil.calcHeartbeatTimeout(holder.limits.hardwareIdleTimeout);
 
-        var stats = holder.stats;
+        GlobalStats stats = holder.stats;
 
         //http API handlers
-        var resetPasswordLogic = new ResetPasswordHttpLogic(holder);
-        var httpAPILogic = new HttpAPILogic(holder);
-        var noMatchHandler = new NoMatchHandler();
-        var baseWebSocketUnificator = new BaseWebSocketUnificator() {
+        ResetPasswordHttpLogic resetPasswordLogic = new ResetPasswordHttpLogic(holder);
+        HttpAPILogic httpAPILogic = new HttpAPILogic(holder);
+        NoMatchHandler noMatchHandler = new NoMatchHandler();
+        BaseWebSocketUnificator baseWebSocketUnificator = new BaseWebSocketUnificator() {
             @Override
             public void channelRead(ChannelHandlerContext ctx, Object msg) {
                 var req = (FullHttpRequest) msg;
