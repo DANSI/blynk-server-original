@@ -424,6 +424,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
         hardClient2.login(devices[0].token);
         hardClient2.verifyResult(ok(1));
+        clientPair.appClient.verifyResult(hardwareConnected(1, "1-0"));
 
         clientPair.appClient.reset();
 
