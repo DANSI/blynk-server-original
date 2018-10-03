@@ -123,7 +123,12 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
             dash.updatedAt = System.currentTimeMillis();
         }
 
-        HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(user, tokenValue.dash, device);
+        createSessionAndReregister(ctx, user, dash, device, message.id);
+    }
+
+    private void createSessionAndReregister(ChannelHandlerContext ctx,
+                                            User user, DashBoard dash, Device device, int msgId) {
+        HardwareStateHolder hardwareStateHolder = new HardwareStateHolder(user, dash, device);
 
         ChannelPipeline pipeline = ctx.pipeline();
         pipeline.replace(this, "HHArdwareHandler", new HardwareHandler(holder, hardwareStateHolder));
@@ -132,11 +137,11 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
                 hardwareStateHolder.userKey, ctx.channel().eventLoop());
 
         if (session.isSameEventLoop(ctx)) {
-            completeLogin(ctx.channel(), session, user, dash, device, message.id);
+            completeLogin(ctx.channel(), session, user, dash, device, msgId);
         } else {
             log.debug("Re registering hard channel. {}", ctx.channel());
             ReregisterChannelUtil.reRegisterChannel(ctx, session, channelFuture ->
-                    completeLogin(channelFuture.channel(), session, user, dash, device, message.id));
+                    completeLogin(channelFuture.channel(), session, user, dash, device, msgId));
         }
     }
 
