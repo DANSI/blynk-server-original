@@ -424,6 +424,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
         hardClient2.login(devices[0].token);
         hardClient2.verifyResult(ok(1));
+        clientPair.appClient.verifyResult(hardwareConnected(1, "1-0"));
 
         clientPair.appClient.reset();
 
@@ -582,7 +583,7 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
     public void testTemporaryTokenWorksAsExpected() throws Exception {
         Device device1 = new Device(1, "My Device", BoardType.ESP8266);
 
-        clientPair.appClient.send("getProvisionToken 1\0" + device1.toString());
+        clientPair.appClient.getProvisionToken(1, device1);
         device1 = clientPair.appClient.parseDevice(1);
         assertNotNull(device1);
         assertEquals(1, device1.id);

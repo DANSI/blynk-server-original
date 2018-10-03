@@ -21,6 +21,7 @@ import cc.blynk.server.hardware.handlers.hardware.HardwareChannelStateHandler;
 import cc.blynk.server.hardware.handlers.hardware.auth.HardwareLoginHandler;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.utils.FileUtils;
+import cc.blynk.utils.NumberUtil;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
@@ -56,7 +57,7 @@ public class HardwareAndHttpAPIServer extends BaseServer {
         HardwareChannelStateHandler hardwareChannelStateHandler = new HardwareChannelStateHandler(holder);
         AlreadyLoggedHandler alreadyLoggedHandler = new AlreadyLoggedHandler();
         int maxWebLength = holder.limits.webRequestMaxSize;
-        int hardTimeoutSecs = holder.limits.hardwareIdleTimeout;
+        int hardTimeoutSecs = NumberUtil.calcHeartbeatTimeout(holder.limits.hardwareIdleTimeout);
 
         GlobalStats stats = holder.stats;
 

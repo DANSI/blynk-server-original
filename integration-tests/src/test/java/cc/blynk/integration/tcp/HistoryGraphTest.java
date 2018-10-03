@@ -2025,7 +2025,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         Path pinReportingDataPath3 = Paths.get(tempDir, "data", getUserName(),
                 ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 7, GraphGranularityType.HOURLY));
 
-        int STORAGE_PERIOD = 15;
+        int STORAGE_PERIOD = 10;
         //write max amount of data for 1 week + 1 point
         for (int i = 0; i < STORAGE_PERIOD * 24 * 60 + 1; i++) {
             FileUtils.write(pinReportingDataPath1, 1.11D, i);

@@ -172,4 +172,7 @@ public final class NumberUtil {
         return (numSign) ? number : -number;
     }
 
+    public static int calcHeartbeatTimeout(int heartbeatInterval) {
+        return (int) Math.ceil(heartbeatInterval * 2.3D);
+    }
 }

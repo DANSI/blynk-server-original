@@ -312,6 +312,10 @@ public class TestAppClient extends BaseTestAppClient {
         send(produceMessageBaseOnUserInput(line, id));
     }
 
+    public void getProvisionToken(int dashId, Device device) {
+        send("getProvisionToken " + dashId + BODY_SEPARATOR + device.toString());
+    }
+
     public void replace(SimpleClientHandler simpleClientHandler) {
         this.channel.pipeline().removeLast();
         this.channel.pipeline().addLast(simpleClientHandler);
