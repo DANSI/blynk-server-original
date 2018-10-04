@@ -37,7 +37,7 @@ public abstract class BaseHttpAndBlynkUnificationHandler extends ByteToMessageDe
         if (isHttp(header4Bytes)) {
             return buildHttpPipeline(pipeline);
         }
-        if (isHardwarePipeline(header4Bytes, lastByteOfHeader)){
+        if (isHardwarePipeline(header4Bytes, lastByteOfHeader)) {
             return buildHardwarePipeline(pipeline);
         }
         return buildAppPipeline(pipeline);
