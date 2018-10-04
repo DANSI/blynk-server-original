@@ -3,13 +3,12 @@ package cc.blynk.server.application.handlers.main.logic.dashboard.widget.tile;
 import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
+import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.Arrays;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.split3;
@@ -51,19 +50,14 @@ public final class UpdateTileTemplateLogic {
 
         var deviceTiles = (DeviceTiles) widget;
 
-        var newTileTemplate = JsonParser.parseTileTemplate(tileTemplateString, message.id);
-        var existingTileTemplateIndex = deviceTiles.getTileTemplateIndexByIdOrThrow(newTileTemplate.id);
-        var existingTileTemplate = deviceTiles.templates[existingTileTemplateIndex];
+        TileTemplate newTileTemplate = JsonParser.parseTileTemplate(tileTemplateString, message.id);
+        int existingTileTemplateIndex = deviceTiles.getTileTemplateIndexByIdOrThrow(newTileTemplate.id);
+        TileTemplate existingTileTemplate = deviceTiles.templates[existingTileTemplateIndex];
 
         deviceTiles.recreateTilesIfNecessary(newTileTemplate, existingTileTemplate);
 
-        var updatedTemplates = Arrays.copyOf(deviceTiles.templates, deviceTiles.templates.length);
-        updatedTemplates[existingTileTemplateIndex] = newTileTemplate;
-        //do not override widgets field, as we have separate commands for it.
-        newTileTemplate.widgets = existingTileTemplate.widgets;
-
         log.debug("Updating tile template {}.", tileTemplateString);
-        deviceTiles.templates = updatedTemplates;
+        deviceTiles.replaceTileTemplate(newTileTemplate, existingTileTemplateIndex);
 
         dash.cleanPinStorage(deviceTiles, true, false);
 
