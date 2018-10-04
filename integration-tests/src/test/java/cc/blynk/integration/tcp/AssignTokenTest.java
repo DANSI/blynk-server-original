@@ -2,6 +2,8 @@ package cc.blynk.integration.tcp;
 
 import cc.blynk.integration.SingleServerInstancePerTestWithDB;
 import cc.blynk.integration.model.tcp.TestHardClient;
+import cc.blynk.integration.model.tcp.TestSslHardClient;
+import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.db.model.FlashedToken;
@@ -80,5 +82,17 @@ public class AssignTokenTest extends SingleServerInstancePerTestWithDB {
         assertEquals(Status.ONLINE, devices[0].status);
     }
 
+    @Test
+    public void testConnectTo443PortForHardware() throws Exception {
+        clientPair.appClient.createDevice(1, new Device(1, "My Device", BoardType.ESP8266));
+        Device device = clientPair.appClient.parseDevice();
+        assertNotNull(device);
+        assertNotNull(device.token);
 
+        TestSslHardClient hardClient2 = new TestSslHardClient("localhost", properties.getHttpsPort());
+        hardClient2.start();
+
+        hardClient2.login(device.token);
+        hardClient2.verifyResult(ok(1));
+    }
 }

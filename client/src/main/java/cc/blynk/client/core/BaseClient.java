@@ -16,6 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.nio.channels.UnresolvedAddressException;
 import java.util.Collections;
@@ -139,6 +140,18 @@ public abstract class BaseClient {
         } catch (InterruptedException e) {
             log.error(e);
         }
+    }
+
+    protected File makeCertificateFile(String propertyName) {
+        String path = props.getProperty(propertyName);
+        if (path == null || path.isEmpty()) {
+            path = "";
+        }
+        File file = new File(path);
+        if (!file.exists()) {
+            log.warn("{} file was not found at {} location", propertyName, path);
+        }
+        return file;
     }
 
     protected abstract ChannelInitializer<SocketChannel> getChannelInitializer();

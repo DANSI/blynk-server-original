@@ -59,7 +59,7 @@ messages between Blynk mobile application and various microcontroller boards and
 - Java 8/10 required (OpenJDK, Oracle) 
 - Any OS that can run java 
 - At least 30 MB of RAM (could be less with tuning)
-- Open ports 9443 (for app), 8080 (for hardware without ssl), 8441 (for hardware with ssl)
+- Open ports 9443 (for app and hardware with ssl), 8080 (for hardware without ssl)
 
 [Ubuntu java installation instruction](#install-java-for-ubuntu).
 
@@ -137,7 +137,7 @@ That's it!
 + Install [Docker](https://docs.docker.com/install/)
 + Run Docker container
 
-        docker run -p 8080:8080 -p 8441:8441 -p 9443:9443 mpherg/blynk-server
+        docker run -p 8080:8080 -p 9443:9443 mpherg/blynk-server
 
 ### Full customisation
 
@@ -298,11 +298,6 @@ Available server options:
 + Http, hardware and web sockets port
 
         http.port=8080
-
-
-+ Hardware ssl/tls port (for hardware that supports SSL/TLS sockets)
-
-        hardware.ssl.port=8441
         
         
 + For simplicity Blynk already provides server jar with built in SSL certificates, so you have working server out of the box via SSL/TLS sockets. But as certificate and it's private key are in public this is totally not secure. So in order to fix that you need to provide your own certificates. And change below properties with path to your cert. and private key and it's password. See how to generate self-signed certificates [here](#generate-ssl-certificates)
@@ -631,7 +626,7 @@ Blynk has a bunch of integration tests that require DB, so you have to skip test
         mvn clean install -Dmaven.test.skip=true
         
 ### How Blynk Works?
-When hardware connects to Blynk cloud it opens either keep-alive ssl/tls connection on port 8441 or keep-alive plain 
+When hardware connects to Blynk cloud it opens either keep-alive ssl/tls connection on port 443 (9443 for local servers) or keep-alive plain
 tcp/ip connection on port 8080. Blynk app opens mutual ssl/tls connection to Blynk Cloud on port 443 (9443 for local servers).
 Blynk Cloud is responsible for forwarding messages between hardware and app. In both (app and hardware) connections Blynk uses 
 own binary protocol described below.

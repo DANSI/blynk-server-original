@@ -42,6 +42,7 @@ import cc.blynk.server.hardware.handlers.hardware.HardwareChannelStateHandler;
 import cc.blynk.server.hardware.handlers.hardware.auth.HardwareLoginHandler;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.utils.FileUtils;
+import cc.blynk.utils.NumberUtil;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
@@ -115,6 +116,7 @@ public class AppAndHttpsServer extends BaseServer {
                 new CookieBasedUrlReWriterHandler(rootPath, "/static/admin.html", "/static/login.html");
 
         var alreadyLoggedHandler = new AlreadyLoggedHandler();
+        int hardTimeoutSecs = NumberUtil.calcHeartbeatTimeout(holder.limits.hardwareIdleTimeout);
 
         var baseWebSocketUnificator = new BaseWebSocketUnificator() {
             @Override
@@ -256,8 +258,8 @@ public class AppAndHttpsServer extends BaseServer {
                     }
 
                     @Override
-                    public ChannelPipeline buildBlynkPipeline(ChannelPipeline pipeline) {
-                        log.trace("Blynk protocol connection detected.", pipeline.channel());
+                    public ChannelPipeline buildAppPipeline(ChannelPipeline pipeline) {
+                        log.trace("Blynk app protocol connection detected.", pipeline.channel());
                         return pipeline
                                 .addFirst("AChannelState", appChannelStateHandler)
                                 .addFirst("AReadTimeout", new IdleStateHandler(appIdleTimeout, 0, 0))
@@ -269,6 +271,19 @@ public class AppAndHttpsServer extends BaseServer {
                                 .addLast("AResetPass", resetPasswordHandler)
                                 .addLast("AShareLogin", appShareLoginHandler)
                                 .addLast("ANotLogged", userNotLoggedHandler);
+                    }
+
+                    @Override
+                    public ChannelPipeline buildHardwarePipeline(ChannelPipeline pipeline) {
+                        log.trace("Blynk ssl hardware protocol connection detected.", pipeline.channel());
+                        return pipeline
+                                .addFirst("H_IdleStateHandler",
+                                        new IdleStateHandler(hardTimeoutSecs, 0, 0))
+                                .addLast("H_ChannelState", hardwareChannelStateHandler)
+                                .addLast("H_MessageDecoder", new MessageDecoder(holder.stats, holder.limits))
+                                .addLast("H_MessageEncoder", new MessageEncoder(holder.stats))
+                                .addLast("H_Login", hardwareLoginHandler)
+                                .addLast("H_AlreadyLogged", alreadyLoggedHandler);
                     }
                 });
             }
