@@ -25,6 +25,7 @@ If you need more information, please follow these links:
 - [Quick Local Server setup](#quick-local-server-setup)
 - [Enabling mail on Local server](#enabling-mail-on-local-server)
 - [Quick local server setup on Raspberry PI](#quick-local-server-setup-on-raspberry-pi)
+- [Docker container setup](#docker-container-setup)
 - [Enabling server auto restart on unix-like systems](#enabling-server-auto-restart-on-unix-like-systems)
 - [Enabling server auto restart on Windows](#enabling-server-auto-restart-on-windows)
 - [Update instruction for unix-like systems](#update-instruction-for-unix-like-systems)
@@ -129,14 +130,21 @@ That's it!
         Blynk Server successfully started.
         All server output is stored in current folder in 'logs/blynk.log' file.
 
-## Quick Docker container setup
+## Docker container setup
+
+### Quick Launch
 
 + Install [Docker](https://docs.docker.com/install/)
 + Run Docker container
 
         docker run -p 8080:8080 -p 8441:8441 -p 9443:9443 mpherg/blynk-server
 
-That's it!
+### Full customisation
+
++ Check [README](server/Docker) in docker folder
+
+
+
 
 ## Enabling server auto restart on unix-like systems
         
