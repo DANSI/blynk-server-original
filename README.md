@@ -131,10 +131,18 @@ That's it!
 
 ## Quick Docker container setup
 
+### Quick Launch
+
 + Install [Docker](https://docs.docker.com/install/)
 + Run Docker container
 
         docker run -p 8080:8080 -p 8441:8441 -p 9443:9443 mpherg/blynk-server
+
+### Full customisation
+
++ Check [README](server/Docker) in docker folder
+
+
 
 That's it!
 
