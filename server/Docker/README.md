@@ -14,7 +14,7 @@ docker build -t blynk .
 ### RUN
 
 ```bash
-docker run --name blynk-server -v ~/blynk-server/server/Docker:/data -p 8440:8440 -p 8441:8441 -p 8080:8080 -p 9443:9443 blynk &
+docker run --name blynk-server -v ~/blynk-server/server/Docker:/data -p 8440:8440 -p 8080:8080 -p 9443:9443 blynk &
 ```
 
 Don't forget to change the port attribution if you change on the ENV vars in Dockerfile
