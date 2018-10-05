@@ -12,7 +12,7 @@ import java.util.Arrays;
  */
 public class IntArray {
 
-    public static final int[] EMPTY = {};
+    private static final int[] EMPTY = {};
 
     private static final int DEFAULT_CAPACITY = 10;
     private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
