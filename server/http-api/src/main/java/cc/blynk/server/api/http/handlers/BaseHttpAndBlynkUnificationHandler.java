@@ -20,23 +20,31 @@ public abstract class BaseHttpAndBlynkUnificationHandler extends ByteToMessageDe
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
-        // Will use the first 4 bytes to detect a protocol.
-        if (in.readableBytes() < 4) {
+        // Will use the first 5 bytes to detect a protocol.
+        if (in.readableBytes() < 5) {
             return;
         }
 
-        int readerIndex = in.readerIndex();
-        long httpHeader4Bytes = in.getUnsignedInt(readerIndex);
+        //we can't simply read 5 bytes as 1 number, so split on 4 bytes and 1 byte read
+        long header4Bytes = in.getUnsignedInt(0);
+        short lastByteOfHeader = in.getUnsignedByte(4);
 
         ChannelPipeline pipeline = ctx.pipeline();
-        buildPipeline(pipeline, httpHeader4Bytes).remove(this);
+        buildPipeline(pipeline, header4Bytes, lastByteOfHeader).remove(this);
     }
 
-    private ChannelPipeline buildPipeline(ChannelPipeline pipeline, long magic) {
-        if (isHttp(magic)) {
+    private ChannelPipeline buildPipeline(ChannelPipeline pipeline, long header4Bytes, short lastByteOfHeader) {
+        if (isHttp(header4Bytes)) {
             return buildHttpPipeline(pipeline);
         }
-        return buildBlynkPipeline(pipeline);
+        if (isHardwarePipeline(header4Bytes, lastByteOfHeader)) {
+            return buildHardwarePipeline(pipeline);
+        }
+        return buildAppPipeline(pipeline);
+    }
+
+    private static boolean isHardwarePipeline(long header4Bytes, short lastByteOfHeader) {
+        return header4Bytes == 486539520L && lastByteOfHeader == 32;
     }
 
     /**
@@ -57,7 +65,9 @@ public abstract class BaseHttpAndBlynkUnificationHandler extends ByteToMessageDe
 
     public abstract ChannelPipeline buildHttpPipeline(ChannelPipeline pipeline);
 
-    public abstract ChannelPipeline buildBlynkPipeline(ChannelPipeline pipeline);
+    public abstract ChannelPipeline buildAppPipeline(ChannelPipeline pipeline);
+
+    public abstract ChannelPipeline buildHardwarePipeline(ChannelPipeline pipeline);
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {

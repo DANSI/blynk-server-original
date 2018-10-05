@@ -13,8 +13,6 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Arrays;
-
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.utils.StringUtils.split3;
 
@@ -61,13 +59,8 @@ public final class UpdateTileTemplateLogic {
 
         deviceTiles.recreateTilesIfNecessary(newTileTemplate, existingTileTemplate);
 
-        TileTemplate[] updatedTemplates = Arrays.copyOf(deviceTiles.templates, deviceTiles.templates.length);
-        updatedTemplates[existingTileTemplateIndex] = newTileTemplate;
-        //do not override widgets field, as we have separate commands for it.
-        newTileTemplate.widgets = existingTileTemplate.widgets;
-
         log.debug("Updating tile template {}.", tileTemplateString);
-        deviceTiles.templates = updatedTemplates;
+        deviceTiles.replaceTileTemplate(newTileTemplate, existingTileTemplateIndex);
 
         dash.cleanPinStorage(deviceTiles, true, false);
 

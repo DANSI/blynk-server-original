@@ -25,6 +25,7 @@ If you need more information, please follow these links:
 - [Quick Local Server setup](#quick-local-server-setup)
 - [Enabling mail on Local server](#enabling-mail-on-local-server)
 - [Quick local server setup on Raspberry PI](#quick-local-server-setup-on-raspberry-pi)
+- [Docker container setup](#docker-container-setup)
 - [Enabling server auto restart on unix-like systems](#enabling-server-auto-restart-on-unix-like-systems)
 - [Enabling server auto restart on Windows](#enabling-server-auto-restart-on-windows)
 - [Update instruction for unix-like systems](#update-instruction-for-unix-like-systems)
@@ -58,7 +59,7 @@ messages between Blynk mobile application and various microcontroller boards and
 - Java 8/10 required (OpenJDK, Oracle) 
 - Any OS that can run java 
 - At least 30 MB of RAM (could be less with tuning)
-- Open ports 9443 (for app), 8080 (for hardware without ssl), 8441 (for hardware with ssl)
+- Open ports 9443 (for app and hardware with ssl), 8080 (for hardware without ssl)
 
 [Ubuntu java installation instruction](#install-java-for-ubuntu).
 
@@ -73,7 +74,7 @@ For Windows download Java [here](http://download.oracle.com/otn-pub/java/jdk/10.
 
 + Run the server on default 'hardware port 8080' and default 'application port 9443' (SSL port)
 
-        java -jar server-0.39.8.jar -dataFolder /path
+        java -jar server-0.39.9.jar -dataFolder /path
         
 That's it! 
 
@@ -116,11 +117,11 @@ Go [here](https://www.google.com/settings/security/lesssecureapps) and then clic
         
 + Download Blynk server jar file (or manually copy it to Raspberry Pi via ssh and scp command): 
    
-        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.39.8/server-0.39.8-java8.jar"
+        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.39.9/server-0.39.9-java8.jar"
 
 + Run the server on default 'hardware port 8080' and default 'application port 9443' (SSL port)
 
-        java -jar server-0.39.8-java8.jar -dataFolder /home/pi/Blynk
+        java -jar server-0.39.9-java8.jar -dataFolder /home/pi/Blynk
         
 That's it! 
 
@@ -129,20 +130,27 @@ That's it!
         Blynk Server successfully started.
         All server output is stored in current folder in 'logs/blynk.log' file.
 
-## Quick Docker container setup
+## Docker container setup
+
+### Quick Launch
 
 + Install [Docker](https://docs.docker.com/install/)
 + Run Docker container
 
-        docker run -p 8080:8080 -p 8441:8441 -p 9443:9443 mpherg/blynk-server
+        docker run -p 8080:8080 -p 9443:9443 mpherg/blynk-server
 
-That's it!
+### Full customisation
+
++ Check [README](server/Docker) in docker folder
+
+
+
 
 ## Enabling server auto restart on unix-like systems
         
 + To enable server auto restart find /etc/rc.local file and add:
 
-        java -jar /home/pi/server-0.39.8.jar -dataFolder /home/pi/Blynk &
+        java -jar /home/pi/server-0.39.9.jar -dataFolder /home/pi/Blynk &
         
 + Or if the approach above doesn't work, execute 
        
@@ -150,7 +158,7 @@ That's it!
 
 add the following line
 
-        @reboot java -jar /home/pi/server-0.39.8.jar -dataFolder /home/pi/Blynk &
+        @reboot java -jar /home/pi/server-0.39.9.jar -dataFolder /home/pi/Blynk &
         
 save and exit.
 
@@ -162,7 +170,7 @@ save and exit.
 
 + Put in it one line: 
 
-        java -jar server-0.39.8.jar -dataFolder /home/pi/Blynk
+        java -jar server-0.39.9.jar -dataFolder /home/pi/Blynk
         
 + Put bat file to windows startup folder
 
@@ -179,7 +187,7 @@ Server should be always updated before you update Blynk App. To update your serv
         
 + You should see something like that
  
-        username   10539  1.0 12.1 3325808 428948 pts/76 Sl   Jan22   9:11 java -jar server-0.39.8.jar   
+        username   10539  1.0 12.1 3325808 428948 pts/76 Sl   Jan22   9:11 java -jar server-0.39.9.jar   
         
 + Kill the old process
 
@@ -278,7 +286,7 @@ do the same with ```mail.properties``` via ```-mailConfig``` and ```sms.properti
  
 For example:
 
-    java -jar server-0.39.8.jar -dataFolder /home/pi/Blynk -serverConfig /home/pi/someFolder/server.properties
+    java -jar server-0.39.9.jar -dataFolder /home/pi/Blynk -serverConfig /home/pi/someFolder/server.properties
 
 Available server options:
 
@@ -290,11 +298,6 @@ Available server options:
 + Http, hardware and web sockets port
 
         http.port=8080
-
-
-+ Hardware ssl/tls port (for hardware that supports SSL/TLS sockets)
-
-        hardware.ssl.port=8441
         
         
 + For simplicity Blynk already provides server jar with built in SSL certificates, so you have working server out of the box via SSL/TLS sockets. But as certificate and it's private key are in public this is totally not secure. So in order to fix that you need to provide your own certificates. And change below properties with path to your cert. and private key and it's password. See how to generate self-signed certificates [here](#generate-ssl-certificates)
@@ -623,7 +626,7 @@ Blynk has a bunch of integration tests that require DB, so you have to skip test
         mvn clean install -Dmaven.test.skip=true
         
 ### How Blynk Works?
-When hardware connects to Blynk cloud it opens either keep-alive ssl/tls connection on port 8441 or keep-alive plain 
+When hardware connects to Blynk cloud it opens either keep-alive ssl/tls connection on port 443 (9443 for local servers) or keep-alive plain
 tcp/ip connection on port 8080. Blynk app opens mutual ssl/tls connection to Blynk Cloud on port 443 (9443 for local servers).
 Blynk Cloud is responsible for forwarding messages between hardware and app. In both (app and hardware) connections Blynk uses 
 own binary protocol described below.

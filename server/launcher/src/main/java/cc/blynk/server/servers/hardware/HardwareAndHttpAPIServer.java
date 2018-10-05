@@ -143,8 +143,14 @@ public class HardwareAndHttpAPIServer extends BaseServer {
                             }
 
                             @Override
-                            public ChannelPipeline buildBlynkPipeline(ChannelPipeline pipeline) {
-                                log.trace("Blynk protocol connection detected.", pipeline.channel());
+                            //for hardware port we always expecting hardware and never app
+                            public ChannelPipeline buildAppPipeline(ChannelPipeline pipeline) {
+                                return buildHardwarePipeline(pipeline);
+                            }
+
+                            @Override
+                            public ChannelPipeline buildHardwarePipeline(ChannelPipeline pipeline) {
+                                log.trace("Blynk hardware plain protocol connection detected.", pipeline.channel());
                                 return pipeline
                                         .addFirst("H_IdleStateHandler",
                                                 new IdleStateHandler(hardTimeoutSecs, 0, 0))

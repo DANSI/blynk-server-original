@@ -718,6 +718,11 @@ public class DashBoard {
         this.devices = list.toArray(new Device[0]);
     }
 
+    public void addDevice(Device device) {
+        this.devices = ArrayUtil.add(this.devices, device, Device.class);
+        this.updatedAt = System.currentTimeMillis();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
