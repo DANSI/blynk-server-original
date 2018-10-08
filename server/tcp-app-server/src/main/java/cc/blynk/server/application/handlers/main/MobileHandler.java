@@ -132,11 +132,11 @@ public class MobileHandler extends BaseSimpleChannelInboundHandler<StringMessage
 
     public final MobileStateHolder state;
     private final Holder holder;
-    private final MobileHardwareLogic hardwareApp;
+    private final MobileHardwareLogic hardwareLogic;
 
     private MobileHardwareResendFromBTLogic hardwareResendFromBTLogic;
     private MobileExportGraphDataLogic exportGraphData;
-    private MobileMailLogic appMailLogic;
+    private MobileMailLogic mailLogic;
     private MobilePurchaseLogic purchaseLogic;
     private MobileDeleteAppLogic deleteAppLogic;
     private MobileMailQRsLogic mailQRsLogic;
@@ -147,7 +147,7 @@ public class MobileHandler extends BaseSimpleChannelInboundHandler<StringMessage
         this.state = state;
         this.holder = holder;
 
-        this.hardwareApp = new MobileHardwareLogic(holder, state.user.email);
+        this.hardwareLogic = new MobileHardwareLogic(holder, state.user.email);
     }
 
     @Override
@@ -155,7 +155,7 @@ public class MobileHandler extends BaseSimpleChannelInboundHandler<StringMessage
         holder.stats.incrementAppStat();
         switch (msg.command) {
             case HARDWARE :
-                hardwareApp.messageReceived(ctx, state, msg);
+                hardwareLogic.messageReceived(ctx, state, msg);
                 break;
             case HARDWARE_RESEND_FROM_BLUETOOTH :
                 if (hardwareResendFromBTLogic == null) {
@@ -213,10 +213,10 @@ public class MobileHandler extends BaseSimpleChannelInboundHandler<StringMessage
                 break;
 
             case EMAIL :
-                if (appMailLogic == null) {
-                    this.appMailLogic = new MobileMailLogic(holder);
+                if (mailLogic == null) {
+                    this.mailLogic = new MobileMailLogic(holder);
                 }
-                appMailLogic.messageReceived(ctx, state.user, msg);
+                mailLogic.messageReceived(ctx, state.user, msg);
                 break;
 
             case CREATE_DASH :
