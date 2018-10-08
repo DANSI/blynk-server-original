@@ -72,7 +72,7 @@ public final class Command {
     public static final short UPDATE_TAG = 47;
     public static final short DELETE_TAG = 48;
     public static final short GET_TAGS = 49;
-    public static final short GET_DEVICE = 50;
+    public static final short MOBILE_GET_DEVICE = 131;
 
     public static final short UPDATE_FACE = 51;
 
@@ -183,7 +183,7 @@ public final class Command {
             Map.entry(CREATE_DEVICE, "CreateDevice"),
             Map.entry(UPDATE_DEVICE, "UpdateDevice"),
             Map.entry(DELETE_DEVICE, "DeleteDevice"),
-            Map.entry(GET_DEVICE, "GetDevice"),
+            Map.entry(MOBILE_GET_DEVICE, "GetDevice"),
             Map.entry(GET_DEVICES, "GetDevices"),
             Map.entry(ADD_ENERGY, "AddEnergy"),
             Map.entry(GET_ENERGY, "GetEnergy"),

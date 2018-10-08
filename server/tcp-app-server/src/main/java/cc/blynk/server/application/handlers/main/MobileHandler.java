@@ -91,7 +91,6 @@ import static cc.blynk.server.core.protocol.enums.Command.EMAIL_QR;
 import static cc.blynk.server.core.protocol.enums.Command.EXPORT_GRAPH_DATA;
 import static cc.blynk.server.core.protocol.enums.Command.EXPORT_REPORT;
 import static cc.blynk.server.core.protocol.enums.Command.GET_CLONE_CODE;
-import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICES;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.GET_ENHANCED_GRAPH_DATA;
@@ -106,6 +105,7 @@ import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_RESEND_FROM_BLUETOOTH;
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.core.protocol.enums.Command.LOGOUT;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICE;
 import static cc.blynk.server.core.protocol.enums.Command.PING;
 import static cc.blynk.server.core.protocol.enums.Command.REDEEM;
 import static cc.blynk.server.core.protocol.enums.Command.REFRESH_SHARE_TOKEN;
@@ -282,7 +282,7 @@ public class MobileHandler extends BaseSimpleChannelInboundHandler<StringMessage
             case GET_DEVICES :
                 MobileGetDevicesLogic.messageReceived(ctx, state.user, msg);
                 break;
-            case GET_DEVICE :
+            case MOBILE_GET_DEVICE:
                 MobileGetDeviceLogic.messageReceived(ctx, state.user, msg);
                 break;
 

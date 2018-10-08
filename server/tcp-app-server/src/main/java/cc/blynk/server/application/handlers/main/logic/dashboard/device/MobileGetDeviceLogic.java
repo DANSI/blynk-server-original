@@ -7,7 +7,7 @@ import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 
-import static cc.blynk.server.core.protocol.enums.Command.GET_DEVICES;
+import static cc.blynk.server.core.protocol.enums.Command.MOBILE_GET_DEVICE;
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 
@@ -32,7 +32,8 @@ public final class MobileGetDeviceLogic {
             ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
         } else {
             if (ctx.channel().isWritable()) {
-                ctx.writeAndFlush(makeUTF8StringMessage(GET_DEVICES, message.id, device.toString()), ctx.voidPromise());
+                ctx.writeAndFlush(makeUTF8StringMessage(MOBILE_GET_DEVICE,
+                        message.id, device.toString()), ctx.voidPromise());
             }
         }
     }
