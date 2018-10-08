@@ -7,7 +7,7 @@ import io.netty.channel.Channel;
 import java.util.Collection;
 import java.util.Collections;
 
-import static cc.blynk.server.core.model.widgets.AppSyncWidget.SYNC_DEFAULT_MESSAGE_ID;
+import static cc.blynk.server.core.model.widgets.MobileSyncWidget.SYNC_DEFAULT_MESSAGE_ID;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
 import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
 

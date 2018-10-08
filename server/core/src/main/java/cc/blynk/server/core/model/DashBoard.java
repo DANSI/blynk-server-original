@@ -14,8 +14,8 @@ import cc.blynk.server.core.model.storage.PinStorageKeyDeserializer;
 import cc.blynk.server.core.model.storage.PinStorageValue;
 import cc.blynk.server.core.model.storage.PinStorageValueDeserializer;
 import cc.blynk.server.core.model.storage.SinglePinStorageValue;
-import cc.blynk.server.core.model.widgets.AppSyncWidget;
 import cc.blynk.server.core.model.widgets.DeviceCleaner;
+import cc.blynk.server.core.model.widgets.MobileSyncWidget;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Target;
@@ -48,7 +48,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static cc.blynk.server.core.model.widgets.AppSyncWidget.ANY_TARGET;
+import static cc.blynk.server.core.model.widgets.MobileSyncWidget.ANY_TARGET;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DEVICES;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_TAGS;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_WIDGETS;
@@ -598,8 +598,8 @@ public class DashBoard {
 
     public void sendAppSyncs(Channel appChannel, int targetId, boolean useNewFormat) {
         for (Widget widget : widgets) {
-            if (widget instanceof AppSyncWidget && appChannel.isWritable()) {
-                ((AppSyncWidget) widget).sendAppSync(appChannel, id, targetId, useNewFormat);
+            if (widget instanceof MobileSyncWidget && appChannel.isWritable()) {
+                ((MobileSyncWidget) widget).sendAppSync(appChannel, id, targetId, useNewFormat);
             }
         }
 

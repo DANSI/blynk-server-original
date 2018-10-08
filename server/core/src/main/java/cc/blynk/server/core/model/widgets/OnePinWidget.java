@@ -23,7 +23,7 @@ import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
  * Created on 02.12.15.
  */
 //todo all this should be replaced with 1 Pin field.
-public abstract class OnePinWidget extends Widget implements AppSyncWidget, HardwareSyncWidget {
+public abstract class OnePinWidget extends Widget implements MobileSyncWidget, HardwareSyncWidget {
 
     public int deviceId;
 

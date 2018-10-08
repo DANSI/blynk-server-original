@@ -12,7 +12,7 @@ import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
 import cc.blynk.server.core.model.widgets.ui.reporting.Report;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
-import cc.blynk.server.core.protocol.handlers.encoders.AppMessageEncoder;
+import cc.blynk.server.core.protocol.handlers.encoders.MobileMessageEncoder;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.utils.SHA256Util;
@@ -112,7 +112,7 @@ public class TestAppClient extends BaseTestAppClient {
                 ch.pipeline().addLast(
                         sslCtx.newHandler(ch.alloc(), host, port),
                         new AppClientMessageDecoder(),
-                        new AppMessageEncoder(new GlobalStats()),
+                        new MobileMessageEncoder(new GlobalStats()),
                         responseMock
                 );
             }

@@ -23,7 +23,7 @@ import cc.blynk.server.core.model.widgets.ui.reporting.type.OneTimeReport;
 import cc.blynk.server.core.model.widgets.ui.reporting.type.ReportDurationType;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
+import cc.blynk.server.servers.application.MobileAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.FileUtils;
@@ -91,7 +91,7 @@ public class ReportingTest extends BaseTest {
     @Before
     public void init() throws Exception {
         this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
-        this.appServer = new AppAndHttpsServer(holder).start();
+        this.appServer = new MobileAndHttpsServer(holder).start();
 
         this.clientPair = initAppAndHardPair();
         reset(holder.mailWrapper);

@@ -5,7 +5,7 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.others.webhook.Header;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
+import cc.blynk.server.servers.application.MobileAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.properties.ServerProperties;
@@ -62,7 +62,7 @@ public class WebhookTest extends SingleServerInstancePerTest {
 
         holder = createHolderWithIOMock(properties, "no-db.properties");
         hardwareServer = new HardwareAndHttpAPIServer(holder).start();
-        appServer = new AppAndHttpsServer(holder).start();
+        appServer = new MobileAndHttpsServer(holder).start();
 
         httpServerUrl = String.format("http://localhost:%s/", properties.getHttpPort());
         httpclient = new DefaultAsyncHttpClient(

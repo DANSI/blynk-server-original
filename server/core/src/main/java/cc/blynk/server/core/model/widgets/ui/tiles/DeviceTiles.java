@@ -4,9 +4,9 @@ import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.widgets.AppSyncWidget;
 import cc.blynk.server.core.model.widgets.DeviceCleaner;
 import cc.blynk.server.core.model.widgets.HardwareSyncWidget;
+import cc.blynk.server.core.model.widgets.MobileSyncWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.outputs.TextAlignment;
@@ -31,7 +31,7 @@ import static cc.blynk.utils.StringUtils.prependDashIdAndDeviceId;
  * Created by Dmitriy Dumanskiy.
  * Created on 02.10.17.
  */
-public class DeviceTiles extends Widget implements AppSyncWidget, HardwareSyncWidget, DeviceCleaner {
+public class DeviceTiles extends Widget implements MobileSyncWidget, HardwareSyncWidget, DeviceCleaner {
 
     public volatile TileTemplate[] templates = EMPTY_TEMPLATES;
 

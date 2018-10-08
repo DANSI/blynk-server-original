@@ -11,7 +11,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
+import cc.blynk.server.servers.application.MobileAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.SHA256Util;
@@ -80,7 +80,7 @@ public class HttpsAdminServerTest extends BaseTest {
 
     @Before
     public void init() throws Exception {
-        this.httpAdminServer = new AppAndHttpsServer(holder).start();
+        this.httpAdminServer = new MobileAndHttpsServer(holder).start();
 
         httpsAdminServerUrl = String.format("https://localhost:%s/admin", properties.getHttpsPort());
         httpServerUrl = String.format("http://localhost:%s/", properties.getHttpPort());

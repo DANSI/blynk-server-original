@@ -5,7 +5,7 @@ import cc.blynk.integration.TestUtil;
 import cc.blynk.integration.model.tcp.ClientPair;
 import cc.blynk.server.Holder;
 import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
+import cc.blynk.server.servers.application.MobileAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import org.junit.After;
 import org.junit.Before;
@@ -35,7 +35,7 @@ public class AppOfflineTest extends BaseTest {
         properties.setProperty("app.socket.idle.timeout", "1");
         Holder holder = createDefaultHolder(properties, "no-db.properties");
         this.hardwareServer = new HardwareAndHttpAPIServer(holder).start();
-        this.appServer = new AppAndHttpsServer(holder).start();
+        this.appServer = new MobileAndHttpsServer(holder).start();
 
         this.clientPair = initAppAndHardPair("user_profile_json_empty_dash.txt");
     }
