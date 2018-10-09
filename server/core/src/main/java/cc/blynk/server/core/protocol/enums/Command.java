@@ -72,7 +72,7 @@ public final class Command {
     public static final short UPDATE_TAG = 47;
     public static final short DELETE_TAG = 48;
     public static final short GET_TAGS = 49;
-    public static final short MOBILE_GET_DEVICE = 131;
+    public static final short MOBILE_GET_DEVICE = 50;
 
     public static final short UPDATE_FACE = 51;
 
