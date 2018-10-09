@@ -44,7 +44,7 @@ public abstract class BaseHttpAndBlynkUnificationHandler extends ByteToMessageDe
     }
 
     private static boolean isHardwarePipeline(long header4Bytes, short lastByteOfHeader) {
-        return header4Bytes == 486539520L && lastByteOfHeader == 32;
+        return lastByteOfHeader == 32 && (header4Bytes == 486539520L || header4Bytes == 33554688L);
     }
 
     /**
