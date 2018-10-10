@@ -31,6 +31,8 @@ contact.email=xxx@blynk.cc
 user.devices.limit=100000
 user.message.quota.limit=10000
 web.request.max.size=5242880
+#maximum number of days minute records for reporting will be stored
+store.minute.record.days=30
 region=test
 admin.rootPath=/test
 product.name=test

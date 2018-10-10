@@ -75,7 +75,9 @@ final class JobLauncher {
         //once every 7 days
         scheduler.scheduleAtFixedRate(reportingDataDiskCleaner, 1, 7, DAYS);
 
-        var reportingTruncateWorker = new ReportingTruncateWorker(holder.reportingDiskDao);
+        ReportingTruncateWorker reportingTruncateWorker = new ReportingTruncateWorker(holder.reportingDiskDao,
+                holder.limits.storeMinuteRecordDays);
+
         //once every week
         scheduler.scheduleAtFixedRate(reportingTruncateWorker, 1, 24 * 7, HOURS);
 

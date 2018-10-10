@@ -31,6 +31,7 @@ public class Limits {
     public final int webhookFailureLimit;
     public final int hardwareIdleTimeout;
     public final int appIdleTimeout;
+    public final int storeMinuteRecordDays;
 
     public Limits(ServerProperties props) {
         this.webRequestMaxSize = props.getIntProperty("web.request.max.size", 512 * 1024);
@@ -53,6 +54,7 @@ public class Limits {
         this.appIdleTimeout = props.getIntProperty("app.socket.idle.timeout", 300);
 
         this.hourlyRegistrationsLimit = props.getIntProperty("hourly.registrations.limit", 1000);
+        this.storeMinuteRecordDays = props.getIntProperty("store.minute.record.days", 10);
         this.reportsLimit = 25;
     }
 
