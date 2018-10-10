@@ -96,44 +96,6 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         return latest(files).getName();
     }
 
-    @Test
-    public void testDeleteGraphCommandWorks() throws Exception {
-        clientPair.appClient.send("getgraphdata 1 d 8 del");
-
-        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
-    }
-
-    @Test
-    public void testGetGraphDataFor1Pin() throws Exception {
-        String tempDir = holder.props.getProperty("data.folder");
-
-        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
-        if (Files.notExists(userReportFolder)) {
-            Files.createDirectories(userReportFolder);
-        }
-
-        Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
-
-        FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
-        FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
-
-        clientPair.appClient.send("getgraphdata 1 d 8 24 h");
-
-        BinaryMessage graphDataResponse = clientPair.appClient.getBinaryBody();
-
-        assertNotNull(graphDataResponse);
-        byte[] decompressedGraphData = BaseTest.decompress(graphDataResponse.getBytes());
-        ByteBuffer bb = ByteBuffer.wrap(decompressedGraphData);
-
-        assertEquals(1, bb.getInt());
-        assertEquals(2, bb.getInt());
-        assertEquals(1.11D, bb.getDouble(), 0.1);
-        assertEquals(1111111, bb.getLong());
-        assertEquals(1.22D, bb.getDouble(), 0.1);
-        assertEquals(2222222, bb.getLong());
-    }
-
     private static File latest(File[] files) {
         long lastMod = Long.MIN_VALUE;
         File choice = null;

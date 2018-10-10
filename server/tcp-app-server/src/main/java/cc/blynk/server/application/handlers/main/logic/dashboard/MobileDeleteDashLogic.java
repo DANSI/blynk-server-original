@@ -28,7 +28,7 @@ public final class MobileDeleteDashLogic {
 
     public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
                                        MobileStateHolder state, StringMessage message) {
-        var dashId = Integer.parseInt(message.body);
+        int dashId = Integer.parseInt(message.body);
 
         deleteDash(holder, state, dashId);
         state.user.lastModifiedTs = System.currentTimeMillis();

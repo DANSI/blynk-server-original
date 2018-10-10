@@ -106,7 +106,7 @@ public class TestAppClient extends BaseTestAppClient {
 
     @Override
     public ChannelInitializer<SocketChannel> getChannelInitializer() {
-        return new ChannelInitializer<>() {
+        return new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) {
                 ch.pipeline().addLast(

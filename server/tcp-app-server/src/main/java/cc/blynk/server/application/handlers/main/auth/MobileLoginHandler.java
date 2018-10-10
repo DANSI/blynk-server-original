@@ -151,7 +151,7 @@ public class MobileLoginHandler extends SimpleChannelInboundHandler<LoginMessage
 
     private void blynkLogin(ChannelHandlerContext ctx, int msgId, String email, String pass,
                             Version version, String appName) {
-        var user = holder.userDao.getByName(email, appName);
+        User user = holder.userDao.getByName(email, appName);
 
         if (user == null) {
             log.warn("User '{}' not registered. {}", email, ctx.channel().remoteAddress());
@@ -175,20 +175,20 @@ public class MobileLoginHandler extends SimpleChannelInboundHandler<LoginMessage
     }
 
     private void login(ChannelHandlerContext ctx, int messageId, User user, Version version) {
-        var pipeline = (DefaultChannelPipeline) ctx.pipeline();
+        DefaultChannelPipeline pipeline = (DefaultChannelPipeline) ctx.pipeline();
         cleanPipeline(pipeline);
 
-        var appStateHolder = new MobileStateHolder(user, version);
+        MobileStateHolder appStateHolder = new MobileStateHolder(user, version);
         pipeline.addLast("AAppHandler", new MobileHandler(holder, appStateHolder));
 
-        var channel = ctx.channel();
+        Channel channel = ctx.channel();
 
         //todo back compatibility code. remove in future.
         if (user.region == null || user.region.isEmpty()) {
             user.region = holder.props.region;
         }
 
-        var session = holder.sessionDao.getOrCreateSessionByUser(appStateHolder.userKey, channel.eventLoop());
+        Session session = holder.sessionDao.getOrCreateSessionByUser(appStateHolder.userKey, channel.eventLoop());
         if (session.isSameEventLoop(channel)) {
             completeLogin(channel, session, user, messageId, version);
         } else {

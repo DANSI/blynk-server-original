@@ -50,13 +50,14 @@ final class JobLauncher {
         scheduler.scheduleAtFixedRate(reportingWorker, startDelay,
                 AverageAggregatorProcessor.MINUTE, MILLISECONDS);
 
-        var profileSaverWorker = new ProfileSaverWorker(holder.userDao, holder.fileManager, holder.dbManager);
+        ProfileSaverWorker profileSaverWorker =
+                new ProfileSaverWorker(holder.userDao, holder.fileManager, holder.dbManager);
 
         //running 1 sec later after reporting
         scheduler.scheduleAtFixedRate(profileSaverWorker, startDelay + 1000,
                 holder.props.getIntProperty("profile.save.worker.period"), MILLISECONDS);
 
-        var statsWorker = new StatsWorker(holder);
+        StatsWorker statsWorker = new StatsWorker(holder);
         scheduler.scheduleAtFixedRate(statsWorker, 1000,
                 holder.props.getIntProperty("stats.print.worker.period"), MILLISECONDS);
 
@@ -70,7 +71,7 @@ final class JobLauncher {
 
         //running once every 3 day
         //todo could be removed?
-        var reportingDataDiskCleaner =
+        HistoryGraphUnusedPinDataCleanerWorker reportingDataDiskCleaner =
                 new HistoryGraphUnusedPinDataCleanerWorker(holder.userDao, holder.reportingDiskDao);
         //once every 7 days
         scheduler.scheduleAtFixedRate(reportingDataDiskCleaner, 1, 7, DAYS);
@@ -85,7 +86,7 @@ final class JobLauncher {
         startDelay = 1000 - (System.currentTimeMillis() % 1000);
 
         //separate thread for timer and reading widgets
-        var ses = Executors.newScheduledThreadPool(1, BlynkTPFactory.build("TimerAndReading"));
+        ScheduledExecutorService ses = Executors.newScheduledThreadPool(1, BlynkTPFactory.build("TimerAndReading"));
         ses.scheduleAtFixedRate(holder.timerWorker, startDelay, 1000, MILLISECONDS);
         ses.scheduleAtFixedRate(holder.readingWidgetsWorker, startDelay + 400, 1000, MILLISECONDS);
 

@@ -38,6 +38,7 @@ import cc.blynk.server.core.protocol.handlers.decoders.WSMessageDecoder;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.core.protocol.handlers.encoders.MobileMessageEncoder;
 import cc.blynk.server.core.protocol.handlers.encoders.WSMessageEncoder;
+import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.server.hardware.handlers.hardware.HardwareChannelStateHandler;
 import cc.blynk.server.hardware.handlers.hardware.auth.HardwareLoginHandler;
 import cc.blynk.server.servers.BaseServer;
@@ -74,55 +75,55 @@ public class MobileAndHttpsServer extends BaseServer {
         super(holder.props.getProperty("listen.address"),
                 holder.props.getIntProperty("https.port"), holder.transportTypeHolder);
 
-        var appChannelStateHandler = new MobileChannelStateHandler(holder.sessionDao);
-        var registerHandler = new MobileRegisterHandler(holder);
+        MobileChannelStateHandler appChannelStateHandler = new MobileChannelStateHandler(holder.sessionDao);
+        MobileRegisterHandler registerHandler = new MobileRegisterHandler(holder);
         MobileLoginHandler appLoginHandler = new MobileLoginHandler(holder);
-        var appShareLoginHandler = new MobileShareLoginHandler(holder);
-        var userNotLoggedHandler = new UserNotLoggedHandler();
-        var getServerHandler = new MobileGetServerHandler(holder);
-        var resetPasswordHandler = new MobileResetPasswordHandler(holder);
+        MobileShareLoginHandler appShareLoginHandler = new MobileShareLoginHandler(holder);
+        UserNotLoggedHandler userNotLoggedHandler = new UserNotLoggedHandler();
+        MobileGetServerHandler getServerHandler = new MobileGetServerHandler(holder);
+        MobileResetPasswordHandler resetPasswordHandler = new MobileResetPasswordHandler(holder);
 
-        var hardwareIdleTimeout = holder.limits.hardwareIdleTimeout;
-        var appIdleTimeout = holder.limits.appIdleTimeout;
+        int hardwareIdleTimeout = holder.limits.hardwareIdleTimeout;
+        int appIdleTimeout = holder.limits.appIdleTimeout;
 
-        var hardwareChannelStateHandler = new HardwareChannelStateHandler(holder);
-        var hardwareLoginHandler = new HardwareLoginHandler(holder, port);
+        HardwareChannelStateHandler hardwareChannelStateHandler = new HardwareChannelStateHandler(holder);
+        HardwareLoginHandler hardwareLoginHandler = new HardwareLoginHandler(holder, port);
 
-        var rootPath = holder.props.getAdminRootPath();
+        String rootPath = holder.props.getAdminRootPath();
 
-        var ipFilterHandler = new IpFilterHandler(
+        IpFilterHandler ipFilterHandler = new IpFilterHandler(
                 holder.props.getCommaSeparatedValueAsArray("allowed.administrator.ips"));
 
-        var stats = holder.stats;
+        GlobalStats stats = holder.stats;
 
         //http API handlers
-        var resetPasswordLogic = new ResetPasswordHttpLogic(holder);
-        var httpAPILogic = new HttpAPILogic(holder);
-        var noMatchHandler = new NoMatchHandler();
-        var webSocketHandler = new WSHandler(stats);
-        var webSocketWrapperEncoder = new WSWrapperEncoder();
+        ResetPasswordHttpLogic resetPasswordLogic = new ResetPasswordHttpLogic(holder);
+        HttpAPILogic httpAPILogic = new HttpAPILogic(holder);
+        NoMatchHandler noMatchHandler = new NoMatchHandler();
+        WSHandler webSocketHandler = new WSHandler(stats);
+        WSWrapperEncoder webSocketWrapperEncoder = new WSWrapperEncoder();
 
-        var webAppMessageEncoder = new WSMessageEncoder();
+        WSMessageEncoder webAppMessageEncoder = new WSMessageEncoder();
 
         //admin API handlers
-        var otaLogic = new OTALogic(holder, rootPath);
-        var usersLogic = new UsersLogic(holder, rootPath);
-        var statsLogic = new StatsLogic(holder, rootPath);
-        var configsLogic = new ConfigsLogic(holder, rootPath);
-        var hardwareStatsLogic = new HardwareStatsLogic(holder, rootPath);
-        var adminAuthHandler = new AdminAuthHandler(holder, rootPath);
-        var authCookieHandler = new AuthCookieHandler(holder.sessionDao);
-        var cookieBasedUrlReWriterHandler =
+        OTALogic otaLogic = new OTALogic(holder, rootPath);
+        UsersLogic usersLogic = new UsersLogic(holder, rootPath);
+        StatsLogic statsLogic = new StatsLogic(holder, rootPath);
+        ConfigsLogic configsLogic = new ConfigsLogic(holder, rootPath);
+        HardwareStatsLogic hardwareStatsLogic = new HardwareStatsLogic(holder, rootPath);
+        AdminAuthHandler adminAuthHandler = new AdminAuthHandler(holder, rootPath);
+        AuthCookieHandler authCookieHandler = new AuthCookieHandler(holder.sessionDao);
+        CookieBasedUrlReWriterHandler cookieBasedUrlReWriterHandler =
                 new CookieBasedUrlReWriterHandler(rootPath, "/static/admin.html", "/static/login.html");
 
-        var alreadyLoggedHandler = new AlreadyLoggedHandler();
+        AlreadyLoggedHandler alreadyLoggedHandler = new AlreadyLoggedHandler();
         int hardTimeoutSecs = NumberUtil.calcHeartbeatTimeout(holder.limits.hardwareIdleTimeout);
 
-        var baseWebSocketUnificator = new BaseWebSocketUnificator() {
+        BaseWebSocketUnificator baseWebSocketUnificator = new BaseWebSocketUnificator() {
             @Override
             public void channelRead(ChannelHandlerContext ctx, Object msg) {
-                var req = (FullHttpRequest) msg;
-                var uri = req.uri();
+                FullHttpRequest req = (FullHttpRequest) msg;
+                String uri = req.uri();
 
                 log.trace("In http and websocket unificator handler.");
                 if (uri.equals("/")) {
@@ -152,7 +153,7 @@ public class MobileAndHttpsServer extends BaseServer {
                     return;
                 }
 
-                var pipeline = ctx.pipeline();
+                ChannelPipeline pipeline = ctx.pipeline();
 
                 pipeline.addLast(new UploadHandler(holder.props.jarPath, "/upload", "/static/ota"))
                         .addLast(new OTAHandler(holder, rootPath + "/ota/start", "/static/ota"))
@@ -187,7 +188,7 @@ public class MobileAndHttpsServer extends BaseServer {
             }
 
             private void initWebDashboardSocket(ChannelHandlerContext ctx) {
-                var pipeline = ctx.pipeline();
+                ChannelPipeline pipeline = ctx.pipeline();
 
                 //websockets specific handlers
                 pipeline.addFirst("AChannelState", appChannelStateHandler)
@@ -209,7 +210,7 @@ public class MobileAndHttpsServer extends BaseServer {
             }
 
             private void initWebSocketPipeline(ChannelHandlerContext ctx, String websocketPath) {
-                var pipeline = ctx.pipeline();
+                ChannelPipeline pipeline = ctx.pipeline();
 
                 //websockets specific handlers
                 pipeline.addFirst("WSIdleStateHandler", new IdleStateHandler(hardwareIdleTimeout, 0, 0))
@@ -232,7 +233,7 @@ public class MobileAndHttpsServer extends BaseServer {
             }
         };
 
-        channelInitializer = new ChannelInitializer<>() {
+        channelInitializer = new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) {
                 ch.pipeline()

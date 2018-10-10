@@ -1,6 +1,6 @@
 package cc.blynk.server.application.handlers.main;
 
-import cc.blynk.server.application.handlers.main.auth.AppStateHolder;
+import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
@@ -34,7 +34,7 @@ public class MobileChannelStateHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
-        AppStateHolder state = getAppState(ctx.channel());
+        MobileStateHolder state = getAppState(ctx.channel());
         if (state != null) {
             Session session = sessionDao.userSession.get(state.userKey);
             if (session != null) {

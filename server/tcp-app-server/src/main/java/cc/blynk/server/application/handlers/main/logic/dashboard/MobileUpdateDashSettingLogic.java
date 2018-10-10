@@ -1,6 +1,9 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard;
 
 import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.DashboardSettings;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
@@ -27,14 +30,14 @@ public final class MobileUpdateDashSettingLogic {
 
     public static void messageReceived(ChannelHandlerContext ctx, MobileStateHolder state,
                                        StringMessage message, int settingsSizeLimit) {
-        var split = StringUtils.split2(message.body);
+        String[] split = StringUtils.split2(message.body);
 
         if (split.length < 2) {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        var dashId = Integer.parseInt(split[0]);
-        var dashSettingsString = split[1];
+        int dashId = Integer.parseInt(split[0]);
+        String dashSettingsString = split[1];
 
         if (dashSettingsString == null || dashSettingsString.isEmpty()) {
             throw new IllegalCommandException("Income dash settings message is empty.");
@@ -45,11 +48,11 @@ public final class MobileUpdateDashSettingLogic {
         }
 
         log.debug("Trying to parse project settings : {}", dashSettingsString);
-        var settings = JsonParser.parseDashboardSettings(dashSettingsString, message.id);
+        DashboardSettings settings = JsonParser.parseDashboardSettings(dashSettingsString, message.id);
 
-        var user = state.user;
+        User user = state.user;
 
-        var existingDash = user.profile.getDashByIdOrThrow(dashId);
+        DashBoard existingDash = user.profile.getDashByIdOrThrow(dashId);
 
         existingDash.updateSettings(settings);
         user.lastModifiedTs = existingDash.updatedAt;

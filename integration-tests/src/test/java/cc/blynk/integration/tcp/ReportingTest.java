@@ -45,8 +45,10 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Enumeration;
+import java.util.Objects;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
@@ -553,7 +555,7 @@ public class ReportingTest extends BaseTest {
 
         //a bit upfront
         long now = System.currentTimeMillis() + 1000;
-        LocalTime localTime = LocalTime.ofInstant(Instant.ofEpochMilli(now), ZoneId.of("UTC"));
+        LocalTime localTime = ofInstant(Instant.ofEpochMilli(now), ZoneId.of("UTC"));
         localTime = LocalTime.of(localTime.getHour(), localTime.getMinute());
 
         Report report = new Report(1, null,
@@ -638,7 +640,7 @@ public class ReportingTest extends BaseTest {
 
         //a bit upfront
         long now = pointNow + 1000;
-        LocalTime localTime = LocalTime.ofInstant(Instant.ofEpochMilli(now), ZoneId.of("UTC"));
+        LocalTime localTime = ofInstant(Instant.ofEpochMilli(now), ZoneId.of("UTC"));
         localTime = LocalTime.of(localTime.getHour(), localTime.getMinute());
 
         Report report = new Report(1, "DailyReport",
@@ -709,7 +711,7 @@ public class ReportingTest extends BaseTest {
 
         //a bit upfront
         long now = System.currentTimeMillis() + 1000;
-        LocalTime localTime = LocalTime.ofInstant(Instant.ofEpochMilli(now), ZoneId.of("UTC"));
+        LocalTime localTime = ofInstant(Instant.ofEpochMilli(now), ZoneId.of("UTC"));
         localTime = LocalTime.of(localTime.getHour(), localTime.getMinute());
 
         Report report = new Report(1, "DailyReport",
@@ -790,7 +792,7 @@ public class ReportingTest extends BaseTest {
 
         //a bit upfront
         long now = System.currentTimeMillis() + 1000;
-        LocalTime localTime = LocalTime.ofInstant(Instant.ofEpochMilli(now), ZoneId.of("UTC"));
+        LocalTime localTime = ofInstant(Instant.ofEpochMilli(now), ZoneId.of("UTC"));
         localTime = LocalTime.of(localTime.getHour(), localTime.getMinute());
 
         Report report = new Report(1, "DailyReport",
@@ -879,7 +881,7 @@ public class ReportingTest extends BaseTest {
 
         //a bit upfront
         long now = System.currentTimeMillis() + 1000;
-        LocalTime localTime = LocalTime.ofInstant(Instant.ofEpochMilli(now), ZoneId.of("UTC"));
+        LocalTime localTime = ofInstant(Instant.ofEpochMilli(now), ZoneId.of("UTC"));
         localTime = LocalTime.of(localTime.getHour(), localTime.getMinute());
 
         Report report = new Report(1, "DailyReport",
@@ -975,7 +977,7 @@ public class ReportingTest extends BaseTest {
 
         //a bit upfront
         long now = System.currentTimeMillis() + 1000;
-        LocalTime localTime = LocalTime.ofInstant(Instant.ofEpochMilli(now), ZoneId.of("UTC"));
+        LocalTime localTime = ofInstant(Instant.ofEpochMilli(now), ZoneId.of("UTC"));
         localTime = LocalTime.of(localTime.getHour(), localTime.getMinute());
 
         Report report = new Report(1, "DailyReport",
@@ -1069,7 +1071,7 @@ public class ReportingTest extends BaseTest {
 
         //a bit upfront
         long now = System.currentTimeMillis() + 1000;
-        LocalTime localTime = LocalTime.ofInstant(Instant.ofEpochMilli(now), ZoneId.of("UTC"));
+        LocalTime localTime = ofInstant(Instant.ofEpochMilli(now), ZoneId.of("UTC"));
         localTime = LocalTime.of(localTime.getHour(), localTime.getMinute());
 
         Report report = new Report(1, "DailyReport",
@@ -1161,7 +1163,7 @@ public class ReportingTest extends BaseTest {
 
         //a bit upfront
         long now = System.currentTimeMillis() + 1000;
-        LocalTime localTime = LocalTime.ofInstant(Instant.ofEpochMilli(now), ZoneId.of("UTC"));
+        LocalTime localTime = ofInstant(Instant.ofEpochMilli(now), ZoneId.of("UTC"));
         localTime = LocalTime.of(localTime.getHour(), localTime.getMinute());
 
         Report report = new Report(1, "DailyReport",
@@ -1261,7 +1263,7 @@ public class ReportingTest extends BaseTest {
 
         //a bit upfront
         long now = System.currentTimeMillis() + 1000;
-        LocalTime localTime = LocalTime.ofInstant(Instant.ofEpochMilli(now), ZoneId.of("UTC"));
+        LocalTime localTime = ofInstant(Instant.ofEpochMilli(now), ZoneId.of("UTC"));
         localTime = LocalTime.of(localTime.getHour(), localTime.getMinute());
 
         Report report = new Report(1, "DailyReport",
@@ -1354,7 +1356,7 @@ public class ReportingTest extends BaseTest {
 
         //a bit upfront
         long now = System.currentTimeMillis() + 1000;
-        LocalTime localTime = LocalTime.ofInstant(Instant.ofEpochMilli(now), ZoneId.of("UTC"));
+        LocalTime localTime = ofInstant(Instant.ofEpochMilli(now), ZoneId.of("UTC"));
         localTime = LocalTime.of(localTime.getHour(), localTime.getMinute());
 
         Report report = new Report(1, "DailyReport",
@@ -1447,7 +1449,7 @@ public class ReportingTest extends BaseTest {
 
         //a bit upfront
         long now = System.currentTimeMillis() + 1000;
-        LocalTime localTime = LocalTime.ofInstant(Instant.ofEpochMilli(now), ZoneId.of("UTC"));
+        LocalTime localTime = ofInstant(Instant.ofEpochMilli(now), ZoneId.of("UTC"));
         localTime = LocalTime.of(localTime.getHour(), localTime.getMinute());
 
         Report report = new Report(1, "DailyReport",
@@ -2263,6 +2265,18 @@ public class ReportingTest extends BaseTest {
             return new String(ar, UTF_16);
         }
     }
+
+    public static LocalTime ofInstant(Instant instant, ZoneId zone) {
+        Objects.requireNonNull(instant, "instant");
+        Objects.requireNonNull(zone, "zone");
+        ZoneOffset offset = zone.getRules().getOffset(instant);
+        long localSecond = instant.getEpochSecond() + offset.getTotalSeconds();
+        int secsOfDay = (int) Math.floorMod(localSecond, SECONDS_PER_DAY);
+        return LocalTime.ofNanoOfDay(secsOfDay * NANOS_PER_SECOND + instant.getNano());
+    }
+
+    static final int SECONDS_PER_DAY = 60 * 60 * 24;
+    static final long NANOS_PER_SECOND =  1000_000_000L;
 }
 
 

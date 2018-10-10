@@ -46,7 +46,7 @@ public class TwitterWrapperTest {
         String message = "Hello!!!";
 
         twitterWrapper.send(userToken, userSecret, message,
-                new AsyncCompletionHandler<>() {
+                new AsyncCompletionHandler<Response>() {
                     @Override
                     public Response onCompleted(Response response) {
                         if (response.getStatusCode() != HttpResponseStatus.OK.code()) {
