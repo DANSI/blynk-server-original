@@ -1,6 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic;
 
-import cc.blynk.server.application.handlers.sharing.auth.AppShareStateHolder;
+import cc.blynk.server.application.handlers.sharing.auth.MobileShareStateHolder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
@@ -21,7 +21,7 @@ public final class LoadSharedProfileGzippedLogic {
     private LoadSharedProfileGzippedLogic() {
     }
 
-    public static void messageReceived(ChannelHandlerContext ctx, AppShareStateHolder state, StringMessage message) {
+    public static void messageReceived(ChannelHandlerContext ctx, MobileShareStateHolder state, StringMessage message) {
         byte[] data;
         User user = state.user;
         if (message.body.length() == 0) {
@@ -35,7 +35,7 @@ public final class LoadSharedProfileGzippedLogic {
             DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
             data = gzipDashRestrictive(dash);
         }
-        LoadProfileGzippedLogic.write(ctx, data, message.id);
+        MobileLoadProfileGzippedLogic.write(ctx, data, message.id);
     }
 
 }

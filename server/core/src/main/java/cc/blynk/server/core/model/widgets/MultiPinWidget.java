@@ -15,7 +15,7 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
  * Created by Dmitriy Dumanskiy.
  * Created on 02.11.15.
  */
-public abstract class MultiPinWidget extends Widget implements AppSyncWidget {
+public abstract class MultiPinWidget extends Widget implements MobileSyncWidget {
 
     public int deviceId;
 

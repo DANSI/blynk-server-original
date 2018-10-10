@@ -11,7 +11,7 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
+import cc.blynk.server.servers.application.MobileAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.SHA256Util;
@@ -80,7 +80,7 @@ public class HttpsAdminServerTest extends BaseTest {
 
     @Before
     public void init() throws Exception {
-        this.httpAdminServer = new AppAndHttpsServer(holder).start();
+        this.httpAdminServer = new MobileAndHttpsServer(holder).start();
 
         httpsAdminServerUrl = String.format("https://localhost:%s/admin", properties.getHttpsPort());
         httpServerUrl = String.format("http://localhost:%s/", properties.getHttpPort());
@@ -191,9 +191,32 @@ public class HttpsAdminServerTest extends BaseTest {
         String testUser = "dmitriy@blynk.cc";
         String appName = "Blynk";
         HttpGet request = new HttpGet(httpsAdminServerUrl + "/users/" + testUser + "-" + appName);
-        request.setHeader("set-cookie", "session=123");
+        request.setHeader("Cookie", "session=123");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(404, response.getStatusLine().getStatusCode());
+        }
+    }
+
+    @Test
+    public void testGetUserFromAdminPageNoAccessWithFakeCookie2() throws Exception {
+        login(admin.email, admin.pass);
+
+        SSLContext sslcontext = TestUtil.initUnsecuredSSLContext();
+        // Allow TLSv1 protocol only
+        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext, new MyHostVerifier());
+        CloseableHttpClient httpclient2 = HttpClients.custom()
+                .setSSLSocketFactory(sslsf)
+                .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
+                .build();
+
+
+        String testUser = "dmitriy@blynk.cc";
+        String appName = "Blynk";
+        HttpGet request = new HttpGet(httpsAdminServerUrl + "/users/" + testUser + "-" + appName);
+        request.setHeader("Cookie", "session=123");
+
+        try (CloseableHttpResponse response = httpclient2.execute(request)) {
             assertEquals(404, response.getStatusLine().getStatusCode());
         }
     }

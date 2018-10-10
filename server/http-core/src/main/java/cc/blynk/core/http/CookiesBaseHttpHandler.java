@@ -7,8 +7,6 @@ import cc.blynk.server.core.stats.GlobalStats;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpRequest;
 
-import static io.netty.handler.codec.http.HttpHeaderNames.COOKIE;
-
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -27,7 +25,7 @@ public abstract class CookiesBaseHttpHandler extends BaseHttpHandler {
 
     @Override
     public boolean process(ChannelHandlerContext ctx, HttpRequest req) {
-        if (req.headers().contains(COOKIE)) {
+        if (ctx.channel().attr(SessionDao.userAttributeKey).get() != null) {
             return super.process(ctx, req);
         }
         return false;

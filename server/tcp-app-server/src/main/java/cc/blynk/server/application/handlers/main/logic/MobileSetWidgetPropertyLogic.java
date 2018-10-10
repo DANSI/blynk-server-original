@@ -1,0 +1,78 @@
+package cc.blynk.server.application.handlers.main.logic;
+
+import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.enums.WidgetProperty;
+import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.utils.StringUtils;
+import io.netty.channel.ChannelHandlerContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommandBody;
+import static cc.blynk.server.internal.CommonByteBufUtil.ok;
+
+/**
+ * Handler that allows to change widget properties from hardware side.
+ *
+ * The Blynk Project.
+ * Created by Dmitriy Dumanskiy.
+ * Created on 2/1/2015.
+ *
+ */
+public final class MobileSetWidgetPropertyLogic {
+
+    private static final Logger log = LogManager.getLogger(MobileSetWidgetPropertyLogic.class);
+
+    private MobileSetWidgetPropertyLogic(SessionDao sessionDao) {
+    }
+
+    public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
+        String[] splitBody = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
+
+        if (splitBody.length != 4) {
+            log.debug("AppSetWidgetProperty command body has wrong format. {}", message.body);
+            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+            return;
+        }
+
+        int dashId = Integer.parseInt(splitBody[0]);
+        long widgetId = Long.parseLong(splitBody[1]);
+        String property = splitBody[2];
+        String propertyValue = splitBody[3];
+
+        if (property.length() == 0 || propertyValue.length() == 0) {
+            log.debug("AppSetWidgetProperty command body has wrong format. {}", message.body);
+            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+            return;
+        }
+
+        WidgetProperty widgetProperty = WidgetProperty.getProperty(property);
+
+        if (widgetProperty == null) {
+            log.debug("Unsupported app set property {}.", property);
+            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+            return;
+        }
+
+        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
+        //for now supporting only virtual pins
+        Widget widget = dash.getWidgetById(widgetId);
+        if (widget == null) {
+            widget = dash.getWidgetByIdInDeviceTilesOrThrow(widgetId);
+        }
+
+        try {
+            widget.setProperty(widgetProperty, propertyValue);
+            dash.updatedAt = System.currentTimeMillis();
+        } catch (Exception e) {
+            log.debug("Error setting widget property. Reason : {}", e.getMessage());
+            ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
+            return;
+        }
+        ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
+    }
+
+}

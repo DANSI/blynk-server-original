@@ -1,7 +1,7 @@
 package cc.blynk.client.handlers.decoders;
 
 import cc.blynk.server.core.protocol.enums.Command;
-import cc.blynk.server.core.protocol.handlers.decoders.AppMessageDecoder;
+import cc.blynk.server.core.protocol.handlers.decoders.MobileMessageDecoder;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
@@ -34,7 +34,7 @@ public class AppClientMessageDecoder extends ByteToMessageDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
-        if (in.readableBytes() < AppMessageDecoder.PROTOCOL_APP_HEADER_SIZE) {
+        if (in.readableBytes() < MobileMessageDecoder.PROTOCOL_APP_HEADER_SIZE) {
             return;
         }
 

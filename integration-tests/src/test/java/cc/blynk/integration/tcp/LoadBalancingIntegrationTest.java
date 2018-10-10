@@ -12,7 +12,7 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
+import cc.blynk.server.servers.application.MobileAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.server.workers.ProfileSaverWorker;
 import cc.blynk.utils.AppNameUtil;
@@ -68,14 +68,14 @@ public class LoadBalancingIntegrationTest extends BaseTest {
     public void init() throws Exception {
         holder = createDefaultHolder(properties, "db-test.properties");;
         hardwareServer1 = new HardwareAndHttpAPIServer(holder).start();
-        appServer1 = new AppAndHttpsServer(holder).start();
+        appServer1 = new MobileAndHttpsServer(holder).start();
 
         properties2 = new ServerProperties(Collections.emptyMap(), "server2.properties");
         properties2.setProperty("data.folder", getDataFolder());
 
         this.holder2 = createDefaultHolder(properties2, "db-test.properties");;
         hardwareServer2 = new HardwareAndHttpAPIServer(holder2).start();
-        appServer2 = new AppAndHttpsServer(holder2).start();
+        appServer2 = new MobileAndHttpsServer(holder2).start();
         plainHardPort2 = properties2.getIntProperty("http.port");
         tcpAppPort2 = properties2.getIntProperty("https.port");
 

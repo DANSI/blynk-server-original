@@ -6,7 +6,7 @@ import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Button;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
+import cc.blynk.server.servers.application.MobileAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.FileUtils;
 import cc.blynk.utils.properties.ServerProperties;
@@ -65,7 +65,7 @@ public class HttpAPIPinsAsyncClientTest extends SingleServerInstancePerTest {
         properties.setProperty("data.folder", getRelativeDataFolder("/profiles"));
         holder = createHolderWithIOMock(properties, "no-db.properties");
         hardwareServer = new HardwareAndHttpAPIServer(holder).start();
-        appServer = new AppAndHttpsServer(holder).start();
+        appServer = new MobileAndHttpsServer(holder).start();
         httpsServerUrl = String.format("http://localhost:%s/", properties.getHttpPort());
         httpclient = new DefaultAsyncHttpClient(
                 new DefaultAsyncHttpClientConfig.Builder()

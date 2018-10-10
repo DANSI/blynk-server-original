@@ -9,7 +9,7 @@ import cc.blynk.server.core.dao.ota.OTAManager;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
+import cc.blynk.server.servers.application.MobileAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.SHA256Util;
 import io.netty.handler.codec.http.HttpHeaderNames;
@@ -84,7 +84,7 @@ public class OTATest extends BaseTest {
     @Before
     public void init() throws Exception {
         httpServer = new HardwareAndHttpAPIServer(holder).start();
-        httpsServer = new AppAndHttpsServer(holder).start();
+        httpsServer = new MobileAndHttpsServer(holder).start();
         httpsAdminServerUrl = String.format("https://localhost:%s/admin", properties.getHttpsPort());
 
         String pass = "admin";

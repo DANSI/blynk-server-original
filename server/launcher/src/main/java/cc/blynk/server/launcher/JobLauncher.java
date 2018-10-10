@@ -50,14 +50,13 @@ final class JobLauncher {
         scheduler.scheduleAtFixedRate(reportingWorker, startDelay,
                 AverageAggregatorProcessor.MINUTE, MILLISECONDS);
 
-        ProfileSaverWorker profileSaverWorker =
-                new ProfileSaverWorker(holder.userDao, holder.fileManager, holder.dbManager);
+        var profileSaverWorker = new ProfileSaverWorker(holder.userDao, holder.fileManager, holder.dbManager);
 
         //running 1 sec later after reporting
         scheduler.scheduleAtFixedRate(profileSaverWorker, startDelay + 1000,
                 holder.props.getIntProperty("profile.save.worker.period"), MILLISECONDS);
 
-        StatsWorker statsWorker = new StatsWorker(holder);
+        var statsWorker = new StatsWorker(holder);
         scheduler.scheduleAtFixedRate(statsWorker, 1000,
                 holder.props.getIntProperty("stats.print.worker.period"), MILLISECONDS);
 
@@ -71,12 +70,14 @@ final class JobLauncher {
 
         //running once every 3 day
         //todo could be removed?
-        HistoryGraphUnusedPinDataCleanerWorker reportingDataDiskCleaner =
+        var reportingDataDiskCleaner =
                 new HistoryGraphUnusedPinDataCleanerWorker(holder.userDao, holder.reportingDiskDao);
         //once every 7 days
         scheduler.scheduleAtFixedRate(reportingDataDiskCleaner, 1, 7, DAYS);
 
-        ReportingTruncateWorker reportingTruncateWorker = new ReportingTruncateWorker(holder.reportingDiskDao);
+        ReportingTruncateWorker reportingTruncateWorker = new ReportingTruncateWorker(holder.reportingDiskDao,
+                holder.limits.storeMinuteRecordDays);
+
         //once every week
         scheduler.scheduleAtFixedRate(reportingTruncateWorker, 1, 24 * 7, HOURS);
 
@@ -84,7 +85,7 @@ final class JobLauncher {
         startDelay = 1000 - (System.currentTimeMillis() % 1000);
 
         //separate thread for timer and reading widgets
-        ScheduledExecutorService ses = Executors.newScheduledThreadPool(1, BlynkTPFactory.build("TimerAndReading"));
+        var ses = Executors.newScheduledThreadPool(1, BlynkTPFactory.build("TimerAndReading"));
         ses.scheduleAtFixedRate(holder.timerWorker, startDelay, 1000, MILLISECONDS);
         ses.scheduleAtFixedRate(holder.readingWidgetsWorker, startDelay + 400, 1000, MILLISECONDS);
 

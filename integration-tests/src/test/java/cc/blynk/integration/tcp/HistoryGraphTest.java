@@ -2006,7 +2006,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
     @Test
     public void truncateReportingDataWorks() throws Exception {
-        ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDiskDao);
+        ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDiskDao, 10);
         String tempDir = holder.props.getProperty("data.folder");
 
         Path userReportFolder = Paths.get(tempDir, "data", getUserName());
@@ -2077,7 +2077,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
     @Test
     public void doNotTruncateFileWithCorrectSize() throws Exception {
-        ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDiskDao);
+        ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDiskDao, 10);
         String tempDir = holder.props.getProperty("data.folder");
 
         Path userReportFolder = Paths.get(tempDir, "data", getUserName());
@@ -2113,7 +2113,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
     @Test
     public void truncateReportingDataDontFailsInEmptyFolder() throws Exception {
-        ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDiskDao);
+        ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDiskDao, 10);
         String tempDir = holder.props.getProperty("data.folder");
 
         Path userReportFolder = Paths.get(tempDir, "data", getUserName());
@@ -2128,7 +2128,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
     @Test
     public void truncateReportingDataDeletesEmptyFolder() throws Exception {
-        ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDiskDao);
+        ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDiskDao, 10);
         String tempDir = holder.props.getProperty("data.folder");
 
         Path userReportFolder = Paths.get(tempDir, "data", getUserName());

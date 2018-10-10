@@ -1,8 +1,8 @@
 package cc.blynk.server.core.model.auth;
 
 import cc.blynk.server.common.BaseSimpleChannelInboundHandler;
-import cc.blynk.server.core.protocol.handlers.decoders.AppMessageDecoder;
 import cc.blynk.server.core.protocol.handlers.decoders.MessageDecoder;
+import cc.blynk.server.core.protocol.handlers.decoders.MobileMessageDecoder;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.utils.ArrayUtil;
@@ -61,9 +61,9 @@ public class Session {
             if (messageDecoder != null) {
                 sum += messageDecoder.getQuotaMeter().getOneMinuteRateNoTick();
             } else {
-                AppMessageDecoder appMessageDecoder = ch.pipeline().get(AppMessageDecoder.class);
-                if (appMessageDecoder != null) {
-                    sum += appMessageDecoder.getQuotaMeter().getOneMinuteRateNoTick();
+                MobileMessageDecoder mobileMessageDecoder = ch.pipeline().get(MobileMessageDecoder.class);
+                if (mobileMessageDecoder != null) {
+                    sum += mobileMessageDecoder.getQuotaMeter().getOneMinuteRateNoTick();
                 }
             }
         }

@@ -24,7 +24,7 @@ import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphType;
 import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
 import cc.blynk.server.core.model.widgets.ui.table.Table;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
+import cc.blynk.server.servers.application.MobileAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.DateTimeUtils;
 import cc.blynk.utils.properties.ServerProperties;
@@ -102,7 +102,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
         properties.setProperty("data.folder", getRelativeDataFolder("/profiles"));
         holder = createDefaultHolder(properties, "no-db.properties");
         hardwareServer = new HardwareAndHttpAPIServer(holder).start();
-        appServer = new AppAndHttpsServer(holder).start();
+        appServer = new MobileAndHttpsServer(holder).start();
 
         httpServerUrl = String.format("http://localhost:%s/", properties.getHttpPort());
         httpclient = HttpClients.createDefault();

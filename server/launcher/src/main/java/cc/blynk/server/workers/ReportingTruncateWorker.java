@@ -33,9 +33,9 @@ public class ReportingTruncateWorker implements Runnable {
     private final long exportExpirePeriod;
     private final int maxRecordsCount;
 
-    public ReportingTruncateWorker(ReportingDiskDao reportingDao) {
+    public ReportingTruncateWorker(ReportingDiskDao reportingDao, int storeMinuteRecordDays) {
         //storing minute points only for 10 days
-        this(reportingDao, (int) TimeUnit.DAYS.toMinutes(10), TimeUnit.DAYS.toMillis(45));
+        this(reportingDao, (int) TimeUnit.DAYS.toMinutes(storeMinuteRecordDays), TimeUnit.DAYS.toMillis(45));
     }
 
     public ReportingTruncateWorker(ReportingDiskDao reportingDao, int maxRecordsCount, long exportExpirePeriod) {

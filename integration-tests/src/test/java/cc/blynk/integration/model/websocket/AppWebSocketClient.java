@@ -17,7 +17,7 @@ package cc.blynk.integration.model.websocket;
 
 import cc.blynk.integration.model.tcp.BaseTestAppClient;
 import cc.blynk.server.Limits;
-import cc.blynk.server.core.protocol.handlers.decoders.WebAppMessageDecoder;
+import cc.blynk.server.core.protocol.handlers.decoders.WSMessageDecoder;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.stats.GlobalStats;
 import cc.blynk.utils.SHA256Util;
@@ -83,7 +83,7 @@ public final class AppWebSocketClient extends BaseTestAppClient {
                         new HttpClientCodec(),
                         new HttpObjectAggregator(8192),
                         appHandler,
-                        new WebAppMessageDecoder(new GlobalStats(),
+                        new WSMessageDecoder(new GlobalStats(),
                                 new Limits(new ServerProperties(Collections.emptyMap()))
                         )
                 );

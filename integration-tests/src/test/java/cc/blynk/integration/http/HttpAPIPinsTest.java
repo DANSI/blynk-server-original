@@ -5,7 +5,7 @@ import cc.blynk.integration.TestUtil;
 import cc.blynk.server.api.http.pojo.EmailPojo;
 import cc.blynk.server.api.http.pojo.PushMessagePojo;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.servers.application.AppAndHttpsServer;
+import cc.blynk.server.servers.application.MobileAndHttpsServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.properties.ServerProperties;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -47,7 +47,7 @@ public class HttpAPIPinsTest extends SingleServerInstancePerTest {
         properties = new ServerProperties(Collections.emptyMap());
         properties.setProperty("data.folder", getRelativeDataFolder("/profiles"));
         holder = createHolderWithIOMock(properties, "no-db.properties");
-        appServer = new AppAndHttpsServer(holder).start();
+        appServer = new MobileAndHttpsServer(holder).start();
         hardwareServer = new HardwareAndHttpAPIServer(holder).start();
         httpsServerUrl = String.format("http://localhost:%s/", properties.getHttpPort());
         httpclient = HttpClients.createDefault();

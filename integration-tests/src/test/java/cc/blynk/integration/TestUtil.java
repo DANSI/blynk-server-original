@@ -12,7 +12,7 @@ import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.model.widgets.AppSyncWidget;
+import cc.blynk.server.core.model.widgets.MobileSyncWidget;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -190,7 +190,7 @@ public final class TestUtil {
     }
 
     public static StringMessage appSync(String body) {
-        return appSync(AppSyncWidget.SYNC_DEFAULT_MESSAGE_ID, body);
+        return appSync(MobileSyncWidget.SYNC_DEFAULT_MESSAGE_ID, body);
     }
 
     public static StringMessage setProperty(int msgId, String body) {

@@ -25,14 +25,12 @@ public class AuthCookieHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (msg instanceof FullHttpRequest) {
             FullHttpRequest request = (FullHttpRequest) msg;
-            User user = sessionDao.getUserFromCookie(request);
 
             if (request.uri().equals("/admin/logout")) {
                 ctx.channel().attr(SessionDao.userAttributeKey).set(null);
             } else {
-                if (user != null) {
-                    ctx.channel().attr(SessionDao.userAttributeKey).set(user);
-                }
+                User user = sessionDao.getUserFromCookie(request);
+                ctx.channel().attr(SessionDao.userAttributeKey).set(user);
             }
         }
         super.channelRead(ctx, msg);
