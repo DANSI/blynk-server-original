@@ -191,9 +191,32 @@ public class HttpsAdminServerTest extends BaseTest {
         String testUser = "dmitriy@blynk.cc";
         String appName = "Blynk";
         HttpGet request = new HttpGet(httpsAdminServerUrl + "/users/" + testUser + "-" + appName);
-        request.setHeader("set-cookie", "session=123");
+        request.setHeader("Cookie", "session=123");
 
         try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(404, response.getStatusLine().getStatusCode());
+        }
+    }
+
+    @Test
+    public void testGetUserFromAdminPageNoAccessWithFakeCookie2() throws Exception {
+        login(admin.email, admin.pass);
+
+        SSLContext sslcontext = TestUtil.initUnsecuredSSLContext();
+        // Allow TLSv1 protocol only
+        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext, new MyHostVerifier());
+        CloseableHttpClient httpclient2 = HttpClients.custom()
+                .setSSLSocketFactory(sslsf)
+                .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
+                .build();
+
+
+        String testUser = "dmitriy@blynk.cc";
+        String appName = "Blynk";
+        HttpGet request = new HttpGet(httpsAdminServerUrl + "/users/" + testUser + "-" + appName);
+        request.setHeader("Cookie", "session=123");
+
+        try (CloseableHttpResponse response = httpclient2.execute(request)) {
             assertEquals(404, response.getStatusLine().getStatusCode());
         }
     }

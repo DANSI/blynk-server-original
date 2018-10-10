@@ -167,7 +167,6 @@ public class MobileAndHttpsServer extends BaseServer {
                         .addLast(statsLogic)
                         .addLast(configsLogic)
                         .addLast(hardwareStatsLogic)
-                        .addLast(resetPasswordLogic)
                         .addLast(httpAPILogic)
                         .addLast(noMatchHandler)
                         .remove(this);
