@@ -1786,6 +1786,65 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
     }
 
     @Test
+    public void cleanNotUsedPinDataWorksAsExpectedForReportsWidget() throws Exception {
+        HistoryGraphUnusedPinDataCleanerWorker cleaner = new HistoryGraphUnusedPinDataCleanerWorker(holder.userDao, holder.reportingDiskDao);
+
+        ReportingWidget reportingWidget = new ReportingWidget();
+        reportingWidget.id = 432;
+        reportingWidget.width = 8;
+        reportingWidget.height = 4;
+        reportingWidget.reportSources = new ReportSource[] {
+                new TileTemplateReportSource(
+                        new ReportDataStream[] {new ReportDataStream((byte) 88, PinType.VIRTUAL, null, false),
+                                new ReportDataStream((byte) 89, PinType.VIRTUAL, null, false)},
+                        0,
+                        new int[] {0, 1}
+                )
+        };
+
+        clientPair.appClient.createWidget(1, reportingWidget);
+        clientPair.appClient.verifyResult(ok(1));
+        clientPair.appClient.reset();
+
+        String tempDir = holder.props.getProperty("data.folder");
+
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+
+        //this file has corresponding history graph
+        Path pinReportingDataPath1 = Paths.get(tempDir, "data", getUserName(),
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphGranularityType.MINUTE));
+        FileUtils.write(pinReportingDataPath1, 1.11D, 1111111);
+
+        Path pinReportingDataPath2 = Paths.get(tempDir, "data", getUserName(),
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 89, GraphGranularityType.MINUTE));
+        FileUtils.write(pinReportingDataPath2, 1.11D, 1111111);
+
+        Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
+                ReportingDiskDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphGranularityType.MINUTE));
+        FileUtils.write(pinReportingDataPath12, 1.11D, 1111111);
+
+        Path pinReportingDataPath22 = Paths.get(tempDir, "data", getUserName(),
+                ReportingDiskDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 89, GraphGranularityType.MINUTE));
+        FileUtils.write(pinReportingDataPath22, 1.11D, 1111111);
+
+        assertTrue(Files.exists(pinReportingDataPath1));
+        assertTrue(Files.exists(pinReportingDataPath2));
+        assertTrue(Files.exists(pinReportingDataPath12));
+        assertTrue(Files.exists(pinReportingDataPath22));
+
+
+        cleaner.run();
+
+        assertTrue(Files.exists(pinReportingDataPath1));
+        assertTrue(Files.exists(pinReportingDataPath2));
+        assertTrue(Files.exists(pinReportingDataPath12));
+        assertTrue(Files.exists(pinReportingDataPath22));
+    }
+
+    @Test
     public void cleanNotUsedPinDataWorksAsExpectedForSuperChartInDeviceTiles() throws Exception {
         HistoryGraphUnusedPinDataCleanerWorker cleaner = new HistoryGraphUnusedPinDataCleanerWorker(holder.userDao, holder.reportingDiskDao);
 

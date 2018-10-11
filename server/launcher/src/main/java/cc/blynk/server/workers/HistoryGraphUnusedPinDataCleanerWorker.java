@@ -10,6 +10,9 @@ import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
+import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
+import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportDataStream;
+import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportSource;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.internal.EmptyArraysUtil;
@@ -98,6 +101,27 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
         if (widget instanceof Superchart) {
             Superchart enhancedHistoryGraph = (Superchart) widget;
             add(doNotRemovePaths, dash, enhancedHistoryGraph, deviceIds);
+        } else if (widget instanceof ReportingWidget) {
+            //reports can't be assigned to device tiles so we ignore deviceIds parameter
+            ReportingWidget reportingWidget = (ReportingWidget) widget;
+            add(doNotRemovePaths, dash, reportingWidget);
+        }
+    }
+
+    private static void add(Set<String> doNotRemovePaths, DashBoard dash,
+                            ReportingWidget reportingWidget) {
+        for (ReportSource reportSource : reportingWidget.reportSources) {
+            int[] deviceIds = reportSource.getDeviceIds();
+            for (ReportDataStream reportDataStream : reportSource.reportDataStreams) {
+                for (int deviceId : deviceIds) {
+                    for (GraphGranularityType type : GraphGranularityType.values()) {
+                        String filename = ReportingDiskDao.generateFilename(dash.id,
+                                deviceId,
+                                reportDataStream.pinType, reportDataStream.pin, type);
+                        doNotRemovePaths.add(filename);
+                    }
+                }
+            }
         }
     }
 
