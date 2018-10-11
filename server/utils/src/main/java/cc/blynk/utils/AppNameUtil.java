@@ -13,4 +13,8 @@ public final class AppNameUtil {
     public static final String BLYNK = "Blynk";
     public static final String FACEBOOK = "facebook";
 
+    public static String generateAppId() {
+        return AppNameUtil.BLYNK.toLowerCase() + StringUtils.randomString(8);
+    }
+
 }

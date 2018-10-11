@@ -8,7 +8,6 @@ import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.ArrayUtil;
-import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,7 +41,7 @@ public final class MobileCreateAppLogic {
 
         var newApp = JsonParser.parseApp(appString, message.id);
 
-        newApp.id = AppNameUtil.BLYNK.toLowerCase() + StringUtils.randomString(8);
+        newApp.id = AppNameUtil.generateAppId();
 
         if (newApp.isNotValid()) {
             throw new NotAllowedException("App is not valid.", message.id);
