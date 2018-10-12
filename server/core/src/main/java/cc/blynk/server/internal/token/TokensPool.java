@@ -1,4 +1,4 @@
-package cc.blynk.server.internal;
+package cc.blynk.server.internal.token;
 
 import cc.blynk.utils.FileUtils;
 import org.apache.logging.log4j.LogManager;

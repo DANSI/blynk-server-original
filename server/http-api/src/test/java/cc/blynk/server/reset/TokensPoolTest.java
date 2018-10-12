@@ -1,7 +1,7 @@
 package cc.blynk.server.reset;
 
-import cc.blynk.server.internal.TokenUser;
-import cc.blynk.server.internal.TokensPool;
+import cc.blynk.server.internal.token.TokenUser;
+import cc.blynk.server.internal.token.TokensPool;
 import cc.blynk.utils.AppNameUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;

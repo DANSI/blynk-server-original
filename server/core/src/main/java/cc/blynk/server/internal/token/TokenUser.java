@@ -1,4 +1,4 @@
-package cc.blynk.server.internal;
+package cc.blynk.server.internal.token;
 
 import java.io.Serializable;
 

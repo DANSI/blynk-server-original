@@ -1,5 +1,7 @@
 package cc.blynk.server.internal;
 
+import cc.blynk.server.internal.token.TokenUser;
+import cc.blynk.server.internal.token.TokensPool;
 import cc.blynk.utils.TokenGeneratorUtil;
 import org.junit.Test;
 
