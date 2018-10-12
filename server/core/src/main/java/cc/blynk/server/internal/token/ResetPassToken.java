@@ -3,25 +3,22 @@ package cc.blynk.server.internal.token;
 import java.io.Serializable;
 
 /**
- * The Blynk project
- * Created by Andrew Zakordonets
- * Date : 12/05/2015.
+ * The Blynk Project.
+ * Created by Dmitriy Dumanskiy.
+ * Created on 12.10.18.
  */
-public final class TokenUser implements Serializable {
+public final class ResetPassToken extends BaseToken implements Serializable {
 
-    public final String email;
     public final String appName;
-    public final long createdAt;
 
-    public TokenUser(String email, String appName) {
-        this.email = email;
+    public ResetPassToken(String email, String appName) {
+        super(email);
         this.appName = appName;
-        this.createdAt = System.currentTimeMillis();
     }
 
     @Override
     public String toString() {
-        return "TokenUser{"
+        return "ResetPassToken{"
                 + "email='" + email + '\''
                 + ", appName='" + appName + '\''
                 + '}';
