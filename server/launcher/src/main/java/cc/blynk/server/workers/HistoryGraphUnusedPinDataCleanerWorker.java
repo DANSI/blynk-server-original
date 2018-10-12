@@ -10,6 +10,7 @@ import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
+import cc.blynk.server.core.model.widgets.ui.reporting.Report;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportDataStream;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportSource;
@@ -110,15 +111,17 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
 
     private static void add(Set<String> doNotRemovePaths, DashBoard dash,
                             ReportingWidget reportingWidget) {
-        for (ReportSource reportSource : reportingWidget.reportSources) {
-            int[] deviceIds = reportSource.getDeviceIds();
-            for (ReportDataStream reportDataStream : reportSource.reportDataStreams) {
-                for (int deviceId : deviceIds) {
-                    for (GraphGranularityType type : GraphGranularityType.values()) {
-                        String filename = ReportingDiskDao.generateFilename(dash.id,
-                                deviceId,
-                                reportDataStream.pinType, reportDataStream.pin, type);
-                        doNotRemovePaths.add(filename);
+        for (Report report : reportingWidget.reports) {
+            for (ReportSource reportSource : report.reportSources) {
+                int[] deviceIds = reportSource.getDeviceIds();
+                for (ReportDataStream reportDataStream : reportSource.reportDataStreams) {
+                    for (int deviceId : deviceIds) {
+                        for (GraphGranularityType type : GraphGranularityType.values()) {
+                            String filename = ReportingDiskDao.generateFilename(dash.id,
+                                    deviceId,
+                                    reportDataStream.pinType, reportDataStream.pin, type);
+                            doNotRemovePaths.add(filename);
+                        }
                     }
                 }
             }
