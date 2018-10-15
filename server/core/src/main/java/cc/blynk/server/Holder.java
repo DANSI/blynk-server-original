@@ -35,7 +35,6 @@ import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 
 import java.util.Collections;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Just a holder for all necessary objects for server instance creation.
@@ -155,7 +154,7 @@ public class Holder {
 
         String contactEmail = serverProperties.getProperty("contact.email", mailProperties.getSMTPUsername());
         this.sslContextHolder = new SslContextHolder(props, contactEmail);
-        this.tokensPool = new TokensPool(serverProperties.getReportingFolder(), TimeUnit.MINUTES.toMillis(60));
+        this.tokensPool = new TokensPool(serverProperties.getReportingFolder());
     }
 
     //for tests only
@@ -212,7 +211,7 @@ public class Holder {
         this.reportScheduler = new ReportScheduler(1, downloadUrl, mailWrapper, reportingDiskDao, userDao.users);
 
         this.sslContextHolder = new SslContextHolder(props, "test@blynk.cc");
-        this.tokensPool = new TokensPool(serverProperties.getReportingFolder(), TimeUnit.MINUTES.toMillis(60));
+        this.tokensPool = new TokensPool(serverProperties.getReportingFolder());
 
     }
 

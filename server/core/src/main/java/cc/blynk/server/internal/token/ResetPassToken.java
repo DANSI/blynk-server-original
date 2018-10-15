@@ -12,7 +12,7 @@ public final class ResetPassToken extends BaseToken implements Serializable {
     public final String appName;
 
     public ResetPassToken(String email, String appName) {
-        super(email);
+        super(email, DEFAULT_EXPIRE_TIME);
         this.appName = appName;
     }
 

@@ -1,6 +1,7 @@
 package cc.blynk.server.internal.token;
 
 import java.io.Serializable;
+import java.util.concurrent.TimeUnit;
 
 /**
  * The Blynk Project.
@@ -10,10 +11,15 @@ import java.io.Serializable;
 public abstract class BaseToken implements Serializable {
 
     public final String email;
-    public final long createdAt;
+    private final long expireAt;
+    static final long DEFAULT_EXPIRE_TIME = TimeUnit.MINUTES.toMillis(45);
 
-    public BaseToken(String email) {
+    BaseToken(String email, long tokenExpirationPeriodMillis) {
         this.email = email;
-        this.createdAt = System.currentTimeMillis();
+        this.expireAt = System.currentTimeMillis() + tokenExpirationPeriodMillis;
+    }
+
+    boolean isExpired(long now) {
+        return expireAt < now;
     }
 }

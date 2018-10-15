@@ -23,13 +23,11 @@ public final class TokensPool implements Closeable {
     private static final Logger log = LogManager.getLogger(TokensPool.class);
     private static final String TOKENS_TEMP_FILENAME = "tokens_pool_temp.bin";
 
-    private final long tokenExpirationPeriodMillis;
     private final String dataFolder;
     private final ConcurrentHashMap<String, BaseToken> tokens;
 
     @SuppressWarnings("unchecked")
-    public TokensPool(String dataFolder, long expirationPeriodMillis) {
-        this.tokenExpirationPeriodMillis = expirationPeriodMillis;
+    public TokensPool(String dataFolder) {
         this.dataFolder = dataFolder;
 
         Path path = Paths.get(dataFolder, TOKENS_TEMP_FILENAME);
@@ -79,7 +77,7 @@ public final class TokensPool implements Closeable {
 
     public void cleanupOldTokens() {
         long now = System.currentTimeMillis();
-        tokens.entrySet().removeIf(entry -> entry.getValue().createdAt + tokenExpirationPeriodMillis < now);
+        tokens.entrySet().removeIf(entry -> entry.getValue().isExpired(now));
     }
 
     //just for tests
