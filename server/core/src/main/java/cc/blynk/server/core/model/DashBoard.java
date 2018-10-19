@@ -62,6 +62,7 @@ public class DashBoard {
 
     //-1 means this is not child project
     private static final int IS_PARENT_DASH = -1;
+    private static final String DEFAULT_NAME = "New Project";
 
     public int id;
 
@@ -127,7 +128,7 @@ public class DashBoard {
     }
 
     public String getNameOrDefault() {
-        return name == null ? "New Project" : name;
+        return name == null ? DEFAULT_NAME : name;
     }
 
     public void putPinPropertyStorageValue(int deviceId, PinType type, byte pin,
