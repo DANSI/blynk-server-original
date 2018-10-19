@@ -20,11 +20,13 @@ import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphType;
 import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
+import cc.blynk.server.core.model.widgets.ui.reporting.Report;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.DeviceReportSource;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportDataStream;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportSource;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.TileTemplateReportSource;
+import cc.blynk.server.core.model.widgets.ui.reporting.type.OneTimeReport;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.model.widgets.ui.tiles.templates.PageTileTemplate;
@@ -51,6 +53,7 @@ import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.ZoneId;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.zip.GZIPInputStream;
 
@@ -62,6 +65,7 @@ import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.server.core.model.serialization.JsonParser.MAPPER;
 import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.ONE_HOUR;
 import static cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod.SIX_HOURS;
+import static cc.blynk.server.core.model.widgets.ui.reporting.ReportOutput.CSV_FILE_PER_DEVICE_PER_PIN;
 import static cc.blynk.server.core.protocol.enums.Response.NO_DATA;
 import static java.nio.file.StandardOpenOption.APPEND;
 import static java.nio.file.StandardOpenOption.CREATE;
@@ -1782,6 +1786,70 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         assertTrue(Files.exists(pinReportingDataPath2));
         assertTrue(Files.exists(pinReportingDataPath3));
         assertTrue(Files.notExists(pinReportingDataPath4));
+    }
+
+    @Test
+    public void cleanNotUsedPinDataWorksAsExpectedForReportsWidget() throws Exception {
+        HistoryGraphUnusedPinDataCleanerWorker cleaner = new HistoryGraphUnusedPinDataCleanerWorker(holder.userDao, holder.reportingDiskDao);
+
+        ReportingWidget reportingWidget = new ReportingWidget();
+        reportingWidget.id = 432;
+        reportingWidget.width = 8;
+        reportingWidget.height = 4;
+        reportingWidget.reports = new Report[] {
+                new Report(1, "My One Time Report",
+                        new ReportSource[] {
+                                new TileTemplateReportSource(
+                                        new ReportDataStream[] {new ReportDataStream((byte) 88, PinType.VIRTUAL, null, false),
+                                                new ReportDataStream((byte) 89, PinType.VIRTUAL, null, false)},
+                                        0,
+                                        new int[] {0, 1}
+                                )
+                        },
+                        new OneTimeReport(86400), "test@gmail.com",
+                        GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN, null, ZoneId.of("UTC"), 0, 0, null)
+        };
+
+        clientPair.appClient.createWidget(1, reportingWidget);
+        clientPair.appClient.verifyResult(ok(1));
+        clientPair.appClient.reset();
+
+        String tempDir = holder.props.getProperty("data.folder");
+
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+
+        //this file has corresponding history graph
+        Path pinReportingDataPath1 = Paths.get(tempDir, "data", getUserName(),
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphGranularityType.MINUTE));
+        FileUtils.write(pinReportingDataPath1, 1.11D, 1111111);
+
+        Path pinReportingDataPath2 = Paths.get(tempDir, "data", getUserName(),
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 89, GraphGranularityType.MINUTE));
+        FileUtils.write(pinReportingDataPath2, 1.11D, 1111111);
+
+        Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
+                ReportingDiskDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphGranularityType.MINUTE));
+        FileUtils.write(pinReportingDataPath12, 1.11D, 1111111);
+
+        Path pinReportingDataPath22 = Paths.get(tempDir, "data", getUserName(),
+                ReportingDiskDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 89, GraphGranularityType.MINUTE));
+        FileUtils.write(pinReportingDataPath22, 1.11D, 1111111);
+
+        assertTrue(Files.exists(pinReportingDataPath1));
+        assertTrue(Files.exists(pinReportingDataPath2));
+        assertTrue(Files.exists(pinReportingDataPath12));
+        assertTrue(Files.exists(pinReportingDataPath22));
+
+
+        cleaner.run();
+
+        assertTrue(Files.exists(pinReportingDataPath1));
+        assertTrue(Files.exists(pinReportingDataPath2));
+        assertTrue(Files.exists(pinReportingDataPath12));
+        assertTrue(Files.exists(pinReportingDataPath22));
     }
 
     @Test

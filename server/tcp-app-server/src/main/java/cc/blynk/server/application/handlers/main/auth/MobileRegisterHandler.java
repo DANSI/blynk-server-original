@@ -75,7 +75,7 @@ public class MobileRegisterHandler extends SimpleChannelInboundHandler<RegisterM
         String[] messageParts = StringUtils.split3(message.body);
 
         //expecting message with 2 parts at least.
-        if (messageParts.length < 2) {
+        if (messageParts.length < 3) {
             log.error("Register Handler. Wrong income message format. {}", message);
             ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
             return;
@@ -83,7 +83,7 @@ public class MobileRegisterHandler extends SimpleChannelInboundHandler<RegisterM
 
         String email = messageParts[0].trim().toLowerCase();
         String pass = messageParts[1];
-        String appName = messageParts.length == 3 ? messageParts[2] : AppNameUtil.BLYNK;
+        String appName = messageParts[2];
         log.info("Trying register user : {}, app : {}", email, appName);
 
         if (BlynkEmailValidator.isNotValidEmail(email)) {

@@ -15,6 +15,7 @@ import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.handlers.encoders.MobileMessageEncoder;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.stats.GlobalStats;
+import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.SHA256Util;
 import cc.blynk.utils.properties.ServerProperties;
 import io.netty.channel.ChannelInitializer;
@@ -201,21 +202,16 @@ public class TestAppClient extends BaseTestAppClient {
         send("createDash " + dashJson);
     }
 
-    public void register(String email, String pass) {
-        send("register " + email + BODY_SEPARATOR + SHA256Util.makeHash(pass, email));
-    }
-
     public void register(String email, String pass, String appName) {
         send("register " + email + BODY_SEPARATOR + SHA256Util.makeHash(pass, email) + BODY_SEPARATOR + appName);
     }
 
     public void login(String email, String pass) {
-        send("login " + email + BODY_SEPARATOR + SHA256Util.makeHash(pass, email));
+        login(email, pass, "Android", "2.27.0", AppNameUtil.BLYNK);
     }
 
     public void login(String email, String pass, String os, String version) {
-        send("login " + email + BODY_SEPARATOR + SHA256Util.makeHash(pass, email)
-                + BODY_SEPARATOR + os + BODY_SEPARATOR + version);
+        login(email, pass, os, version, AppNameUtil.BLYNK);
     }
 
     public void login(String email, String pass, String os, String version, String appName) {

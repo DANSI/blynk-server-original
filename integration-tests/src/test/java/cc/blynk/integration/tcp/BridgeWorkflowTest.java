@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
+import cc.blynk.utils.AppNameUtil;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -368,7 +369,7 @@ public class BridgeWorkflowTest extends SingleServerInstancePerTest {
 
         appClient.start();
 
-        appClient.register("test@test.com", "1");
+        appClient.register("test@test.com", "1", AppNameUtil.BLYNK);
         appClient.verifyResult(ok(1));
 
         appClient.login("test@test.com", "1", "Android", "RC13");

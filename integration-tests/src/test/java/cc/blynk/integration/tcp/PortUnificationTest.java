@@ -5,6 +5,7 @@ import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.utils.AppNameUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -27,7 +28,7 @@ public class PortUnificationTest extends SingleServerInstancePerTest {
         TestAppClient appClient = new TestAppClient("localhost", appPort, properties);
         appClient.start();
 
-        appClient.register(incrementAndGetUserName(), "1");
+        appClient.register(incrementAndGetUserName(), "1", AppNameUtil.BLYNK);
         appClient.login(getUserName(), "1", "Android", "1.10.4");
         appClient.verifyResult(ok(1));
         appClient.verifyResult(ok(2));
@@ -39,7 +40,7 @@ public class PortUnificationTest extends SingleServerInstancePerTest {
         TestAppClient appClient = new TestAppClient("localhost", appPort, properties);
         appClient.start();
 
-        appClient.register(incrementAndGetUserName(), "1");
+        appClient.register(incrementAndGetUserName(), "1", AppNameUtil.BLYNK);
         appClient.login(getUserName(), "1", "Android", "1.10.4");
         appClient.createDash("{\"id\":1, \"createdAt\":1, \"name\":\"test board\"}");
 

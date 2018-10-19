@@ -10,6 +10,7 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.enums.Priority;
+import cc.blynk.utils.AppNameUtil;
 import io.netty.channel.ChannelFuture;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -57,7 +58,7 @@ public class NotificationsLogicTest extends SingleServerInstancePerTest {
 
         appClient.start();
 
-        appClient.register("test@test.com", "1");
+        appClient.register("test@test.com", "1", AppNameUtil.BLYNK);
         appClient.verifyResult(ok(1));
 
         appClient.login("test@test.com", "1", "Android", "RC13");

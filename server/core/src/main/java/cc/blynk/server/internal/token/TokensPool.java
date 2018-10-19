@@ -1,4 +1,4 @@
-package cc.blynk.server.internal;
+package cc.blynk.server.internal.token;
 
 import cc.blynk.utils.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -14,45 +14,54 @@ import static cc.blynk.server.internal.SerializationUtil.deserialize;
 import static cc.blynk.server.internal.SerializationUtil.serialize;
 
 /**
- * The Blynk project
- * Created by Andrew Zakordonets
- * Date : 12/05/2015.
+ * The Blynk Project.
+ * Created by Dmitriy Dumanskiy.
+ * Created on 12.10.18.
  */
 public final class TokensPool implements Closeable {
 
     private static final Logger log = LogManager.getLogger(TokensPool.class);
     private static final String TOKENS_TEMP_FILENAME = "tokens_pool_temp.bin";
 
-    private final long tokenExpirationPeriodMillis;
     private final String dataFolder;
-    private final ConcurrentHashMap<String, TokenUser> tokens;
+    private final ConcurrentHashMap<String, BaseToken> tokens;
 
     @SuppressWarnings("unchecked")
-    public TokensPool(String dataFolder, long expirationPeriodMillis) {
-        this.tokenExpirationPeriodMillis = expirationPeriodMillis;
+    public TokensPool(String dataFolder) {
         this.dataFolder = dataFolder;
 
         Path path = Paths.get(dataFolder, TOKENS_TEMP_FILENAME);
-        this.tokens = (ConcurrentHashMap<String, TokenUser>) deserialize(path);
+        this.tokens = (ConcurrentHashMap<String, BaseToken>) deserialize(path);
         FileUtils.deleteQuietly(path);
     }
 
-    public void addToken(String token, TokenUser user) {
+    public void addToken(String token, ResetPassToken user) {
         log.info("Adding token for {} user to the pool", user.email);
         cleanupOldTokens();
         tokens.put(token, user);
     }
 
-    public TokenUser getUser(String token) {
+    public ResetPassToken getResetPassToken(String token) {
+        BaseToken baseToken = getBaseToken(token);
+        if (baseToken instanceof ResetPassToken) {
+            return (ResetPassToken) baseToken;
+        }
+        return null;
+    }
+
+    public BaseToken getBaseToken(String token) {
         cleanupOldTokens();
         return tokens.get(token);
     }
 
-    public boolean hasToken(String email, String appName) {
-        for (Map.Entry<String, TokenUser> entry : tokens.entrySet()) {
-            TokenUser tokenUser = entry.getValue();
-            if (tokenUser.isSame(email, appName)) {
-                return true;
+    public boolean hasResetToken(String email, String appName) {
+        for (Map.Entry<String, BaseToken> entry : tokens.entrySet()) {
+            BaseToken tokenBase = entry.getValue();
+            if (tokenBase instanceof ResetPassToken) {
+                ResetPassToken resetPassToken = (ResetPassToken) tokenBase;
+                if (resetPassToken.isSame(email, appName)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -68,11 +77,11 @@ public final class TokensPool implements Closeable {
 
     public void cleanupOldTokens() {
         long now = System.currentTimeMillis();
-        tokens.entrySet().removeIf(entry -> entry.getValue().createdAt + tokenExpirationPeriodMillis < now);
+        tokens.entrySet().removeIf(entry -> entry.getValue().isExpired(now));
     }
 
     //just for tests
-    public ConcurrentHashMap<String, TokenUser> getTokens() {
+    public ConcurrentHashMap<String, BaseToken> getTokens() {
         return tokens;
     }
 

@@ -139,10 +139,10 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
 
         appClient.start();
 
-        appClient.register("test1@test.com", "1");
+        appClient.register("test1@test.com", "1", AppNameUtil.BLYNK);
         appClient.verifyResult(ok(1));
 
-        appClient.register("test2@test.com", "1");
+        appClient.register("test2@test.com", "1", AppNameUtil.BLYNK);
         appClient.verifyResult(notAllowed(2));
 
         assertTrue(appClient.isClosed());
@@ -156,7 +156,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
 
         String username = incrementAndGetUserName();
 
-        appClient.register(username, "1");
+        appClient.register(username, "1", AppNameUtil.BLYNK);
         appClient.verifyResult(ok(1));
 
         appClient.login(username, "1", "Android", "RC13");
@@ -221,7 +221,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
 
         String username = incrementAndGetUserName();
 
-        appClient.register(username, "1");
+        appClient.register(username, "1", AppNameUtil.BLYNK);
         appClient.verifyResult(ok(1));
 
         appClient.login(username, "1", "Android", "RC13");
@@ -266,7 +266,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
 
         appClient.start();
 
-        appClient.register("te?st@test.com", "1");
+        appClient.register("te?st@test.com", "1", AppNameUtil.BLYNK);
         appClient.verifyResult(illegalCommand(1));
     }
 
@@ -276,7 +276,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
 
         appClient.start();
 
-        appClient.register("test@test.com", "1");
+        appClient.register("test@test.com", "1", AppNameUtil.BLYNK);
         appClient.verifyResult(ok(1));
 
         appClient.login("test@test.com", "1", "Android", "RC13");

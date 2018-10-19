@@ -1,5 +1,8 @@
 package cc.blynk.server.internal;
 
+import cc.blynk.server.internal.token.BaseToken;
+import cc.blynk.server.internal.token.ResetPassToken;
+import cc.blynk.server.internal.token.TokensPool;
 import cc.blynk.utils.TokenGeneratorUtil;
 import org.junit.Test;
 
@@ -13,23 +16,21 @@ public class SerializationTokenPoolTest {
     @Test
     public void someTEst() {
         String path = System.getProperty("java.io.tmpdir");
-        TokensPool tokensPool = new TokensPool(path, 1000_000);
+        TokensPool tokensPool = new TokensPool(path);
 
         String token = TokenGeneratorUtil.generateNewToken();
-        TokenUser tokenUser = new TokenUser("dima@mail.us", "Blynk");
-        tokensPool.addToken(token, tokenUser);
+        ResetPassToken resetPassToken = new ResetPassToken("dima@mail.us", "Blynk");
+        tokensPool.addToken(token, resetPassToken);
         tokensPool.close();
 
-        TokensPool tokensPool2 = new TokensPool(path, 1000_000);
-        ConcurrentHashMap<String, TokenUser> tokens = tokensPool2.getTokens();
+        TokensPool tokensPool2 = new TokensPool(path);
+        ConcurrentHashMap<String, BaseToken> tokens = tokensPool2.getTokens();
         assertNotNull(tokens);
         assertEquals(1, tokens.size());
-        TokenUser tokenUser2 = tokens.get(token);
-        assertNotNull(tokenUser2);
-        assertEquals("dima@mail.us", tokenUser2.email);
-        assertEquals("Blynk", tokenUser2.appName);
-        assertEquals(System.currentTimeMillis(), tokenUser2.createdAt, 5000L);
-
+        ResetPassToken resetPassToken2 = (ResetPassToken) tokens.get(token);
+        assertNotNull(resetPassToken2);
+        assertEquals("dima@mail.us", resetPassToken2.email);
+        assertEquals("Blynk", resetPassToken2.appName);
     }
 
 }

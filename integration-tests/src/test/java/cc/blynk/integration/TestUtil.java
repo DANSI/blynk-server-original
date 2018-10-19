@@ -25,6 +25,7 @@ import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
 import cc.blynk.server.notifications.sms.SMSWrapper;
 import cc.blynk.server.notifications.twitter.TwitterWrapper;
+import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.properties.ServerProperties;
 import com.fasterxml.jackson.databind.ObjectReader;
@@ -268,7 +269,7 @@ public final class TestUtil {
 
         int dashId = profile.dashBoards[0].id;
 
-        appClient.register(user, pass);
+        appClient.register(user, pass, AppNameUtil.BLYNK);
         appClient.login(user, pass, "Android", "1.10.4");
         int rand = ThreadLocalRandom.current().nextInt();
         appClient.send("addEnergy " + energy + "\0" + String.valueOf(rand));

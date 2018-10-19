@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.widgets.ui.reporting.type.BaseReportType;
 import cc.blynk.server.core.model.widgets.ui.reporting.type.DailyReport;
 import cc.blynk.server.core.model.widgets.ui.reporting.type.OneTimeReport;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandBodyException;
+import cc.blynk.server.internal.EmptyArraysUtil;
 import cc.blynk.utils.validators.BlynkEmailValidator;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -73,7 +74,7 @@ public class Report {
                   @JsonProperty("lastRunResult") ReportResult lastRunResult) {
         this.id = id;
         this.name = name;
-        this.reportSources = reportSources;
+        this.reportSources = reportSources == null ? EmptyArraysUtil.EMPTY_REPORT_SOURCES : reportSources;
         this.reportType = reportType;
         this.recipients = recipients;
         this.granularityType = granularityType == null ? GraphGranularityType.MINUTE : granularityType;

@@ -17,8 +17,9 @@ import cc.blynk.server.core.dao.FileManager;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.db.DBManager;
-import cc.blynk.server.internal.TokenUser;
-import cc.blynk.server.internal.TokensPool;
+import cc.blynk.server.internal.token.BaseToken;
+import cc.blynk.server.internal.token.ResetPassToken;
+import cc.blynk.server.internal.token.TokensPool;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.FileLoaderUtil;
@@ -114,7 +115,7 @@ public class ResetPasswordHttpLogic extends BaseHttpHandler {
         String token = generateToken();
         log.info("{} trying to reset pass.", trimmedEmail);
 
-        TokenUser userToken = new TokenUser(trimmedEmail, appName);
+        ResetPassToken userToken = new ResetPassToken(trimmedEmail, appName);
         tokensPool.addToken(token, userToken);
         String message = emailBody.replace(Placeholders.RESET_URL, resetPassUrl + token);
         log.info("Sending token to {} address", trimmedEmail);
@@ -140,13 +141,13 @@ public class ResetPasswordHttpLogic extends BaseHttpHandler {
     @GET
     @Path("landing")
     public Response generateResetPage(@QueryParam("token") String token) {
-        TokenUser user = tokensPool.getUser(token);
-        if (user == null) {
+        BaseToken baseToken = tokensPool.getBaseToken(token);
+        if (baseToken == null) {
             return badRequest("Your token was not found or it is outdated. Please try again.");
         }
 
-        log.info("{} landed.", user.email);
-        String page = pageContent.replace(Placeholders.EMAIL, user.email).replace(Placeholders.TOKEN, token);
+        log.info("{} landed.", baseToken.email);
+        String page = pageContent.replace(Placeholders.EMAIL, baseToken.email).replace(Placeholders.TOKEN, token);
         return ok(page, MediaType.TEXT_HTML);
     }
 
@@ -155,7 +156,7 @@ public class ResetPasswordHttpLogic extends BaseHttpHandler {
     public Response getNewResetPage(@QueryParam("token") String token, @QueryParam("email") String email) {
         //we do not check token here, as we used single host but we may have many servers
 
-        //TokenUser user = tokensPool.getUser(token);
+        //ResetPassToken user = tokensPool.getBaseToken(token);
         //if (user == null) {
         //    return badRequest("Your token was not found or it is outdated. Please try again.");
         //}
@@ -171,16 +172,16 @@ public class ResetPasswordHttpLogic extends BaseHttpHandler {
     @Path("updatePassword")
     public Response updatePassword(@FormParam("password") String passHash,
                                    @FormParam("token") String token) {
-        TokenUser tokenUser = tokensPool.getUser(token);
-        if (tokenUser == null) {
+        ResetPassToken resetPassToken = tokensPool.getResetPassToken(token);
+        if (resetPassToken == null) {
             return badRequest("Invalid token. Please repeat all steps.");
         }
 
-        log.info("Resetting pass for {}", tokenUser.email);
-        User user = userDao.getByName(tokenUser.email, tokenUser.appName);
+        log.info("Resetting pass for {}", resetPassToken.email);
+        User user = userDao.getByName(resetPassToken.email, resetPassToken.appName);
 
         if (user == null) {
-            log.warn("No user with email {}", tokenUser.email);
+            log.warn("No user with email {}", resetPassToken.email);
             return notFound();
         }
 

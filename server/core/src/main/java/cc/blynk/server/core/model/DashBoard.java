@@ -261,7 +261,7 @@ public class DashBoard {
             }
             if (widget instanceof ReportingWidget) {
                 ReportingWidget reportingWidget = (ReportingWidget) widget;
-                if (reportingWidget.hasPin(pin, pinType, deviceId)) {
+                if (reportingWidget.hasPin(pin, pinType)) {
                     return reportingWidget;
                 }
             }
