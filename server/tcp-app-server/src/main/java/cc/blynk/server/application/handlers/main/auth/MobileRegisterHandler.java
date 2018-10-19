@@ -75,7 +75,7 @@ public class MobileRegisterHandler extends SimpleChannelInboundHandler<RegisterM
         }
 
         String email = messageParts[0].trim().toLowerCase();
-        String pass = messageParts[1];
+        String passHash = messageParts[1];
         String appName = messageParts[2];
         log.info("Trying register user : {}, app : {}", email, appName);
 
@@ -91,7 +91,7 @@ public class MobileRegisterHandler extends SimpleChannelInboundHandler<RegisterM
             return;
         }
 
-        User newUser = userDao.add(email, pass, appName);
+        User newUser = userDao.add(email, passHash, appName);
 
         log.info("Registered {}.", email);
 

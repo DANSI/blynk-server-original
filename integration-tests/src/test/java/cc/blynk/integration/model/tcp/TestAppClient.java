@@ -15,7 +15,6 @@ import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.handlers.encoders.MobileMessageEncoder;
 import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.stats.GlobalStats;
-import cc.blynk.utils.AppNameUtil;
 import cc.blynk.utils.SHA256Util;
 import cc.blynk.utils.properties.ServerProperties;
 import io.netty.channel.ChannelInitializer;
@@ -28,6 +27,7 @@ import java.util.Collections;
 import java.util.Random;
 import java.util.StringJoiner;
 
+import static cc.blynk.utils.AppNameUtil.BLYNK;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR_STRING;
 import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
@@ -207,11 +207,11 @@ public class TestAppClient extends BaseTestAppClient {
     }
 
     public void login(String email, String pass) {
-        login(email, pass, "Android", "2.27.0", AppNameUtil.BLYNK);
+        login(email, pass, "Android", "2.27.0", BLYNK);
     }
 
     public void login(String email, String pass, String os, String version) {
-        login(email, pass, os, version, AppNameUtil.BLYNK);
+        login(email, pass, os, version, BLYNK);
     }
 
     public void login(String email, String pass, String os, String version, String appName) {
@@ -310,6 +310,14 @@ public class TestAppClient extends BaseTestAppClient {
 
     public void getProvisionToken(int dashId, Device device) {
         send("getProvisionToken " + dashId + BODY_SEPARATOR + device.toString());
+    }
+
+    public void createApp(App app) {
+        send("createApp " + app.toString());
+    }
+
+    public void loadProfileGzipped() {
+        send("loadProfileGzipped");
     }
 
     public void replace(SimpleClientHandler simpleClientHandler) {

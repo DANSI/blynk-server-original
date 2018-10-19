@@ -347,16 +347,16 @@ public class UserDao {
         return newUser;
     }
 
-    public User add(String email, String pass, String appName) {
+    public User add(String email, String passHash, String appName) {
         log.debug("Adding new user {}. App : {}", email, appName);
-        User newUser = new User(email, pass, appName, region, host, false, false);
+        User newUser = new User(email, passHash, appName, region, host, false, false);
         users.put(new UserKey(email, appName), newUser);
         return newUser;
     }
 
-    public void add(String email, String pass, String appName, boolean isSuperAdmin) {
+    public void add(String email, String passHash, String appName, boolean isSuperAdmin) {
         log.debug("Adding new user {}. App : {}", email, appName);
-        User newUser = new User(email, pass, appName, region, host, false, isSuperAdmin);
+        User newUser = new User(email, passHash, appName, region, host, false, isSuperAdmin);
         users.put(new UserKey(email, appName), newUser);
     }
 
