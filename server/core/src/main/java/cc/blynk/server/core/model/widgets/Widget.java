@@ -225,17 +225,17 @@ public abstract class Widget implements CopyObject<Widget> {
         return false;
     }
 
-    public void setProperty(WidgetProperty property, String propertyValue) {
+    public boolean setProperty(WidgetProperty property, String propertyValue) {
         switch (property) {
             case LABEL :
                 this.label = propertyValue;
-                break;
+                return true;
             case COLOR :
                 this.color = ByteUtils.parseColor(propertyValue);
                 this.isDefaultColor = false;
-                break;
+                return true;
             default:
-                throw new RuntimeException("Property is not supported for this widget.");
+                return false;
         }
     }
 }

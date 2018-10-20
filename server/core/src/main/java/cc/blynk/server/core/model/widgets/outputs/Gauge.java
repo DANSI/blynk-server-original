@@ -22,14 +22,13 @@ public class Gauge extends OnePinReadingWidget {
     }
 
     @Override
-    public void setProperty(WidgetProperty property, String propertyValue) {
+    public boolean setProperty(WidgetProperty property, String propertyValue) {
         switch (property) {
             case VALUE_FORMATTING :
                 this.valueFormatting = propertyValue;
-                break;
+                return true;
             default:
-                super.setProperty(property, propertyValue);
-                break;
+                return super.setProperty(property, propertyValue);
         }
     }
 

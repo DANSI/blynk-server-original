@@ -24,20 +24,19 @@ public class Image extends OnePinWidget {
     public volatile int rotation;
 
     @Override
-    public void setProperty(WidgetProperty property, String propertyValue) {
+    public boolean setProperty(WidgetProperty property, String propertyValue) {
         switch (property) {
             case OPACITY :
                 this.opacity = Integer.parseInt(propertyValue);
-                break;
+                return true;
             case SCALE :
                 this.scale = Integer.parseInt(propertyValue);
-                break;
+                return true;
             case ROTATION :
                 this.rotation = Integer.parseInt(propertyValue);
-                break;
+                return true;
             default:
-                super.setProperty(property, propertyValue);
-                break;
+                return super.setProperty(property, propertyValue);
         }
     }
 

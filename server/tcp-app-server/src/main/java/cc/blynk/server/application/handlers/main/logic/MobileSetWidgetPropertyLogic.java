@@ -62,14 +62,13 @@ public final class MobileSetWidgetPropertyLogic {
             widget = dash.getWidgetByIdInDeviceTilesOrThrow(widgetId);
         }
 
-        try {
-            widget.setProperty(widgetProperty, propertyValue);
-            dash.updatedAt = System.currentTimeMillis();
-        } catch (Exception e) {
-            log.debug("Error setting widget property. Reason : {}", e.getMessage());
+        if (!widget.setProperty(widgetProperty, propertyValue)) {
+            log.debug("Property {} with value {} not supported.", property, propertyValue);
             ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
             return;
         }
+
+        dash.updatedAt = System.currentTimeMillis();
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }
 

@@ -46,41 +46,40 @@ public class StyledButton extends OnePinWidget {
     }
 
     @Override
-    public void setProperty(WidgetProperty property, String propertyValue) {
+    public boolean setProperty(WidgetProperty property, String propertyValue) {
         switch (property) {
             case ON_BACK_COLOR :
                 if (this.onButtonState != null) {
                     this.onButtonState.backgroundColor = ByteUtils.parseColor(propertyValue);
                 }
-                break;
+                return true;
             case OFF_BACK_COLOR :
                 if (this.offButtonState != null) {
                     this.offButtonState.backgroundColor = ByteUtils.parseColor(propertyValue);
                 }
-                break;
+                return true;
             case ON_COLOR :
                 if (this.onButtonState != null) {
                     this.onButtonState.textColor = ByteUtils.parseColor(propertyValue);
                 }
-                break;
+                return true;
             case OFF_COLOR :
                 if (this.offButtonState != null) {
                     this.offButtonState.textColor = ByteUtils.parseColor(propertyValue);
                 }
-                break;
+                return true;
             case ON_LABEL :
                 if (this.onButtonState != null) {
                     this.onButtonState.text = propertyValue;
                 }
-                break;
+                return true;
             case OFF_LABEL :
                 if (this.offButtonState != null) {
                     this.offButtonState.text = propertyValue;
                 }
-                break;
+                return true;
             default:
-                super.setProperty(property, propertyValue);
-                break;
+                return super.setProperty(property, propertyValue);
         }
     }
 }

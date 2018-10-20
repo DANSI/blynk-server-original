@@ -34,14 +34,13 @@ public class Step extends OnePinWidget {
     }
 
     @Override
-    public void setProperty(WidgetProperty property, String propertyValue) {
+    public boolean setProperty(WidgetProperty property, String propertyValue) {
         switch (property) {
             case STEP :
                 this.step = Float.parseFloat(propertyValue);
-                break;
+                return true;
             default:
-                super.setProperty(property, propertyValue);
-                break;
+                return super.setProperty(property, propertyValue);
         }
     }
 }

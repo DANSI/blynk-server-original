@@ -74,15 +74,12 @@ public final class SetWidgetPropertyLogic {
         Widget widget = null;
         for (Widget dashWidget : dash.widgets) {
             if (dashWidget.isSame(deviceId, pin, PinType.VIRTUAL)) {
-                try {
-                    dashWidget.setProperty(widgetProperty, propertyValue);
-                    dash.updatedAt = System.currentTimeMillis();
-                } catch (Exception e) {
-                    log.debug("Error setting widget property. Reason : {}", e.getMessage());
-                    ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
-                    return;
+                if (dashWidget.setProperty(widgetProperty, propertyValue)) {
+                    widget = dashWidget;
+                } else {
+                    log.trace("Property {} with value {} not supported for widgetId {} .",
+                            property, propertyValue, dashWidget.id);
                 }
-                widget = dashWidget;
             }
         }
 
@@ -90,6 +87,7 @@ public final class SetWidgetPropertyLogic {
         if (widget == null) {
             dash.putPinPropertyStorageValue(deviceId, PinType.VIRTUAL, pin, widgetProperty, propertyValue);
         }
+        dash.updatedAt = System.currentTimeMillis();
 
         Session session = sessionDao.userSession.get(state.userKey);
         session.sendToApps(SET_WIDGET_PROPERTY, message.id, dash.id, deviceId, message.body);

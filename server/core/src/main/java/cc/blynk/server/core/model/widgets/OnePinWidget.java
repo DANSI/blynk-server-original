@@ -140,19 +140,18 @@ public abstract class OnePinWidget extends Widget implements MobileSyncWidget, H
     }
 
     @Override
-    public void setProperty(WidgetProperty property, String propertyValue) {
+    public boolean setProperty(WidgetProperty property, String propertyValue) {
         switch (property) {
             case MIN :
                 //accepting floats as valid, but using int for min/max due to back compatibility
                 this.min = Float.parseFloat(propertyValue);
-                break;
+                return true;
             case MAX :
                 //accepting floats as valid, but using int for min/max due to back compatibility
                 this.max = Float.parseFloat(propertyValue);
-                break;
+                return true;
             default:
-                super.setProperty(property, propertyValue);
-                break;
+                return super.setProperty(property, propertyValue);
         }
     }
 
