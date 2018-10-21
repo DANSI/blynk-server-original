@@ -355,11 +355,9 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
         Widget widget = null;
         for (Widget dashWidget : dash.widgets) {
             if (dashWidget.isSame(deviceId, pin, pinType)) {
-                try {
-                    //todo for now supporting only single property
-                    dashWidget.setProperty(property, value);
-                } catch (Exception e) {
-                    log.debug("Error setting widget property. Reason : {}", e.getMessage());
+                //todo for now supporting only single property
+                if (!dashWidget.setProperty(property, value)) {
+                    log.debug("Property {} with value {} not supported.", property, value);
                     return badRequest("Error setting widget property.");
                 }
                 widget = dashWidget;

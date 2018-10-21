@@ -10,6 +10,8 @@ import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.enums.ProvisionType;
+import cc.blynk.server.core.model.enums.Theme;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -73,17 +75,20 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
 
     @Test
     public void testGetProjectByToken() throws Exception {
-        clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"AppPreview\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
-        App app = clientPair.appClient.parseApp(1);
-        assertNotNull(app);
-        assertNotNull(app.id);
+        App appObj = new App(null, Theme.BlynkLight,
+                ProvisionType.STATIC,
+                0, false, "AppPreview", "myIcon", new int[] {1});
+        clientPair.appClient.createApp(appObj);
+        App appFromApi = clientPair.appClient.parseApp(1);
+        assertNotNull(appFromApi);
+        assertNotNull(appFromApi.id);
         clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
         Device[] devices = clientPair.appClient.parseDevices();
         assertEquals(1, devices.length);
 
-        clientPair.appClient.send("emailQr 1\0" + app.id);
+        clientPair.appClient.send("emailQr 1\0" + appFromApi.id);
         clientPair.appClient.verifyResult(ok(2));
 
         QrHolder[] qrHolders = makeQRs(devices, 1);
@@ -99,7 +104,10 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
 
     @Test
     public void testSendStaticEmailForAppPublish() throws Exception {
-        clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"AppPreview\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
+        App appObj = new App(null, Theme.BlynkLight,
+                ProvisionType.STATIC,
+                0, false, "AppPreview", "myIcon", new int[] {1});
+        clientPair.appClient.createApp(appObj);
         App app = clientPair.appClient.parseApp(1);
         assertNotNull(app);
         assertNotNull(app.id);
@@ -128,7 +136,10 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
 
     @Test
     public void testSendDynamicEmailForAppPublish() throws Exception {
-        clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"DYNAMIC\",\"color\":0,\"name\":\"AppPreview\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
+        App appObj = new App(null, Theme.BlynkLight,
+                ProvisionType.DYNAMIC,
+                0, false, "AppPreview", "myIcon", new int[] {1});
+        clientPair.appClient.createApp(appObj);
         App app = clientPair.appClient.parseApp(1);
         assertNotNull(app);
         assertNotNull(app.id);
@@ -150,7 +161,10 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
 
     @Test
     public void testSendDynamicEmailForAppPublishAndNoDevices() throws Exception {
-        clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"DYNAMIC\",\"color\":0,\"name\":\"AppPreview\",\"icon\":\"myIcon\",\"projectIds\":[1]}");
+        App appObj = new App(null, Theme.BlynkLight,
+                ProvisionType.DYNAMIC,
+                0, false, "AppPreview", "myIcon", new int[] {1});
+        clientPair.appClient.createApp(appObj);
         App app = clientPair.appClient.parseApp(1);
         assertNotNull(app);
         assertNotNull(app.id);

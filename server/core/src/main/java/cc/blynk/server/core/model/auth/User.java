@@ -52,12 +52,12 @@ public class User {
         this.appName = AppNameUtil.BLYNK;
     }
 
-    public User(String email, String pass, String appName, String region, String ip,
+    public User(String email, String passHash, String appName, String region, String ip,
                 boolean isFacebookUser, boolean isSuperAdmin) {
         this();
         this.email = email;
         this.name = email;
-        this.pass = pass;
+        this.pass = passHash;
         this.appName = appName;
         this.region = region;
         this.ip = ip;
@@ -66,13 +66,13 @@ public class User {
     }
 
     //used when user is fully read from DB
-    public User(String email, String pass, String appName, String region, String ip,
+    public User(String email, String passHash, String appName, String region, String ip,
                 boolean isFacebookUser, boolean isSuperAdmin, String name,
                 long lastModifiedTs, long lastLoggedAt, String lastLoggedIP,
                 Profile profile, int energy) {
         this.email = email;
         this.name = email;
-        this.pass = pass;
+        this.pass = passHash;
         this.appName = appName;
         this.region = region;
         this.ip = ip;

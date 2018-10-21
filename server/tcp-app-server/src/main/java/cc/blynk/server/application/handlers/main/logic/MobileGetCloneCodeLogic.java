@@ -3,6 +3,7 @@ package cc.blynk.server.application.handlers.main.logic;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.serialization.CopyUtil;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.model.messages.MessageBase;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -32,10 +33,13 @@ public final class MobileGetCloneCodeLogic {
                                        User user, StringMessage message) {
         int dashId = Integer.parseInt(message.body);
 
+        //todo all this is very ugly, however takes 5 min for implementation, also this is rare feature
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
+        DashBoard copiedDash = CopyUtil.deepCopy(dash);
+        copiedDash.eraseValues();
 
+        String json = JsonParser.toJsonRestrictiveDashboard(copiedDash);
         String qrToken = TokenGeneratorUtil.generateNewToken();
-        String json = JsonParser.toJsonRestrictiveDashboard(dash);
 
         holder.blockingIOProcessor.executeDB(() -> {
             MessageBase result;

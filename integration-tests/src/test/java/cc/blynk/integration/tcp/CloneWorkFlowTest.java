@@ -5,6 +5,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.widgets.controls.Slider;
 import cc.blynk.utils.StringUtils;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
@@ -52,13 +53,16 @@ public class CloneWorkFlowTest extends SingleServerInstancePerTestWithDB {
 
     @Test
     public void getProjectByCloneCode() throws Exception {
+        clientPair.hardwareClient.send("hardware vw 4 4");
+        clientPair.hardwareClient.send("hardware vw 44 44");
+
         clientPair.appClient.send("getCloneCode 1");
-        String token = clientPair.appClient.getBody();
+        String token = clientPair.appClient.getBody(3);
         assertNotNull(token);
         assertEquals(32, token.length());
 
         clientPair.appClient.send("getProjectByCloneCode " + token);
-        DashBoard dashBoard = clientPair.appClient.parseDash(2);
+        DashBoard dashBoard = clientPair.appClient.parseDash(4);
         assertEquals("My Dashboard", dashBoard.name);
         Device device = dashBoard.devices[0];
         assertEquals(0, device.connectTime);
@@ -67,9 +71,14 @@ public class CloneWorkFlowTest extends SingleServerInstancePerTestWithDB {
         assertEquals(0, device.firstConnectTime);
         assertNull(device.deviceOtaInfo);
         assertNull(device.hardwareInfo);
+        Slider slider = (Slider) dashBoard.getWidgetById(4);
+        assertNotNull(slider);
+        assertNull(slider.value);
+        assertNotNull(dashBoard.pinsStorage);
+        assertEquals(0, dashBoard.pinsStorage.size());
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.parseProfile(3);
+        Profile profile = clientPair.appClient.parseProfile(5);
         assertEquals(1, profile.dashBoards.length);
     }
 

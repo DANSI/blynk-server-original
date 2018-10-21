@@ -39,17 +39,16 @@ public class Button extends OnePinWidget {
     }
 
     @Override
-    public void setProperty(WidgetProperty property, String propertyValue) {
+    public boolean setProperty(WidgetProperty property, String propertyValue) {
         switch (property) {
             case ON_LABEL :
                 this.onLabel = propertyValue;
-                break;
+                return true;
             case OFF_LABEL :
                 this.offLabel = propertyValue;
-                break;
+                return true;
             default:
-                super.setProperty(property, propertyValue);
-                break;
+                return super.setProperty(property, propertyValue);
         }
     }
 }

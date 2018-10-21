@@ -19,7 +19,7 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static cc.blynk.integration.TestUtil.createTag;
-import static cc.blynk.integration.TestUtil.illegalCommandBody;
+import static cc.blynk.integration.TestUtil.illegalCommand;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.setProperty;
 import static cc.blynk.server.core.protocol.enums.Response.ILLEGAL_COMMAND_BODY;
@@ -220,7 +220,10 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         assertEquals(widget.x, 1);
 
         clientPair.hardwareClient.setProperty(4, "url", "0");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND_BODY)));
+
+        //we do not fail here, as many widgets now may be assigned to the same pin
+        clientPair.hardwareClient.verifyResult(ok(1));
+        //verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(new ResponseMessage(1, ILLEGAL_COMMAND_BODY)));
     }
 
     @Test
@@ -279,8 +282,8 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
     public void setMinMaxWrongPropertyFloat() throws Exception {
         clientPair.hardwareClient.setProperty(4, "min", "10.11-1");
         clientPair.hardwareClient.setProperty(4, "max", "20.22-2");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(illegalCommandBody(1)));
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(illegalCommandBody(2)));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(illegalCommand(1)));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(illegalCommand(2)));
         verify(clientPair.appClient.responseMock, after(50).never()).channelRead(any(), any());
         verify(clientPair.appClient.responseMock, after(50).never()).channelRead(any(), any());
     }

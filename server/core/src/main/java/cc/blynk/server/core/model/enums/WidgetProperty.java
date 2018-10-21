@@ -70,6 +70,12 @@ public enum WidgetProperty {
                 return SUFFIX;
             case "maximumFractionDigits" :
                 return FRACTION;
+            case "opacity" :
+                return OPACITY;
+            case "scale" :
+                return SCALE;
+            case "rotation" :
+                return ROTATION;
             default:
                 return null;
         }

@@ -35,14 +35,13 @@ public class Menu extends OnePinWidget {
     }
 
     @Override
-    public void setProperty(WidgetProperty property, String propertyValue) {
+    public boolean setProperty(WidgetProperty property, String propertyValue) {
         switch (property) {
             case LABELS :
                 this.labels = propertyValue.split(StringUtils.BODY_SEPARATOR_STRING);
-                break;
+                return true;
             default:
-                super.setProperty(property, propertyValue);
-                break;
+                return super.setProperty(property, propertyValue);
         }
     }
 }
