@@ -59,6 +59,7 @@ IP Tables
 
         sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8080
         sudo iptables -t nat -A PREROUTING -p tcp --dport 443 -j REDIRECT --to-port 9443
+        sudo iptables -t nat -A PREROUTING -p tcp --dport 8441 -j REDIRECT --to-port 9443
         
         sudo apt-get install iptables-persistent
         
