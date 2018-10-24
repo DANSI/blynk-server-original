@@ -5,6 +5,7 @@ import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.protocol.handlers.encoders.MessageEncoder;
 import cc.blynk.server.core.stats.GlobalStats;
+import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -50,6 +51,10 @@ public class TestHardClient extends BaseTestHardwareClient {
 
     public void setProperty(int pin, String property, String value) {
         send("setProperty " + pin + " " + property + " " + value);
+    }
+
+    public void setProperty(int pin, String property, String... value) {
+        send("setProperty " + pin + " " + property + " " + String.join(StringUtils.BODY_SEPARATOR_STRING, value));
     }
 
     public void sync() {
