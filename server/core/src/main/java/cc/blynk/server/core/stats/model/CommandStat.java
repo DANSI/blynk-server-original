@@ -24,7 +24,6 @@ import static cc.blynk.server.core.protocol.enums.Command.GET_ENERGY;
 import static cc.blynk.server.core.protocol.enums.Command.GET_SERVER;
 import static cc.blynk.server.core.protocol.enums.Command.GET_SHARE_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.GET_TAGS;
-import static cc.blynk.server.core.protocol.enums.Command.GET_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_CONNECTED;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_LOGIN;
@@ -148,9 +147,6 @@ public class CommandStat {
                 break;
             case SHARING :
                 this.sharing = val;
-                break;
-            case GET_TOKEN :
-                this.getToken = val;
                 break;
             case PING :
                 this.ping = val;

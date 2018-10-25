@@ -181,8 +181,9 @@ public class BridgeWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testCorrectWorkflow2HardsDifferentToken() throws Exception {
-        clientPair.appClient.getToken(2);
-        String token = clientPair.appClient.getBody();
+        clientPair.appClient.createDevice(2, new Device(4, "123", BoardType.ESP8266));
+        Device device = clientPair.appClient.parseDevice();
+        String token = device.token;
 
         clientPair.appClient.activate(2);
         clientPair.appClient.verifyResult(new ResponseMessage(2, DEVICE_NOT_IN_NETWORK));
@@ -199,14 +200,15 @@ public class BridgeWorkflowTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.verifyResult(ok(1));
         clientPair.hardwareClient.send("bridge 1 aw 11 11");
         hardClient1.verifyResult(bridge(2, "aw 11 11"));
-        clientPair.appClient.verifyResult(hardwareConnected(1, "2-0"));
-        clientPair.appClient.verifyResult(hardware(2, "2-0 aw 11 11"));
+        clientPair.appClient.verifyResult(hardwareConnected(1, "2-" + device.id));
+        clientPair.appClient.verifyResult(hardware(2, "2-" + device.id +" aw 11 11"));
     }
 
     @Test
     public void testCorrectWorkflow3HardsDifferentToken() throws Exception {
-        clientPair.appClient.getToken(2);
-        String token = clientPair.appClient.getBody();
+        clientPair.appClient.createDevice(2, new Device(4, "123", BoardType.ESP8266));
+        Device device = clientPair.appClient.parseDevice();
+        String token = device.token;
         clientPair.appClient.reset();
 
         //creating 2 new hard clients
@@ -230,17 +232,19 @@ public class BridgeWorkflowTest extends SingleServerInstancePerTest {
         hardClient1.verifyResult(bridge(2, "aw 11 11"));
         hardClient2.verifyResult(bridge(2, "aw 11 11"));
 
-        clientPair.appClient.verifyResult(hardwareConnected(1, "2-0"), 2);
+        clientPair.appClient.verifyResult(hardwareConnected(1, "2-" + device.id), 2);
         clientPair.appClient.never(hardware(2, "2 aw 11 11"));
     }
 
     @Test
     public void testCorrectWorkflow4HardsDifferentToken() throws Exception {
-        clientPair.appClient.getToken(2);
-        String token2 = clientPair.appClient.getBody(1);
+        clientPair.appClient.createDevice(2, new Device(4, "123", BoardType.ESP8266));
+        Device device = clientPair.appClient.parseDevice();
+        String token2 = device.token;
 
-        clientPair.appClient.getToken(3);
-        String token3 = clientPair.appClient.getBody(2);
+        clientPair.appClient.createDevice(3, new Device(5, "123", BoardType.ESP8266));
+        device = clientPair.appClient.parseDevice(2);
+        String token3 = device.token;
 
         //creating 2 new hard clients
         TestHardClient hardClient1 = new TestHardClient("localhost", tcpHardPort);
@@ -278,8 +282,9 @@ public class BridgeWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testCorrectWorkflow3HardsDifferentTokenAndSync() throws Exception {
-        clientPair.appClient.getToken(2);
-        String token = clientPair.appClient.getBody();
+        clientPair.appClient.createDevice(2, new Device(4, "123", BoardType.ESP8266));
+        Device device = clientPair.appClient.parseDevice();
+        String token = device.token;
         clientPair.appClient.reset();
 
         //creating 2 new hard clients
@@ -303,7 +308,7 @@ public class BridgeWorkflowTest extends SingleServerInstancePerTest {
         hardClient1.verifyResult(bridge(2, "aw 11 11"));
         hardClient2.verifyResult(bridge(2, "aw 11 11"));
 
-        clientPair.appClient.verifyResult(produce(1, HARDWARE_CONNECTED, "2-0"), 2);
+        clientPair.appClient.verifyResult(produce(1, HARDWARE_CONNECTED, "2-" + device.id), 2);
         clientPair.appClient.never(hardware(2, "2 aw 11 11"));
 
         hardClient1.sync(PinType.ANALOG, 11);
@@ -314,11 +319,13 @@ public class BridgeWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testCorrectWorkflow4HardsDifferentTokenAndSync() throws Exception {
-        clientPair.appClient.getToken(2);
-        String token2 = clientPair.appClient.getBody(1);
+        clientPair.appClient.createDevice(2, new Device(4, "123", BoardType.ESP8266));
+        Device device = clientPair.appClient.parseDevice();
+        String token2 = device.token;
 
-        clientPair.appClient.getToken(3);
-        String token3 = clientPair.appClient.getBody(2);
+        clientPair.appClient.createDevice(3, new Device(5, "123", BoardType.ESP8266));
+        device = clientPair.appClient.parseDevice(2);
+        String token3 = device.token;
 
         //creating 2 new hard clients
         TestHardClient hardClient1 = new TestHardClient("localhost", tcpHardPort);

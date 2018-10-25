@@ -17,7 +17,6 @@ public final class Command {
     public static final short REDEEM = 3;
     public static final short HARDWARE_CONNECTED = 4;
 
-    public static final short GET_TOKEN = 5;
     public static final short PING = 6;
     public static final short ACTIVATE_DASHBOARD = 7;
     public static final short DEACTIVATE_DASHBOARD = 8;
@@ -150,7 +149,6 @@ public final class Command {
             Map.entry(LOAD_PROFILE_GZIPPED, "LoadProfile"),
             Map.entry(APP_SYNC, "AppSync"),
             Map.entry(SHARING, "Sharing"),
-            Map.entry(GET_TOKEN, "GetToken"),
             Map.entry(ASSIGN_TOKEN, "AssignToken"),
             Map.entry(PING, "Ping"), Map.entry(SMS, "Sms"),
             Map.entry(ACTIVATE_DASHBOARD, "Activate"),

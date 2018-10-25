@@ -355,8 +355,8 @@ public class NotificationsLogicTest extends SingleServerInstancePerTest {
         clientPair.appClient.updateDash(profile.getDashById(1));
         clientPair.appClient.verifyResult(ok(1));
 
-        clientPair.appClient.getToken(1);
-        String token = clientPair.appClient.getBody(2);
+        clientPair.appClient.getDevice(1, 0);
+        Device device = clientPair.appClient.parseDevice(2);
 
         clientPair.appClient.send("logout");
         clientPair.appClient.verifyResult(ok(3));
@@ -373,7 +373,7 @@ public class NotificationsLogicTest extends SingleServerInstancePerTest {
         TestHardClient hardClient = new TestHardClient("localhost", tcpHardPort);
         hardClient.start();
 
-        hardClient.login(token);
+        hardClient.login(device.token);
         hardClient.verifyResult(ok(1));
 
         appClient.send("addPushToken 1\0uid\0token");
@@ -398,9 +398,6 @@ public class NotificationsLogicTest extends SingleServerInstancePerTest {
         clientPair.appClient.updateDash(profile.getDashById(1));
         clientPair.appClient.verifyResult(ok(1));
 
-        clientPair.appClient.getToken(1);
-        String token = clientPair.appClient.getBody(2);
-
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
         appClient.login(getUserName(), "1", "Android", "1.10.4");
@@ -410,7 +407,7 @@ public class NotificationsLogicTest extends SingleServerInstancePerTest {
         appClient.verifyResult(ok(2));
 
         clientPair.appClient.send("logout uid");
-        clientPair.appClient.verifyResult(ok(3));
+        clientPair.appClient.verifyResult(ok(2));
 
         clientPair.hardwareClient.stop().await();
 
@@ -431,8 +428,8 @@ public class NotificationsLogicTest extends SingleServerInstancePerTest {
         clientPair.appClient.updateDash(profile.getDashById(1));
         clientPair.appClient.verifyResult(ok(1));
 
-        clientPair.appClient.getToken(1);
-        String token = clientPair.appClient.getBody(2);
+        clientPair.appClient.getDevice(1, 0);
+        Device device = clientPair.appClient.parseDevice(2);
 
         TestAppClient appClient = new TestAppClient(properties);
         appClient.start();
@@ -518,13 +515,12 @@ public class NotificationsLogicTest extends SingleServerInstancePerTest {
         ChannelFuture channelFuture = clientPair.hardwareClient.stop();
         channelFuture.await();
 
-
-        clientPair.appClient.getToken(1);
-        String token = clientPair.appClient.getBody(2);
+        clientPair.appClient.getDevice(1, 0);
+        Device device = clientPair.appClient.parseDevice(2);
 
         TestHardClient newHardClient = new TestHardClient("localhost", tcpHardPort);
         newHardClient.start();
-        newHardClient.login(token);
+        newHardClient.login(device.token);
         newHardClient.verifyResult(ok(1));
 
         ArgumentCaptor<AndroidGCMMessage> objectArgumentCaptor = ArgumentCaptor.forClass(AndroidGCMMessage.class);

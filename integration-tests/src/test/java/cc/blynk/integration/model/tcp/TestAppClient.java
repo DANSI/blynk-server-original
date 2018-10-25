@@ -227,10 +227,6 @@ public class TestAppClient extends BaseTestAppClient {
         send("appsync " + dashId + DEVICE_SEPARATOR + deviceId);
     }
 
-    public void getToken(int dashId) {
-        send("getToken " + dashId);
-    }
-
     public void deleteDeviceData(int dashId, int deviceId) {
         send("deletedevicedata " + dashId + DEVICE_SEPARATOR + deviceId);
     }

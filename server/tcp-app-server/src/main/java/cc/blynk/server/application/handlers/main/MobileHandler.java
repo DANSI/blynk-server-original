@@ -11,7 +11,6 @@ import cc.blynk.server.application.handlers.main.logic.MobileGetEnergyLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileGetProjectByClonedTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileGetProjectByTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileGetProvisionTokenLogic;
-import cc.blynk.server.application.handlers.main.logic.MobileGetTokenLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileHardwareLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileHardwareResendFromBTLogic;
 import cc.blynk.server.application.handlers.main.logic.MobileLoadProfileGzippedLogic;
@@ -99,7 +98,6 @@ import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROVISION_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.GET_SHARE_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.GET_TAGS;
-import static cc.blynk.server.core.protocol.enums.Command.GET_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.GET_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_RESEND_FROM_BLUETOOTH;
@@ -176,9 +174,6 @@ public class MobileHandler extends BaseSimpleChannelInboundHandler<StringMessage
                 MobileShareLogic.messageReceived(holder, ctx, state, msg);
                 break;
 
-            case GET_TOKEN :
-                MobileGetTokenLogic.messageReceived(holder, ctx, state.user, msg);
-                break;
             case ASSIGN_TOKEN :
                 MobileAssignTokenLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
