@@ -47,6 +47,7 @@ import static cc.blynk.integration.TestUtil.createDevice;
 import static cc.blynk.integration.TestUtil.hardware;
 import static cc.blynk.integration.TestUtil.hardwareConnected;
 import static cc.blynk.integration.TestUtil.illegalCommand;
+import static cc.blynk.integration.TestUtil.illegalCommandBody;
 import static cc.blynk.integration.TestUtil.notAllowed;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.parseProfile;
@@ -669,23 +670,21 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         String token = clientPair.appClient.getBody(2);
         assertNotNull(token);
 
-        clientPair.appClient.getToken(10, 0);
-        String token2 = clientPair.appClient.getBody(3);
-        assertNotNull(token2);
-        assertEquals(token, token2);
+        clientPair.appClient.getDevice(10, 0);
+        Device device2 = clientPair.appClient.parseDevice(3);
+        assertNotNull(device2);
+        assertEquals(token, device2.token);
 
-        clientPair.appClient.getToken(10, 0);
-        token2 = clientPair.appClient.getBody(4);
-        assertNotNull(token2);
-        assertEquals(token, token2);
+        clientPair.appClient.getDevice(10, 0);
+        device2 = clientPair.appClient.parseDevice(4);
+        assertNotNull(device2);
+        assertEquals(token, device2.token);
 
         clientPair.appClient.createDash("{\"id\":11, \"name\":\"test board\"}");
         clientPair.appClient.verifyResult(ok(5));
 
-        clientPair.appClient.getToken(11, 0);
-        token2 = clientPair.appClient.getBody(6);
-        assertNotNull(token2);
-        assertNotEquals(token, token2);
+        clientPair.appClient.getDevice(11, 0);
+        clientPair.appClient.verifyResult(illegalCommandBody(6));
     }
 
     @Test

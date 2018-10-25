@@ -193,17 +193,17 @@ public class NotificationsLogicTest extends SingleServerInstancePerTest {
         assertNotNull(device.token);
         clientPair.appClient.verifyResult(createDevice(1, device));
 
-        clientPair.appClient.getToken(1, 1);
-        String token = clientPair.appClient.getBody(2);
+        clientPair.appClient.getDevice(1, 1);
+        device = clientPair.appClient.parseDevice(2);
 
         TestHardClient newHardClient = new TestHardClient("localhost", tcpHardPort);
         newHardClient.start();
-        newHardClient.login(token);
+        newHardClient.login(device.token);
         newHardClient.verifyResult(ok(1));
-        clientPair.appClient.verifyResult(hardwareConnected(1, "1-1"));
+        clientPair.appClient.verifyResult(hardwareConnected(1, "1-" + device.id));
 
         newHardClient.stop();
-        clientPair.appClient.verifyResult(deviceOffline(0, "1-1"));
+        clientPair.appClient.verifyResult(deviceOffline(0, "1-" + device.id));
     }
 
     @Test

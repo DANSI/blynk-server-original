@@ -902,13 +902,13 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
         assertNull(device.token);
 
         appClient2.reset();
-        appClient2.getToken(1, device.id);
-        String token = appClient2.getBody();
+        appClient2.getDevice(1, device.id);
+        device = appClient2.parseDevice();
 
         TestHardClient hardClient1 = new TestHardClient("localhost", properties.getHttpPort());
         hardClient1.start();
 
-        hardClient1.login(token);
+        hardClient1.login(device.token);
         hardClient1.verifyResult(ok(1));
         appClient2.verifyResult(hardwareConnected(1, "1-0"));
 
