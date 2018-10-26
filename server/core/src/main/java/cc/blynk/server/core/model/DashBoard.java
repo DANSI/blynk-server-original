@@ -96,6 +96,8 @@ public class DashBoard {
 
     public volatile boolean widgetBackgroundOn;
 
+    public int color = -1;
+
     @JsonView(View.Private.class)
     public volatile String sharedToken;
 
@@ -633,6 +635,7 @@ public class DashBoard {
         this.isAppConnectedOn = updatedDashboard.isAppConnectedOn;
         this.isNotificationsOff = updatedDashboard.isNotificationsOff;
         this.widgetBackgroundOn = updatedDashboard.widgetBackgroundOn;
+        this.color = updatedDashboard.color;
 
         Notification newNotification = updatedDashboard.getNotificationWidget();
         if (newNotification != null) {
@@ -655,6 +658,7 @@ public class DashBoard {
         this.isAppConnectedOn = parent.isAppConnectedOn;
         this.isNotificationsOff = parent.isNotificationsOff;
         this.widgetBackgroundOn = parent.widgetBackgroundOn;
+        this.color = parent.color;
         this.tags = copyTags(parent.tags);
         //do not update devices by purpose
         //this.devices = parent.devices;
