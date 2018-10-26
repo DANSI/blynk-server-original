@@ -15,6 +15,10 @@ public class Tabs extends NoPinWidget {
 
     public volatile int color;
 
+    public int activeTxtColor;
+
+    public int underlineColor;
+
     public int textColor;
 
     public Tabs() {
