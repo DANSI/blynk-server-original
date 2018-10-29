@@ -42,7 +42,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -281,7 +280,7 @@ public class DashBoard {
         throw new IllegalCommandException("Device with passed id not found.");
     }
 
-    private boolean hasWidgetsByDeviceId(int deviceId) {
+    public boolean hasWidgetsByDeviceId(int deviceId) {
         for (Widget widget : widgets) {
             if (!(widget instanceof DeviceTiles) && widget.isAssignedToDevice(deviceId)) {
                 return true;
@@ -641,14 +640,6 @@ public class DashBoard {
         for (TileTemplate tileTemplate : deviceTiles.templates) {
             cleanPinStorageForTileTemplate(tileTemplate, removeProperties);
         }
-    }
-
-    //removes devices that has no widgets assigned to
-    //probably those devices were added via device tiles widget
-    public void removeDevicesProvisionedFromDeviceTiles() {
-        List<Device> list = new ArrayList<>(Arrays.asList(this.devices));
-        list.removeIf(device -> !hasWidgetsByDeviceId(device.id));
-        this.devices = list.toArray(new Device[0]);
     }
 
     public void addDevice(Device device) {
