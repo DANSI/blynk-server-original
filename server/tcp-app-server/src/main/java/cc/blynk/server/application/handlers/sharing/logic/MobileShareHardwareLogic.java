@@ -4,8 +4,12 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.logic.MobileHardwareLogic;
 import cc.blynk.server.application.handlers.sharing.auth.MobileShareStateHolder;
 import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
+import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.Target;
+import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.processors.BaseProcessorHandler;
 import cc.blynk.server.core.processors.WebhookProcessor;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -46,16 +50,16 @@ public class MobileShareHardwareLogic extends BaseProcessorHandler {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, MobileShareStateHolder state, StringMessage message) {
-        var session = sessionDao.userSession.get(state.userKey);
+        Session session = sessionDao.userSession.get(state.userKey);
 
         //here expecting command in format "1-200000 vw 88 1"
-        var split = split2(message.body);
+        String[] split = split2(message.body);
 
         //here we have "1-200000"
-        var dashIdAndTargetIdString = split2Device(split[0]);
-        var dashId = Integer.parseInt(dashIdAndTargetIdString[0]);
+        String[] dashIdAndTargetIdString = split2Device(split[0]);
+        int dashId = Integer.parseInt(dashIdAndTargetIdString[0]);
 
-        var dash = state.user.profile.getDashByIdOrThrow(dashId);
+        DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
 
         //if no active dashboard - do nothing. this could happen only in case of app. bug
         if (!dash.isActive) {
@@ -63,7 +67,7 @@ public class MobileShareHardwareLogic extends BaseProcessorHandler {
         }
 
         //deviceId or tagId or device selector widget id
-        var targetId = 0;
+        int targetId = 0;
 
         //new logic for multi devices
         if (dashIdAndTargetIdString.length == 2) {
@@ -77,20 +81,28 @@ public class MobileShareHardwareLogic extends BaseProcessorHandler {
         }
 
         //sending message only if widget assigned to device or tag has assigned devices
-        var target = dash.getTarget(targetId);
+        Target target;
+        if (targetId < Tag.START_TAG_ID) {
+            target = dash.getDeviceById(targetId);
+        } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
+            target = dash.getTagById(targetId);
+        } else {
+            //means widget assigned to device selector widget.
+            target = dash.getDeviceSelector(targetId);
+        }
         if (target == null) {
             log.debug("No assigned target id for received command.");
             return;
         }
 
-        var deviceIds = target.getDeviceIds();
+        int[] deviceIds = target.getDeviceIds();
 
         if (deviceIds.length == 0) {
             log.debug("No devices assigned to target.");
             return;
         }
 
-        var operation = split[1].charAt(1);
+        char operation = split[1].charAt(1);
         switch (operation) {
             case 'u' :
                 //splitting "vu 200000 1"
@@ -106,10 +118,10 @@ public class MobileShareHardwareLogic extends BaseProcessorHandler {
                     return;
                 }
 
-                var pinType = PinType.getPinType(splitBody[0].charAt(0));
-                var pin = Byte.parseByte(splitBody[1]);
-                var value = splitBody[2];
-                var now = System.currentTimeMillis();
+                PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
+                byte pin = Byte.parseByte(splitBody[1]);
+                String value = splitBody[2];
+                long now = System.currentTimeMillis();
 
                 for (int deviceId : deviceIds) {
                     dash.update(deviceId, pin, pinType, value, now);
@@ -120,7 +132,7 @@ public class MobileShareHardwareLogic extends BaseProcessorHandler {
                     dash.update(targetId, pin, pinType, value, now);
                 }
 
-                var sharedToken = state.token;
+                String sharedToken = state.token;
                 if (sharedToken != null) {
                     for (var appChannel : session.appChannels) {
                         if (appChannel != ctx.channel() && appChannel.isWritable()

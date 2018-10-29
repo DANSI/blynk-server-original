@@ -2,10 +2,14 @@ package cc.blynk.server.application.handlers.main.logic.graph;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Tag;
+import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
+import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.StringUtils;
@@ -72,10 +76,19 @@ public final class MobileDeleteEnhancedGraphDataLogic {
         holder.blockingIOProcessor.executeHistory(() -> {
             try {
                 for (GraphDataStream graphDataStream : dataStreams) {
-                    var target = dash.getTarget(graphDataStream.getTargetId(targetId));
-                    var dataStream = graphDataStream.dataStream;
+                    Target target;
+                    int targetIdUpdated = graphDataStream.getTargetId(targetId);
+                    if (targetIdUpdated < Tag.START_TAG_ID) {
+                        target = dash.getDeviceById(targetIdUpdated);
+                    } else if (targetIdUpdated < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
+                        target = dash.getTagById(targetIdUpdated);
+                    } else {
+                        target = dash.getDeviceSelector(targetIdUpdated);
+                    }
+
+                    DataStream dataStream = graphDataStream.dataStream;
                     if (target != null && dataStream != null && dataStream.pinType != null) {
-                        var deviceId = target.getDeviceId();
+                        int deviceId = target.getDeviceId();
                         holder.reportingDiskDao.delete(user, dash.id, deviceId, dataStream.pinType, dataStream.pin);
                     }
                 }

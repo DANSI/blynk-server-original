@@ -5,7 +5,9 @@ import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
+import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.processors.BaseProcessorHandler;
 import cc.blynk.server.core.processors.WebhookProcessor;
@@ -76,7 +78,16 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
         }
 
         //sending message only if widget assigned to device or tag has assigned devices
-        var target = dash.getTarget(targetId);
+        Target target;
+        if (targetId < Tag.START_TAG_ID) {
+            target = dash.getDeviceById(targetId);
+        } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
+            target = dash.getTagById(targetId);
+        } else {
+            //means widget assigned to device selector widget.
+            target = dash.getDeviceSelector(targetId);
+        }
+
         if (target == null) {
             log.debug("No assigned target id for received command.");
             return;

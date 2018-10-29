@@ -5,11 +5,13 @@ import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphGranularityType;
 import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
+import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.model.widgets.ui.reporting.Report;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportDataStream;
@@ -135,7 +137,16 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
 
                 int[] resultIds;
                 if (deviceIds == null) {
-                    Target target = dash.getTarget(graphDataStream.targetId);
+                    Target target;
+                    int targetId = graphDataStream.targetId;
+                    if (targetId < Tag.START_TAG_ID) {
+                        target = dash.getDeviceById(targetId);
+                    } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
+                        target = dash.getTagById(targetId);
+                    } else {
+                        //means widget assigned to device selector widget.
+                        target = dash.getDeviceSelector(targetId);
+                    }
                     if (target != null) {
                         resultIds = target.getAssignedDeviceIds();
                     } else {
