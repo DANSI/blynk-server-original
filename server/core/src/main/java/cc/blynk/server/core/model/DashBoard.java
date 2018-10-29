@@ -98,6 +98,8 @@ public class DashBoard {
 
     public int color = -1;
 
+    public boolean isDefaultColor = true;
+
     @JsonView(View.Private.class)
     public volatile String sharedToken;
 
