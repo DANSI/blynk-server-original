@@ -7,7 +7,6 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,20 +41,11 @@ public final class MobileDeleteDeviceLogic {
 
         log.debug("Deleting device with id {}.", deviceId);
 
-        int existingDeviceIndex = dash.getDeviceIndexById(deviceId);
-        Device device = dash.devices[existingDeviceIndex];
+        Device device = dash.deleteDevice(deviceId);
         holder.tokenManager.deleteDevice(device);
         Session session = holder.sessionDao.userSession.get(state.userKey);
         session.closeHardwareChannelByDeviceId(dashId, deviceId);
 
-        dash.devices = ArrayUtil.remove(dash.devices, existingDeviceIndex, Device.class);
-        dash.eraseValuesForDevice(deviceId);
-        try {
-            dash.deleteDeviceFromObjects(deviceId);
-        } catch (Exception e) {
-            log.warn("Error erasing widget device. Reason : {}", e.getMessage());
-        }
-        dash.updatedAt = System.currentTimeMillis();
         state.user.lastModifiedTs = dash.updatedAt;
 
         holder.blockingIOProcessor.executeHistory(() -> {

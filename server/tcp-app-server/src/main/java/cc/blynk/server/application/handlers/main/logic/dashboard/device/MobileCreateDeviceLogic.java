@@ -1,13 +1,13 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.device;
 
 import cc.blynk.server.Holder;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -31,26 +31,26 @@ public final class MobileCreateDeviceLogic {
 
     public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
                                        User user, StringMessage message) {
-        var split = split2(message.body);
+        String[] split = split2(message.body);
 
         if (split.length < 2) {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        var dashId = Integer.parseInt(split[0]);
-        var deviceString = split[1];
+        int dashId = Integer.parseInt(split[0]);
+        String deviceString = split[1];
 
         if (deviceString == null || deviceString.isEmpty()) {
             throw new IllegalCommandException("Income device message is empty.");
         }
 
-        var dash = user.profile.getDashByIdOrThrow(dashId);
+        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
         if (dash.devices.length > holder.limits.deviceLimit) {
             throw new NotAllowedException("Device limit is reached.", message.id);
         }
 
-        var newDevice = JsonParser.parseDevice(deviceString, message.id);
+        Device newDevice = JsonParser.parseDevice(deviceString, message.id);
 
         log.debug("Creating new device {}.", deviceString);
 
@@ -58,18 +58,17 @@ public final class MobileCreateDeviceLogic {
             throw new IllegalCommandException("Income device message is not valid.");
         }
 
-        for (var device : dash.devices) {
+        for (Device device : dash.devices) {
             if (device.id == newDevice.id) {
                 throw new NotAllowedException("Device with same id already exists.", message.id);
             }
         }
 
-        dash.devices = ArrayUtil.add(dash.devices, newDevice, Device.class);
+        dash.addDevice(newDevice);
 
-        var newToken = TokenGeneratorUtil.generateNewToken();
+        String newToken = TokenGeneratorUtil.generateNewToken();
         holder.tokenManager.assignToken(user, dash, newDevice, newToken);
 
-        dash.updatedAt = System.currentTimeMillis();
         user.lastModifiedTs = dash.updatedAt;
 
         if (ctx.channel().isWritable()) {

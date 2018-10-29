@@ -271,7 +271,7 @@ public class DashBoard {
         return null;
     }
 
-    public int getDeviceIndexById(int id) {
+    private int getDeviceIndexByIdOrThrow(int id) {
         for (int i = 0; i < devices.length; i++) {
             if (devices[i].id == id) {
                 return i;
@@ -397,7 +397,7 @@ public class DashBoard {
         }
     }
 
-    public void eraseValuesForDevice(int deviceId) {
+    private void eraseValuesForDevice(int deviceId) {
         pinsStorage.entrySet().removeIf(entry -> entry.getKey().deviceId == deviceId);
         for (Widget widget : widgets) {
             if (widget.isAssignedToDevice(deviceId)) {
@@ -409,7 +409,7 @@ public class DashBoard {
         }
     }
 
-    public void deleteDeviceFromObjects(int deviceId) {
+    private void deleteDeviceFromObjects(int deviceId) {
         for (Widget widget : widgets) {
             if (widget instanceof DeviceCleaner) {
                 ((DeviceCleaner) widget).deleteDevice(deviceId);
@@ -640,6 +640,16 @@ public class DashBoard {
         for (TileTemplate tileTemplate : deviceTiles.templates) {
             cleanPinStorageForTileTemplate(tileTemplate, removeProperties);
         }
+    }
+
+    public Device deleteDevice(int deviceId) {
+        int existingDeviceIndex = getDeviceIndexByIdOrThrow(deviceId);
+        Device deviceToRemove = this.devices[existingDeviceIndex];
+        this.devices = ArrayUtil.remove(this.devices, existingDeviceIndex, Device.class);
+        eraseValuesForDevice(deviceId);
+        deleteDeviceFromObjects(deviceId);
+        this.updatedAt = System.currentTimeMillis();
+        return deviceToRemove;
     }
 
     public void addDevice(Device device) {
