@@ -16,15 +16,45 @@
                 {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"DIGIT4_DISPLAY", "pinType":"DIGITAL", "pin":7},
                 {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"LABELED_VALUE_DISPLAY",          "pinType":"DIGITAL", "pin":8}
              ],
+             "devices" :
+                          [
+                            {
+                               "id":0,
+                               "boardType":"Arduino UNO",
+                               "token":"12345678901234567890123456789012",
+                               "connectionType":"ETHERNET",
+                               "name":"My Device"
+                            }
+                          ],
              "settings" : {"boardType":"Arduino UNO", "someParam":"someValue"}
             },
             {
                 "id":2,
-                "name":"My Dashboard2"
+                "name":"My Dashboard2",
+                "devices" :
+                             [
+                               {
+                                  "id":1,
+                                  "boardType":"Arduino UNO",
+                                  "token":"12345678901234567890123456789013",
+                                  "connectionType":"ETHERNET",
+                                  "name":"My Device"
+                               }
+                             ]
             },
             {
                 "id":3,
-                "name":"My Dashboard3"
+                "name":"My Dashboard3",
+                "devices" :
+                             [
+                               {
+                                  "id":2,
+                                  "boardType":"Arduino UNO",
+                                  "token":"12345678901234567890123456789014",
+                                  "connectionType":"ETHERNET",
+                                  "name":"My Device"
+                               }
+                             ]
             }
         ],
     "twitter" : {

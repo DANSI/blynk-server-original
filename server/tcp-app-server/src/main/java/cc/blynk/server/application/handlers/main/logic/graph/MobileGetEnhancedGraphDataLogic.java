@@ -7,8 +7,11 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
+import cc.blynk.server.core.model.device.Tag;
+import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphPeriod;
 import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
+import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NoDataException;
@@ -92,7 +95,15 @@ public final class MobileGetEnhancedGraphDataLogic {
         int i = 0;
         for (GraphDataStream graphDataStream : enhancedHistoryGraph.dataStreams) {
             //special case, for device tiles widget targetID may be overrided
-            Target target = dash.getTarget(graphDataStream.getTargetId(targetId));
+            Target target;
+            int targetIdUpdated = graphDataStream.getTargetId(targetId);
+            if (targetIdUpdated < Tag.START_TAG_ID) {
+                target = dash.getDeviceById(targetIdUpdated);
+            } else if (targetIdUpdated < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
+                target = dash.getTagById(targetIdUpdated);
+            } else {
+                target = dash.getDeviceSelector(targetIdUpdated);
+            }
             if (target == null) {
                 requestedPins[i] = new GraphPinRequest(dashId, -1,
                         graphDataStream.dataStream, graphPeriod, skipCount, graphDataStream.functionType);

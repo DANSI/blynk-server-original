@@ -15,6 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -297,7 +298,7 @@ public class UserDao {
         clonedDash.updatedAt = clonedDash.createdAt;
         clonedDash.isActive = true;
         clonedDash.eraseValues();
-        clonedDash.removeDevicesProvisionedFromDeviceTiles();
+        removeDevicesProvisionedFromDeviceTiles(clonedDash);
 
         clonedDash.addTimers(timerWorker, new UserKey(newUser));
 
@@ -315,6 +316,15 @@ public class UserDao {
             }
         }
     }
+
+    //removes devices that has no widgets assigned to
+    //probably those devices were added via device tiles widget
+    private static void removeDevicesProvisionedFromDeviceTiles(DashBoard dash) {
+        List<Device> list = new ArrayList<>(Arrays.asList(dash.devices));
+        list.removeIf(device -> !dash.hasWidgetsByDeviceId(device.id));
+        dash.devices = list.toArray(new Device[0]);
+    }
+
 
     /**
      * Will take a url such as http://www.stackoverflow.com and return www.stackoverflow.com

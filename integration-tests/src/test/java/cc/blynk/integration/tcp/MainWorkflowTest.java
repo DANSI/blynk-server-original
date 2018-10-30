@@ -47,6 +47,7 @@ import static cc.blynk.integration.TestUtil.createDevice;
 import static cc.blynk.integration.TestUtil.hardware;
 import static cc.blynk.integration.TestUtil.hardwareConnected;
 import static cc.blynk.integration.TestUtil.illegalCommand;
+import static cc.blynk.integration.TestUtil.illegalCommandBody;
 import static cc.blynk.integration.TestUtil.notAllowed;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.parseProfile;
@@ -174,7 +175,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         Profile profile = appClient.parseProfile(1);
         profile.dashBoards[0].updatedAt = 0;
 
-        assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board\",\"createdAt\":1,\"updatedAt\":0,\"widgets\":[{\"type\":\"BUTTON\",\"id\":1,\"x\":0,\"y\":0,\"color\":0,\"width\":1,\"height\":1,\"tabId\":0,\"label\":\"Some Text\",\"isDefaultColor\":false,\"deviceId\":0,\"pinType\":\"DIGITAL\",\"pin\":1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0.0,\"max\":0.0,\"pushMode\":false}],\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false,\"widgetBackgroundOn\":false}]}", profile.toString());
+        assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board\",\"createdAt\":1,\"updatedAt\":0,\"widgets\":[{\"type\":\"BUTTON\",\"id\":1,\"x\":0,\"y\":0,\"color\":0,\"width\":1,\"height\":1,\"tabId\":0,\"label\":\"Some Text\",\"isDefaultColor\":false,\"deviceId\":0,\"pinType\":\"DIGITAL\",\"pin\":1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0.0,\"max\":0.0,\"pushMode\":false}],\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false,\"widgetBackgroundOn\":false,\"color\":-1,\"isDefaultColor\":true}]}", profile.toString());
 
         appClient.createWidget(1, "{\"id\":2, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"Some Text 2\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":2}");
         appClient.verifyResult(ok(2));
@@ -184,7 +185,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         appClient.send("loadProfileGzipped");
         profile = appClient.parseProfile(1);
         profile.dashBoards[0].updatedAt = 0;
-        assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board\",\"createdAt\":1,\"updatedAt\":0,\"widgets\":[{\"type\":\"BUTTON\",\"id\":1,\"x\":0,\"y\":0,\"color\":0,\"width\":1,\"height\":1,\"tabId\":0,\"label\":\"Some Text\",\"isDefaultColor\":false,\"deviceId\":0,\"pinType\":\"DIGITAL\",\"pin\":1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0.0,\"max\":0.0,\"pushMode\":false},{\"type\":\"BUTTON\",\"id\":2,\"x\":2,\"y\":2,\"color\":0,\"width\":1,\"height\":1,\"tabId\":0,\"label\":\"Some Text 2\",\"isDefaultColor\":false,\"deviceId\":0,\"pinType\":\"DIGITAL\",\"pin\":2,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0.0,\"max\":0.0,\"pushMode\":false}],\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false,\"widgetBackgroundOn\":false}]}", profile.toString());
+        assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board\",\"createdAt\":1,\"updatedAt\":0,\"widgets\":[{\"type\":\"BUTTON\",\"id\":1,\"x\":0,\"y\":0,\"color\":0,\"width\":1,\"height\":1,\"tabId\":0,\"label\":\"Some Text\",\"isDefaultColor\":false,\"deviceId\":0,\"pinType\":\"DIGITAL\",\"pin\":1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0.0,\"max\":0.0,\"pushMode\":false},{\"type\":\"BUTTON\",\"id\":2,\"x\":2,\"y\":2,\"color\":0,\"width\":1,\"height\":1,\"tabId\":0,\"label\":\"Some Text 2\",\"isDefaultColor\":false,\"deviceId\":0,\"pinType\":\"DIGITAL\",\"pin\":2,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0.0,\"max\":0.0,\"pushMode\":false}],\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false,\"widgetBackgroundOn\":false,\"color\":-1,\"isDefaultColor\":true}]}", profile.toString());
 
         appClient.updateWidget(1, "{\"id\":2, \"width\":1, \"height\":1, \"x\":2, \"y\":2, \"label\":\"new label\", \"type\":\"BUTTON\", \"pinType\":\"DIGITAL\", \"pin\":3}\"");
         appClient.verifyResult(ok(2));
@@ -194,7 +195,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         appClient.send("loadProfileGzipped");
         profile = appClient.parseProfile(1);
         profile.dashBoards[0].updatedAt = 0;
-        assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board\",\"createdAt\":1,\"updatedAt\":0,\"widgets\":[{\"type\":\"BUTTON\",\"id\":1,\"x\":0,\"y\":0,\"color\":0,\"width\":1,\"height\":1,\"tabId\":0,\"label\":\"Some Text\",\"isDefaultColor\":false,\"deviceId\":0,\"pinType\":\"DIGITAL\",\"pin\":1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0.0,\"max\":0.0,\"pushMode\":false},{\"type\":\"BUTTON\",\"id\":2,\"x\":2,\"y\":2,\"color\":0,\"width\":1,\"height\":1,\"tabId\":0,\"label\":\"new label\",\"isDefaultColor\":false,\"deviceId\":0,\"pinType\":\"DIGITAL\",\"pin\":3,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0.0,\"max\":0.0,\"pushMode\":false}],\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false,\"widgetBackgroundOn\":false}]}", profile.toString());
+        assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board\",\"createdAt\":1,\"updatedAt\":0,\"widgets\":[{\"type\":\"BUTTON\",\"id\":1,\"x\":0,\"y\":0,\"color\":0,\"width\":1,\"height\":1,\"tabId\":0,\"label\":\"Some Text\",\"isDefaultColor\":false,\"deviceId\":0,\"pinType\":\"DIGITAL\",\"pin\":1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0.0,\"max\":0.0,\"pushMode\":false},{\"type\":\"BUTTON\",\"id\":2,\"x\":2,\"y\":2,\"color\":0,\"width\":1,\"height\":1,\"tabId\":0,\"label\":\"new label\",\"isDefaultColor\":false,\"deviceId\":0,\"pinType\":\"DIGITAL\",\"pin\":3,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0.0,\"max\":0.0,\"pushMode\":false}],\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false,\"widgetBackgroundOn\":false,\"color\":-1,\"isDefaultColor\":true}]}", profile.toString());
 
         appClient.deleteWidget(1, 3);
         appClient.verifyResult(illegalCommand(2));
@@ -210,7 +211,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         appClient.send("loadProfileGzipped");
         profile = appClient.parseProfile(1);
         profile.dashBoards[0].updatedAt = 0;
-        assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board\",\"createdAt\":1,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false,\"widgetBackgroundOn\":false}]}", profile.toString());
+        assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board\",\"createdAt\":1,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false,\"widgetBackgroundOn\":false,\"color\":-1,\"isDefaultColor\":true}]}", profile.toString());
     }
 
     @Test
@@ -327,7 +328,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         Profile profile = appClient.parseProfile(1);
         profile.dashBoards[0].updatedAt = 0;
 
-        assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board\",\"createdAt\":1,\"updatedAt\":0,\"widgets\":[{\"type\":\"BUTTON\",\"id\":1,\"x\":0,\"y\":0,\"color\":0,\"width\":1,\"height\":1,\"tabId\":0,\"label\":\"Some Text\",\"isDefaultColor\":false,\"deviceId\":0,\"pinType\":\"DIGITAL\",\"pin\":1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0.0,\"max\":0.0,\"pushMode\":false}],\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false,\"widgetBackgroundOn\":false}]}", profile.toString());
+        assertEquals("{\"dashBoards\":[{\"id\":1,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board\",\"createdAt\":1,\"updatedAt\":0,\"widgets\":[{\"type\":\"BUTTON\",\"id\":1,\"x\":0,\"y\":0,\"color\":0,\"width\":1,\"height\":1,\"tabId\":0,\"label\":\"Some Text\",\"isDefaultColor\":false,\"deviceId\":0,\"pinType\":\"DIGITAL\",\"pin\":1,\"pwmMode\":false,\"rangeMappingOn\":false,\"min\":0.0,\"max\":0.0,\"pushMode\":false}],\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false,\"widgetBackgroundOn\":false,\"color\":-1,\"isDefaultColor\":true}]}", profile.toString());
     }
 
     @Test
@@ -595,13 +596,13 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         responseProfile = clientPair.appClient.parseProfile(7);
         responseProfile.dashBoards[0].updatedAt = 0;
         responseProfile.dashBoards[0].createdAt = 0;
-        assertEquals("{\"dashBoards\":[{\"id\":10,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false,\"widgetBackgroundOn\":false}]}", responseProfile.toString());
+        assertEquals("{\"dashBoards\":[{\"id\":10,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false,\"widgetBackgroundOn\":false,\"color\":-1,\"isDefaultColor\":true}]}", responseProfile.toString());
 
         clientPair.appClient.send("loadProfileGzipped 10");
         responseDash = clientPair.appClient.parseDash(8);
         responseDash.updatedAt = 0;
         responseDash.createdAt = 0;
-        assertEquals("{\"id\":10,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false,\"widgetBackgroundOn\":false}", responseDash.toString());
+        assertEquals("{\"id\":10,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false,\"widgetBackgroundOn\":false,\"color\":-1,\"isDefaultColor\":true}", responseDash.toString());
 
         clientPair.appClient.send("loadProfileGzipped 1");
         clientPair.appClient.verifyResult(illegalCommand(9));
@@ -613,13 +614,13 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         responseProfile = clientPair.appClient.parseProfile(11);
         responseProfile.dashBoards[0].updatedAt = 0;
         responseProfile.dashBoards[0].createdAt = 0;
-        String expectedProfile = "{\"dashBoards\":[{\"id\":10,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":true,\"widgetBackgroundOn\":false}]}";
+        String expectedProfile = "{\"dashBoards\":[{\"id\":10,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":true,\"widgetBackgroundOn\":false,\"color\":-1,\"isDefaultColor\":true}]}";
         assertEquals(expectedProfile, responseProfile.toString());
 
         clientPair.appClient.updateDash("{\"id\":10,\"name\":\"test board update\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}");
         clientPair.appClient.verifyResult(ok(2));
 
-        expectedProfile = "{\"dashBoards\":[{\"id\":10,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":true,\"widgetBackgroundOn\":false}]}";
+        expectedProfile = "{\"dashBoards\":[{\"id\":10,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":true,\"widgetBackgroundOn\":false,\"color\":-1,\"isDefaultColor\":true}]}";
         clientPair.appClient.send("loadProfileGzipped");
         responseProfile = clientPair.appClient.parseProfile(13);
         responseProfile.dashBoards[0].updatedAt = 0;
@@ -665,27 +666,26 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.createDash("{\"id\":10, \"name\":\"test board\"}");
         clientPair.appClient.verifyResult(ok(1));
 
-        clientPair.appClient.getToken(10);
-        String token = clientPair.appClient.getBody(2);
+        clientPair.appClient.createDevice(10, new Device(2, "123", BoardType.ESP8266));
+        Device device = clientPair.appClient.parseDevice(2);
+        String token = device.token;
         assertNotNull(token);
 
-        clientPair.appClient.getToken(10, 0);
-        String token2 = clientPair.appClient.getBody(3);
-        assertNotNull(token2);
-        assertEquals(token, token2);
+        clientPair.appClient.getDevice(10, 2);
+        Device device2 = clientPair.appClient.parseDevice(3);
+        assertNotNull(device2);
+        assertEquals(token, device2.token);
 
-        clientPair.appClient.getToken(10, 0);
-        token2 = clientPair.appClient.getBody(4);
-        assertNotNull(token2);
-        assertEquals(token, token2);
+        clientPair.appClient.getDevice(10, 2);
+        device2 = clientPair.appClient.parseDevice(4);
+        assertNotNull(device2);
+        assertEquals(token, device2.token);
 
         clientPair.appClient.createDash("{\"id\":11, \"name\":\"test board\"}");
         clientPair.appClient.verifyResult(ok(5));
 
-        clientPair.appClient.getToken(11, 0);
-        token2 = clientPair.appClient.getBody(6);
-        assertNotNull(token2);
-        assertNotEquals(token, token2);
+        clientPair.appClient.getDevice(11, 0);
+        clientPair.appClient.verifyResult(illegalCommandBody(6));
     }
 
     @Test
@@ -694,8 +694,9 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
 
         clientPair.appClient.reset();
-        clientPair.appClient.getToken(10);
-        String token = clientPair.appClient.getBody();
+        clientPair.appClient.createDevice(10, new Device(2, "123", BoardType.ESP8266));
+        Device device = clientPair.appClient.parseDevice();
+        String token = device.token;
         assertNotNull(token);
 
         clientPair.appClient.reset();
@@ -833,8 +834,9 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
 
         clientPair.appClient.reset();
 
-        clientPair.appClient.getToken(2);
-        String token2 = clientPair.appClient.getBody();
+        clientPair.appClient.createDevice(2, new Device(2, "123", BoardType.ESP8266));
+        Device device = clientPair.appClient.parseDevice();
+        String token2 = device.token;
         hardClient2.login(token2);
         hardClient2.verifyResult(ok(1));
 
@@ -844,7 +846,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(hardware(1, "1-0 aw 1 1")));
 
         hardClient2.send("hardware aw 1 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(hardware(2, "2-0 aw 1 1")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(hardware(2, "2-" + device.id + " aw 1 1")));
 
 
         clientPair.appClient.deactivate(1);
@@ -854,7 +856,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, after(500).never()).channelRead(any(), eq(new ResponseMessage(2, NO_ACTIVE_DASHBOARD)));
 
         hardClient2.send("hardware aw 1 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(hardware(3, "2-0 aw 1 1")));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(hardware(3, "2-" + device.id + " aw 1 1")));
         hardClient2.stop().awaitUninterruptibly();
     }
 
@@ -1179,7 +1181,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
     public void testClosedConnectionWhenNotLogged() throws Exception {
         TestAppClient appClient2 = new TestAppClient(properties);
         appClient2.start();
-        appClient2.getToken(1);
+        appClient2.getDevice(1, 0);
         verify(appClient2.responseMock, after(600).never()).channelRead(any(), any());
         assertTrue(appClient2.isClosed());
 
@@ -1249,16 +1251,15 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
         clientPair.appClient.reset();
 
-        clientPair.appClient.getToken(2);
+        clientPair.appClient.createDevice(2, new Device(2, "123", BoardType.ESP8266));
+        Device device = clientPair.appClient.parseDevice();
 
-        //getting token for second GetTokenMessage
-        String token = clientPair.appClient.getBody();
         clientPair.appClient.reset();
 
         //connecting separate hardware to non active dashboard
         TestHardClient nonActiveDashHardClient = new TestHardClient("localhost", properties.getHttpPort());
         nonActiveDashHardClient.start();
-        nonActiveDashHardClient.login(token);
+        nonActiveDashHardClient.login(device.token);
         verify(nonActiveDashHardClient.responseMock, timeout(2000)).channelRead(any(), eq(ok(1)));
         nonActiveDashHardClient.reset();
 
@@ -1267,7 +1268,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         nonActiveDashHardClient.send("hardware aw 1 1");
         //verify(nonActiveDashHardClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(1, NO_ACTIVE_DASHBOARD)));
         verify(clientPair.appClient.responseMock, timeout(1000).times(1)).channelRead(any(), any());
-        verify(clientPair.appClient.responseMock, timeout(1000).times(1)).channelRead(any(), eq(hardwareConnected(1, "2-0")));
+        verify(clientPair.appClient.responseMock, timeout(1000).times(1)).channelRead(any(), eq(hardwareConnected(1, "2-" + device.id)));
 
         clientPair.hardwareClient.send("hardware aw 1 1");
         verify(clientPair.hardwareClient.responseMock, after(1000).never()).channelRead(any(), any());

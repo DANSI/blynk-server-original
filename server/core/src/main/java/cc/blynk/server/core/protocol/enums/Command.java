@@ -19,7 +19,6 @@ public final class Command {
     public static final short REDEEM = 3;
     public static final short HARDWARE_CONNECTED = 4;
 
-    public static final short GET_TOKEN = 5;
     public static final short PING = 6;
     public static final short ACTIVATE_DASHBOARD = 7;
     public static final short DEACTIVATE_DASHBOARD = 8;
@@ -153,7 +152,6 @@ public final class Command {
             put(LOAD_PROFILE_GZIPPED, "LoadProfile");
             put(APP_SYNC, "AppSync");
             put(SHARING, "Sharing");
-            put(GET_TOKEN, "GetToken");
             put(ASSIGN_TOKEN, "AssignToken");
             put(PING, "Ping");
             put(SMS, "Sms");

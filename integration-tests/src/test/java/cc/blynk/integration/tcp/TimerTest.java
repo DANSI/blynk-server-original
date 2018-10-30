@@ -521,9 +521,9 @@ public class TimerTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(4));
 
         clientPair.appClient.reset();
-        clientPair.appClient.getToken(2);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), any());
-        hardClient2.login(clientPair.appClient.getBody());
+        clientPair.appClient.createDevice(2, new Device(1, "Device", BoardType.ESP8266));
+        Device device = clientPair.appClient.parseDevice();
+        hardClient2.login(device.token);
         hardClient2.verifyResult(ok(1));
         hardClient2.reset();
 

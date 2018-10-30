@@ -368,9 +368,10 @@ public class LoadBalancingIntegrationTest extends BaseTest {
         appClient.verifyResult(new ResponseMessage(4, DEVICE_NOT_IN_NETWORK));
 
         appClient.reset();
-        appClient.getToken(1);
+        appClient.createDevice(1, new Device(0, "123", BoardType.ESP8266));
+        Device device = appClient.parseDevice();
 
-        String token = appClient.getBody();
+        String token = device.token;
         assertNotNull(token);
         return token;
     }

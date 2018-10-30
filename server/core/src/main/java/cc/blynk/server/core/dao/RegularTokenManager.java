@@ -39,7 +39,7 @@ class RegularTokenManager {
 
     String assignToken(User user, DashBoard dash, Device device, String newToken, boolean isTemporary) {
         // Clean old token from cache if exists.
-        String oldToken = deleteDeviceToken(device);
+        String oldToken = deleteDeviceToken(device.token);
 
         //assign new token
         device.token = newToken;
@@ -56,10 +56,10 @@ class RegularTokenManager {
         return oldToken;
     }
 
-    String deleteDeviceToken(Device device) {
-        if (device != null && device.token != null) {
-            cache.remove(device.token);
-            return device.token;
+    String deleteDeviceToken(String deviceToken) {
+        if (deviceToken != null) {
+            cache.remove(deviceToken);
+            return deviceToken;
         }
         return null;
     }

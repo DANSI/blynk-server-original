@@ -36,7 +36,7 @@ public abstract class TileTemplate {
 
     public volatile int[] deviceIds;
 
-    public final String templateId;
+    public String templateId;
 
     public final String name;
 
@@ -85,6 +85,10 @@ public abstract class TileTemplate {
         for (Widget widget : widgets) {
             widget.erase();
         }
+    }
+
+    public boolean isEmptyTemplateId() {
+        return templateId == null || templateId.isEmpty();
     }
 
     public int getWidgetIndexByIdOrThrow(long widgetId) {

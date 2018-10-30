@@ -38,7 +38,6 @@ import static cc.blynk.server.core.protocol.enums.Command.GET_PROVISION_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.GET_SERVER;
 import static cc.blynk.server.core.protocol.enums.Command.GET_SHARE_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.GET_TAGS;
-import static cc.blynk.server.core.protocol.enums.Command.GET_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.GET_WIDGET;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_LOGIN;
@@ -96,8 +95,6 @@ public final class CommandParserUtil {
                 return APP_SYNC;
             case "sharing" :
                 return SHARING;
-            case "gettoken" :
-                return GET_TOKEN;
             case "assigntoken" :
                 return ASSIGN_TOKEN;
             case "refreshtoken" :

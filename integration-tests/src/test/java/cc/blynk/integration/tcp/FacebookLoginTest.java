@@ -7,6 +7,7 @@ import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -107,8 +108,9 @@ public class FacebookLoginTest extends SingleServerInstancePerTest {
         saveProfile(appClient, profile.dashBoards);
 
         appClient.activate(dashId);
-        appClient.getToken(dashId);
-        String token = appClient.getBody(4 + profile.dashBoards.length + expectedSyncCommandsCount);
+        appClient.getDevice(dashId, 0);
+        Device device = appClient.parseDevice(4 + profile.dashBoards.length + expectedSyncCommandsCount);
+        String token = device.token;
 
         hardClient.login(token);
         verify(hardClient.responseMock, timeout(2000)).channelRead(any(), eq(ok(1)));

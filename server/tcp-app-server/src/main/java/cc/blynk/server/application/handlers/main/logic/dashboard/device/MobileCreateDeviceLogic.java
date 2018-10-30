@@ -8,7 +8,6 @@ import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.utils.ArrayUtil;
 import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -65,12 +64,11 @@ public final class MobileCreateDeviceLogic {
             }
         }
 
-        dash.devices = ArrayUtil.add(dash.devices, newDevice, Device.class);
+        dash.addDevice(newDevice);
 
         String newToken = TokenGeneratorUtil.generateNewToken();
         holder.tokenManager.assignToken(user, dash, newDevice, newToken);
 
-        dash.updatedAt = System.currentTimeMillis();
         user.lastModifiedTs = dash.updatedAt;
 
         if (ctx.channel().isWritable()) {

@@ -30,8 +30,9 @@ public class TokenManager {
     }
 
     public void deleteDevice(Device device) {
-        String token = regularTokenManager.deleteDeviceToken(device);
+        String token = device.token;
         if (token != null) {
+            regularTokenManager.deleteDeviceToken(token);
             dbManager.removeToken(token);
         }
     }

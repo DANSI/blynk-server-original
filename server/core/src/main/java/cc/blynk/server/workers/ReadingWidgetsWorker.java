@@ -6,9 +6,11 @@ import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.widgets.FrequencyWidget;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.Tile;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
@@ -124,7 +126,15 @@ public class ReadingWidgetsWorker implements Runnable {
     }
 
     private boolean sameDeviceId(DashBoard dash, int targetId, int channelDeviceId) {
-        Target target = dash.getTarget(targetId);
+        Target target;
+        if (targetId < Tag.START_TAG_ID) {
+            target = dash.getDeviceById(targetId);
+        } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
+            target = dash.getTagById(targetId);
+        } else {
+            //means widget assigned to device selector widget.
+            target = dash.getDeviceSelector(targetId);
+        }
         return target != null && target.isSelected(channelDeviceId);
     }
 

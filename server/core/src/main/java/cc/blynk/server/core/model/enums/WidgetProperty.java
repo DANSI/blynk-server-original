@@ -20,6 +20,7 @@ public enum WidgetProperty {
     MAX("max"),
     IS_ON_PLAY("isOnPlay"),
     URL("url"),
+    URLS("urls"),
     STEP("step"),
     VALUE_FORMATTING("valueFormatting"),
     SUFFIX("suffix"),
@@ -62,6 +63,8 @@ public enum WidgetProperty {
                 return IS_ON_PLAY;
             case "url" :
                 return URL;
+            case "urls" :
+                return URLS;
             case "step" :
                 return STEP;
             case "valueFormatting" :

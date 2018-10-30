@@ -4,6 +4,8 @@ import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.model.tcp.TestAppClient;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.device.BoardType;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
 import org.junit.Test;
@@ -83,9 +85,10 @@ public class MultiAppTest extends SingleServerInstancePerTest {
         verify(appClient.responseMock, timeout(1000)).channelRead(any(), eq(new ResponseMessage(4, DEVICE_NOT_IN_NETWORK)));
 
         appClient.reset();
-        appClient.getToken(1);
+        appClient.createDevice(1, new Device(0, "123", BoardType.ESP8266));
+        Device device = appClient.parseDevice();
 
-        String token = appClient.getBody();
+        String token = device.token;
         assertNotNull(token);
         return token;
     }

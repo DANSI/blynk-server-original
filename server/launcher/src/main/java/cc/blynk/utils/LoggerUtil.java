@@ -3,8 +3,7 @@ package cc.blynk.utils;
 import cc.blynk.utils.properties.BaseProperties;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.Configurator;
 
 /**
  * The Blynk Project.
@@ -45,10 +44,7 @@ public final class LoggerUtil {
      */
     private static void changeLogLevel(String level) {
         Level newLevel = Level.valueOf(level);
-        LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
-        Configuration conf = ctx.getConfiguration();
-        conf.getLoggerConfig(LogManager.ROOT_LOGGER_NAME).setLevel(newLevel);
-        ctx.updateLoggers(conf);
+        Configurator.setAllLevels(LogManager.getRootLogger().getName(), newLevel);
     }
 
 }

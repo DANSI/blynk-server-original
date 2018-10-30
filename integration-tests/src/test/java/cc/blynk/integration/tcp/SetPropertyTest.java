@@ -13,6 +13,7 @@ import cc.blynk.server.core.model.widgets.controls.Step;
 import cc.blynk.server.core.model.widgets.others.Player;
 import cc.blynk.server.core.model.widgets.others.Video;
 import cc.blynk.server.core.model.widgets.ui.Menu;
+import cc.blynk.server.core.model.widgets.ui.image.Image;
 import cc.blynk.server.core.protocol.model.messages.ResponseMessage;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -317,6 +318,78 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         Video videoWidget = (Video) widget;
 
         assertEquals("http://123.com", videoWidget.url);
+    }
+
+    @Test
+    public void testSetUrlsForImageWidget() throws Exception {
+        clientPair.appClient.createWidget(1, "{\"id\":102, \"width\":1, \"height\":1, \"x\":5, \"y\":0, \"tabId\":0, \"label\":\"Some Text\", \"type\":\"IMAGE\", \"urls\":[\"https://blynk.cc/123.jpg\"], \"pinType\":\"VIRTUAL\", \"pin\":17}");
+        clientPair.appClient.verifyResult(ok(1));
+
+        clientPair.hardwareClient.setProperty(17, "urls", "http://123.com");
+        clientPair.hardwareClient.verifyResult(ok(1));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1, "1-0 17 urls http://123.com")));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfileGzipped");
+        Profile profile = clientPair.appClient.parseProfile(1);
+
+        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 17, PinType.VIRTUAL);
+        assertNotNull(widget);
+        assertTrue(widget instanceof Image);
+        Image imageWidget = (Image) widget;
+
+        assertArrayEquals(new String[] {"http://123.com"}, imageWidget.urls);
+
+        clientPair.hardwareClient.setProperty(17, "urls", "http://123.com", "http://124.com");
+        clientPair.hardwareClient.verifyResult(ok(2));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(2, "1-0 17 urls http://123.com http://124.com")));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfileGzipped");
+        profile = clientPair.appClient.parseProfile(1);
+
+        widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 17, PinType.VIRTUAL);
+        assertNotNull(widget);
+        assertTrue(widget instanceof Image);
+        imageWidget = (Image) widget;
+
+        assertArrayEquals(new String[] {"http://123.com", "http://124.com"}, imageWidget.urls);
+    }
+
+    @Test
+    public void testSetUrlForImageWidget() throws Exception {
+        clientPair.appClient.createWidget(1, "{\"id\":102, \"width\":1, \"height\":1, \"x\":5, \"y\":0, \"tabId\":0, \"label\":\"Some Text\", \"type\":\"IMAGE\", \"urls\":[\"https://blynk.cc/123.jpg\"], \"pinType\":\"VIRTUAL\", \"pin\":17}");
+        clientPair.appClient.verifyResult(ok(1));
+
+        clientPair.hardwareClient.setProperty(17, "url", "1", "http://123.com");
+        clientPair.hardwareClient.verifyResult(ok(1));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1, "1-0 17 url 1 http://123.com")));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfileGzipped");
+        Profile profile = clientPair.appClient.parseProfile(1);
+
+        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 17, PinType.VIRTUAL);
+        assertNotNull(widget);
+        assertTrue(widget instanceof Image);
+        Image imageWidget = (Image) widget;
+
+        assertArrayEquals(new String[] {"http://123.com"}, imageWidget.urls);
+
+        clientPair.hardwareClient.setProperty(17, "url", "2", "http://123.com");
+        clientPair.hardwareClient.verifyResult(ok(2));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(2, "1-0 17 url 2 http://123.com")));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfileGzipped");
+        profile = clientPair.appClient.parseProfile(1);
+
+        widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 17, PinType.VIRTUAL);
+        assertNotNull(widget);
+        assertTrue(widget instanceof Image);
+        imageWidget = (Image) widget;
+
+        assertArrayEquals(new String[] {"http://123.com"}, imageWidget.urls);
     }
 
     @Test

@@ -55,7 +55,6 @@ import static cc.blynk.server.core.protocol.enums.Command.DEVICE_OFFLINE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_CLONE_CODE;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROVISION_TOKEN;
-import static cc.blynk.server.core.protocol.enums.Command.GET_TOKEN;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE_CONNECTED;
 import static cc.blynk.server.core.protocol.enums.Command.LOAD_PROFILE_GZIPPED;
 import static cc.blynk.server.core.protocol.enums.Command.OUTDATED_APP_NOTIFICATION;
@@ -117,15 +116,6 @@ public final class TestUtil {
 
     public static String readTestUserProfile() throws Exception {
         return readTestUserProfile("user_profile_json.txt");
-    }
-
-    private static StringMessage getGetTokenMessage(List<Object> arguments) {
-        for (Object obj : arguments) {
-            if (((MessageBase)obj).command == GET_TOKEN) {
-                return (StringMessage) obj;
-            }
-        }
-        throw new RuntimeException("Get token message wasn't retrieved.");
     }
 
     public static void saveProfile(TestAppClient appClient, DashBoard... dashBoards) {
@@ -279,13 +269,13 @@ public final class TestUtil {
         saveProfile(appClient, profile.dashBoards);
 
         appClient.activate(dashId);
-        appClient.getToken(dashId);
 
         ArgumentCaptor<Object> objectArgumentCaptor = ArgumentCaptor.forClass(Object.class);
-        verify(appClient.responseMock, timeout(2000).times(5 + profile.dashBoards.length + expectedSyncCommandsCount)).channelRead(any(), objectArgumentCaptor.capture());
+        verify(appClient.responseMock, timeout(2000).times(4 + profile.dashBoards.length + expectedSyncCommandsCount)).channelRead(any(), objectArgumentCaptor.capture());
 
-        List<Object> arguments = objectArgumentCaptor.getAllValues();
-        String token = getGetTokenMessage(arguments).body;
+        appClient.getDevice(dashId, 0);
+        Device device = appClient.parseDevice(5 + profile.dashBoards.length + expectedSyncCommandsCount);
+        String token = device.token;
 
         hardClient.login(token);
         verify(hardClient.responseMock, timeout(2000)).channelRead(any(), eq(ok(1)));
