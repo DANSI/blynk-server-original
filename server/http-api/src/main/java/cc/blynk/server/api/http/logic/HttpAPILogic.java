@@ -42,6 +42,7 @@ import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
+import cc.blynk.utils.NumberUtil;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.TokenGeneratorUtil;
 import cc.blynk.utils.http.MediaType;
@@ -185,7 +186,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         try {
             pinType = PinType.getPinType(pinString.charAt(0));
-            pin = Short.parseShort(pinString.substring(1));
+            pin = NumberUtil.parsePin(pinString.substring(1));
         } catch (NumberFormatException | IllegalCommandBodyException e) {
             log.debug("Wrong pin format. {}", pinString);
             return badRequest("Wrong pin format.");
@@ -295,7 +296,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         try {
             pinType = PinType.getPinType(pinString.charAt(0));
-            pin = Short.parseShort(pinString.substring(1));
+            pin = NumberUtil.parsePin(pinString.substring(1));
         } catch (NumberFormatException | IllegalCommandBodyException e) {
             log.debug("Wrong pin format. {}", pinString);
             return badRequest("Wrong pin format.");
@@ -344,7 +345,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
         short pin;
         try {
             pinType = PinType.getPinType(pinString.charAt(0));
-            pin = Short.parseShort(pinString.substring(1));
+            pin = NumberUtil.parsePin(pinString.substring(1));
         } catch (NumberFormatException | IllegalCommandBodyException e) {
             log.debug("Wrong pin format. {}", pinString);
             return badRequest("Wrong pin format.");
@@ -438,7 +439,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         try {
             pinType = PinType.getPinType(pinString.charAt(0));
-            pin = Short.parseShort(pinString.substring(1));
+            pin = NumberUtil.parsePin(pinString.substring(1));
         } catch (NumberFormatException | IllegalCommandBodyException e) {
             log.debug("Wrong pin format. {}", pinString);
             return badRequest("Wrong pin format.");
@@ -503,7 +504,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         try {
             pinType = PinType.getPinType(pinString.charAt(0));
-            pin = Short.parseShort(pinString.substring(1));
+            pin = NumberUtil.parsePin(pinString.substring(1));
         } catch (NumberFormatException | IllegalCommandBodyException e) {
             log.debug("Wrong pin format. {}", pinString);
             return badRequest("Wrong pin format.");

@@ -100,6 +100,16 @@ public class HttpAPIPinsTest extends SingleServerInstancePerTest {
     }
 
     @Test
+    public void testGetWringPin() throws Exception {
+        HttpGet request = new HttpGet(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/get/v256");
+
+        try (CloseableHttpResponse response = httpclient.execute(request)) {
+            assertEquals(400, response.getStatusLine().getStatusCode());
+            assertEquals("Wrong pin format.", TestUtil.consumeText(response));
+        }
+    }
+
+    @Test
     public void testPutGetNonExistingPin() throws Exception {
         HttpPut put = new HttpPut(httpsServerUrl + "4ae3851817194e2596cf1b7103603ef8/update/v10");
         put.setEntity(new StringEntity("[\"100\"]", ContentType.APPLICATION_JSON));
