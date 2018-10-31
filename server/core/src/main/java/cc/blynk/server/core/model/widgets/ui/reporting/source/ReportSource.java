@@ -31,7 +31,7 @@ public abstract class ReportSource implements DeviceCleaner {
         return reportDataStreams.length > 0;
     }
 
-    public boolean isSame(byte pin, PinType pinType) {
+    public boolean isSame(short pin, PinType pinType) {
         for (ReportDataStream reportDataStream : reportDataStreams) {
             if (reportDataStream.isSame(pin, pinType)) {
                 return true;

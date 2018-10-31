@@ -37,7 +37,7 @@ public class Terminal extends OnePinWidget {
     public boolean attachNewLine;
 
     @Override
-    public boolean updateIfSame(int deviceId, byte pin, PinType type, String value) {
+    public boolean updateIfSame(int deviceId, short pin, PinType type, String value) {
         if (isSame(deviceId, pin, type)) {
             if ("clr".equals(value)) {
                 this.lastCommands.clear();

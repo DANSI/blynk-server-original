@@ -16,8 +16,12 @@
         sudo add-apt-repository ppa:linuxuprising/java
         sudo apt-get update
         sudo apt-get install oracle-java10-installer
+
+        sudo add-apt-repository ppa:openjdk-r/ppa \
+        && sudo apt-get update -q \
+        && sudo apt install -y openjdk-11-jdk
         
-        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.39.12/server-0.39.12.jar"
+        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.40.0/server-0.40.0.jar"
         
 
 server.properties

@@ -176,7 +176,7 @@ public abstract class Widget implements CopyObject<Widget> {
 
     public abstract boolean isAssignedToDevice(int deviceId);
 
-    protected void append(StringBuilder sb, byte pin, PinType pinType) {
+    protected void append(StringBuilder sb, short pin, PinType pinType) {
         if (pin != DataStream.NO_PIN && pinType != PinType.VIRTUAL) {
             PinMode pinMode = getModeType();
             if (pinMode != null) {
@@ -188,11 +188,11 @@ public abstract class Widget implements CopyObject<Widget> {
         }
     }
 
-    public boolean updateIfSame(int deviceId, byte pin, PinType type, String value) {
+    public boolean updateIfSame(int deviceId, short pin, PinType type, String value) {
         return false;
     }
 
-    public boolean isSame(int deviceId, byte pin, PinType type) {
+    public boolean isSame(int deviceId, short pin, PinType type) {
         return false;
     }
 

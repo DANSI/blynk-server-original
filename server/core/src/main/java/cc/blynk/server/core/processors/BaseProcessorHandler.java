@@ -27,7 +27,7 @@ public abstract class BaseProcessorHandler {
         this.webhookProcessor = webhookProcessor;
     }
 
-    protected void processEventorAndWebhook(User user, DashBoard dash, int deviceId, Session session, byte pin,
+    protected void processEventorAndWebhook(User user, DashBoard dash, int deviceId, Session session, short pin,
                                             PinType pinType, String value, long now) {
         try {
             eventorProcessor.process(user, session, dash, deviceId, pin, pinType, value, now);

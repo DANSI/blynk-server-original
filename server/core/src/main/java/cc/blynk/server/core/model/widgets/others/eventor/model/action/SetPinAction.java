@@ -28,7 +28,7 @@ public class SetPinAction extends BaseAction {
         this.setPinType = setPinType;
     }
 
-    public SetPinAction(byte pin, PinType pinType, String value) {
+    public SetPinAction(short pin, PinType pinType, String value) {
         this.dataStream = new DataStream(pin, pinType);
         this.value = value;
         this.setPinType = SetPinActionType.CUSTOM;

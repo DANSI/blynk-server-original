@@ -86,7 +86,7 @@ public class EventorProcessor {
         }
     }
 
-    public void process(User user, Session session, DashBoard dash, int deviceId, byte pin,
+    public void process(User user, Session session, DashBoard dash, int deviceId, short pin,
                         PinType type, String triggerValue, long now) {
         Eventor eventor = dash.getEventorWidget();
         if (eventor == null || eventor.rules == null

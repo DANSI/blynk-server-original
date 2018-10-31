@@ -38,7 +38,7 @@ public class Map extends OnePinWidget {
     public float lon; // last user position on map
 
     @Override
-    public boolean updateIfSame(int deviceId, byte pin, PinType type, String value) {
+    public boolean updateIfSame(int deviceId, short pin, PinType type, String value) {
         if (isSame(deviceId, pin, type)) {
             switch (value) {
                 case "clr" :

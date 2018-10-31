@@ -329,7 +329,7 @@ public class SyncWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = clientPair.appClient.parseProfile(1);
-        TimeInput timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
+        TimeInput timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (short) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(82800, timeInput.startAt);
         assertEquals(82860, timeInput.stopAt);
@@ -340,7 +340,7 @@ public class SyncWorkflowTest extends SingleServerInstancePerTest {
     @Test
     public void testSyncForTimer() throws Exception {
         User user = holder.userDao.users.get(new UserKey(getUserName(), "Blynk"));
-        Widget widget = user.profile.dashBoards[0].findWidgetByPin(0, (byte) 5, PinType.DIGITAL);
+        Widget widget = user.profile.dashBoards[0].findWidgetByPin(0, (short) 5, PinType.DIGITAL);
         Timer timer = (Timer) widget;
         timer.value = "100500";
 

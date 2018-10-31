@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class ReportDataStream {
 
-    public final byte pin;
+    public final short pin;
 
     public final PinType pinType;
 
@@ -22,7 +22,7 @@ public class ReportDataStream {
     public final boolean isSelected;
 
     @JsonCreator
-    public ReportDataStream(@JsonProperty("pin") byte pin,
+    public ReportDataStream(@JsonProperty("pin") short pin,
                             @JsonProperty("pinType") PinType pinType,
                             @JsonProperty("label") String label,
                             @JsonProperty("isSelected") boolean isSelected) {
@@ -32,7 +32,7 @@ public class ReportDataStream {
         this.isSelected = isSelected;
     }
 
-    public boolean isSame(byte pin, PinType pinType) {
+    public boolean isSame(short pin, PinType pinType) {
         return this.pin == pin && this.pinType == pinType;
     }
 

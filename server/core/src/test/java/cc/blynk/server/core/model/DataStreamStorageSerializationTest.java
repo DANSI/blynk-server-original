@@ -35,7 +35,7 @@ public class DataStreamStorageSerializationTest {
         };
         user.lastModifiedTs = 0;
         user.profile.dashBoards[0].pinsStorage = new HashMap<>();
-        PinStorageKey pinStorageKey = new PinStorageKey(0, PinType.VIRTUAL, (byte) 0);
+        PinStorageKey pinStorageKey = new PinStorageKey(0, PinType.VIRTUAL, (short) 0);
         user.profile.dashBoards[0].pinsStorage.put(pinStorageKey, new SinglePinStorageValue());
 
         String result = user.toString();
@@ -52,9 +52,9 @@ public class DataStreamStorageSerializationTest {
         };
         user.lastModifiedTs = 0;
         user.profile.dashBoards[0].pinsStorage = new HashMap<>();
-        PinStorageKey pinStorageKey = new PinStorageKey(0, PinType.VIRTUAL, (byte) 0);
-        PinStorageKey pinStorageKey2 = new PinStorageKey(0, PinType.DIGITAL, (byte) 1);
-        PinPropertyStorageKey pinStorageKey3 = new PinPropertyStorageKey(0, PinType.VIRTUAL, (byte) 0, WidgetProperty.LABEL);
+        PinStorageKey pinStorageKey = new PinStorageKey(0, PinType.VIRTUAL, (short) 0);
+        PinStorageKey pinStorageKey2 = new PinStorageKey(0, PinType.DIGITAL, (short) 1);
+        PinPropertyStorageKey pinStorageKey3 = new PinPropertyStorageKey(0, PinType.VIRTUAL, (short) 0, WidgetProperty.LABEL);
         user.profile.dashBoards[0].pinsStorage.put(pinStorageKey, new SinglePinStorageValue("1"));
         user.profile.dashBoards[0].pinsStorage.put(pinStorageKey2,new SinglePinStorageValue("2"));
         user.profile.dashBoards[0].pinsStorage.put(pinStorageKey3, new SinglePinStorageValue("3"));
@@ -75,7 +75,7 @@ public class DataStreamStorageSerializationTest {
         };
         user.lastModifiedTs = 0;
         user.profile.dashBoards[0].pinsStorage = new HashMap<>();
-        PinStorageKey pinStorageKey = new PinStorageKey(0, PinType.VIRTUAL, (byte) 0);
+        PinStorageKey pinStorageKey = new PinStorageKey(0, PinType.VIRTUAL, (short) 0);
         PinStorageValue pinStorageValue = new MultiPinStorageValue(MultiPinStorageValueType.LCD);
         user.profile.dashBoards[0].pinsStorage.put(pinStorageKey, pinStorageValue);
 
@@ -93,7 +93,7 @@ public class DataStreamStorageSerializationTest {
         };
         user.lastModifiedTs = 0;
         user.profile.dashBoards[0].pinsStorage = new HashMap<>();
-        PinStorageKey pinStorageKey = new PinStorageKey(0, PinType.VIRTUAL, (byte) 0);
+        PinStorageKey pinStorageKey = new PinStorageKey(0, PinType.VIRTUAL, (short) 0);
         PinStorageValue pinStorageValue = new MultiPinStorageValue(MultiPinStorageValueType.LCD);
         pinStorageValue.update("1");
         user.profile.dashBoards[0].pinsStorage.put(pinStorageKey, pinStorageValue);
@@ -112,7 +112,7 @@ public class DataStreamStorageSerializationTest {
         };
         user.lastModifiedTs = 0;
         user.profile.dashBoards[0].pinsStorage = new HashMap<>();
-        PinStorageKey pinStorageKey = new PinStorageKey(0, PinType.VIRTUAL, (byte) 0);
+        PinStorageKey pinStorageKey = new PinStorageKey(0, PinType.VIRTUAL, (short) 0);
         PinStorageValue pinStorageValue = new MultiPinStorageValue(MultiPinStorageValueType.LCD);
         pinStorageValue.update("1");
         pinStorageValue.update("2");
@@ -132,7 +132,7 @@ public class DataStreamStorageSerializationTest {
         };
         user.lastModifiedTs = 0;
         user.profile.dashBoards[0].pinsStorage = new HashMap<>();
-        PinStorageKey pinStorageKey = new PinStorageKey(0, PinType.VIRTUAL, (byte) 0);
+        PinStorageKey pinStorageKey = new PinStorageKey(0, PinType.VIRTUAL, (short) 0);
         PinStorageValue pinStorageValue = new MultiPinStorageValue(MultiPinStorageValueType.LCD);
         pinStorageValue.update("1");
         pinStorageValue.update("2");
@@ -157,7 +157,7 @@ public class DataStreamStorageSerializationTest {
         };
         user.lastModifiedTs = 0;
         user.profile.dashBoards[0].pinsStorage = new HashMap<>();
-        PinStorageKey pinStorageKey = new PinStorageKey(0, PinType.VIRTUAL, (byte) 0);
+        PinStorageKey pinStorageKey = new PinStorageKey(0, PinType.VIRTUAL, (short) 0);
         PinStorageValue pinStorageValue = new MultiPinStorageValue(MultiPinStorageValueType.LCD);
         pinStorageValue.update("\0");
         user.profile.dashBoards[0].pinsStorage.put(pinStorageKey, pinStorageValue);
@@ -176,9 +176,9 @@ public class DataStreamStorageSerializationTest {
         assertNotNull(user);
         assertEquals(3, user.profile.dashBoards[0].pinsStorage.size());
 
-        PinStorageKey pinStorageKey = new PinStorageKey(0, PinType.VIRTUAL, (byte) 0);
-        PinStorageKey pinStorageKey2 = new PinStorageKey(0, PinType.DIGITAL, (byte) 111);
-        PinPropertyStorageKey pinStorageKey3 = new PinPropertyStorageKey(0, PinType.VIRTUAL, (byte) 0, WidgetProperty.LABEL);
+        PinStorageKey pinStorageKey = new PinStorageKey(0, PinType.VIRTUAL, (short) 0);
+        PinStorageKey pinStorageKey2 = new PinStorageKey(0, PinType.DIGITAL, (short) 111);
+        PinPropertyStorageKey pinStorageKey3 = new PinPropertyStorageKey(0, PinType.VIRTUAL, (short) 0, WidgetProperty.LABEL);
 
         assertEquals("1", ((SinglePinStorageValue) user.profile.dashBoards[0].pinsStorage.get(pinStorageKey)).value);
         assertEquals("2", ((SinglePinStorageValue) user.profile.dashBoards[0].pinsStorage.get(pinStorageKey2)).value);
@@ -195,7 +195,7 @@ public class DataStreamStorageSerializationTest {
         assertNotNull(user);
         assertEquals(1, user.profile.dashBoards[0].pinsStorage.size());
 
-        PinStorageKey pinStorageKey = new PinStorageKey(0, PinType.VIRTUAL, (byte) 0);
+        PinStorageKey pinStorageKey = new PinStorageKey(0, PinType.VIRTUAL, (short) 0);
 
         assertEquals("1", ((MultiPinStorageValue) user.profile.dashBoards[0].pinsStorage.get(pinStorageKey)).values.poll());
         assertEquals("2", ((MultiPinStorageValue) user.profile.dashBoards[0].pinsStorage.get(pinStorageKey)).values.poll());
@@ -211,7 +211,7 @@ public class DataStreamStorageSerializationTest {
         assertNotNull(user);
         assertEquals(1, user.profile.dashBoards[0].pinsStorage.size());
 
-        PinStorageKey pinStorageKey = new PinStorageKey(0, PinType.VIRTUAL, (byte) 0);
+        PinStorageKey pinStorageKey = new PinStorageKey(0, PinType.VIRTUAL, (short) 0);
 
         assertNotNull(user.profile.dashBoards[0].pinsStorage.get(pinStorageKey));
         assertEquals(0, ((MultiPinStorageValue) user.profile.dashBoards[0].pinsStorage.get(pinStorageKey)).values.size());

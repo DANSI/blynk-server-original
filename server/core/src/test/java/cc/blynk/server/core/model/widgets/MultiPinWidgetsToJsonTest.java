@@ -20,8 +20,8 @@ public class MultiPinWidgetsToJsonTest {
     public void testJoystick() {
         TwoAxisJoystick joystick = new TwoAxisJoystick();
         joystick.dataStreams = new DataStream[] {
-                new DataStream((byte) 1, false, false, PinType.VIRTUAL, "value", 0, 250, "label"),
-                new DataStream((byte) 2, false, false, PinType.VIRTUAL, "value2", 0, 250, "label")
+                new DataStream((short) 1, false, false, PinType.VIRTUAL, "value", 0, 250, "label"),
+                new DataStream((short) 2, false, false, PinType.VIRTUAL, "value2", 0, 250, "label")
         };
         assertEquals("[\"value\"]", joystick.getJsonValue());
 
@@ -33,8 +33,8 @@ public class MultiPinWidgetsToJsonTest {
     public void testRGB() {
         RGB rgb = new RGB();
         rgb.dataStreams = new DataStream[] {
-                new DataStream((byte) 1, false, false, PinType.VIRTUAL, "value", 0, 250, "label"),
-                new DataStream((byte) 2, false, false, PinType.VIRTUAL, "value2", 0, 250, "label")
+                new DataStream((short) 1, false, false, PinType.VIRTUAL, "value", 0, 250, "label"),
+                new DataStream((short) 2, false, false, PinType.VIRTUAL, "value2", 0, 250, "label")
         };
         assertEquals("[\"value\"]", rgb.getJsonValue());
 
@@ -47,8 +47,8 @@ public class MultiPinWidgetsToJsonTest {
         LCD lcd = new LCD();
         lcd.advancedMode = true;
         lcd.dataStreams = new DataStream[] {
-                new DataStream((byte) 1, false, false, PinType.VIRTUAL, "value", 0, 250, "label"),
-                new DataStream((byte) 2, false, false, PinType.VIRTUAL, "value2", 0, 250, "label")
+                new DataStream((short) 1, false, false, PinType.VIRTUAL, "value", 0, 250, "label"),
+                new DataStream((short) 2, false, false, PinType.VIRTUAL, "value2", 0, 250, "label")
         };
         assertEquals("[\"value\"]", lcd.getJsonValue());
 
@@ -60,7 +60,7 @@ public class MultiPinWidgetsToJsonTest {
     public void testJoystickMultiValue() {
         TwoAxisJoystick joystick = new TwoAxisJoystick();
         joystick.dataStreams = new DataStream[] {
-                new DataStream((byte) 1, false, false, PinType.VIRTUAL, "value\0value2", 0, 250, "label")
+                new DataStream((short) 1, false, false, PinType.VIRTUAL, "value\0value2", 0, 250, "label")
         };
         assertEquals("[\"value\",\"value2\"]", joystick.getJsonValue());
     }

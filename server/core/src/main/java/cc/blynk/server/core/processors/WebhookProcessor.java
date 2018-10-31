@@ -68,7 +68,7 @@ public class WebhookProcessor extends NotificationBase {
         this.webhookFailureLimit = failureLimit;
     }
 
-    public void process(Session session, DashBoard dash, int deviceId, byte pin,
+    public void process(Session session, DashBoard dash, int deviceId, short pin,
                         PinType pinType, String triggerValue, long now) {
         WebHook webhook = dash.findWebhookByPin(deviceId, pin, pinType);
         if (webhook == null) {

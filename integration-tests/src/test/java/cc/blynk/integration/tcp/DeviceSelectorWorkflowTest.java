@@ -647,7 +647,7 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
         lcd.width = 1;
         lcd.height = 1;
         lcd.deviceId = (int) deviceSelector.id;
-        lcd.dataStreams = new DataStream[] {new DataStream((byte) 88, PinType.VIRTUAL)};
+        lcd.dataStreams = new DataStream[] {new DataStream((short) 88, PinType.VIRTUAL)};
 
         clientPair.appClient.createWidget(1, deviceSelector);
         clientPair.appClient.createWidget(1, lcd);

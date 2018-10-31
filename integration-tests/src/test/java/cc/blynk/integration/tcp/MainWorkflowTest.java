@@ -372,7 +372,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = clientPair.appClient.parseProfile(2);
         assertNotNull(profile);
-        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 67, PinType.VIRTUAL);
+        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 67, PinType.VIRTUAL);
         assertNotNull(widget);
         assertTrue(widget instanceof Step);
         assertEquals("100", ((OnePinWidget) widget).value);
@@ -389,7 +389,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = clientPair.appClient.parseProfile(2);
         assertNotNull(profile);
-        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 24, PinType.DIGITAL);
+        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 24, PinType.DIGITAL);
         assertNotNull(widget);
         assertTrue(widget instanceof Step);
         assertEquals("100", ((OnePinWidget) widget).value);
@@ -397,8 +397,22 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSendInvalidVirtualPin() throws Exception {
-        clientPair.hardwareClient.send("hardware vw 140 100");
+        clientPair.hardwareClient.send("hardware vw 256 100");
         clientPair.hardwareClient.verifyResult(illegalCommand(1));
+    }
+
+    @Test
+    public void testSendInvalidVirtualPin2() throws Exception {
+        clientPair.hardwareClient.send("hardware vw -1 100");
+        clientPair.hardwareClient.verifyResult(illegalCommand(1));
+    }
+
+    @Test
+    public void testSendValidVirtualPin() throws Exception {
+        clientPair.hardwareClient.send("hardware vw 0 100");
+        clientPair.hardwareClient.send("hardware vw 255 100");
+        clientPair.hardwareClient.never(illegalCommand(1));
+        clientPair.hardwareClient.never(illegalCommand(2));
     }
 
     @Test
@@ -480,7 +494,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("loadProfileGzipped");
         profile = clientPair.appClient.parseProfile(1);
         assertEquals(17, profile.dashBoards[0].widgets.length);
-        assertNotNull(profile.dashBoards[0].findWidgetByPin(0, (byte) 17, PinType.DIGITAL));
+        assertNotNull(profile.dashBoards[0].findWidgetByPin(0, (short) 17, PinType.DIGITAL));
     }
 
     @Test
@@ -519,8 +533,8 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("loadProfileGzipped");
         profile = clientPair.appClient.parseProfile(1);
         assertEquals(18, profile.dashBoards[0].widgets.length);
-        assertNull(profile.dashBoards[0].findWidgetByPin(0, (byte) 17, PinType.DIGITAL));
-        assertNotNull(profile.dashBoards[0].findWidgetByPin(0, (byte) 18, PinType.DIGITAL));
+        assertNull(profile.dashBoards[0].findWidgetByPin(0, (short) 17, PinType.DIGITAL));
+        assertNotNull(profile.dashBoards[0].findWidgetByPin(0, (short) 18, PinType.DIGITAL));
     }
 
     @Test
@@ -638,13 +652,13 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         }
 
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", username,
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
         Path pinReportingDataPath11 = Paths.get(tempDir, "data", username,
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 8, GraphGranularityType.HOURLY));
         Path pinReportingDataPath12 = Paths.get(tempDir, "data", username,
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.DAILY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 8, GraphGranularityType.DAILY));
         Path pinReportingDataPath13 = Paths.get(tempDir, "data", username,
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 9, GraphGranularityType.DAILY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 9, GraphGranularityType.DAILY));
 
         FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath11, 1.11D, 1111111);
@@ -941,7 +955,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = clientPair.appClient.parseProfile(1);
-        Player player = (Player) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
+        Player player = (Player) profile.dashBoards[0].findWidgetByPin(0, (short) 99, PinType.VIRTUAL);
         assertNotNull(player);
         assertTrue(player.isOnPlay);
 
@@ -951,7 +965,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         profile = clientPair.appClient.parseProfile(1);
-        player = (Player) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
+        player = (Player) profile.dashBoards[0].findWidgetByPin(0, (short) 99, PinType.VIRTUAL);
         assertNotNull(player);
         assertFalse(player.isOnPlay);
     }
@@ -969,7 +983,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = clientPair.appClient.parseProfile(1);
-        TimeInput timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
+        TimeInput timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (short) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(82800, timeInput.startAt);
         assertEquals(82860, timeInput.stopAt);
@@ -983,7 +997,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         profile = clientPair.appClient.parseProfile(1);
-        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
+        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (short) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(82800, timeInput.startAt);
         assertEquals(82860, timeInput.stopAt);
@@ -996,7 +1010,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         profile = clientPair.appClient.parseProfile(1);
-        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
+        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (short) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(82800, timeInput.startAt);
         assertEquals(-1, timeInput.stopAt);
@@ -1009,7 +1023,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         profile = clientPair.appClient.parseProfile(1);
-        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
+        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (short) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(82800, timeInput.startAt);
         assertEquals(-1, timeInput.stopAt);
@@ -1022,7 +1036,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         profile = clientPair.appClient.parseProfile(1);
-        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
+        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (short) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(-1, timeInput.startAt);
         assertEquals(-1, timeInput.stopAt);
@@ -1035,7 +1049,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         profile = clientPair.appClient.parseProfile(1);
-        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
+        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (short) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(82800, timeInput.startAt);
         assertEquals(82800, timeInput.stopAt);
@@ -1048,7 +1062,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         profile = clientPair.appClient.parseProfile(1);
-        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
+        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (short) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(-2, timeInput.startAt);
         assertEquals(-3, timeInput.stopAt);
@@ -1070,7 +1084,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = clientPair.appClient.parseProfile(1);
-        TimeInput timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
+        TimeInput timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (short) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(82800, timeInput.startAt);
         assertEquals(82860, timeInput.stopAt);
@@ -1084,7 +1098,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         profile = clientPair.appClient.parseProfile(1);
-        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
+        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (short) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(82800, timeInput.startAt);
         assertEquals(82860, timeInput.stopAt);
@@ -1097,7 +1111,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         profile = (clientPair.appClient.parseProfile(1));
-        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
+        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (short) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(82800, timeInput.startAt);
         assertEquals(-1, timeInput.stopAt);
@@ -1110,7 +1124,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         profile = (clientPair.appClient.parseProfile(1));
-        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
+        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (short) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(82800, timeInput.startAt);
         assertEquals(-1, timeInput.stopAt);
@@ -1123,7 +1137,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         profile = (clientPair.appClient.parseProfile(1));
-        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
+        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (short) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(-1, timeInput.startAt);
         assertEquals(-1, timeInput.stopAt);
@@ -1136,7 +1150,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         profile = clientPair.appClient.parseProfile(1);
-        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
+        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (short) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(82800, timeInput.startAt);
         assertEquals(82800, timeInput.stopAt);
@@ -1149,7 +1163,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         profile = clientPair.appClient.parseProfile(1);
-        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (byte) 99, PinType.VIRTUAL);
+        timeInput = (TimeInput) profile.dashBoards[0].findWidgetByPin(0, (short) 99, PinType.VIRTUAL);
         assertNotNull(timeInput);
         assertEquals(-2, timeInput.startAt);
         assertEquals(-3, timeInput.stopAt);
@@ -1356,7 +1370,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
 
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = clientPair.appClient.parseProfile(2);
-        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 18, PinType.DIGITAL);
+        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 18, PinType.DIGITAL);
         assertNotNull(widget);
         assertEquals("1032", ((Button) widget).value);
     }
@@ -1377,7 +1391,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
 
         int counter = 0;
         for (Widget widget : profile.dashBoards[0].widgets) {
-            if (widget.isSame(0, (byte) 37, PinType.VIRTUAL)) {
+            if (widget.isSame(0, (short) 37, PinType.VIRTUAL)) {
                 counter++;
                 assertEquals("10", ((OnePinWidget) widget).value);
             }
@@ -1390,7 +1404,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         profile = clientPair.appClient.parseProfile(5);
         counter = 0;
         for (Widget widget : profile.dashBoards[0].widgets) {
-            if (widget.isSame(0, (byte) 37, PinType.VIRTUAL)) {
+            if (widget.isSame(0, (short) 37, PinType.VIRTUAL)) {
                 counter++;
                 assertEquals("11", ((OnePinWidget) widget).value);
             }
@@ -1408,7 +1422,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
 
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = clientPair.appClient.parseProfile(2);
-        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 18, PinType.DIGITAL);
+        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 18, PinType.DIGITAL);
         assertNotNull(widget);
         assertEquals("1", ((Button) widget).value);
     }

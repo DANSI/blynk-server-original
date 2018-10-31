@@ -175,7 +175,7 @@ public class BridgeWorkflowTest extends SingleServerInstancePerTest {
 
         clientPair.hardwareClient.send("bridge 1 i " + clientPair.token);
         clientPair.hardwareClient.verifyResult(ok(1));
-        clientPair.hardwareClient.send("bridge 1 vw 140 10");
+        clientPair.hardwareClient.send("bridge 1 vw 256 10");
         clientPair.hardwareClient.verifyResult(illegalCommand(2));
     }
 

@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
+import cc.blynk.utils.NumberUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -69,7 +70,7 @@ public final class SetWidgetPropertyLogic {
         }
 
         int deviceId = state.device.id;
-        byte pin = Byte.parseByte(bodyParts[0]);
+        short pin = NumberUtil.parsePin(bodyParts[0]);
 
         Widget widget = null;
         for (Widget dashWidget : dash.widgets) {

@@ -275,7 +275,7 @@ public class HttpAPIPinsAsyncClientTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = clientPair.appClient.parseProfile(1);
 
-        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
+        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 4, PinType.VIRTUAL);
         assertNotNull(widget);
         assertEquals("My-New-Label", widget.label);
     }
@@ -293,7 +293,7 @@ public class HttpAPIPinsAsyncClientTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = clientPair.appClient.parseProfile(1);
 
-        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
+        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 4, PinType.VIRTUAL);
         assertNotNull(widget);
         assertEquals(255, widget.color);
     }
@@ -314,7 +314,7 @@ public class HttpAPIPinsAsyncClientTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = clientPair.appClient.parseProfile(1);
 
-        Button button = (Button) profile.dashBoards[0].findWidgetByPin(0, (byte) 2, PinType.VIRTUAL);
+        Button button = (Button) profile.dashBoards[0].findWidgetByPin(0, (short) 2, PinType.VIRTUAL);
         assertNotNull(button);
         assertEquals("newOnButtonLabel", button.onLabel);
     }
@@ -336,7 +336,7 @@ public class HttpAPIPinsAsyncClientTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = clientPair.appClient.parseProfile(1);
 
-        Button button = (Button) profile.dashBoards[0].findWidgetByPin(0, (byte) 1, PinType.VIRTUAL);
+        Button button = (Button) profile.dashBoards[0].findWidgetByPin(0, (short) 1, PinType.VIRTUAL);
         assertNotNull(button);
         assertEquals("newOffButtonLabel", button.offLabel);
     }

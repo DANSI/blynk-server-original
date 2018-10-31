@@ -28,7 +28,7 @@ public class CreateReportTestTimingTest {
 
     @Test
     public void testDailyReportStartTimeInThePast()  {
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Temperature", true);
 
         ReportSource reportSource2 = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},
@@ -53,7 +53,7 @@ public class CreateReportTestTimingTest {
 
     @Test
     public void testDailyReportStartTimeInTheFuture() {
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Temperature", true);
 
         ReportSource reportSource2 = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},
@@ -78,7 +78,7 @@ public class CreateReportTestTimingTest {
 
     @Test
     public void testDailyReportStartTimeInTheFutureAnotherTimezone() {
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Temperature", true);
 
         ReportSource reportSource2 = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},
@@ -101,7 +101,7 @@ public class CreateReportTestTimingTest {
 
     @Test
     public void testDailyReportStartTimeInTheFutureAnotherTimezone2() {
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Temperature", true);
 
         ReportSource reportSource2 = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},
@@ -124,7 +124,7 @@ public class CreateReportTestTimingTest {
 
     @Test
     public void testWeeklyReportStartTimeInThePast() {
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Temperature", true);
 
         ReportSource reportSource2 = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},
@@ -148,7 +148,7 @@ public class CreateReportTestTimingTest {
 
     @Test
     public void testStartEndDateIsSameAsNow() {
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Temperature", true);
 
         ReportSource reportSource2 = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},
@@ -172,7 +172,7 @@ public class CreateReportTestTimingTest {
 
     @Test
     public void testStartDateInFuture() {
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Temperature", true);
 
         ReportSource reportSource2 = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},
@@ -197,7 +197,7 @@ public class CreateReportTestTimingTest {
 
     @Test
     public void testStartDateInFuture2() {
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Temperature", true);
 
         ReportSource reportSource2 = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},
@@ -222,7 +222,7 @@ public class CreateReportTestTimingTest {
 
     @Test(expected = IllegalCommandBodyException.class)
     public void testEndDateInPastDailyReport() {
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Temperature", true);
 
         ReportSource reportSource2 = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},
@@ -245,7 +245,7 @@ public class CreateReportTestTimingTest {
 
     @Test(expected = IllegalCommandBodyException.class)
     public void testEndDateInPastMonthlyReport() {
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Temperature", true);
 
         ReportSource reportSource2 = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},

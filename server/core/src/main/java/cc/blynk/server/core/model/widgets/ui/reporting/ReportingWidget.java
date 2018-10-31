@@ -59,7 +59,7 @@ public class ReportingWidget extends NoPinWidget implements DeviceCleaner {
         return -1;
     }
 
-    public boolean hasPin(byte pin, PinType pinType) {
+    public boolean hasPin(short pin, PinType pinType) {
         for (ReportSource reportSource : reportSources) {
             if (reportSource.isSame(pin, pinType)) {
                 return true;

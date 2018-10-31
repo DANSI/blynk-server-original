@@ -28,6 +28,7 @@ import cc.blynk.server.core.model.widgets.others.eventor.model.condition.string.
 import cc.blynk.server.core.model.widgets.others.eventor.model.condition.string.StringNotEqual;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.enums.Priority;
+import cc.blynk.utils.NumberUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -85,7 +86,7 @@ public class EventorTest extends SingleServerInstancePerTest {
 
     private static DataStream parsePin(String pinString) {
         PinType pinType = PinType.getPinType(pinString.charAt(0));
-        byte pin = Byte.parseByte(pinString.substring(1));
+        short pin = NumberUtil.parsePin(pinString.substring(1));
         return new DataStream(pin, pinType);
     }
 
@@ -175,7 +176,7 @@ public class EventorTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = clientPair.appClient.parseProfile(1);
         assertNotNull(profile);
-        OnePinWidget widget = (OnePinWidget) profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
+        OnePinWidget widget = (OnePinWidget) profile.dashBoards[0].findWidgetByPin(0, (short) 4, PinType.VIRTUAL);
         assertNotNull(widget);
         assertEquals("123", widget.value);
     }
@@ -247,8 +248,8 @@ public class EventorTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSimpleRule7() throws Exception {
-        DataStream triggerDataStream = new DataStream((byte)1, PinType.VIRTUAL);
-        DataStream dataStream = new DataStream((byte)2, PinType.VIRTUAL);
+        DataStream triggerDataStream = new DataStream((short) 1, PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((short) 2, PinType.VIRTUAL);
         SetPinAction setPinAction = new SetPinAction(dataStream, "123", SetPinActionType.CUSTOM);
         Rule rule = new Rule(triggerDataStream, null, new Between(10, 12), new BaseAction[] {setPinAction}, true);
 
@@ -265,8 +266,8 @@ public class EventorTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSimpleRule8() throws Exception {
-        DataStream triggerDataStream = new DataStream((byte)1, PinType.VIRTUAL);
-        DataStream dataStream = new DataStream((byte)2, PinType.VIRTUAL);
+        DataStream triggerDataStream = new DataStream((short) 1, PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((short) 2, PinType.VIRTUAL);
         SetPinAction setPinAction = new SetPinAction(dataStream, "123", SetPinActionType.CUSTOM);
         Rule rule = new Rule(triggerDataStream, null, new NotBetween(10, 12), new BaseAction[] {setPinAction}, true);
 
@@ -513,11 +514,11 @@ public class EventorTest extends SingleServerInstancePerTest {
 
     @Test
     public void testSimpleRuleWith2Actions() throws Exception {
-        DataStream triggerDataStream = new DataStream((byte)1, PinType.VIRTUAL);
+        DataStream triggerDataStream = new DataStream((short) 1, PinType.VIRTUAL);
         Rule rule = new Rule(triggerDataStream, null, new GreaterThan(37),
                 new BaseAction[] {
-                        new SetPinAction((byte)0, PinType.VIRTUAL, "0"),
-                        new SetPinAction((byte)1, PinType.VIRTUAL, "1")
+                        new SetPinAction((short) 0, PinType.VIRTUAL, "0"),
+                        new SetPinAction((short) 1, PinType.VIRTUAL, "1")
                 },
                 true);
 
@@ -551,8 +552,8 @@ public class EventorTest extends SingleServerInstancePerTest {
 
     @Test
     public void testStringEqualsRule() throws Exception {
-        DataStream triggerStream = new DataStream((byte) 1, PinType.VIRTUAL);
-        SetPinAction setPinAction = new SetPinAction(new DataStream((byte) 2, PinType.VIRTUAL),
+        DataStream triggerStream = new DataStream((short) 1, PinType.VIRTUAL);
+        SetPinAction setPinAction = new SetPinAction(new DataStream((short) 2, PinType.VIRTUAL),
                 "123", SetPinActionType.CUSTOM);
 
         Eventor eventor = new Eventor(new Rule[] {
@@ -570,8 +571,8 @@ public class EventorTest extends SingleServerInstancePerTest {
 
     @Test
     public void testValueChangedRule() throws Exception {
-        DataStream triggerStream = new DataStream((byte) 1, PinType.VIRTUAL);
-        SetPinAction setPinAction = new SetPinAction(new DataStream((byte) 2, PinType.VIRTUAL),
+        DataStream triggerStream = new DataStream((short) 1, PinType.VIRTUAL);
+        SetPinAction setPinAction = new SetPinAction(new DataStream((short) 2, PinType.VIRTUAL),
                 "123", SetPinActionType.CUSTOM);
 
         Eventor eventor = new Eventor(new Rule[] {
@@ -597,8 +598,8 @@ public class EventorTest extends SingleServerInstancePerTest {
 
     @Test
     public void testStringNotEqualsRule() throws Exception {
-        DataStream triggerStream = new DataStream((byte) 1, PinType.VIRTUAL);
-        SetPinAction setPinAction = new SetPinAction(new DataStream((byte) 2, PinType.VIRTUAL),
+        DataStream triggerStream = new DataStream((short) 1, PinType.VIRTUAL);
+        SetPinAction setPinAction = new SetPinAction(new DataStream((short) 2, PinType.VIRTUAL),
                 "123", SetPinActionType.CUSTOM);
 
         Eventor eventor = new Eventor(new Rule[] {
@@ -616,8 +617,8 @@ public class EventorTest extends SingleServerInstancePerTest {
 
     @Test
     public void testStringEqualsRuleWrongTrigger() throws Exception {
-        DataStream triggerStream = new DataStream((byte) 1, PinType.VIRTUAL);
-        SetPinAction setPinAction = new SetPinAction(new DataStream((byte) 2, PinType.VIRTUAL),
+        DataStream triggerStream = new DataStream((short) 1, PinType.VIRTUAL);
+        SetPinAction setPinAction = new SetPinAction(new DataStream((short) 2, PinType.VIRTUAL),
                 "123", SetPinActionType.CUSTOM);
 
         Eventor eventor = new Eventor(new Rule[] {

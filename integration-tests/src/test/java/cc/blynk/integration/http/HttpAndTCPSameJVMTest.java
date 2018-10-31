@@ -218,7 +218,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
                 DateTimeUtils.UTC
         );
 
-        DataStream dataStream = new DataStream((byte) 4, VIRTUAL);
+        DataStream dataStream = new DataStream((short) 4, VIRTUAL);
         SetPinAction setPinAction = new SetPinAction(dataStream, "1", SetPinActionType.CUSTOM);
 
         Eventor eventor = new Eventor(new Rule[] {
@@ -601,7 +601,7 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
     public void sendMultiValueToAppViaHttpApi2() throws Exception {
         RGB rgb = new RGB();
         rgb.dataStreams = new DataStream[] {
-                new DataStream((byte) 101, VIRTUAL)
+                new DataStream((short) 101, VIRTUAL)
         };
         rgb.splitMode = false;
         rgb.height = 2;
@@ -623,9 +623,9 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
     public void sendMultiValueToAppViaHttpApi3() throws Exception {
         RGB rgb = new RGB();
         rgb.dataStreams = new DataStream[] {
-                new DataStream((byte) 101, VIRTUAL),
-                new DataStream((byte) 102, VIRTUAL),
-                new DataStream((byte) 103, VIRTUAL)
+                new DataStream((short) 101, VIRTUAL),
+                new DataStream((short) 102, VIRTUAL),
+                new DataStream((short) 103, VIRTUAL)
         };
         rgb.splitMode = false;
         rgb.height = 2;
@@ -649,8 +649,8 @@ public class HttpAndTCPSameJVMTest extends SingleServerInstancePerTest {
         superchart.id = 100;
         superchart.width = 8;
         superchart.height = 4;
-        DataStream dataStream = new DataStream((byte) 44, PinType.VIRTUAL);
-        DataStream dataStream2 = new DataStream((byte) 45, PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((short) 44, PinType.VIRTUAL);
+        DataStream dataStream2 = new DataStream((short) 45, PinType.VIRTUAL);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream2, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         superchart.dataStreams = new GraphDataStream[] {

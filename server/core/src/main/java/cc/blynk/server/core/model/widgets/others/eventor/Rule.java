@@ -2,11 +2,11 @@ package cc.blynk.server.core.model.widgets.others.eventor;
 
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.condition.BaseCondition;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import cc.blynk.server.core.model.widgets.controls.Timer;
 
 /**
  * The Blynk Project.
@@ -45,7 +45,7 @@ public class Rule {
         return triggerDataStream != null && condition != null && actions != null;
     }
 
-    public boolean isReady(byte pin, PinType pinType) {
+    public boolean isReady(short pin, PinType pinType) {
         return isActive && notEmpty() && triggerDataStream.isSame(pin, pinType);
     }
 

@@ -18,11 +18,11 @@ public class PinStorageKey {
 
     public final int deviceId;
 
-    public final byte pin;
+    public final short pin;
 
     public final char pinTypeChar;
 
-    public PinStorageKey(int deviceId, PinType pinType, byte pin) {
+    public PinStorageKey(int deviceId, PinType pinType, short pin) {
         this.deviceId = deviceId;
         this.pinTypeChar = pinType.pintTypeChar;
         this.pin = pin;

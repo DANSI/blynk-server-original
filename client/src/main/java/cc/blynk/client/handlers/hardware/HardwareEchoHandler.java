@@ -4,6 +4,7 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.protocol.enums.Command;
 import cc.blynk.server.core.protocol.model.messages.MessageFactory;
 import cc.blynk.server.core.protocol.model.messages.common.HardwareMessage;
+import cc.blynk.utils.NumberUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -28,7 +29,7 @@ public class HardwareEchoHandler extends SimpleChannelInboundHandler<HardwareMes
 
         PinType pinType = PinType.getPinType(split[0].charAt(0));
 
-        byte pin = Byte.parseByte(split[1]);
+        short pin = NumberUtil.parsePin(split[1]);
         //String value = split[2];
 
         switch (msg.body.charAt(1)) {
@@ -43,7 +44,7 @@ public class HardwareEchoHandler extends SimpleChannelInboundHandler<HardwareMes
         }
     }
 
-    private void read(ChannelHandlerContext ctx, PinType pinType, byte pin, int msgId) {
+    private void read(ChannelHandlerContext ctx, PinType pinType, short pin, int msgId) {
         String value = "";
         if (pinType == PinType.VIRTUAL) {
             if (pin == 0) {

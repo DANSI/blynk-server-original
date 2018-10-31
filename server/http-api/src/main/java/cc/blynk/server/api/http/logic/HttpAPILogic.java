@@ -103,7 +103,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
         this.httpsPort = holder.props.getHttpsPortAsString();
     }
 
-    private static String makeBody(DashBoard dash, int deviceId, byte pin, PinType pinType, String pinValue) {
+    private static String makeBody(DashBoard dash, int deviceId, short pin, PinType pinType, String pinValue) {
         Widget widget = dash.findWidgetByPin(deviceId, pin, pinType);
         if (widget instanceof OnePinWidget) {
             return ((OnePinWidget) widget).makeHardwareBody();
@@ -182,11 +182,11 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
         DashBoard dashBoard = tokenValue.dash;
 
         PinType pinType;
-        byte pin;
+        short pin;
 
         try {
             pinType = PinType.getPinType(pinString.charAt(0));
-            pin = Byte.parseByte(pinString.substring(1));
+            pin = Short.parseShort(pinString.substring(1));
         } catch (NumberFormatException | IllegalCommandBodyException e) {
             log.debug("Wrong pin format. {}", pinString);
             return badRequest("Wrong pin format.");
@@ -292,11 +292,11 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
         int deviceId = tokenValue.device.id;
 
         PinType pinType;
-        byte pin;
+        short pin;
 
         try {
             pinType = PinType.getPinType(pinString.charAt(0));
-            pin = Byte.parseByte(pinString.substring(1));
+            pin = Short.parseShort(pinString.substring(1));
         } catch (NumberFormatException | IllegalCommandBodyException e) {
             log.debug("Wrong pin format. {}", pinString);
             return badRequest("Wrong pin format.");
@@ -342,10 +342,10 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
         }
 
         PinType pinType;
-        byte pin;
+        short pin;
         try {
             pinType = PinType.getPinType(pinString.charAt(0));
-            pin = Byte.parseByte(pinString.substring(1));
+            pin = Short.parseShort(pinString.substring(1));
         } catch (NumberFormatException | IllegalCommandBodyException e) {
             log.debug("Wrong pin format. {}", pinString);
             return badRequest("Wrong pin format.");
@@ -435,11 +435,11 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
         DashBoard dash = tokenValue.dash;
 
         PinType pinType;
-        byte pin;
+        short pin;
 
         try {
             pinType = PinType.getPinType(pinString.charAt(0));
-            pin = Byte.parseByte(pinString.substring(1));
+            pin = Short.parseShort(pinString.substring(1));
         } catch (NumberFormatException | IllegalCommandBodyException e) {
             log.debug("Wrong pin format. {}", pinString);
             return badRequest("Wrong pin format.");
@@ -500,11 +500,11 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
         DashBoard dash = tokenValue.dash;
 
         PinType pinType;
-        byte pin;
+        short pin;
 
         try {
             pinType = PinType.getPinType(pinString.charAt(0));
-            pin = Byte.parseByte(pinString.substring(1));
+            pin = Short.parseShort(pinString.substring(1));
         } catch (NumberFormatException | IllegalCommandBodyException e) {
             log.debug("Wrong pin format. {}", pinString);
             return badRequest("Wrong pin format.");

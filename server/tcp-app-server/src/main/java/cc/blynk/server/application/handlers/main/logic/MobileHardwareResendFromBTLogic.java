@@ -10,6 +10,7 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.processors.BaseProcessorHandler;
 import cc.blynk.server.core.processors.WebhookProcessor;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
+import cc.blynk.utils.NumberUtil;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
@@ -73,7 +74,7 @@ public class MobileHardwareResendFromBTLogic extends BaseProcessorHandler {
             }
 
             PinType pinType = PinType.getPinType(splitBody[0].charAt(0));
-            byte pin = Byte.parseByte(splitBody[1]);
+            short pin = NumberUtil.parsePin(splitBody[1]);
             String value = splitBody[2];
             long now = System.currentTimeMillis();
 

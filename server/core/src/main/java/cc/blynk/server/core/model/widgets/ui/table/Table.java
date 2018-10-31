@@ -39,7 +39,7 @@ public class Table extends OnePinWidget {
     }
 
     @Override
-    public boolean updateIfSame(int deviceId, byte pin, PinType type, String value) {
+    public boolean updateIfSame(int deviceId, short pin, PinType type, String value) {
         if (isSame(deviceId, pin, type)) {
             String[] values = value.split(BODY_SEPARATOR_STRING);
             if (values.length > 0) {

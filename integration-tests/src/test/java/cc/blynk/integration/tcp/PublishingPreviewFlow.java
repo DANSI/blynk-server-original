@@ -864,7 +864,7 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
         assertNotNull(dashBoard);
         assertNotNull(dashBoard.pinsStorage);
         assertEquals(1, dashBoard.pinsStorage.size());
-        Widget w = dashBoard.findWidgetByPin(0, (byte) 1, PinType.DIGITAL);
+        Widget w = dashBoard.findWidgetByPin(0, (short) 1, PinType.DIGITAL);
         assertNotNull(w);
         assertEquals("abc", ((OnePinWidget) w).value);
 
@@ -893,7 +893,7 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
         assertNotNull(dashBoard);
         assertNotNull(dashBoard.pinsStorage);
         assertTrue(dashBoard.pinsStorage.isEmpty());
-        w = dashBoard.findWidgetByPin(0, (byte) 1, PinType.DIGITAL);
+        w = dashBoard.findWidgetByPin(0, (short) 1, PinType.DIGITAL);
         assertNotNull(w);
         assertNull(((OnePinWidget) w).value);
 

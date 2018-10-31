@@ -504,7 +504,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
         appClient.verifyResult(ok(4));
 
         TileTemplate tileTemplate = new PageTileTemplate(1,
-                null, new int[] {0}, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte) 1, PinType.VIRTUAL),
+                null, new int[] {0}, "name", "name", "iconName", BoardType.ESP8266, new DataStream((short) 1, PinType.VIRTUAL),
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
 
         appClient.createTemplate(1, deviceTiles.id, tileTemplate);
@@ -568,7 +568,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
         appClient.verifyResult(ok(4));
 
         TileTemplate tileTemplate = new PageTileTemplate(1,
-                null, new int[] {0}, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte) 1, PinType.VIRTUAL),
+                null, new int[] {0}, "name", "name", "iconName", BoardType.ESP8266, new DataStream((short) 1, PinType.VIRTUAL),
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
 
         appClient.createTemplate(1, deviceTiles.id, tileTemplate);

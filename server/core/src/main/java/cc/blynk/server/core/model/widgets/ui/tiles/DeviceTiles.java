@@ -147,7 +147,7 @@ public class DeviceTiles extends Widget implements MobileSyncWidget, HardwareSyn
     }
 
     @Override
-    public boolean isSame(int deviceId, byte pin, PinType pinType) {
+    public boolean isSame(int deviceId, short pin, PinType pinType) {
         for (Tile tile : tiles) {
             if (tile.isSame(deviceId, pin, pinType)) {
                 return true;
@@ -157,7 +157,7 @@ public class DeviceTiles extends Widget implements MobileSyncWidget, HardwareSyn
     }
 
     @Override
-    public boolean updateIfSame(int deviceId, byte pin, PinType pinType, String value) {
+    public boolean updateIfSame(int deviceId, short pin, PinType pinType, String value) {
         for (Tile tile : tiles) {
             if (tile.updateIfSame(deviceId, pin, pinType, value)) {
                 return true;
@@ -243,7 +243,7 @@ public class DeviceTiles extends Widget implements MobileSyncWidget, HardwareSyn
         return counter;
     }
 
-    public String getValue(int deviceId, byte pin, PinType pinType) {
+    public String getValue(int deviceId, short pin, PinType pinType) {
         for (Tile tile : tiles) {
             if (tile.isSame(deviceId, pin, pinType)) {
                 return tile.dataStream.value;
