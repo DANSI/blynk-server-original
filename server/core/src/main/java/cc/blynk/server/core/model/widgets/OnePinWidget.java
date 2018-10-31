@@ -29,7 +29,7 @@ public abstract class OnePinWidget extends Widget implements MobileSyncWidget, H
 
     public PinType pinType;
 
-    public byte pin = -1;
+    public short pin = -1;
 
     public boolean pwmMode;
 
@@ -42,7 +42,7 @@ public abstract class OnePinWidget extends Widget implements MobileSyncWidget, H
     public volatile String value;
 
     public static String makeMultiValueHardwareBody(int dashId, int deviceId,
-                                                       char pintTypeChar, byte pin, Iterator<?> values) {
+                                                       char pintTypeChar, short pin, Iterator<?> values) {
         StringBuilder sb = new StringBuilder();
         sb.append(dashId).append(DEVICE_SEPARATOR).append(deviceId).append(BODY_SEPARATOR)
           .append(pintTypeChar).append('m').append(BODY_SEPARATOR).append(pin);
@@ -53,11 +53,11 @@ public abstract class OnePinWidget extends Widget implements MobileSyncWidget, H
         return sb.toString();
     }
 
-    public static String makeHardwareBody(PinType pinType, byte pin, String value) {
+    public static String makeHardwareBody(PinType pinType, short pin, String value) {
         return makeHardwareBody(pinType.pintTypeChar, pin, value);
     }
 
-    public static String makeHardwareBody(char pintTypeChar, byte pin, String value) {
+    public static String makeHardwareBody(char pintTypeChar, short pin, String value) {
         return "" + pintTypeChar + 'w' + BODY_SEPARATOR + pin + BODY_SEPARATOR + value;
     }
 
@@ -97,7 +97,7 @@ public abstract class OnePinWidget extends Widget implements MobileSyncWidget, H
     }
 
     @Override
-    public boolean updateIfSame(int deviceId, byte pin, PinType type, String value) {
+    public boolean updateIfSame(int deviceId, short pin, PinType type, String value) {
         if (isSame(deviceId, pin, type)) {
             this.value = value;
             return true;
@@ -116,7 +116,7 @@ public abstract class OnePinWidget extends Widget implements MobileSyncWidget, H
     }
 
     @Override
-    public boolean isSame(int deviceId, byte pin, PinType type) {
+    public boolean isSame(int deviceId, short pin, PinType type) {
         return this.deviceId == deviceId && this.pin == pin && (
                 (type == this.pinType)
                         || (this.pwmMode && type == PinType.ANALOG)

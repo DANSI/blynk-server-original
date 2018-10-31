@@ -15,7 +15,7 @@ public class Player extends OnePinWidget {
     public volatile boolean isOnPlay;
 
     @Override
-    public boolean updateIfSame(int deviceId, byte pin, PinType type, String value) {
+    public boolean updateIfSame(int deviceId, short pin, PinType type, String value) {
         if (isSame(deviceId, pin, type)) {
             this.value = value;
             switch (value) {

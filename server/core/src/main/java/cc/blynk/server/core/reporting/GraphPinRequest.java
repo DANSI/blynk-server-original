@@ -28,7 +28,7 @@ public class GraphPinRequest {
 
     public final PinType pinType;
 
-    public final byte pin;
+    public final short pin;
 
     private final GraphPeriod graphPeriod;
 
@@ -48,7 +48,7 @@ public class GraphPinRequest {
         this.isTag = true;
         if (dataStream == null) {
             this.pinType = PinType.VIRTUAL;
-            this.pin = (byte) DataStream.NO_PIN;
+            this.pin = (short) DataStream.NO_PIN;
         } else {
             this.pinType = (dataStream.pinType == null ? PinType.VIRTUAL : dataStream.pinType);
             this.pin = dataStream.pin;
@@ -68,7 +68,7 @@ public class GraphPinRequest {
         this.isTag = false;
         if (dataStream == null) {
             this.pinType = PinType.VIRTUAL;
-            this.pin = (byte) DataStream.NO_PIN;
+            this.pin = (short) DataStream.NO_PIN;
         } else {
             this.pinType = (dataStream.pinType == null ? PinType.VIRTUAL : dataStream.pinType);
             this.pin = dataStream.pin;

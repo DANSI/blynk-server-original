@@ -23,7 +23,7 @@ public abstract class MultiPinWidget extends Widget implements MobileSyncWidget 
     public DataStream[] dataStreams;
 
     @Override
-    public boolean updateIfSame(int deviceId, byte pinIn, PinType type, String value) {
+    public boolean updateIfSame(int deviceId, short pinIn, PinType type, String value) {
         boolean isSame = false;
         if (this.dataStreams != null && this.deviceId == deviceId) {
             for (DataStream dataStream : this.dataStreams) {
@@ -37,7 +37,7 @@ public abstract class MultiPinWidget extends Widget implements MobileSyncWidget 
     }
 
     @Override
-    public boolean isSame(int deviceId, byte pinIn, PinType pinType) {
+    public boolean isSame(int deviceId, short pinIn, PinType pinType) {
         if (dataStreams != null && this.deviceId == deviceId) {
             for (DataStream dataStream : dataStreams) {
                 if (dataStream.isSame(pinIn, pinType)) {
@@ -54,7 +54,7 @@ public abstract class MultiPinWidget extends Widget implements MobileSyncWidget 
         return this.deviceId >= DeviceSelector.DEVICE_SELECTOR_STARTING_ID;
     }
 
-    public String makeHardwareBody(byte pinIn, PinType pinType) {
+    public String makeHardwareBody(short pinIn, PinType pinType) {
         if (dataStreams == null) {
             return null;
         }

@@ -45,7 +45,7 @@ public class TimeInput extends OnePinWidget {
     public boolean isTimezoneAllowed;
 
     @Override
-    public boolean updateIfSame(int deviceId, byte pin, PinType type, String value) {
+    public boolean updateIfSame(int deviceId, short pin, PinType type, String value) {
         if (super.updateIfSame(deviceId, pin, type, value)) {
             String[] values = value.split(BODY_SEPARATOR_STRING);
             if (values.length > 2) {

@@ -105,7 +105,7 @@ public class DashBoard {
                      contentUsing = PinStorageValueDeserializer.class)
     public Map<PinStorageKey, PinStorageValue> pinsStorage = Collections.emptyMap();
 
-    public void update(int deviceId, byte pin, PinType pinType, String value, long now) {
+    public void update(int deviceId, short pin, PinType pinType, String value, long now) {
         if (!updateWidgets(deviceId, pin, pinType, value)) {
             //special case. #237 if no widget - storing without widget.
             putPinStorageValue(deviceId, pinType, pin, value);
@@ -114,7 +114,7 @@ public class DashBoard {
         this.updatedAt = now;
     }
 
-    private boolean updateWidgets(int deviceId, byte pin, PinType type, String value) {
+    private boolean updateWidgets(int deviceId, short pin, PinType type, String value) {
         boolean hasWidget = false;
         for (Widget widget : widgets) {
             if (widget.updateIfSame(deviceId, pin, type, value)) {
@@ -132,12 +132,12 @@ public class DashBoard {
         return name == null ? DEFAULT_NAME : name;
     }
 
-    public void putPinPropertyStorageValue(int deviceId, PinType type, byte pin,
+    public void putPinPropertyStorageValue(int deviceId, PinType type, short pin,
                                            WidgetProperty property, String value) {
         putPinStorageValue(new PinPropertyStorageKey(deviceId, type, pin, property), value);
     }
 
-    private void putPinStorageValue(int deviceId, PinType type, byte pin, String value) {
+    private void putPinStorageValue(int deviceId, PinType type, short pin, String value) {
         putPinStorageValue(new PinStorageKey(deviceId, type, pin), value);
     }
 
@@ -219,7 +219,7 @@ public class DashBoard {
         updatedAt = System.currentTimeMillis();
     }
 
-    public Widget findWidgetByPin(int deviceId, byte pin, PinType pinType) {
+    public Widget findWidgetByPin(int deviceId, short pin, PinType pinType) {
         for (Widget widget : widgets) {
             if (widget.isSame(deviceId, pin, pinType)) {
                 return widget;
@@ -228,7 +228,7 @@ public class DashBoard {
         return null;
     }
 
-    public WebHook findWebhookByPin(int deviceId, byte pin, PinType pinType) {
+    public WebHook findWebhookByPin(int deviceId, short pin, PinType pinType) {
         for (Widget widget : widgets) {
             if (widget instanceof WebHook) {
                 WebHook webHook = (WebHook) widget;
@@ -499,7 +499,7 @@ public class DashBoard {
     }
 
     private static void removePinStorageValue(DashBoard dash,
-                                              int targetId, PinType pinType, byte pin, boolean removeProperties) {
+                                              int targetId, PinType pinType, short pin, boolean removeProperties) {
         Target target;
         if (targetId < Tag.START_TAG_ID) {
             target = dash.getDeviceById(targetId);

@@ -89,7 +89,7 @@ public class ReportingDiskDao implements Closeable {
     }
 
     public ByteBuffer getByteBufferFromDisk(User user, int dashId, int deviceId,
-                                            PinType pinType, byte pin, int count,
+                                            PinType pinType, short pin, int count,
                                             GraphGranularityType type, int skipCount) {
         Path userDataFile = Paths.get(
                 dataFolder,
@@ -215,7 +215,7 @@ public class ReportingDiskDao implements Closeable {
         return false;
     }
 
-    private static String generateFilename(int dashId, int deviceId, char pinType, byte pin, String type) {
+    private static String generateFilename(int dashId, int deviceId, char pinType, short pin, String type) {
         return generateFilenamePrefix(dashId, deviceId) + pinType + pin + "_" + type + ".bin";
     }
 
@@ -227,7 +227,7 @@ public class ReportingDiskDao implements Closeable {
         return "history_" + dashId + DEVICE_SEPARATOR + deviceId + "_";
     }
 
-    private static void delete(String userReportingDir, int dashId, int deviceId, PinType pinType, byte pin,
+    private static void delete(String userReportingDir, int dashId, int deviceId, PinType pinType, short pin,
                                GraphGranularityType reportGranularity) {
         Path userDataFile = Paths.get(userReportingDir,
                 generateFilename(dashId, deviceId, pinType, pin, reportGranularity));
@@ -235,7 +235,7 @@ public class ReportingDiskDao implements Closeable {
     }
 
     public static String generateFilename(int dashId, int deviceId,
-                                          PinType pinType, byte pin, GraphGranularityType type) {
+                                          PinType pinType, short pin, GraphGranularityType type) {
         return generateFilename(dashId, deviceId, pinType.pintTypeChar, pin, type.label);
     }
 
@@ -279,7 +279,7 @@ public class ReportingDiskDao implements Closeable {
         return count;
     }
 
-    public void delete(User user, int dashId, int deviceId, PinType pinType, byte pin) {
+    public void delete(User user, int dashId, int deviceId, PinType pinType, short pin) {
         log.debug("Removing {}{} pin data for dashId {}, deviceId {}.", pinType.pintTypeChar, pin, dashId, deviceId);
         String userReportingDir = getUserReportingFolderPath(user).toString();
 
@@ -288,7 +288,7 @@ public class ReportingDiskDao implements Closeable {
         }
     }
 
-    public void process(User user, DashBoard dash, int deviceId, byte pin, PinType pinType, String value, long ts) {
+    public void process(User user, DashBoard dash, int deviceId, short pin, PinType pinType, String value, long ts) {
         try {
             double doubleVal = NumberUtil.parseDouble(value);
             process(user, dash, deviceId, pin, pinType, value, ts, doubleVal);
@@ -298,7 +298,7 @@ public class ReportingDiskDao implements Closeable {
         }
     }
 
-    private void process(User user, DashBoard dash, int deviceId, byte pin, PinType pinType,
+    private void process(User user, DashBoard dash, int deviceId, short pin, PinType pinType,
                          String value, long ts, double doubleVal) {
         if (enableRawDbDataStore) {
             rawDataProcessor.collect(

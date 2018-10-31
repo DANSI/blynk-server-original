@@ -99,7 +99,7 @@ public class DBManagerTest {
             long minute = (System.currentTimeMillis() / AverageAggregatorProcessor.MINUTE) * AverageAggregatorProcessor.MINUTE;
 
             for (int i = 0; i < 100; i++) {
-                ReportingDBDao.prepareReportingInsert(ps, userName, 1, 0, (byte) 0, PinType.VIRTUAL, minute, (double) i);
+                ReportingDBDao.prepareReportingInsert(ps, userName, 1, 0, (short) 0, PinType.VIRTUAL, minute, (double) i);
                 ps.addBatch();
                 minute += AverageAggregatorProcessor.MINUTE;
                 a++;

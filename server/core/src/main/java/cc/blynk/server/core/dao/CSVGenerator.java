@@ -37,7 +37,7 @@ public class CSVGenerator {
         this.reportingDao = reportingDao;
     }
 
-    public Path createCSV(User user, int dashId, int inDeviceId, PinType pinType, byte pin, int... deviceIds)
+    public Path createCSV(User user, int dashId, int inDeviceId, PinType pinType, short pin, int... deviceIds)
             throws Exception {
         if (!DataStream.isValid(pin, pinType)) {
             throw new IllegalStateException("Wrong pin format.");
@@ -67,14 +67,14 @@ public class CSVGenerator {
         return path;
     }
 
-    private static Path generateExportCSVPath(String email, int dashId, int deviceId, PinType pinType, byte pin) {
+    private static Path generateExportCSVPath(String email, int dashId, int deviceId, PinType pinType, short pin) {
         return Paths.get(CSV_DIR, format(email, dashId, deviceId, pinType, pin));
     }
 
     public static final String EXPORT_CSV_EXTENSION = ".csv.gz";
 
     //"%s_%s_%c%d.csv.gz"
-    private static String format(String email, int dashId, int deviceId, PinType pinType, byte pin) {
+    private static String format(String email, int dashId, int deviceId, PinType pinType, short pin) {
         long now = System.currentTimeMillis();
         return email + "_" + dashId + "_" + deviceId + "_"
                 + pinType.pintTypeChar + pin + "_" + now + EXPORT_CSV_EXTENSION;

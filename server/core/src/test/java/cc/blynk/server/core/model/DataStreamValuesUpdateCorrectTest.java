@@ -4,6 +4,7 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.controls.Button;
 import cc.blynk.server.core.model.widgets.controls.RGB;
+import cc.blynk.utils.NumberUtil;
 import cc.blynk.utils.StringUtils;
 import com.fasterxml.jackson.databind.ObjectReader;
 import org.apache.commons.lang3.ArrayUtils;
@@ -55,9 +56,9 @@ public class DataStreamValuesUpdateCorrectTest {
 
         RGB rgb = new RGB();
         rgb.dataStreams = new DataStream[3];
-        rgb.dataStreams[0] = new DataStream((byte)0, false, false, PinType.VIRTUAL, null, 0, 255, null);
-        rgb.dataStreams[1] = new DataStream((byte)1, false, false, PinType.VIRTUAL, null, 0, 255, null);
-        rgb.dataStreams[2] = new DataStream((byte)2, false, false, PinType.VIRTUAL, null, 0, 255, null);
+        rgb.dataStreams[0] = new DataStream((short) 0, false, false, PinType.VIRTUAL, null, 0, 255, null);
+        rgb.dataStreams[1] = new DataStream((short) 1, false, false, PinType.VIRTUAL, null, 0, 255, null);
+        rgb.dataStreams[2] = new DataStream((short) 2, false, false, PinType.VIRTUAL, null, 0, 255, null);
 
 
         dash.widgets = ArrayUtils.add(dash.widgets, rgb);
@@ -72,9 +73,9 @@ public class DataStreamValuesUpdateCorrectTest {
 
         rgb = new RGB();
         rgb.dataStreams = new DataStream[3];
-        rgb.dataStreams[0] = new DataStream((byte)4, false, false, PinType.VIRTUAL, null, 0, 255, null);
-        rgb.dataStreams[1] = new DataStream((byte)4, false, false, PinType.VIRTUAL, null, 0, 255, null);
-        rgb.dataStreams[2] = new DataStream((byte)4, false, false, PinType.VIRTUAL, null, 0, 255, null);
+        rgb.dataStreams[0] = new DataStream((short) 4, false, false, PinType.VIRTUAL, null, 0, 255, null);
+        rgb.dataStreams[1] = new DataStream((short) 4, false, false, PinType.VIRTUAL, null, 0, 255, null);
+        rgb.dataStreams[2] = new DataStream((short) 4, false, false, PinType.VIRTUAL, null, 0, 255, null);
 
         dash.widgets = ArrayUtils.add(dash.widgets, rgb);
 
@@ -89,7 +90,7 @@ public class DataStreamValuesUpdateCorrectTest {
 
     public static void update(DashBoard dash, int deviceId, String[] splitted) {
         final PinType type = PinType.getPinType(splitted[0].charAt(0));
-        final byte pin = Byte.parseByte(splitted[1]);
+        final short pin = NumberUtil.parsePin(splitted[1]);
         dash.update(deviceId, pin, type, splitted[2], System.currentTimeMillis());
     }
 

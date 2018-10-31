@@ -12,6 +12,8 @@ public final class NumberUtil {
     public static final double NO_RESULT = Double.MIN_VALUE;
     private static final NumberFormatException cachedNumberFormatException =
             new NumberFormatException("Not a valid double number.");
+    private static final NumberFormatException cachedNumberFormatExceptionForPin =
+            new NumberFormatException("Not a valid pin number.");
 
     private NumberUtil() {
     }
@@ -174,5 +176,13 @@ public final class NumberUtil {
 
     public static int calcHeartbeatTimeout(int heartbeatInterval) {
         return (int) Math.ceil(heartbeatInterval * 2.3D);
+    }
+
+    public static short parsePin(String pinString) throws NumberFormatException {
+        int i = Integer.parseInt(pinString, 10);
+        if (i < 0 || i > 255) {
+            throw cachedNumberFormatExceptionForPin;
+        }
+        return (short) i;
     }
 }

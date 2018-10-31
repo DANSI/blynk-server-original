@@ -49,7 +49,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = clientPair.appClient.parseProfile(1);
 
-        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte)4, PinType.VIRTUAL);
+        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 4, PinType.VIRTUAL);
         assertNotNull(widget);
         assertEquals("Some Text", widget.label);
 
@@ -61,7 +61,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("loadProfileGzipped");
         profile = clientPair.appClient.parseProfile(1);
 
-        widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
+        widget = profile.dashBoards[0].findWidgetByPin(0, (short) 4, PinType.VIRTUAL);
         assertNotNull(widget);
         assertEquals("MyNewLabel", widget.label);
     }
@@ -81,7 +81,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = clientPair.appClient.parseProfile(2);
 
-        Slider slider = (Slider) profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
+        Slider slider = (Slider) profile.dashBoards[0].findWidgetByPin(0, (short) 4, PinType.VIRTUAL);
         assertNotNull(slider);
         slider.width = 2;
         slider.height = 2;
@@ -124,7 +124,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = clientPair.appClient.parseProfile(1);
 
-        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 17, PinType.VIRTUAL);
+        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 17, PinType.VIRTUAL);
         assertNotNull(widget);
         assertTrue(widget instanceof Button);
         Button button = (Button) widget;
@@ -147,7 +147,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = clientPair.appClient.parseProfile(1);
 
-        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 17, PinType.VIRTUAL);
+        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 17, PinType.VIRTUAL);
         assertNotNull(widget);
         assertTrue(widget instanceof Player);
         Player playerWidget = (Player) widget;
@@ -168,7 +168,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = clientPair.appClient.parseProfile(1);
 
-        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 17, PinType.VIRTUAL);
+        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 17, PinType.VIRTUAL);
         assertNotNull(widget);
         assertTrue(widget instanceof Menu);
         Menu menuWidget = (Menu) widget;
@@ -181,7 +181,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = clientPair.appClient.parseProfile(1);
 
-        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
+        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 4, PinType.VIRTUAL);
         assertEquals(widget.label, "Some Text");
 
         clientPair.hardwareClient.setProperty(4, "YYY", "MyNewLabel");
@@ -189,7 +189,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
 
         clientPair.appClient.send("loadProfileGzipped");
         profile = clientPair.appClient.parseProfile(2);
-        widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
+        widget = profile.dashBoards[0].findWidgetByPin(0, (short) 4, PinType.VIRTUAL);
 
         assertEquals(widget.label, "Some Text");
     }
@@ -199,7 +199,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = clientPair.appClient.parseProfile(1);
 
-        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
+        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 4, PinType.VIRTUAL);
         assertEquals(widget.x, 1);
 
         clientPair.hardwareClient.setProperty(4, "x", "0");
@@ -207,7 +207,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
 
         clientPair.appClient.send("loadProfileGzipped");
         profile = clientPair.appClient.parseProfile(2);
-        widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
+        widget = profile.dashBoards[0].findWidgetByPin(0, (short) 4, PinType.VIRTUAL);
 
         assertEquals(widget.x, 1);
     }
@@ -217,7 +217,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = clientPair.appClient.parseProfile(1);
 
-        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
+        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 4, PinType.VIRTUAL);
         assertEquals(widget.x, 1);
 
         clientPair.hardwareClient.setProperty(4, "url", "0");
@@ -237,7 +237,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = clientPair.appClient.parseProfile(1);
 
-        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
+        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 4, PinType.VIRTUAL);
         assertEquals(600084223, widget.color);
     }
 
@@ -255,7 +255,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         Profile profile = clientPair.appClient.parseProfile(1);
         profile.dashBoards[0].updatedAt = 0;
 
-        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
+        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 4, PinType.VIRTUAL);
         assertEquals(10, ((OnePinWidget) widget).min, 0.0001);
         assertEquals(20, ((OnePinWidget) widget).max, 0.0001);
     }
@@ -274,7 +274,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         Profile profile = clientPair.appClient.parseProfile(1);
         profile.dashBoards[0].updatedAt = 0;
 
-        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 4, PinType.VIRTUAL);
+        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 4, PinType.VIRTUAL);
         assertEquals(10.1, ((OnePinWidget) widget).min, 0.0001);
         assertEquals(20.2, ((OnePinWidget) widget).max, 0.0001);
     }
@@ -312,7 +312,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = clientPair.appClient.parseProfile(1);
 
-        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 17, PinType.VIRTUAL);
+        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 17, PinType.VIRTUAL);
         assertNotNull(widget);
         assertTrue(widget instanceof Video);
         Video videoWidget = (Video) widget;
@@ -333,7 +333,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = clientPair.appClient.parseProfile(1);
 
-        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 17, PinType.VIRTUAL);
+        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 17, PinType.VIRTUAL);
         assertNotNull(widget);
         assertTrue(widget instanceof Image);
         Image imageWidget = (Image) widget;
@@ -348,7 +348,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("loadProfileGzipped");
         profile = clientPair.appClient.parseProfile(1);
 
-        widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 17, PinType.VIRTUAL);
+        widget = profile.dashBoards[0].findWidgetByPin(0, (short) 17, PinType.VIRTUAL);
         assertNotNull(widget);
         assertTrue(widget instanceof Image);
         imageWidget = (Image) widget;
@@ -369,7 +369,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = clientPair.appClient.parseProfile(1);
 
-        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 17, PinType.VIRTUAL);
+        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 17, PinType.VIRTUAL);
         assertNotNull(widget);
         assertTrue(widget instanceof Image);
         Image imageWidget = (Image) widget;
@@ -384,7 +384,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("loadProfileGzipped");
         profile = clientPair.appClient.parseProfile(1);
 
-        widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 17, PinType.VIRTUAL);
+        widget = profile.dashBoards[0].findWidgetByPin(0, (short) 17, PinType.VIRTUAL);
         assertNotNull(widget);
         assertTrue(widget instanceof Image);
         imageWidget = (Image) widget;
@@ -421,7 +421,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = clientPair.appClient.parseProfile(1);
 
-        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 17, PinType.VIRTUAL);
+        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 17, PinType.VIRTUAL);
         assertNotNull(widget);
         assertTrue(widget instanceof Video);
         Video videoWidget = (Video) widget;
@@ -457,7 +457,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = clientPair.appClient.parseProfile(1);
 
-        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (byte) 17, PinType.VIRTUAL);
+        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 17, PinType.VIRTUAL);
         assertNotNull(widget);
         assertTrue(widget instanceof Step);
         Step stepWidget = (Step) widget;

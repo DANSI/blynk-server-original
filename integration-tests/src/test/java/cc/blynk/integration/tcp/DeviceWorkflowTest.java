@@ -493,13 +493,13 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
         }
 
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
         Path pinReportingDataPath11 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (short) 8, GraphGranularityType.HOURLY));
         Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.DAILY));
+                ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (short) 8, GraphGranularityType.DAILY));
         Path pinReportingDataPath13 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 9, GraphGranularityType.DAILY));
+                ReportingDiskDao.generateFilename(1, 1, PinType.VIRTUAL, (short) 9, GraphGranularityType.DAILY));
 
         FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath11, 1.11D, 1111111);

@@ -117,15 +117,15 @@ public class ReportingTest extends BaseTest {
         }
 
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
         Path pinReportingDataPath11 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 8, GraphGranularityType.HOURLY));
         Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.DAILY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 8, GraphGranularityType.DAILY));
 
 
         Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 2, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 2, PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
 
         FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath11, 1.11D, 1111111);
@@ -154,15 +154,15 @@ public class ReportingTest extends BaseTest {
         }
 
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
         Path pinReportingDataPath11 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 8, GraphGranularityType.HOURLY));
         Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.DAILY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 8, GraphGranularityType.DAILY));
 
 
         Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 2, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 2, PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
 
         FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath11, 1.11D, 1111111);
@@ -191,17 +191,17 @@ public class ReportingTest extends BaseTest {
         }
 
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
         Path pinReportingDataPath11 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 8, GraphGranularityType.HOURLY));
         Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.DAILY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 8, GraphGranularityType.DAILY));
         Path pinReportingDataPath13 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 9, GraphGranularityType.DAILY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 9, GraphGranularityType.DAILY));
 
 
         Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 2, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 2, PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
 
         FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath11, 1.11D, 1111111);
@@ -230,7 +230,7 @@ public class ReportingTest extends BaseTest {
 
     @Test
     public void createReportCRUD() throws Exception {
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Temperature", true);
         ReportSource reportSource = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},
                 1,
@@ -284,7 +284,7 @@ public class ReportingTest extends BaseTest {
 
     @Test
     public void testDailyReportIsTriggered() throws Exception {
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Temperature", true);
         ReportSource reportSource = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},
                 1,
@@ -382,7 +382,7 @@ public class ReportingTest extends BaseTest {
 
     @Test
     public void testReportIdRemovedFromScheduler() throws Exception {
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Temperature", true);
         ReportSource reportSource = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},
                 1,
@@ -460,7 +460,7 @@ public class ReportingTest extends BaseTest {
 
     @Test
     public void testReportIdRemovedFromSchedulerWhenDashIsRemoved() throws Exception {
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Temperature", true);
         ReportSource reportSource = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},
                 1,
@@ -530,11 +530,11 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
 
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Temperature", true);
         ReportSource reportSource = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},
                 1,
@@ -611,7 +611,7 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 1, GraphGranularityType.HOURLY));
         long pointNow = System.currentTimeMillis();
         long pointNowTruncated = (pointNow / GraphGranularityType.HOURLY.period) * GraphGranularityType.HOURLY.period;
         pointNowTruncated -= TimeUnit.DAYS.toMillis(1);
@@ -619,7 +619,7 @@ public class ReportingTest extends BaseTest {
             FileUtils.write(pinReportingDataPath10, i, pointNowTruncated + TimeUnit.HOURS.toMillis(i));
         }
 
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Temperature", true);
         ReportSource reportSource = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},
                 1,
@@ -682,15 +682,15 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
 
         Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath20, 1.11D, pointNow);
 
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature,yes", true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Temperature,yes", true);
         ReportSource reportSource = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},
                 1,
@@ -763,15 +763,15 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
 
         Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath20, 1.11D, pointNow);
 
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, null, true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, null, true);
         ReportSource reportSource = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},
                 1,
@@ -852,15 +852,15 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
 
         Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath20, 1.11D, pointNow);
 
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Мій датастрім", true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Мій датастрім", true);
         ReportSource reportSource = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},
                 1,
@@ -941,22 +941,22 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 2, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
         FileUtils.write(pinReportingDataPath20, 1.12D, pointNow);
 
         Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         Path pinReportingDataPath22 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 2, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath12, 1.13D, pointNow);
         FileUtils.write(pinReportingDataPath22, 1.14D, pointNow);
 
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, null, true);
-        ReportDataStream reportDataStream2 = new ReportDataStream((byte) 2, PinType.VIRTUAL, null, true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, null, true);
+        ReportDataStream reportDataStream2 = new ReportDataStream((short) 2, PinType.VIRTUAL, null, true);
         ReportSource reportSource = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream, reportDataStream2},
                 1,
@@ -1043,14 +1043,14 @@ public class ReportingTest extends BaseTest {
         long pointNow = System.currentTimeMillis();
 
         Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         Path pinReportingDataPath22 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 2, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath12, 1.13D, pointNow);
         FileUtils.write(pinReportingDataPath22, 1.14D, pointNow);
 
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, null, true);
-        ReportDataStream reportDataStream2 = new ReportDataStream((byte) 2, PinType.VIRTUAL, null, true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, null, true);
+        ReportDataStream reportDataStream2 = new ReportDataStream((short) 2, PinType.VIRTUAL, null, true);
         ReportSource reportSource = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream, reportDataStream2},
                 1,
@@ -1127,22 +1127,22 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 2, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
         FileUtils.write(pinReportingDataPath20, 1.12D, pointNow);
 
         Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         Path pinReportingDataPath22 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 2, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath12, 1.13D, pointNow);
         FileUtils.write(pinReportingDataPath22, 1.14D, pointNow);
 
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
-        ReportDataStream reportDataStream2 = new ReportDataStream((byte) 2, PinType.VIRTUAL, "Humidity", true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream2 = new ReportDataStream((short) 2, PinType.VIRTUAL, "Humidity", true);
         ReportSource reportSource = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream, reportDataStream2},
                 1,
@@ -1227,22 +1227,22 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 2, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
         FileUtils.write(pinReportingDataPath20, 1.12D, pointNow);
 
         Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         Path pinReportingDataPath22 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 2, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath12, 1.13D, pointNow);
         FileUtils.write(pinReportingDataPath22, 1.14D, pointNow);
 
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
-        ReportDataStream reportDataStream2 = new ReportDataStream((byte) 2, PinType.VIRTUAL, "Humidity", true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream2 = new ReportDataStream((short) 2, PinType.VIRTUAL, "Humidity", true);
         ReportSource reportSource = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream, reportDataStream2},
                 1,
@@ -1320,22 +1320,22 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 2, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
         FileUtils.write(pinReportingDataPath20, 1.12D, pointNow);
 
         Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         Path pinReportingDataPath22 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 2, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath12, 1.13D, pointNow);
         FileUtils.write(pinReportingDataPath22, 1.14D, pointNow);
 
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
-        ReportDataStream reportDataStream2 = new ReportDataStream((byte) 2, PinType.VIRTUAL, "Humidity", true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream2 = new ReportDataStream((short) 2, PinType.VIRTUAL, "Humidity", true);
         ReportSource reportSource = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream, reportDataStream2},
                 1,
@@ -1413,22 +1413,22 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 2, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
         FileUtils.write(pinReportingDataPath20, 1.12D, pointNow);
 
         Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         Path pinReportingDataPath22 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 2, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath12, 1.13D, pointNow);
         FileUtils.write(pinReportingDataPath22, 1.14D, pointNow);
 
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
-        ReportDataStream reportDataStream2 = new ReportDataStream((byte) 2, PinType.VIRTUAL, "Humidity", true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream2 = new ReportDataStream((short) 2, PinType.VIRTUAL, "Humidity", true);
         ReportSource reportSource = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream, reportDataStream2},
                 1,
@@ -1503,11 +1503,11 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
 
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, null, true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, null, true);
         ReportSource reportSource = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},
                 1,
@@ -1575,11 +1575,11 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         long now = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, now);
 
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Temperature", true);
         ReportSource reportSource = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},
                 1,
@@ -1654,11 +1654,11 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         long now = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, now);
 
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Temperature", true);
         ReportSource reportSource = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},
                 1,
@@ -1738,11 +1738,11 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         long now = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, now);
 
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Temperature", true);
         ReportSource reportSource = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},
                 1,
@@ -1817,11 +1817,11 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         long now = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, now);
 
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Temperature", true);
         ReportSource reportSource = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},
                 1,
@@ -1874,11 +1874,11 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         long now = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.11D, now);
 
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Temperature", true);
         ReportSource reportSource = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},
                 1,
@@ -1943,7 +1943,7 @@ public class ReportingTest extends BaseTest {
 
     @Test
     public void testOneTimeReportIsTriggeredWithCustomJson() throws Exception {
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Temperature", true);
         ReportSource reportSource = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},
                 1,
@@ -1974,7 +1974,7 @@ public class ReportingTest extends BaseTest {
 
     @Test
     public void testOneTimeReportIsTriggeredAndNoData() throws Exception {
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Temperature", true);
         ReportSource reportSource = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},
                 1,
@@ -2028,11 +2028,11 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath10, 1.11D, 111111);
 
 
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Temperature", true);
         ReportSource reportSource = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},
                 1,
@@ -2080,7 +2080,7 @@ public class ReportingTest extends BaseTest {
 
     @Test
     public void testExpiredReportIsNotAddedToTheProject() throws Exception {
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Temperature", true);
         ReportSource reportSource = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},
                 1,
@@ -2127,7 +2127,7 @@ public class ReportingTest extends BaseTest {
 
     @Test
     public void testExpiredReportIsNotAddedToTheProject2() throws Exception {
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Temperature", true);
         ReportSource reportSource = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},
                 1,
@@ -2179,12 +2179,12 @@ public class ReportingTest extends BaseTest {
             Files.createDirectories(userReportFolder);
         }
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 1, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
         long pointNow = System.currentTimeMillis();
         FileUtils.write(pinReportingDataPath10, 1.12D, pointNow - TimeUnit.HOURS.toMillis(25));
         FileUtils.write(pinReportingDataPath10, 1.11D, pointNow);
 
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, null, true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, null, true);
         ReportSource reportSource = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},
                 1,

@@ -28,7 +28,7 @@ public class ReportingModelTest {
 
     @Test
     public void printModel() throws Exception {
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Temperature", true);
         ReportSource reportSource = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},
                 1,
@@ -78,7 +78,7 @@ public class ReportingModelTest {
 
     @Test
     public void testEmailDynamicPart() {
-        ReportDataStream reportDataStream = new ReportDataStream((byte) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Temperature", true);
 
         ReportSource reportSource2 = new TileTemplateReportSource(
                 new ReportDataStream[] {reportDataStream},

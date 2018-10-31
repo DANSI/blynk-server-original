@@ -42,7 +42,7 @@ public class AverageAggregatorTest {
 
         PinType pinType = PinType.VIRTUAL;
         int dashId = 1;
-        byte pin = 1;
+        short pin = 1;
 
         long ts = getMillis(2015, 8, 1, 0, 0);
 
@@ -70,7 +70,7 @@ public class AverageAggregatorTest {
         user.appName = AppNameUtil.BLYNK;
         PinType pinType = PinType.VIRTUAL;
         int dashId = 1;
-        byte pin = 1;
+        short pin = 1;
 
         double expectedDailyAverage = 0;
 
@@ -112,7 +112,7 @@ public class AverageAggregatorTest {
         user.appName = AppNameUtil.BLYNK;
         PinType pinType = PinType.VIRTUAL;
         int dashId = 1;
-        byte pin = 1;
+        short pin = 1;
 
         double expectedDailyAverage = 0;
 

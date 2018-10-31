@@ -115,10 +115,10 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
-        DataStream dataStream1 = new DataStream((byte) 8, PinType.DIGITAL);
-        DataStream dataStream2 = new DataStream((byte) 9, PinType.DIGITAL);
-        DataStream dataStream3 = new DataStream((byte) 10, PinType.DIGITAL);
-        DataStream dataStream4 = new DataStream((byte) 11, PinType.DIGITAL);
+        DataStream dataStream1 = new DataStream((short) 8, PinType.DIGITAL);
+        DataStream dataStream2 = new DataStream((short) 9, PinType.DIGITAL);
+        DataStream dataStream3 = new DataStream((short) 10, PinType.DIGITAL);
+        DataStream dataStream4 = new DataStream((short) 11, PinType.DIGITAL);
         GraphDataStream graphDataStream1 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream1, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream2, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         GraphDataStream graphDataStream3 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream3, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
@@ -140,13 +140,13 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
         Path pinReportingDataPath1 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphPeriod.THREE_MONTHS.granularityType));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 8, GraphPeriod.THREE_MONTHS.granularityType));
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 9, GraphPeriod.THREE_MONTHS.granularityType));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 9, GraphPeriod.THREE_MONTHS.granularityType));
         Path pinReportingDataPath3 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 10, GraphPeriod.THREE_MONTHS.granularityType));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 10, GraphPeriod.THREE_MONTHS.granularityType));
         Path pinReportingDataPath4 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 11, GraphPeriod.THREE_MONTHS.granularityType));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 11, GraphPeriod.THREE_MONTHS.granularityType));
 
         for (int i = 0; i < GraphPeriod.THREE_MONTHS.numberOfPoints; i++) {
             long now = System.currentTimeMillis();
@@ -193,7 +193,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
@@ -201,8 +201,8 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
-        DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
-        DataStream dataStream2 = new DataStream((byte) 89, PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((short) 88, PinType.VIRTUAL);
+        DataStream dataStream2 = new DataStream((short) 89, PinType.VIRTUAL);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, dataStream, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 1, dataStream2, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
@@ -257,12 +257,12 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(1, 1, PinType.VIRTUAL, (short) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
@@ -270,7 +270,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
-        DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((short) 88, PinType.VIRTUAL);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, dataStream, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
@@ -323,12 +323,12 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(1, 1, PinType.VIRTUAL, (short) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
@@ -336,7 +336,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
-        DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((short) 88, PinType.VIRTUAL);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, dataStream, AggregationFunctionType.MIN, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
@@ -389,12 +389,12 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(1, 1, PinType.VIRTUAL, (short) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
@@ -402,7 +402,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
-        DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((short) 88, PinType.VIRTUAL);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, dataStream, AggregationFunctionType.SUM, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
@@ -455,12 +455,12 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(1, 1, PinType.VIRTUAL, (short) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
@@ -468,7 +468,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
-        DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((short) 88, PinType.VIRTUAL);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, dataStream, AggregationFunctionType.AVG, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
@@ -521,12 +521,12 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(1, 1, PinType.VIRTUAL, (short) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
@@ -534,7 +534,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
-        DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((short) 88, PinType.VIRTUAL);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, dataStream, AggregationFunctionType.MED, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
@@ -594,17 +594,17 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(1, 1, PinType.VIRTUAL, (short) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath2, 1.112D, 1111111);
         FileUtils.write(pinReportingDataPath2, 1.222D, 2222222);
 
         Path pinReportingDataPath3 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (byte) 88, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(1, 2, PinType.VIRTUAL, (short) 88, GraphPeriod.DAY.granularityType));
         FileUtils.write(pinReportingDataPath3, 1.113D, 1111111);
         FileUtils.write(pinReportingDataPath3, 1.223D, 2222222);
 
@@ -612,7 +612,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
-        DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((short) 88, PinType.VIRTUAL);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 100_000, dataStream, AggregationFunctionType.MED, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
@@ -647,7 +647,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 8, GraphGranularityType.HOURLY));
 
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
@@ -679,7 +679,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphPeriod.ONE_HOUR.granularityType));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 8, GraphPeriod.ONE_HOUR.granularityType));
 
         for (int point = 0; point < GraphPeriod.ONE_HOUR.numberOfPoints + 1; point++) {
             FileUtils.write(pinReportingDataPath, (double) point, 1111111 + point);
@@ -689,7 +689,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
-        DataStream dataStream = new DataStream((byte) 8, PinType.DIGITAL);
+        DataStream dataStream = new DataStream((short) 8, PinType.DIGITAL);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
@@ -725,7 +725,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphPeriod.DAY.granularityType));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 8, GraphPeriod.DAY.granularityType));
 
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
@@ -734,8 +734,8 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
-        DataStream dataStream = new DataStream((byte) 8, PinType.DIGITAL);
-        DataStream dataStream2 = new DataStream((byte) 9, PinType.DIGITAL);
+        DataStream dataStream = new DataStream((short) 8, PinType.DIGITAL);
+        DataStream dataStream2 = new DataStream((short) 9, PinType.DIGITAL);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream2, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
@@ -773,7 +773,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 8, GraphGranularityType.HOURLY));
 
         FileUtils.write(pinReportingDataPath, 1.11D, 1111111);
         FileUtils.write(pinReportingDataPath, 1.22D, 2222222);
@@ -782,7 +782,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
-        DataStream dataStream = new DataStream((byte) 8, null);
+        DataStream dataStream = new DataStream((short) 8, null);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
@@ -802,7 +802,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
-        DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((short) 88, PinType.VIRTUAL);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
@@ -832,7 +832,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
-        DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((short) 88, PinType.VIRTUAL);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
@@ -868,7 +868,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         enhancedHistoryGraph.selectedPeriods = new GraphPeriod[] {
                 ONE_HOUR, SIX_HOURS
         };
-        DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((short) 88, PinType.VIRTUAL);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
@@ -916,14 +916,14 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         enhancedHistoryGraph.height = 4;
         GraphDataStream graphDataStream = new GraphDataStream(
                 null, GraphType.LINE, 0, -1,
-                new DataStream((byte) 88, PinType.VIRTUAL),
+                new DataStream((short) 88, PinType.VIRTUAL),
                 AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
 
         TileTemplate tileTemplate = new PageTileTemplate(1,
-                new Widget[]{enhancedHistoryGraph}, deviceIds, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte)1, PinType.VIRTUAL),
+                new Widget[]{enhancedHistoryGraph}, deviceIds, "name", "name", "iconName", BoardType.ESP8266, new DataStream((short)1, PinType.VIRTUAL),
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
 
         clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
@@ -967,11 +967,11 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         enhancedHistoryGraph.height = 4;
         GraphDataStream graphDataStream = new GraphDataStream(
                 null, GraphType.LINE, 0, -1,
-                new DataStream((byte) 88, PinType.VIRTUAL),
+                new DataStream((short) 88, PinType.VIRTUAL),
                 AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         GraphDataStream graphDataStream2 = new GraphDataStream(
                 null, GraphType.LINE, 0, -1,
-                new DataStream((byte) 89, PinType.VIRTUAL),
+                new DataStream((short) 89, PinType.VIRTUAL),
                 AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream,
@@ -979,7 +979,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         };
 
         TileTemplate tileTemplate = new PageTileTemplate(1,
-                new Widget[]{enhancedHistoryGraph}, deviceIds, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte)1, PinType.VIRTUAL),
+                new Widget[]{enhancedHistoryGraph}, deviceIds, "name", "name", "iconName", BoardType.ESP8266, new DataStream((short)1, PinType.VIRTUAL),
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
 
         clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
@@ -1032,7 +1032,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         superchart.height = 4;
         GraphDataStream graphDataStream = new GraphDataStream(
                 null, GraphType.LINE, 0, (int) deviceSelector.id,
-                new DataStream((byte) 88, PinType.VIRTUAL),
+                new DataStream((short) 88, PinType.VIRTUAL),
                 AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         superchart.dataStreams = new GraphDataStream[] {
                 graphDataStream
@@ -1065,7 +1065,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         reportingWidget.height = 4;
         reportingWidget.reportSources = new ReportSource[] {
                 new DeviceReportSource(
-                        new ReportDataStream[] {new ReportDataStream((byte) 88, PinType.VIRTUAL, null, false)},
+                        new ReportDataStream[] {new ReportDataStream((short) 88, PinType.VIRTUAL, null, false)},
                         new int[] {0}
                 )
         };
@@ -1098,7 +1098,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         reportingWidget.height = 4;
         reportingWidget.reportSources = new ReportSource[] {
                 new TileTemplateReportSource(
-                        new ReportDataStream[] {new ReportDataStream((byte) 88, PinType.VIRTUAL, null, false)},
+                        new ReportDataStream[] {new ReportDataStream((short) 88, PinType.VIRTUAL, null, false)},
                         0,
                         new int[] {0}
                 )
@@ -1132,8 +1132,8 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         reportingWidget.height = 4;
         reportingWidget.reportSources = new ReportSource[] {
                 new TileTemplateReportSource(
-                        new ReportDataStream[] {new ReportDataStream((byte) 88, PinType.VIRTUAL, null, false),
-                                                new ReportDataStream((byte) 89, PinType.VIRTUAL, null, false)},
+                        new ReportDataStream[] {new ReportDataStream((short) 88, PinType.VIRTUAL, null, false),
+                                                new ReportDataStream((short) 89, PinType.VIRTUAL, null, false)},
                         0,
                         new int[] {0}
                 )
@@ -1173,7 +1173,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
-        DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((short) 88, PinType.VIRTUAL);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
@@ -1240,7 +1240,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
-        DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((short) 88, PinType.VIRTUAL);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
@@ -1269,7 +1269,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
-        DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((short) 88, PinType.VIRTUAL);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
@@ -1334,7 +1334,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
-        DataStream dataStream = new DataStream((byte) 88, PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((short) 88, PinType.VIRTUAL);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
@@ -1396,7 +1396,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
 
         try (DataOutputStream dos = new DataOutputStream(
                     Files.newOutputStream(pinReportingDataPath, CREATE, APPEND))) {
@@ -1411,7 +1411,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
-        DataStream dataStream = new DataStream((byte) 8, PinType.DIGITAL);
+        DataStream dataStream = new DataStream((short) 8, PinType.DIGITAL);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
@@ -1445,7 +1445,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
 
         try (DataOutputStream dos = new DataOutputStream(
                 Files.newOutputStream(pinReportingDataPath, CREATE, APPEND))) {
@@ -1460,7 +1460,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
-        DataStream dataStream = new DataStream((byte) 8, PinType.DIGITAL);
+        DataStream dataStream = new DataStream((short) 8, PinType.DIGITAL);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
@@ -1496,7 +1496,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
 
         try (DataOutputStream dos = new DataOutputStream(
                 Files.newOutputStream(pinReportingDataPath, CREATE, APPEND))) {
@@ -1511,7 +1511,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
-        DataStream dataStream = new DataStream((byte) 8, PinType.DIGITAL);
+        DataStream dataStream = new DataStream((short) 8, PinType.DIGITAL);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
@@ -1535,7 +1535,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         }
 
         Path pinReportingDataPath = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE));
 
         try (DataOutputStream dos = new DataOutputStream(
                 Files.newOutputStream(pinReportingDataPath, CREATE, APPEND))) {
@@ -1550,7 +1550,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
-        DataStream dataStream = new DataStream((byte) 8, PinType.DIGITAL);
+        DataStream dataStream = new DataStream((short) 8, PinType.DIGITAL);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
@@ -1570,7 +1570,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
-        DataStream dataStream = new DataStream((byte) 8, PinType.DIGITAL);
+        DataStream dataStream = new DataStream((short) 8, PinType.DIGITAL);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
@@ -1623,7 +1623,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", getUserName());
         Files.createDirectories(userReportDirectory);
         Path userReportFile = Paths.get(userReportDirectory.toString(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.ANALOG, (short) 7, GraphGranularityType.MINUTE));
         FileUtils.write(userReportFile, 1.1, 1L);
         FileUtils.write(userReportFile, 2.2, 2L);
 
@@ -1636,7 +1636,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         //generate fake reporting data
         Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", getUserName());
         Files.createDirectories(userReportDirectory);
-        String filename = ReportingDiskDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE);
+        String filename = ReportingDiskDao.generateFilename(1, 0, PinType.ANALOG, (short) 7, GraphGranularityType.MINUTE);
         Path userReportFile = Paths.get(userReportDirectory.toString(), filename);
         FileUtils.write(userReportFile, 1.1, 1L);
         FileUtils.write(userReportFile, 2.2, 2L);
@@ -1695,20 +1695,20 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
         //this file has corresponding history graph
         Path pinReportingDataPath1 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.ANALOG, (short) 7, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath1, 1.11D, 1111111);
 
         //those are not
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 100, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 100, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath2, 1.11D, 1111111);
 
         Path pinReportingDataPath3 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 101, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 101, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath3, 1.11D, 1111111);
 
         Path pinReportingDataPath4 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 102, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 102, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath4, 1.11D, 1111111);
 
         assertTrue(Files.exists(pinReportingDataPath1));
@@ -1736,9 +1736,9 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
-        DataStream dataStream1 = new DataStream((byte) 8, PinType.DIGITAL);
-        DataStream dataStream2 = new DataStream((byte) 9, PinType.DIGITAL);
-        DataStream dataStream3 = new DataStream((byte) 10, PinType.DIGITAL);
+        DataStream dataStream1 = new DataStream((short) 8, PinType.DIGITAL);
+        DataStream dataStream2 = new DataStream((short) 9, PinType.DIGITAL);
+        DataStream dataStream3 = new DataStream((short) 10, PinType.DIGITAL);
         GraphDataStream graphDataStream1 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream1, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream2, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         GraphDataStream graphDataStream3 = new GraphDataStream(null, GraphType.LINE, 0, 0, dataStream3, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
@@ -1760,20 +1760,20 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
         //this file has corresponding history graph
         Path pinReportingDataPath1 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 8, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath1, 1.11D, 1111111);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 9, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 9, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath2, 1.11D, 1111111);
 
         Path pinReportingDataPath3 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 10, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 10, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath3, 1.11D, 1111111);
 
         //those are not
         Path pinReportingDataPath4 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 11, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 11, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath4, 1.11D, 1111111);
 
         assertTrue(Files.exists(pinReportingDataPath1));
@@ -1801,8 +1801,8 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
                 new Report(1, "My One Time Report",
                         new ReportSource[] {
                                 new TileTemplateReportSource(
-                                        new ReportDataStream[] {new ReportDataStream((byte) 88, PinType.VIRTUAL, null, false),
-                                                new ReportDataStream((byte) 89, PinType.VIRTUAL, null, false)},
+                                        new ReportDataStream[] {new ReportDataStream((short) 88, PinType.VIRTUAL, null, false),
+                                                new ReportDataStream((short) 89, PinType.VIRTUAL, null, false)},
                                         0,
                                         new int[] {0, 1}
                                 )
@@ -1824,19 +1824,19 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
         //this file has corresponding history graph
         Path pinReportingDataPath1 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 88, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath1, 1.11D, 1111111);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 89, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 89, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath2, 1.11D, 1111111);
 
         Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 88, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 1, PinType.VIRTUAL, (short) 88, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath12, 1.11D, 1111111);
 
         Path pinReportingDataPath22 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 1, PinType.VIRTUAL, (byte) 89, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 1, PinType.VIRTUAL, (short) 89, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath22, 1.11D, 1111111);
 
         assertTrue(Files.exists(pinReportingDataPath1));
@@ -1873,8 +1873,8 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
-        DataStream dataStream1 = new DataStream((byte) 8, PinType.DIGITAL);
-        DataStream dataStream2 = new DataStream((byte) 9, PinType.DIGITAL);
+        DataStream dataStream1 = new DataStream((short) 8, PinType.DIGITAL);
+        DataStream dataStream2 = new DataStream((short) 9, PinType.DIGITAL);
         GraphDataStream graphDataStream1 = new GraphDataStream(null, GraphType.LINE, 0, -1, dataStream1, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, -1, dataStream2, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
@@ -1885,7 +1885,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
                 new Widget[] {
                         enhancedHistoryGraph
                 },
-                deviceIds, "123", "name", "iconName", BoardType.ESP8266, new DataStream((byte) 1, PinType.VIRTUAL),
+                deviceIds, "123", "name", "iconName", BoardType.ESP8266, new DataStream((short) 1, PinType.VIRTUAL),
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
 
         clientPair.appClient.send("createTemplate " + b("1 " + deviceTiles.id + " ")
@@ -1901,20 +1901,20 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
         //this file has corresponding history graph
         Path pinReportingDataPath1 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (short) 8, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath1, 1.11D, 1111111);
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 9, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (short) 9, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath2, 1.11D, 1111111);
 
         //those are not
         Path pinReportingDataPath3 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 10, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (short) 10, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath3, 1.11D, 1111111);
 
         Path pinReportingDataPath4 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 11, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (short) 11, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath4, 1.11D, 1111111);
 
         assertTrue(Files.exists(pinReportingDataPath1));
@@ -1950,9 +1950,9 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
-        DataStream dataStream1 = new DataStream((byte) 8, PinType.DIGITAL);
-        DataStream dataStream2 = new DataStream((byte) 9, PinType.DIGITAL);
-        DataStream dataStream3 = new DataStream((byte) 10, PinType.DIGITAL);
+        DataStream dataStream1 = new DataStream((short) 8, PinType.DIGITAL);
+        DataStream dataStream2 = new DataStream((short) 9, PinType.DIGITAL);
+        DataStream dataStream3 = new DataStream((short) 10, PinType.DIGITAL);
         GraphDataStream graphDataStream1 = new GraphDataStream(null, GraphType.LINE, 0, 200000, dataStream1, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         GraphDataStream graphDataStream2 = new GraphDataStream(null, GraphType.LINE, 0, 200000, dataStream2, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         GraphDataStream graphDataStream3 = new GraphDataStream(null, GraphType.LINE, 0, 200000, dataStream3, AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
@@ -1974,36 +1974,36 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
         //this file has corresponding history graph
         Path pinReportingDataPath10 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 8, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath10, 1.11D, 1111111);
 
         Path pinReportingDataPath20 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 9, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 9, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath20, 1.11D, 1111111);
 
         Path pinReportingDataPath30 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 10, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 10, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath30, 1.11D, 1111111);
 
         Path pinReportingDataPath11 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (short) 8, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath11, 1.11D, 1111111);
 
         Path pinReportingDataPath21 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 9, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (short) 9, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath21, 1.11D, 1111111);
 
         Path pinReportingDataPath31 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 10, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (short) 10, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath31, 1.11D, 1111111);
 
         //those are not
         Path pinReportingDataPath40 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 11, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 11, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath40, 1.11D, 1111111);
 
         Path pinReportingDataPath41 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 11, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (short) 11, GraphGranularityType.HOURLY));
         FileUtils.write(pinReportingDataPath41, 1.11D, 1111111);
 
         //3 files for device 0
@@ -2047,14 +2047,14 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
         //this file has corresponding history graph
         Path pinReportingDataPath1 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.ANALOG, (short) 7, GraphGranularityType.MINUTE));
 
         Path pinReportingDataPath2 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 7, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 7, GraphGranularityType.MINUTE));
         FileUtils.write(pinReportingDataPath2, 1.11D, 1);
 
         Path pinReportingDataPath3 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 7, GraphGranularityType.HOURLY));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 7, GraphGranularityType.HOURLY));
 
         int STORAGE_PERIOD = 10;
         //write max amount of data for 1 week + 1 point
@@ -2118,7 +2118,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
         //this file has corresponding history graph
         Path pinReportingDataPath1 = Paths.get(tempDir, "data", getUserName(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.ANALOG, (short) 7, GraphGranularityType.MINUTE));
 
         //write max amount of data for 1 week + 1 point
         for (int i = 0; i < 7 * 24 * 60; i++) {
@@ -2190,7 +2190,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         enhancedHistoryGraph.id = 432;
         enhancedHistoryGraph.width = 8;
         enhancedHistoryGraph.height = 4;
-        DataStream dataStream = new DataStream((byte) 8, PinType.DIGITAL);
+        DataStream dataStream = new DataStream((short) 8, PinType.DIGITAL);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0, 200_000, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         enhancedHistoryGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
@@ -2205,12 +2205,12 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", getUserName());
         Files.createDirectories(userReportDirectory);
 
-        String filename = ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE);
+        String filename = ReportingDiskDao.generateFilename(1, 0, PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE);
         Path userReportFile = Paths.get(userReportDirectory.toString(), filename);
         FileUtils.write(userReportFile, 1.1, 1L);
         FileUtils.write(userReportFile, 2.2, 2L);
 
-        filename = ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (byte) 8, GraphGranularityType.MINUTE);
+        filename = ReportingDiskDao.generateFilename(1, 1, PinType.DIGITAL, (short) 8, GraphGranularityType.MINUTE);
         userReportFile = Paths.get(userReportDirectory.toString(), filename);
         FileUtils.write(userReportFile, 11.1, 11L);
         FileUtils.write(userReportFile, 12.2, 12L);
@@ -2267,7 +2267,7 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         superchart.id = 191600;
         superchart.width = 8;
         superchart.height = 4;
-        DataStream dataStream = new DataStream((byte) 7, PinType.ANALOG);
+        DataStream dataStream = new DataStream((short) 7, PinType.ANALOG);
         GraphDataStream graphDataStream = new GraphDataStream(null, GraphType.LINE, 0,
                 200_000, dataStream, null, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         superchart.dataStreams = new GraphDataStream[] {
@@ -2283,12 +2283,12 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
         Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", getUserName());
         Files.createDirectories(userReportDirectory);
 
-        String filename = ReportingDiskDao.generateFilename(1, 0, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE);
+        String filename = ReportingDiskDao.generateFilename(1, 0, PinType.ANALOG, (short) 7, GraphGranularityType.MINUTE);
         Path userReportFile = Paths.get(userReportDirectory.toString(), filename);
         FileUtils.write(userReportFile, 1.1, 1L);
         FileUtils.write(userReportFile, 2.2, 2L);
 
-        filename = ReportingDiskDao.generateFilename(1, 1, PinType.ANALOG, (byte) 7, GraphGranularityType.MINUTE);
+        filename = ReportingDiskDao.generateFilename(1, 1, PinType.ANALOG, (short) 7, GraphGranularityType.MINUTE);
         userReportFile = Paths.get(userReportDirectory.toString(), filename);
         FileUtils.write(userReportFile, 11.1, 11L);
         FileUtils.write(userReportFile, 12.2, 12L);

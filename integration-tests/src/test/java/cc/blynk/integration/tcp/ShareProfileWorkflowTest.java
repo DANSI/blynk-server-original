@@ -443,8 +443,8 @@ public class ShareProfileWorkflowTest extends SingleServerInstancePerTest {
 
     @Test
     public void eventorWorksInSharedModeFromAppSide() throws Exception {
-        DataStream triggerDataStream = new DataStream((byte) 1, PinType.VIRTUAL);
-        DataStream dataStream = new DataStream((byte) 2, PinType.VIRTUAL);
+        DataStream triggerDataStream = new DataStream((short) 1, PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((short) 2, PinType.VIRTUAL);
         SetPinAction setPinAction = new SetPinAction(dataStream, "123", SetPinActionType.CUSTOM);
         Rule rule = new Rule(triggerDataStream, null, new GreaterThan(37), new BaseAction[] {setPinAction}, true);
 

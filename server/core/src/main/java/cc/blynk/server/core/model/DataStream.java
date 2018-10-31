@@ -15,7 +15,7 @@ public class DataStream {
 
     public static final int NO_PIN = -1;
 
-    public final byte pin;
+    public final short pin;
 
     public final boolean pwmMode;
 
@@ -32,7 +32,7 @@ public class DataStream {
     public final String label;
 
     @JsonCreator
-    public DataStream(@JsonProperty("pin") byte pin,
+    public DataStream(@JsonProperty("pin") short pin,
                       @JsonProperty("pwmMode") boolean pwmMode,
                       @JsonProperty("rangeMappingOn") boolean rangeMappingOn,
                       @JsonProperty("pinType") PinType pinType,
@@ -56,11 +56,11 @@ public class DataStream {
                 dataStream.min, dataStream.max, dataStream.label);
     }
 
-    public DataStream(byte pin, PinType pinType) {
+    public DataStream(short pin, PinType pinType) {
         this(pin, false, false, pinType, null, 0, 255, null);
     }
 
-    public static String makeReadingHardwareBody(char pinType, byte pin) {
+    public static String makeReadingHardwareBody(char pinType, short pin) {
         return "" + pinType + 'r' + BODY_SEPARATOR + pin;
     }
 
@@ -68,19 +68,19 @@ public class DataStream {
         return "" + pinType + 'w' + BODY_SEPARATOR + pin + BODY_SEPARATOR + value;
     }
 
-    public static String makeHardwareBody(PinType pinType, byte pin, String value) {
+    public static String makeHardwareBody(PinType pinType, short pin, String value) {
         return makeHardwareBody(pinType.pintTypeChar, pin, value);
     }
 
-    public static String makeHardwareBody(char pinTypeChar, byte pin, String value) {
+    public static String makeHardwareBody(char pinTypeChar, short pin, String value) {
         return "" + pinTypeChar + 'w' + BODY_SEPARATOR + pin + BODY_SEPARATOR + value;
     }
 
-    public static String makeHardwareBody(boolean pwmMode, PinType pinType, byte pin, String value) {
+    public static String makeHardwareBody(boolean pwmMode, PinType pinType, short pin, String value) {
         return pwmMode ? makeHardwareBody(PinType.ANALOG, pin, value) : makeHardwareBody(pinType, pin, value);
     }
 
-    public boolean isSame(byte pin, PinType type) {
+    public boolean isSame(short pin, PinType type) {
         return this.pin == pin && (type == this.pinType || (this.pwmMode && type == PinType.ANALOG));
     }
 
@@ -88,7 +88,7 @@ public class DataStream {
         return pwmMode ? makeHardwareBody(PinType.ANALOG, pin, value) : makeHardwareBody(pinType, pin, value);
     }
 
-    public static boolean isValid(byte pin, PinType pinType) {
+    public static boolean isValid(short pin, PinType pinType) {
         return pin != NO_PIN && pinType != null;
     }
 

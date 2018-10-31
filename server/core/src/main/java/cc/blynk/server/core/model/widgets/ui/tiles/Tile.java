@@ -34,7 +34,7 @@ public class Tile {
         this.dataStream = dataStream;
     }
 
-    public boolean isSame(int deviceId, byte pin, PinType pinType) {
+    public boolean isSame(int deviceId, short pin, PinType pinType) {
         return this.deviceId == deviceId && dataStream != null && dataStream.isSame(pin, pinType);
     }
 
@@ -45,7 +45,7 @@ public class Tile {
         return false;
     }
 
-    public boolean updateIfSame(int deviceId, byte pin, PinType pinType, String value) {
+    public boolean updateIfSame(int deviceId, short pin, PinType pinType, String value) {
         if (isSame(deviceId, pin, pinType)) {
             this.dataStream.value = value;
             return true;

@@ -58,7 +58,7 @@ public class RawDataDBTest {
     @Test
     public void testInsertStringAsRawData() throws Exception {
         RawDataProcessor rawDataProcessor = new RawDataProcessor(true);
-        rawDataProcessor.collect(new BaseReportingKey(user.email, user.appName, 1, 2, PinType.VIRTUAL, (byte) 3), 1111111111, "Lamp is ON", NumberUtil.NO_RESULT);
+        rawDataProcessor.collect(new BaseReportingKey(user.email, user.appName, 1, 2, PinType.VIRTUAL, (short) 3), 1111111111, "Lamp is ON", NumberUtil.NO_RESULT);
 
         //invoking directly dao to avoid separate thread execution
         reportingDBManager.reportingDBDao.insertRawData(rawDataProcessor.rawStorage);
@@ -87,7 +87,7 @@ public class RawDataDBTest {
     @Test
     public void testInsertDoubleAsRawData() throws Exception {
         RawDataProcessor rawDataProcessor = new RawDataProcessor(true);
-        rawDataProcessor.collect(new BaseReportingKey(user.email, user.appName, 1, 2, PinType.VIRTUAL, (byte) 3), 1111111111, "Lamp is ON", 1.33D);
+        rawDataProcessor.collect(new BaseReportingKey(user.email, user.appName, 1, 2, PinType.VIRTUAL, (short) 3), 1111111111, "Lamp is ON", 1.33D);
 
         //invoking directly dao to avoid separate thread execution
         reportingDBManager.reportingDBDao.insertRawData(rawDataProcessor.rawStorage);

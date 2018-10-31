@@ -91,7 +91,7 @@ public class TimerTest extends SingleServerInstancePerTest {
         );
 
 
-        DataStream dataStream = new DataStream((byte)1,PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((short) 1,PinType.VIRTUAL);
         SetPinAction setPinAction = new SetPinAction(dataStream, "1", SetPinActionType.CUSTOM);
 
         Eventor eventor = new Eventor(new Rule[] {
@@ -119,7 +119,7 @@ public class TimerTest extends SingleServerInstancePerTest {
         );
 
 
-        DataStream dataStream = new DataStream((byte)1,PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((short)1,PinType.VIRTUAL);
         SetPinAction setPinAction = new SetPinAction(dataStream, "1", SetPinActionType.CUSTOM);
 
         Eventor eventor = new Eventor(new Rule[] {
@@ -165,10 +165,10 @@ public class TimerTest extends SingleServerInstancePerTest {
         );
 
 
-        DataStream dataStream = new DataStream((byte)1,PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((short)1,PinType.VIRTUAL);
         SetPinAction setPinAction = new SetPinAction(dataStream, "1", SetPinActionType.CUSTOM);
 
-        DataStream dataStream2 = new DataStream((byte)2,PinType.VIRTUAL);
+        DataStream dataStream2 = new DataStream((short)2,PinType.VIRTUAL);
         SetPinAction setPinAction2 = new SetPinAction(dataStream2, "2", SetPinActionType.CUSTOM);
 
         Rule rule = new Rule(null, timerTime, null, new BaseAction[] {setPinAction, setPinAction2}, true);
@@ -200,7 +200,7 @@ public class TimerTest extends SingleServerInstancePerTest {
                 DateTimeUtils.UTC
         );
 
-        DataStream dataStream = new DataStream((byte) 1,PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((short) 1,PinType.VIRTUAL);
         SetPinAction setPinAction = new SetPinAction(dataStream, "1", SetPinActionType.CUSTOM);
         NotifyAction notifyAction = new NotifyAction("Hello");
         Rule rule = new Rule(null, timerTime, null, new BaseAction[] {setPinAction, notifyAction}, true);
@@ -250,7 +250,7 @@ public class TimerTest extends SingleServerInstancePerTest {
                 DateTimeUtils.UTC
         );
 
-        DataStream dataStream = new DataStream((byte)1,PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((short)1,PinType.VIRTUAL);
         SetPinAction setPinAction = new SetPinAction(dataStream, "1", SetPinActionType.CUSTOM);
         Rule rule = new Rule(null, timerTime, null,  new BaseAction[] {setPinAction}, true);
 
@@ -679,7 +679,7 @@ public class TimerTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
 
         TileTemplate tileTemplate = new ButtonTileTemplate(1,
-                null, new int[] {0}, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte) 111, PinType.VIRTUAL),
+                null, new int[] {0}, "name", "name", "iconName", BoardType.ESP8266, new DataStream((short) 111, PinType.VIRTUAL),
                 false, false, false, null, null);
 
         clientPair.appClient.send("createTemplate " + b("1 " + deviceTiles.id + " ")

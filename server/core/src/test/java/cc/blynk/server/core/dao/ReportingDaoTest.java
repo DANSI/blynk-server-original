@@ -21,7 +21,7 @@ public class ReportingDaoTest {
     public void testFileName() {
         int dashId = 1;
         PinType pinType = PinType.VIRTUAL;
-        byte pin = 2;
+        short pin = 2;
 
         assertEquals(String.format(REPORTING_MINUTE_FILE_NAME, dashId, pinType.pintTypeChar, pin),
                 ReportingDiskDao.generateFilename(dashId, 0, pinType, pin, GraphGranularityType.MINUTE));

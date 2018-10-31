@@ -259,7 +259,7 @@ public class TableCommandsTest extends SingleServerInstancePerTest {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         Profile profile = clientPair.appClient.parseProfile(1);
-        return (Table) profile.dashBoards[0].findWidgetByPin(0, (byte) 123, PinType.VIRTUAL);
+        return (Table) profile.dashBoards[0].findWidgetByPin(0, (short) 123, PinType.VIRTUAL);
     }
 
 }

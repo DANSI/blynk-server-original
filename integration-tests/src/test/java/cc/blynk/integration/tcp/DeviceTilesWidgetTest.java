@@ -96,7 +96,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
 
         PageTileTemplate tileTemplate = new PageTileTemplate(1,
-                null, null, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte) 1, PinType.VIRTUAL),
+                null, null, "name", "name", "iconName", BoardType.ESP8266, new DataStream((short) 1, PinType.VIRTUAL),
                 false, null, null, null, -75056000, -231, FontSize.LARGE, false, 2);
 
         clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
@@ -133,7 +133,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
 
         PageTileTemplate tileTemplate = new PageTileTemplate(1,
-                null, null, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte) 1, PinType.VIRTUAL),
+                null, null, "name", "name", "iconName", BoardType.ESP8266, new DataStream((short) 1, PinType.VIRTUAL),
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
 
         clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
@@ -145,7 +145,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(3));
 
         tileTemplate = new PageTileTemplate(1,
-                null, null, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte) 1, PinType.VIRTUAL),
+                null, null, "name", "name", "iconName", BoardType.ESP8266, new DataStream((short) 1, PinType.VIRTUAL),
                 false, null, null, null, -1, -231, FontSize.LARGE, false, 2);
 
         clientPair.appClient.updateTemplate(1, widgetId, tileTemplate);
@@ -209,7 +209,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
 
         ButtonTileTemplate tileTemplate = new ButtonTileTemplate(1,
-                null, null, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte) 1, PinType.VIRTUAL),
+                null, null, "name", "name", "iconName", BoardType.ESP8266, new DataStream((short) 1, PinType.VIRTUAL),
                 false, false, false, null, null);
 
         clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
@@ -335,7 +335,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
         clientPair.appClient.verifyResult(ok(2));
 
-        DataStream dataStream = new DataStream((byte) 1, PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((short) 1, PinType.VIRTUAL);
         tileTemplate = new PageTileTemplate(1,
                 null, new int[]{0}, "name", "name", "iconName", BoardType.ESP8266, dataStream,
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
@@ -358,7 +358,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         assertEquals(1, deviceTiles.tiles[0].dataStream.pin);
         assertEquals(PinType.VIRTUAL, deviceTiles.tiles[0].dataStream.pinType);
 
-        dataStream = new DataStream((byte) 2, PinType.VIRTUAL);
+        dataStream = new DataStream((short) 2, PinType.VIRTUAL);
         tileTemplate = new PageTileTemplate(1,
                 null, new int[]{0}, "name", "name", "iconName", BoardType.ESP8266, dataStream,
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
@@ -414,7 +414,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
         clientPair.appClient.verifyResult(ok(2));
 
-        DataStream dataStream = new DataStream((byte) 1, PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((short) 1, PinType.VIRTUAL);
         tileTemplate = new PageTileTemplate(1,
                 null, new int[]{0, 1}, "name", "name", "iconName", BoardType.ESP8266, dataStream,
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
@@ -441,7 +441,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
             assertEquals(PinType.VIRTUAL, tile.dataStream.pinType);
         }
 
-        dataStream = new DataStream((byte) 2, PinType.VIRTUAL);
+        dataStream = new DataStream((short) 2, PinType.VIRTUAL);
         tileTemplate = new PageTileTemplate(1,
                 null, new int[]{0, 1}, "name", "name", "iconName", BoardType.ESP8266, dataStream,
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
@@ -501,7 +501,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
         clientPair.appClient.verifyResult(ok(2));
 
-        DataStream dataStream = new DataStream((byte) 5, PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((short) 5, PinType.VIRTUAL);
 
         Button button = new Button();
         button.id = 2321;
@@ -627,7 +627,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         clientPair.appClient.createTemplate(1, deviceTiles.id, tileTemplate);
         clientPair.appClient.verifyResult(ok(2));
 
-        DataStream dataStream = new DataStream((byte) 5, PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((short) 5, PinType.VIRTUAL);
 
         ValueDisplay valueDisplay = new ValueDisplay();
         valueDisplay.id = 1234;
@@ -829,7 +829,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         clientPair.appClient.createWidget(1, deviceTiles);
         clientPair.appClient.verifyResult(ok(1));
 
-        DataStream dataStream = new DataStream((byte) 66, PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((short) 66, PinType.VIRTUAL);
         TileTemplate tileTemplate = new PageTileTemplate(1,
                 null, null, "name", "name", "iconName", BoardType.ESP8266, dataStream,
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
@@ -903,7 +903,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         clientPair.appClient.createWidget(1, deviceTiles);
         clientPair.appClient.verifyResult(ok(1));
 
-        DataStream dataStream = new DataStream((byte) 66, PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((short) 66, PinType.VIRTUAL);
         TileTemplate tileTemplate = new PageTileTemplate(1,
                 null, null, "name", "name", "iconName", BoardType.ESP8266, dataStream,
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
@@ -978,7 +978,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         clientPair.appClient.createWidget(1, deviceTiles);
         clientPair.appClient.verifyResult(ok(1));
 
-        DataStream dataStream = new DataStream((byte) 66, PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((short) 66, PinType.VIRTUAL);
         TileTemplate tileTemplate = new PageTileTemplate(1,
                 null, null, "name", "name", "iconName", BoardType.ESP8266, dataStream,
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
@@ -1040,7 +1040,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
 
         int[] deviceIds = new int[] {0};
-        DataStream dataStream = new DataStream((byte) 1, PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((short) 1, PinType.VIRTUAL);
 
         TileTemplate tileTemplate = new PageTileTemplate(1,
                 null, deviceIds, "name", "name", "iconName", BoardType.ESP8266, dataStream,
@@ -1080,7 +1080,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
 
         int[] deviceIds = new int[] {0};
-        DataStream dataStream = new DataStream((byte) 1, PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((short) 1, PinType.VIRTUAL);
 
         TileTemplate tileTemplate = new PageTileTemplate(1,
                 null, deviceIds, "name", "name", "iconName", BoardType.ESP8266, dataStream,
@@ -1197,7 +1197,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         deviceTiles.height = 100;
 
         TileTemplate tileTemplate = new PageTileTemplate(1,
-                null, null, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte) -1, null),
+                null, null, "name", "name", "iconName", BoardType.ESP8266, new DataStream((short) -1, null),
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
         deviceTiles.templates = new TileTemplate[] {
                 tileTemplate
@@ -1207,7 +1207,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
 
         tileTemplate = new PageTileTemplate(1,
-                null, new int[] {0}, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte) 1, PinType.VIRTUAL),
+                null, new int[] {0}, "name", "name", "iconName", BoardType.ESP8266, new DataStream((short) 1, PinType.VIRTUAL),
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
 
         clientPair.appClient.updateTemplate(1, widgetId, tileTemplate);
@@ -1252,14 +1252,14 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         SuperchartGraph.height = 4;
         GraphDataStream graphDataStream = new GraphDataStream(
                 null, GraphType.LINE, 0, 100_000,
-                new DataStream((byte) 88, PinType.VIRTUAL),
+                new DataStream((short) 88, PinType.VIRTUAL),
                 AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         SuperchartGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
 
         TileTemplate tileTemplate = new PageTileTemplate(1,
-                new Widget[]{SuperchartGraph}, deviceIds, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte)1, PinType.VIRTUAL),
+                new Widget[]{SuperchartGraph}, deviceIds, "name", "name", "iconName", BoardType.ESP8266, new DataStream((short) 1, PinType.VIRTUAL),
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
 
         clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
@@ -1291,14 +1291,14 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         SuperchartGraph.height = 4;
         GraphDataStream graphDataStream = new GraphDataStream(
                 null, GraphType.LINE, 0, 100_000,
-                new DataStream((byte) 88, PinType.VIRTUAL),
+                new DataStream((short) 88, PinType.VIRTUAL),
                 AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         SuperchartGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
 
         TileTemplate tileTemplate = new PageTileTemplate(1,
-                new Widget[]{SuperchartGraph}, deviceIds, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte)1, PinType.VIRTUAL),
+                new Widget[]{SuperchartGraph}, deviceIds, "name", "name", "iconName", BoardType.ESP8266, new DataStream((short)1, PinType.VIRTUAL),
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
 
         clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
@@ -1330,14 +1330,14 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         SuperchartGraph.height = 4;
         GraphDataStream graphDataStream = new GraphDataStream(
                 null, GraphType.LINE, 0, 0,
-                new DataStream((byte) 88, PinType.VIRTUAL),
+                new DataStream((short) 88, PinType.VIRTUAL),
                 AggregationFunctionType.MAX, 0, null, null, null, 0, 0, false, null, false, false, false, null, 0, false, 0);
         SuperchartGraph.dataStreams = new GraphDataStream[] {
                 graphDataStream
         };
 
         TileTemplate tileTemplate = new PageTileTemplate(1,
-                new Widget[]{SuperchartGraph}, deviceIds, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte)1, PinType.VIRTUAL),
+                new Widget[]{SuperchartGraph}, deviceIds, "name", "name", "iconName", BoardType.ESP8266, new DataStream((short) 1, PinType.VIRTUAL),
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
 
         clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
@@ -1349,7 +1349,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         Path userReportDirectory = Paths.get(holder.props.getProperty("data.folder"), "data", getUserName());
         Files.createDirectories(userReportDirectory);
         Path userReportFile = Paths.get(userReportDirectory.toString(),
-                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (byte) 88, GraphGranularityType.MINUTE));
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 88, GraphGranularityType.MINUTE));
         FileUtils.write(userReportFile, 1.1, 1L);
         FileUtils.write(userReportFile, 2.2, 2L);
 
@@ -1728,14 +1728,14 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(4));
 
         ButtonTileTemplate tileTemplate = new ButtonTileTemplate(1,
-                null, null, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte) 1, PinType.VIRTUAL),
+                null, null, "name", "name", "iconName", BoardType.ESP8266, new DataStream((short) 1, PinType.VIRTUAL),
                 false, false, false, null, null);
 
         clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
         clientPair.appClient.verifyResult(ok(5));
 
         tileTemplate = new ButtonTileTemplate(1,
-                null, new int[] {0}, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte) 1, PinType.VIRTUAL),
+                null, new int[] {0}, "name", "name", "iconName", BoardType.ESP8266, new DataStream((short) 1, PinType.VIRTUAL),
                 false, false, false, null, null);
 
         clientPair.appClient.updateTemplate(1, widgetId, tileTemplate);
@@ -1927,7 +1927,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
 
         TileTemplate tileTemplate = new ButtonTileTemplate(1,
-                null, new int[] {0}, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte) 111, PinType.VIRTUAL),
+                null, new int[] {0}, "name", "name", "iconName", BoardType.ESP8266, new DataStream((short) 111, PinType.VIRTUAL),
                 false, false, false, null, null);
 
         clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
@@ -1970,7 +1970,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
 
         TileTemplate tileTemplate = new ButtonTileTemplate(1,
-                null, new int[] {0}, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte) 111, PinType.VIRTUAL),
+                null, new int[] {0}, "name", "name", "iconName", BoardType.ESP8266, new DataStream((short) 111, PinType.VIRTUAL),
                 false, false, false, null, null);
 
         clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
@@ -2002,7 +2002,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         clientPair.appClient.createWidget(1, deviceTiles);
         clientPair.appClient.verifyResult(ok(1));
 
-        DataStream dataStream = new DataStream((byte) 5, PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((short) 5, PinType.VIRTUAL);
         TileTemplate tileTemplate = new PageTileTemplate(1,
                 null, new int[] {0}, "name", "name", "iconName", BoardType.ESP8266, dataStream,
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
@@ -2080,7 +2080,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         clientPair.appClient.createWidget(1, deviceTiles);
         clientPair.appClient.verifyResult(ok(1));
 
-        DataStream dataStream = new DataStream((byte) 5, PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((short) 5, PinType.VIRTUAL);
         TileTemplate tileTemplate = new PageTileTemplate(1,
                 null, new int[] {0}, "name", "name", "iconName", BoardType.ESP8266, dataStream,
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
@@ -2141,7 +2141,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
         clientPair.appClient.verifyResult(ok(2));
 
-        DataStream dataStream = new DataStream((byte) 5, PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((short) 5, PinType.VIRTUAL);
 
         ValueDisplay valueDisplay = new ValueDisplay();
         valueDisplay.width = 2;
@@ -2212,7 +2212,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(1));
 
         var tileTemplate = new PageTileTemplate(1,
-                null, new int[] {0}, "name", "name", "iconName", BoardType.ESP8266, new DataStream((byte) 5, PinType.VIRTUAL),
+                null, new int[] {0}, "name", "name", "iconName", BoardType.ESP8266, new DataStream((short) 5, PinType.VIRTUAL),
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
 
         clientPair.appClient.createTemplate(1, deviceTiles.id, tileTemplate);
@@ -2268,7 +2268,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         clientPair.appClient.createWidget(1, deviceTiles);
         clientPair.appClient.verifyResult(ok(1));
 
-        DataStream dataStream = new DataStream((byte) 5, PinType.VIRTUAL);
+        DataStream dataStream = new DataStream((short) 5, PinType.VIRTUAL);
         TileTemplate tileTemplate = new PageTileTemplate(1,
                 null, new int[] {0}, "name", "name", "iconName", BoardType.ESP8266, dataStream,
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);

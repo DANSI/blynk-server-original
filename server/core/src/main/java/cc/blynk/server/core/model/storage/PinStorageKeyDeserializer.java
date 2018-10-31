@@ -20,9 +20,9 @@ public class PinStorageKeyDeserializer extends KeyDeserializer {
 
         var deviceId = Integer.parseInt(split[0]);
         var pinType = PinType.getPinType(split[1].charAt(0));
-        byte pin = 0;
+        short pin = 0;
         try {
-            pin = Byte.parseByte(split[1].substring(1, split[1].length()));
+            pin = Short.parseShort(split[1].substring(1, split[1].length()));
         } catch (NumberFormatException e) {
             //special case for outdated data format.
             return new PinStorageKey(deviceId, pinType, pin);

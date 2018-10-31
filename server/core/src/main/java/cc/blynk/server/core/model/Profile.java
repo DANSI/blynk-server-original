@@ -31,7 +31,7 @@ public class Profile {
 
     public volatile App[] apps = EMPTY_APPS;
 
-    public static Widget getWidgetWithLoggedPin(DashBoard dash, int deviceId, byte pin, PinType pinType) {
+    public static Widget getWidgetWithLoggedPin(DashBoard dash, int deviceId, short pin, PinType pinType) {
         for (Widget widget : dash.widgets) {
             if (widget instanceof Superchart) {
                 Superchart graph = (Superchart) widget;
@@ -63,7 +63,7 @@ public class Profile {
     }
 
     private static boolean isWithinGraph(DashBoard dash, Superchart graph,
-                                         byte pin, PinType pinType, int deviceId, int... deviceIds) {
+                                         short pin, PinType pinType, int deviceId, int... deviceIds) {
         for (GraphDataStream graphDataStream : graph.dataStreams) {
             if (graphDataStream != null && graphDataStream.dataStream != null
                     && graphDataStream.dataStream.isSame(pin, pinType)) {
