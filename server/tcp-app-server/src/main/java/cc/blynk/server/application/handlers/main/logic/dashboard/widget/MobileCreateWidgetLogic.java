@@ -2,6 +2,7 @@ package cc.blynk.server.application.handlers.main.logic.dashboard.widget;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
+import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
@@ -105,7 +106,7 @@ public final class MobileCreateWidgetLogic {
             tileTemplate.widgets = ArrayUtil.add(tileTemplate.widgets, newWidget, Widget.class);
         }
 
-        dash.cleanPinStorage(newWidget, true);
+        Profile.cleanPinStorage(dash, newWidget, true);
         user.lastModifiedTs = dash.updatedAt;
 
         TimerWorker timerWorker = holder.timerWorker;

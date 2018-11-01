@@ -2,6 +2,7 @@ package cc.blynk.server.application.handlers.main.logic.dashboard.widget.tile;
 
 import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
@@ -57,7 +58,7 @@ public final class MobileDeleteTileTemplateLogic {
 
         deviceTiles.templates = ArrayUtil.remove(deviceTiles.templates, existingTileIndex, TileTemplate.class);
         deviceTiles.deleteDeviceTilesByTemplateId(tileId);
-        dash.cleanPinStorageForTileTemplate(tileTemplate, true);
+        Profile.cleanPinStorageForTileTemplate(dash, tileTemplate, true);
 
         dash.updatedAt = System.currentTimeMillis();
 

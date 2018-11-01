@@ -2,6 +2,9 @@ package cc.blynk.server.application.handlers.main.logic.dashboard.widget;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
@@ -37,14 +40,14 @@ public final class MobileUpdateWidgetLogic {
 
     public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
                                        MobileStateHolder state, StringMessage message) {
-        var split = split2(message.body);
+        String[] split = split2(message.body);
 
         if (split.length < 2) {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        var dashId = Integer.parseInt(split[0]);
-        var widgetString = split[1];
+        int dashId = Integer.parseInt(split[0]);
+        String widgetString = split[1];
 
         if (widgetString == null || widgetString.isEmpty()) {
             throw new IllegalCommandException("Income widget message is empty.");
@@ -54,10 +57,10 @@ public final class MobileUpdateWidgetLogic {
             throw new NotAllowedException("Widget is larger then limit.", message.id);
         }
 
-        var user = state.user;
-        var dash = user.profile.getDashByIdOrThrow(dashId);
+        User user = state.user;
+        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
-        var newWidget = JsonParser.parseWidget(widgetString, message.id);
+        Widget newWidget = JsonParser.parseWidget(widgetString, message.id);
 
         if (newWidget.width < 1 || newWidget.height < 1) {
             throw new NotAllowedException("Widget has wrong dimensions.", message.id);
@@ -143,7 +146,7 @@ public final class MobileUpdateWidgetLogic {
                     dash.widgets, newWidget, dash.getWidgetIndexByIdOrThrow(newWidget.id));
         }
 
-        dash.cleanPinStorage(newWidget, true);
+        Profile.cleanPinStorage(dash, newWidget, true);
         user.lastModifiedTs = dash.updatedAt;
 
         if (prevWidget instanceof Timer) {

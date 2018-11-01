@@ -166,7 +166,7 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
                 MobileStateHolder mobileStateHolder = getAppState(channel);
                 if (mobileStateHolder != null && mobileStateHolder.contains(dash.sharedToken)) {
                     boolean isNewSyncFormat = mobileStateHolder.isNewSyncFormat();
-                    dash.sendAppSyncs(channel, selectedDeviceId, isNewSyncFormat);
+                    Profile.sendAppSyncs(dash, channel, selectedDeviceId, isNewSyncFormat);
                 }
                 channel.flush();
             }

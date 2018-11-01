@@ -2,6 +2,7 @@ package cc.blynk.server.application.handlers.main.logic.dashboard;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
+import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
@@ -57,7 +58,7 @@ public final class MobileUpdateDashLogic {
         updatedDash.addTimers(timerWorker, state.userKey);
 
         existingDash.updateFields(updatedDash);
-        existingDash.cleanPinStorage(existingDash.widgets, false, true);
+        Profile.cleanPinStorage(existingDash, false, true);
 
         user.lastModifiedTs = existingDash.updatedAt;
 
