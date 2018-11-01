@@ -418,12 +418,15 @@ public class DashBoard {
         }
     }
 
-    private void deleteDeviceFromObjects(int deviceId) {
+    private void deleteDeviceFromWidgets(int deviceId) {
         for (Widget widget : widgets) {
             if (widget instanceof DeviceCleaner) {
                 ((DeviceCleaner) widget).deleteDevice(deviceId);
             }
         }
+    }
+
+    private void deleteDeviceFromTags(int deviceId) {
         for (Tag tag : tags) {
             tag.deleteDevice(deviceId);
         }
@@ -445,17 +448,6 @@ public class DashBoard {
     public void cleanPinStorage(Widget widget, boolean removeTemplates) {
         cleanPinStorageInternalWithoutUpdatedAt(widget, true, removeTemplates);
         this.updatedAt = System.currentTimeMillis();
-    }
-
-    private static Tag[] copyTags(Tag[] tagsToCopy) {
-        if (tagsToCopy.length == 0) {
-            return tagsToCopy;
-        }
-        Tag[] copy = new Tag[tagsToCopy.length];
-        for (int i = 0; i < copy.length; i++) {
-            copy[i] = tagsToCopy[i].copy();
-        }
-        return copy;
     }
 
     private void cleanPinStorage(DeviceTiles deviceTiles, boolean removeProperties) {
@@ -595,7 +587,6 @@ public class DashBoard {
         this.widgetBackgroundOn = parent.widgetBackgroundOn;
         this.color = parent.color;
         this.isDefaultColor = parent.isDefaultColor;
-        this.tags = copyTags(parent.tags);
         //do not update devices by purpose
         //this.devices = parent.devices;
         this.widgets = copyWidgetsAndPreservePrevValues(this.widgets, parent.widgets);
@@ -656,7 +647,8 @@ public class DashBoard {
         Device deviceToRemove = this.devices[existingDeviceIndex];
         this.devices = ArrayUtil.remove(this.devices, existingDeviceIndex, Device.class);
         eraseValuesForDevice(deviceId);
-        deleteDeviceFromObjects(deviceId);
+        deleteDeviceFromWidgets(deviceId);
+        deleteDeviceFromTags(deviceId);
         this.updatedAt = System.currentTimeMillis();
         return deviceToRemove;
     }

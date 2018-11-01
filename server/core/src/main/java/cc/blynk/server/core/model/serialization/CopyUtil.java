@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.serialization;
 
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.device.Tag;
 import com.fasterxml.jackson.databind.util.TokenBuffer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,6 +19,17 @@ public final class CopyUtil {
     private static final Logger log = LogManager.getLogger(CopyUtil.class);
 
     private CopyUtil() {
+    }
+
+    public static Tag[] copyTags(Tag[] tagsToCopy) {
+        if (tagsToCopy.length == 0) {
+            return tagsToCopy;
+        }
+        Tag[] copy = new Tag[tagsToCopy.length];
+        for (int i = 0; i < copy.length; i++) {
+            copy[i] = tagsToCopy[i].copy();
+        }
+        return copy;
     }
 
     public static DashBoard deepCopy(DashBoard dash) {
