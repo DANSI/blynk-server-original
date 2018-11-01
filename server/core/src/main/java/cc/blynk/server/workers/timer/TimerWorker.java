@@ -4,6 +4,7 @@ import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Tag;
@@ -229,14 +230,14 @@ public class TimerWorker implements Runnable {
                     DashBoard dash = user.profile.getDashById(key.dashId);
                     if (dash != null && dash.isActive) {
                         activeTimers++;
-                        process(dash, key, actions, now);
+                        process(user.profile, dash, key, actions, now);
                     }
                 }
             }
         }
     }
 
-    private void process(DashBoard dash, TimerKey key, BaseAction[] actions, long now) {
+    private void process(Profile profile, DashBoard dash, TimerKey key, BaseAction[] actions, long now) {
         for (BaseAction action : actions) {
             if (action instanceof SetPinAction) {
                 SetPinAction setPinAction = (SetPinAction) action;
@@ -277,7 +278,7 @@ public class TimerWorker implements Runnable {
                 }
 
                 for (int deviceId : deviceIds) {
-                    dash.update(deviceId, setPinAction.dataStream.pin,
+                    profile.update(dash, deviceId, setPinAction.dataStream.pin,
                             setPinAction.dataStream.pinType, setPinAction.value, now);
                 }
 

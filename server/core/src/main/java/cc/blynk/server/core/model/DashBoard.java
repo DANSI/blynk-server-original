@@ -41,7 +41,6 @@ import io.netty.channel.Channel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -105,16 +104,7 @@ public class DashBoard {
                      contentUsing = PinStorageValueDeserializer.class)
     public Map<PinStorageKey, PinStorageValue> pinsStorage = Collections.emptyMap();
 
-    public void update(int deviceId, short pin, PinType pinType, String value, long now) {
-        if (!updateWidgets(deviceId, pin, pinType, value)) {
-            //special case. #237 if no widget - storing without widget.
-            putPinStorageValue(deviceId, pinType, pin, value);
-        }
-
-        this.updatedAt = now;
-    }
-
-    private boolean updateWidgets(int deviceId, short pin, PinType type, String value) {
+    public boolean updateWidgets(int deviceId, short pin, PinType type, String value) {
         boolean hasWidget = false;
         for (Widget widget : widgets) {
             if (widget.updateIfSame(deviceId, pin, type, value)) {
@@ -132,32 +122,10 @@ public class DashBoard {
         return name == null ? DEFAULT_NAME : name;
     }
 
-    public void putPinPropertyStorageValue(int deviceId, PinType type, short pin,
-                                           WidgetProperty property, String value) {
-        putPinStorageValue(new PinPropertyStorageKey(deviceId, type, pin, property), value);
-    }
-
-    private void putPinStorageValue(int deviceId, PinType type, short pin, String value) {
-        putPinStorageValue(new PinStorageKey(deviceId, type, pin), value);
-    }
-
-    private void putPinStorageValue(PinStorageKey key, String value) {
-        if (pinsStorage == Collections.EMPTY_MAP) {
-            pinsStorage = new HashMap<>();
-        }
-
-        PinStorageValue pinStorageValue = pinsStorage.get(key);
-        if (pinStorageValue == null) {
-            pinStorageValue = initStorageValueForStorageKey(key);
-            pinsStorage.put(key, pinStorageValue);
-        }
-        pinStorageValue.update(value);
-    }
-
     //multi value widgets has always priority over single value widgets.
     //for example, we have 2 widgets on the same pin, one it terminal, another is value display.
     //so for that pin we have to return multivalue storage
-    private PinStorageValue initStorageValueForStorageKey(PinStorageKey key) {
+    public PinStorageValue initStorageValueForStorageKey(PinStorageKey key) {
         if (!(key instanceof PinPropertyStorageKey)) {
             for (Widget widget : widgets) {
                 if (widget instanceof OnePinWidget) {

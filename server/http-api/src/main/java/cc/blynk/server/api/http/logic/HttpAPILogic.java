@@ -451,7 +451,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         reportingDao.process(user, dash, deviceId, pin, pinType, pinValue, now);
 
-        dash.update(deviceId, pin, pinType, pinValue, now);
+        user.profile.update(dash, deviceId, pin, pinType, pinValue, now);
         tokenValue.device.dataReceivedAt = now;
 
         String body = makeBody(dash, deviceId, pin, pinType, pinValue);
@@ -515,7 +515,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
         }
 
         long now = System.currentTimeMillis();
-        dash.update(deviceId, pin, pinType, pinsData[0].value, now);
+        user.profile.update(dash, deviceId, pin, pinType, pinsData[0].value, now);
 
         String body = makeBody(dash, deviceId, pin, pinType, pinsData[0].value);
 

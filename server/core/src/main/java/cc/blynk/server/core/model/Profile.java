@@ -3,7 +3,11 @@ package cc.blynk.server.core.model;
 import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.storage.PinPropertyStorageKey;
+import cc.blynk.server.core.model.storage.PinStorageKey;
+import cc.blynk.server.core.model.storage.PinStorageValue;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
@@ -16,6 +20,8 @@ import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.utils.ArrayUtil;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_APPS;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DASHBOARDS;
@@ -30,6 +36,37 @@ public class Profile {
     public volatile DashBoard[] dashBoards = EMPTY_DASHBOARDS;
 
     public volatile App[] apps = EMPTY_APPS;
+
+    public void update(DashBoard dash, int deviceId, short pin, PinType pinType, String value, long now) {
+        if (!dash.updateWidgets(deviceId, pin, pinType, value)) {
+            //special case. #237 if no widget - storing without widget.
+            putPinStorageValue(dash, deviceId, pinType, pin, value);
+        }
+
+        dash.updatedAt = now;
+    }
+
+    public void putPinPropertyStorageValue(DashBoard dash, int deviceId, PinType type, short pin,
+                                           WidgetProperty property, String value) {
+        putPinStorageValue(dash, new PinPropertyStorageKey(deviceId, type, pin, property), value);
+    }
+
+    private void putPinStorageValue(DashBoard dash, int deviceId, PinType type, short pin, String value) {
+        putPinStorageValue(dash, new PinStorageKey(deviceId, type, pin), value);
+    }
+
+    private void putPinStorageValue(DashBoard dash, PinStorageKey key, String value) {
+        if (dash.pinsStorage == Collections.EMPTY_MAP) {
+            dash.pinsStorage = new HashMap<>();
+        }
+
+        PinStorageValue pinStorageValue = dash.pinsStorage.get(key);
+        if (pinStorageValue == null) {
+            pinStorageValue = dash.initStorageValueForStorageKey(key);
+            dash.pinsStorage.put(key, pinStorageValue);
+        }
+        pinStorageValue.update(value);
+    }
 
     public Widget getWidgetWithLoggedPin(DashBoard dash, int deviceId, short pin, PinType pinType) {
         for (Widget widget : dash.widgets) {

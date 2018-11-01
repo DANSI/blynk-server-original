@@ -7,7 +7,6 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.utils.NumberUtil;
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.mqtt.MqttPublishMessage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -43,7 +42,7 @@ public class MqttHardwareLogic {
         return body.charAt(1) == 'w';
     }
 
-    public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, MqttPublishMessage msg) {
+    public void messageReceived(HardwareStateHolder state, MqttPublishMessage msg) {
         Session session = sessionDao.userSession.get(state.userKey);
 
         String body = msg.payload().readSlice(msg.payload().capacity()).toString(StandardCharsets.UTF_8);
@@ -84,7 +83,7 @@ public class MqttHardwareLogic {
 
             reportingDao.process(state.user, dash, deviceId, pin, pinType, value, now);
 
-            dash.update(0, pin, pinType, value, now);
+            state.user.profile.update(dash, 0, pin, pinType, value, now);
         }
 
         if (dash.isActive) {

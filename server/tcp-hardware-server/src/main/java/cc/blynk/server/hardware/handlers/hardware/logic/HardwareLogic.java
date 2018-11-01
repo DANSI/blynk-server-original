@@ -81,7 +81,7 @@ public class HardwareLogic extends BaseProcessorHandler {
             int deviceId = device.id;
 
             reportingDao.process(user, dash, deviceId, pin, pinType, value, now);
-            dash.update(deviceId, pin, pinType, value, now);
+            user.profile.update(dash, deviceId, pin, pinType, value, now);
             device.dataReceivedAt = now;
 
             Session session = sessionDao.userSession.get(userKey);

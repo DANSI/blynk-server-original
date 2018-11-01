@@ -2,6 +2,7 @@ package cc.blynk.server.core.processors;
 
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
@@ -103,7 +104,7 @@ public class EventorProcessor {
                         for (BaseAction action : rule.actions) {
                             if (action.isValid()) {
                                 if (action instanceof SetPinAction) {
-                                    execute(session, dash, deviceId, (SetPinAction) action, now);
+                                    execute(session, user.profile, dash, deviceId, (SetPinAction) action, now);
                                 } else if (action instanceof NotificationAction) {
                                     execute(user, dash, triggerValue, (NotificationAction) action);
                                 }
@@ -182,11 +183,12 @@ public class EventorProcessor {
         );
     }
 
-    private void execute(Session session, DashBoard dash, int deviceId, SetPinAction action, long now) {
+    private void execute(Session session, Profile profile, DashBoard dash,
+                         int deviceId, SetPinAction action, long now) {
         String body = action.makeHardwareBody();
         session.sendMessageToHardware(dash.id, HARDWARE, 888, body, deviceId);
         session.sendToApps(HARDWARE, 888, dash.id, deviceId, body);
 
-        dash.update(deviceId, action.dataStream.pin, action.dataStream.pinType, action.value, now);
+        profile.update(dash, deviceId, action.dataStream.pin, action.dataStream.pinType, action.value, now);
     }
 }

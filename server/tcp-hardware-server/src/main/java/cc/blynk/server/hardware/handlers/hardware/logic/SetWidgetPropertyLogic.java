@@ -86,7 +86,8 @@ public final class SetWidgetPropertyLogic {
 
         //this is possible case for device selector
         if (widget == null) {
-            dash.putPinPropertyStorageValue(deviceId, PinType.VIRTUAL, pin, widgetProperty, propertyValue);
+            state.user.profile.putPinPropertyStorageValue(dash,
+                    deviceId, PinType.VIRTUAL, pin, widgetProperty, propertyValue);
         }
         dash.updatedAt = System.currentTimeMillis();
 
