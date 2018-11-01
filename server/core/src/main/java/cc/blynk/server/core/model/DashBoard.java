@@ -426,7 +426,7 @@ public class DashBoard {
         }
     }
 
-    private void deleteDeviceFromTags(int deviceId) {
+    public void deleteDeviceFromTags(int deviceId) {
         for (Tag tag : tags) {
             tag.deleteDevice(deviceId);
         }
@@ -648,7 +648,6 @@ public class DashBoard {
         this.devices = ArrayUtil.remove(this.devices, existingDeviceIndex, Device.class);
         eraseValuesForDevice(deviceId);
         deleteDeviceFromWidgets(deviceId);
-        deleteDeviceFromTags(deviceId);
         this.updatedAt = System.currentTimeMillis();
         return deviceToRemove;
     }
