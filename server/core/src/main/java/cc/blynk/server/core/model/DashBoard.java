@@ -571,10 +571,6 @@ public class DashBoard {
         }
 
         this.widgets = updatedDashboard.widgets;
-        for (Widget widget : widgets) {
-            cleanPinStorageInternalWithoutUpdatedAt(widget, false, true);
-        }
-        this.updatedAt = System.currentTimeMillis();
     }
 
     public void updateFaceFields(DashBoard parent) {
@@ -617,6 +613,14 @@ public class DashBoard {
         }
 
         return copy.toArray(new Widget[newWidgets.length]);
+    }
+
+    public void cleanPinStorage(Widget[] widgets,
+                                boolean removeProperties, boolean eraseTemplates) {
+        for (Widget widget : widgets) {
+            cleanPinStorageInternalWithoutUpdatedAt(widget, removeProperties, eraseTemplates);
+        }
+        this.updatedAt = System.currentTimeMillis();
     }
 
     private void cleanPinStorageInternalWithoutUpdatedAt(Widget widget,
