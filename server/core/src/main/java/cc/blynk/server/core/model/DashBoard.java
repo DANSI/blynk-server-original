@@ -487,6 +487,10 @@ public class DashBoard {
             }
         }
 
+        sendPinStorageSyncs(appChannel, targetId, useNewFormat);
+    }
+
+    private void sendPinStorageSyncs(Channel appChannel, int targetId, boolean useNewFormat) {
         for (Map.Entry<PinStorageKey, PinStorageValue> entry : pinsStorage.entrySet()) {
             PinStorageKey key = entry.getKey();
             if ((targetId == ANY_TARGET || targetId == key.deviceId) && appChannel.isWritable()) {
