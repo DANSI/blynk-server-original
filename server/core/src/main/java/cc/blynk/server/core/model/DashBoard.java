@@ -259,7 +259,7 @@ public class DashBoard {
 
     public boolean hasWidgetsByDeviceId(int deviceId) {
         for (Widget widget : widgets) {
-            if (!(widget instanceof DeviceTiles) && widget.isAssignedToDevice(deviceId)) {
+            if (widget.isAssignedToDevice(deviceId)) {
                 return true;
             }
         }
@@ -367,27 +367,21 @@ public class DashBoard {
         return sum;
     }
 
-    public void eraseValues() {
-        this.pinsStorage = Collections.emptyMap();
+    public void eraseWidgetValues() {
         for (Widget widget : widgets) {
             widget.erase();
         }
     }
 
-    private void eraseValuesForDevice(int deviceId) {
+    private void erasePinStorageForDevice(int deviceId) {
         pinsStorage.entrySet().removeIf(entry -> entry.getKey().deviceId == deviceId);
-        for (Widget widget : widgets) {
-            if (widget.isAssignedToDevice(deviceId)) {
-                //deviceTiles has a bit different removal logic, so we skip it here
-                if (!(widget instanceof DeviceTiles)) {
-                    widget.erase();
-                }
-            }
-        }
     }
 
-    private void deleteDeviceFromWidgets(int deviceId) {
+    private void eraseWidgetValuesForDevice(int deviceId) {
         for (Widget widget : widgets) {
+            if (widget.isAssignedToDevice(deviceId)) {
+                widget.erase();
+            }
             if (widget instanceof DeviceCleaner) {
                 ((DeviceCleaner) widget).deleteDevice(deviceId);
             }
@@ -618,8 +612,8 @@ public class DashBoard {
         int existingDeviceIndex = getDeviceIndexByIdOrThrow(deviceId);
         Device deviceToRemove = this.devices[existingDeviceIndex];
         this.devices = ArrayUtil.remove(this.devices, existingDeviceIndex, Device.class);
-        eraseValuesForDevice(deviceId);
-        deleteDeviceFromWidgets(deviceId);
+        eraseWidgetValuesForDevice(deviceId);
+        erasePinStorageForDevice(deviceId);
         this.updatedAt = System.currentTimeMillis();
         return deviceToRemove;
     }

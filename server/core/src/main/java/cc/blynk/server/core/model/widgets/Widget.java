@@ -174,6 +174,10 @@ public abstract class Widget implements CopyObject<Widget> {
 
     public abstract void erase();
 
+    /**
+     * WARNING: this method has one exclusion for DeviceTiles, as
+     * Device for Tiles not assigned directly, but assigned via provisioning
+     */
     public abstract boolean isAssignedToDevice(int deviceId);
 
     protected void append(StringBuilder sb, short pin, PinType pinType) {

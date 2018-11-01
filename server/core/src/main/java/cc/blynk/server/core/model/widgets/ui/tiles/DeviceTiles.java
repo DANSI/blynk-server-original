@@ -254,11 +254,6 @@ public class DeviceTiles extends Widget implements MobileSyncWidget, HardwareSyn
 
     @Override
     public boolean isAssignedToDevice(int deviceId) {
-        for (Tile tile : tiles) {
-            if (tile.deviceId == deviceId) {
-                return true;
-            }
-        }
         return false;
     }
 

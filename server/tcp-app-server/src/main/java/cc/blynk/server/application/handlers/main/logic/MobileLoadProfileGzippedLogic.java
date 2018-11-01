@@ -14,6 +14,8 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Collections;
+
 import static cc.blynk.server.core.model.serialization.JsonParser.gzipDash;
 import static cc.blynk.server.core.model.serialization.JsonParser.gzipDashRestrictive;
 import static cc.blynk.server.core.model.serialization.JsonParser.gzipProfile;
@@ -68,7 +70,8 @@ public final class MobileLoadProfileGzippedLogic {
                         //todo ugly. but ok for now
                         String copyString = JsonParser.toJsonRestrictiveDashboard(dash);
                         DashBoard copyDash = JsonParser.parseDashboard(copyString, msgId);
-                        copyDash.eraseValues();
+                        copyDash.eraseWidgetValues();
+                        copyDash.pinsStorage = Collections.emptyMap();
                         write(ctx, gzipDashRestrictive(copyDash), msgId);
                     }
                 } catch (Exception e) {

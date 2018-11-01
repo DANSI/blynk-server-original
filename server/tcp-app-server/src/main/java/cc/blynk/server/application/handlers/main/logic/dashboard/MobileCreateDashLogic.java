@@ -16,6 +16,8 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Collections;
+
 import static cc.blynk.server.internal.CommonByteBufUtil.energyLimit;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 
@@ -98,7 +100,8 @@ public final class MobileCreateDashLogic {
         newDash.addTimers(holder.timerWorker, state.userKey);
 
         if (!generateTokensForDevices) {
-            newDash.eraseValues();
+            newDash.eraseWidgetValues();
+            newDash.pinsStorage = Collections.emptyMap();
         }
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
