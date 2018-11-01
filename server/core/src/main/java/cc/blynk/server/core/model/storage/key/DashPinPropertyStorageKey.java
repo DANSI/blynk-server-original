@@ -6,8 +6,8 @@ import cc.blynk.utils.StringUtils;
 
 import java.util.Objects;
 
+import static cc.blynk.server.core.model.DataStream.makePropertyHardwareBody;
 import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
-import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 
 /**
  * The Blynk Project.
@@ -37,7 +37,7 @@ public final class DashPinPropertyStorageKey extends DashPinStorageKey {
 
     @Override
     public String makeHardwareBody(String value) {
-        return "" + pin + BODY_SEPARATOR + property.label + BODY_SEPARATOR + value;
+        return makePropertyHardwareBody(pin, property, value);
     }
 
     @Override
