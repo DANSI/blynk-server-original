@@ -26,6 +26,7 @@ public final class PinPropertyStorageKey extends PinStorageKey {
         return "" + pin + BODY_SEPARATOR + property.label + BODY_SEPARATOR + value;
     }
 
+    @Override
     public short getCmdType() {
         return SET_WIDGET_PROPERTY;
     }
