@@ -5,6 +5,7 @@ import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.Theme;
+import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.serialization.View;
 import cc.blynk.server.core.model.storage.PinStorageKeyDeserializer;
@@ -488,6 +489,18 @@ public class DashBoard {
     public void addDevice(Device device) {
         this.devices = ArrayUtil.add(this.devices, device, Device.class);
         this.updatedAt = System.currentTimeMillis();
+    }
+
+    public Widget updateProperty(int deviceId, short pin, WidgetProperty widgetProperty, String propertyValue) {
+        Widget widget = null;
+        for (Widget dashWidget : widgets) {
+            if (dashWidget.isSame(deviceId, pin, PinType.VIRTUAL)) {
+                if (dashWidget.setProperty(widgetProperty, propertyValue)) {
+                    widget = dashWidget;
+                }
+            }
+        }
+        return widget;
     }
 
     @Override
