@@ -4,7 +4,6 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
@@ -95,7 +94,7 @@ public final class MobileActivateDashboardLogic {
             }
 
             boolean isNewSyncFormat = mobileStateHolder != null && mobileStateHolder.isNewSyncFormat();
-            Profile.sendAppSyncs(dash, appChannel, ANY_TARGET, isNewSyncFormat);
+            user.profile.sendAppSyncs(dash, appChannel, ANY_TARGET, isNewSyncFormat);
             appChannel.flush();
         }
     }

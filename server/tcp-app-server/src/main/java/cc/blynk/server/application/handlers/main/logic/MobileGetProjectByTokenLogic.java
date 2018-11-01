@@ -12,8 +12,6 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Collections;
-
 import static cc.blynk.server.core.protocol.enums.Command.GET_PROJECT_BY_TOKEN;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeBinaryMessage;
 import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
@@ -49,7 +47,6 @@ public final class MobileGetProjectByTokenLogic {
             DashBoard dash = publishUser.profile.getDashById(dbFlashedToken.dashId);
             DashBoard copy = CopyUtil.deepCopy(dash);
             copy.eraseWidgetValues();
-            copy.pinsStorage = Collections.emptyMap();
 
             if (dash == null) {
                 log.error("Dash with {} id not exists in dashboards.", dbFlashedToken.dashId);

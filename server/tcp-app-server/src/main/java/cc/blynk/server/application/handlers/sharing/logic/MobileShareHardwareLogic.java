@@ -110,7 +110,7 @@ public class MobileShareHardwareLogic extends BaseProcessorHandler {
             case 'u' :
                 //splitting "vu 200000 1"
                 var splitBody = split3(split[1]);
-                MobileHardwareLogic.processDeviceSelectorCommand(ctx, session, dash, message, splitBody);
+                MobileHardwareLogic.processDeviceSelectorCommand(ctx, session, user.profile, dash, message, splitBody);
                 break;
             case 'w' :
                 splitBody = split3(split[1]);

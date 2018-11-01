@@ -3,7 +3,6 @@ package cc.blynk.server.application.handlers.main.logic.dashboard.widget;
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -146,7 +145,7 @@ public final class MobileUpdateWidgetLogic {
                     dash.widgets, newWidget, dash.getWidgetIndexByIdOrThrow(newWidget.id));
         }
 
-        Profile.cleanPinStorage(dash, newWidget, true);
+        user.profile.cleanPinStorage(dash, newWidget, true);
         user.lastModifiedTs = dash.updatedAt;
 
         if (prevWidget instanceof Timer) {

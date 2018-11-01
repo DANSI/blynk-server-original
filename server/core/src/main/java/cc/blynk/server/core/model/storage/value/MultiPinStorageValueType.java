@@ -1,4 +1,4 @@
-package cc.blynk.server.core.model.storage;
+package cc.blynk.server.core.model.storage.value;
 
 import cc.blynk.utils.structure.BaseLimitedQueue;
 import cc.blynk.utils.structure.LCDLimitedQueue;

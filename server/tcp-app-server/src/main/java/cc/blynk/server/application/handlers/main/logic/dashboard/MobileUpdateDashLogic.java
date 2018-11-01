@@ -2,7 +2,8 @@ package cc.blynk.server.application.handlers.main.logic.dashboard;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
-import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
@@ -30,7 +31,7 @@ public final class MobileUpdateDashLogic {
     //todo should accept only dash info and ignore widgets. should be fixed after migration
     public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
                                        MobileStateHolder state, StringMessage message) {
-        var dashString = message.body;
+        String dashString = message.body;
 
         if (dashString == null || dashString.isEmpty()) {
             throw new IllegalCommandException("Income create dash message is empty.");
@@ -41,7 +42,7 @@ public final class MobileUpdateDashLogic {
         }
 
         log.debug("Trying to parse user dash : {}", dashString);
-        var updatedDash = JsonParser.parseDashboard(dashString, message.id);
+        DashBoard updatedDash = JsonParser.parseDashboard(dashString, message.id);
 
         if (updatedDash == null) {
             throw new IllegalCommandException("Project parsing error.");
@@ -49,16 +50,16 @@ public final class MobileUpdateDashLogic {
 
         log.debug("Saving dashboard.");
 
-        var user = state.user;
+        User user = state.user;
 
-        var existingDash = user.profile.getDashByIdOrThrow(updatedDash.id);
+        DashBoard existingDash = user.profile.getDashByIdOrThrow(updatedDash.id);
 
         TimerWorker timerWorker = holder.timerWorker;
         timerWorker.deleteTimers(state.userKey, existingDash);
         updatedDash.addTimers(timerWorker, state.userKey);
 
         existingDash.updateFields(updatedDash);
-        Profile.cleanPinStorage(existingDash, false, true);
+        user.profile.cleanPinStorage(existingDash, false, true);
 
         user.lastModifiedTs = existingDash.updatedAt;
 

@@ -5,6 +5,11 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Status;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.storage.key.DashPinPropertyStorageKey;
+import cc.blynk.server.core.model.storage.key.DashPinStorageKey;
+import cc.blynk.server.core.model.storage.key.PinPropertyStorageKey;
+import cc.blynk.server.core.model.storage.key.PinStorageKey;
+import cc.blynk.server.core.model.storage.value.PinStorageValue;
 import cc.blynk.utils.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,6 +24,7 @@ import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -209,16 +215,32 @@ public class FileManager {
         return Stream.empty();
     }
 
-    private void makeProfileChanges(User user) {
+    //public is for tests only
+    public void makeProfileChanges(User user) {
         if (user.email == null) {
             user.email = user.name;
         }
         user.ip = host;
-        for (DashBoard dashBoard : user.profile.dashBoards) {
-            if (dashBoard.devices != null) {
-                for (Device device : dashBoard.devices) {
+        for (DashBoard dash : user.profile.dashBoards) {
+            if (dash.devices != null) {
+                for (Device device : dash.devices) {
                     device.status = Status.OFFLINE;
                 }
+            }
+            if (dash.pinsStorage != null && dash.pinsStorage.size() > 0) {
+                int dashId = dash.id;
+                for (Map.Entry<PinStorageKey, PinStorageValue> pinsStorageEntry : dash.pinsStorage.entrySet()) {
+                    PinStorageKey key = pinsStorageEntry.getKey();
+                    DashPinStorageKey dashPinStorageKey;
+                    if (key instanceof PinPropertyStorageKey) {
+                        dashPinStorageKey = new DashPinPropertyStorageKey(dashId, (PinPropertyStorageKey) key);
+                    } else {
+                        dashPinStorageKey = new DashPinStorageKey(dashId, key);
+                    }
+                    PinStorageValue value = pinsStorageEntry.getValue();
+                    user.profile.pinsStorage.put(dashPinStorageKey, value);
+                }
+                dash.pinsStorage = Collections.emptyMap();
             }
         }
     }

@@ -5,9 +5,12 @@ import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.model.storage.PinPropertyStorageKey;
-import cc.blynk.server.core.model.storage.PinStorageKey;
-import cc.blynk.server.core.model.storage.PinStorageValue;
+import cc.blynk.server.core.model.serialization.View;
+import cc.blynk.server.core.model.storage.DashPinStorageKeyDeserializer;
+import cc.blynk.server.core.model.storage.PinStorageValueDeserializer;
+import cc.blynk.server.core.model.storage.key.DashPinPropertyStorageKey;
+import cc.blynk.server.core.model.storage.key.DashPinStorageKey;
+import cc.blynk.server.core.model.storage.value.PinStorageValue;
 import cc.blynk.server.core.model.widgets.MobileSyncWidget;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
@@ -22,10 +25,11 @@ import cc.blynk.server.core.model.widgets.ui.tiles.Tile;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.utils.ArrayUtil;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.netty.channel.Channel;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,28 +48,18 @@ public class Profile {
 
     public volatile App[] apps = EMPTY_APPS;
 
-    public static void cleanPinStorage(DashBoard dash, Widget widget, boolean removeTemplates) {
+    @JsonView(View.Private.class)
+    @JsonDeserialize(keyUsing = DashPinStorageKeyDeserializer.class,
+                     contentUsing = PinStorageValueDeserializer.class)
+    public final Map<DashPinStorageKey, PinStorageValue> pinsStorage = new HashMap<>();
+
+    public void cleanPinStorage(DashBoard dash, Widget widget, boolean removeTemplates) {
         cleanPinStorageInternalWithoutUpdatedAt(dash, widget, true, removeTemplates);
         dash.updatedAt = System.currentTimeMillis();
     }
 
-    private static void cleanPinStorage(DashBoard dash, DeviceTiles deviceTiles, boolean removeProperties) {
-        for (Tile tile : deviceTiles.tiles) {
-            if (tile != null && tile.isValidDataStream()) {
-                DataStream dataStream = tile.dataStream;
-                dash.pinsStorage.remove(new PinStorageKey(tile.deviceId, dataStream.pinType, dataStream.pin));
-                if (removeProperties) {
-                    for (WidgetProperty widgetProperty : WidgetProperty.values()) {
-                        dash.pinsStorage.remove(new PinPropertyStorageKey(tile.deviceId,
-                                dataStream.pinType, dataStream.pin, widgetProperty));
-                    }
-                }
-            }
-        }
-    }
-
-    public static void cleanPinStorageForTileTemplate(DashBoard dash, TileTemplate tileTemplate,
-                                                      boolean removeProperties) {
+    public void cleanPinStorageForTileTemplate(DashBoard dash, TileTemplate tileTemplate,
+                                               boolean removeProperties) {
         for (int deviceId : tileTemplate.deviceIds) {
             for (Widget widget : tileTemplate.widgets) {
                 if (widget instanceof OnePinWidget) {
@@ -79,7 +73,7 @@ public class Profile {
         }
     }
 
-    private static void cleanPinStorage(DashBoard dash,
+    private void cleanPinStorage(DashBoard dash,
                                         MultiPinWidget multiPinWidget, int targetId, boolean removeProperties) {
         if (multiPinWidget.dataStreams != null) {
             for (DataStream dataStream : multiPinWidget.dataStreams) {
@@ -91,16 +85,16 @@ public class Profile {
         }
     }
 
-    private static void cleanPinStorage(DashBoard dash,
-                                        OnePinWidget onePinWidget, int targetId, boolean removeProperties) {
+    private void cleanPinStorage(DashBoard dash, OnePinWidget onePinWidget,
+                                 int targetId, boolean removeProperties) {
         if (onePinWidget.isValid()) {
             removePinStorageValue(dash, targetId == -1 ? onePinWidget.deviceId : targetId,
                     onePinWidget.pinType, onePinWidget.pin, removeProperties);
         }
     }
 
-    private static void removePinStorageValue(DashBoard dash, int targetId,
-                                              PinType pinType, short pin, boolean removeProperties) {
+    private void removePinStorageValue(DashBoard dash, int targetId,
+                                       PinType pinType, short pin, boolean removeProperties) {
         Target target;
         if (targetId < Tag.START_TAG_ID) {
             target = dash.getDeviceById(targetId);
@@ -112,17 +106,18 @@ public class Profile {
         }
         if (target != null) {
             for (int deviceId : target.getAssignedDeviceIds()) {
-                dash.pinsStorage.remove(new PinStorageKey(deviceId, pinType, pin));
+                pinsStorage.remove(new DashPinStorageKey(dash.id, deviceId, pinType, pin));
                 if (removeProperties) {
                     for (WidgetProperty widgetProperty : WidgetProperty.values()) {
-                        dash.pinsStorage.remove(new PinPropertyStorageKey(deviceId, pinType, pin, widgetProperty));
+                        pinsStorage.remove(
+                                new DashPinPropertyStorageKey(dash.id, deviceId, pinType, pin, widgetProperty));
                     }
                 }
             }
         }
     }
 
-    public static void sendAppSyncs(DashBoard dash, Channel appChannel, int targetId, boolean useNewFormat) {
+    public void sendAppSyncs(DashBoard dash, Channel appChannel, int targetId, boolean useNewFormat) {
         for (Widget widget : dash.widgets) {
             if (widget instanceof MobileSyncWidget && appChannel.isWritable()) {
                 ((MobileSyncWidget) widget).sendAppSync(appChannel, dash.id, targetId, useNewFormat);
@@ -132,26 +127,28 @@ public class Profile {
         sendPinStorageSyncs(dash, appChannel, targetId, useNewFormat);
     }
 
-    private static void sendPinStorageSyncs(DashBoard dash, Channel appChannel, int targetId, boolean useNewFormat) {
-        for (Map.Entry<PinStorageKey, PinStorageValue> entry : dash.pinsStorage.entrySet()) {
-            PinStorageKey key = entry.getKey();
-            if ((targetId == ANY_TARGET || targetId == key.deviceId) && appChannel.isWritable()) {
+    private void sendPinStorageSyncs(DashBoard dash, Channel appChannel, int targetId, boolean useNewFormat) {
+        for (Map.Entry<DashPinStorageKey, PinStorageValue> entry : pinsStorage.entrySet()) {
+            DashPinStorageKey key = entry.getKey();
+            if ((targetId == ANY_TARGET || targetId == key.deviceId)
+                    && dash.id == key.dashId
+                    && appChannel.isWritable()) {
                 PinStorageValue pinStorageValue = entry.getValue();
                 pinStorageValue.sendAppSync(appChannel, dash.id, key, useNewFormat);
             }
         }
     }
 
-    public static void cleanPinStorage(DashBoard dash, boolean removeProperties,
-                                       boolean eraseTemplates) {
+    public void cleanPinStorage(DashBoard dash, boolean removeProperties,
+                                boolean eraseTemplates) {
         for (Widget widget : dash.widgets) {
             cleanPinStorageInternalWithoutUpdatedAt(dash, widget, removeProperties, eraseTemplates);
         }
         dash.updatedAt = System.currentTimeMillis();
     }
 
-    private static void cleanPinStorageInternalWithoutUpdatedAt(DashBoard dash, Widget widget,
-                                                                boolean removeProperties, boolean eraseTemplates) {
+    private void cleanPinStorageInternalWithoutUpdatedAt(DashBoard dash, Widget widget,
+                                                         boolean removeProperties, boolean eraseTemplates) {
         if (widget instanceof OnePinWidget) {
             OnePinWidget onePinWidget = (OnePinWidget) widget;
             cleanPinStorage(dash, onePinWidget, -1, removeProperties);
@@ -160,22 +157,37 @@ public class Profile {
             cleanPinStorage(dash, multiPinWidget, -1, removeProperties);
         } else if (widget instanceof DeviceTiles) {
             DeviceTiles deviceTiles = (DeviceTiles) widget;
-            cleanPinStorage(dash, deviceTiles, removeProperties);
+            cleanPinStorage(dash.id, deviceTiles, removeProperties);
             if (eraseTemplates) {
                 cleanPinStorageForTemplate(dash, deviceTiles, removeProperties);
             }
         }
     }
 
-    private static void cleanPinStorageForTemplate(DashBoard dash,
+    private void cleanPinStorage(int dashId, DeviceTiles deviceTiles, boolean removeProperties) {
+        for (Tile tile : deviceTiles.tiles) {
+            if (tile != null && tile.isValidDataStream()) {
+                DataStream dataStream = tile.dataStream;
+                pinsStorage.remove(new DashPinStorageKey(dashId, tile.deviceId, dataStream.pinType, dataStream.pin));
+                if (removeProperties) {
+                    for (WidgetProperty widgetProperty : WidgetProperty.values()) {
+                        pinsStorage.remove(new DashPinPropertyStorageKey(dashId, tile.deviceId,
+                                dataStream.pinType, dataStream.pin, widgetProperty));
+                    }
+                }
+            }
+        }
+    }
+
+    private void cleanPinStorageForTemplate(DashBoard dash,
                                                    DeviceTiles deviceTiles, boolean removeProperties) {
         for (TileTemplate tileTemplate : deviceTiles.templates) {
             cleanPinStorageForTileTemplate(dash, tileTemplate, removeProperties);
         }
     }
 
-    public void cleanPinStorageForDevice(DashBoard dash, int deviceId) {
-        dash.pinsStorage.entrySet().removeIf(entry -> entry.getKey().deviceId == deviceId);
+    public void cleanPinStorageForDevice(int deviceId) {
+        pinsStorage.entrySet().removeIf(entry -> entry.getKey().deviceId == deviceId);
     }
 
     public void update(DashBoard dash, int deviceId, short pin, PinType pinType, String value, long now) {
@@ -189,22 +201,18 @@ public class Profile {
 
     public void putPinPropertyStorageValue(DashBoard dash, int deviceId, PinType type, short pin,
                                            WidgetProperty property, String value) {
-        putPinStorageValue(dash, new PinPropertyStorageKey(deviceId, type, pin, property), value);
+        putPinStorageValue(dash, new DashPinPropertyStorageKey(dash.id, deviceId, type, pin, property), value);
     }
 
     private void putPinStorageValue(DashBoard dash, int deviceId, PinType type, short pin, String value) {
-        putPinStorageValue(dash, new PinStorageKey(deviceId, type, pin), value);
+        putPinStorageValue(dash, new DashPinStorageKey(dash.id, deviceId, type, pin), value);
     }
 
-    private void putPinStorageValue(DashBoard dash, PinStorageKey key, String value) {
-        if (dash.pinsStorage == Collections.EMPTY_MAP) {
-            dash.pinsStorage = new HashMap<>();
-        }
-
-        PinStorageValue pinStorageValue = dash.pinsStorage.get(key);
+    private void putPinStorageValue(DashBoard dash, DashPinStorageKey key, String value) {
+        PinStorageValue pinStorageValue = pinsStorage.get(key);
         if (pinStorageValue == null) {
             pinStorageValue = dash.initStorageValueForStorageKey(key);
-            dash.pinsStorage.put(key, pinStorageValue);
+            pinsStorage.put(key, pinStorageValue);
         }
         pinStorageValue.update(value);
     }

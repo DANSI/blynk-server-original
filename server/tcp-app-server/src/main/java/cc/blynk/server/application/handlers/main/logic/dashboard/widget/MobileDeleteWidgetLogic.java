@@ -4,7 +4,6 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.core.dao.UserKey;
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
@@ -103,7 +102,7 @@ public final class MobileDeleteWidgetLogic {
             dash.widgets = ArrayUtil.remove(dash.widgets, index, Widget.class);
         }
 
-        Profile.cleanPinStorage(dash, widgetToDelete, true);
+        user.profile.cleanPinStorage(dash, widgetToDelete, true);
 
         if (widgetToDelete instanceof Timer) {
             timerWorker.delete(state.userKey, (Timer) widgetToDelete, dashId, deviceTilesId, templateId);

@@ -2,7 +2,6 @@ package cc.blynk.server.application.handlers.main.logic.dashboard.widget.tile;
 
 import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -63,7 +62,7 @@ public final class MobileUpdateTileTemplateLogic {
         log.debug("Updating tile template {}.", tileTemplateString);
         deviceTiles.replaceTileTemplate(newTileTemplate, existingTileTemplateIndex);
 
-        Profile.cleanPinStorage(dash, deviceTiles, false);
+        user.profile.cleanPinStorage(dash, deviceTiles, false);
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

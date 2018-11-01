@@ -2,6 +2,8 @@ package cc.blynk.server.core.model.storage;
 
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
+import cc.blynk.server.core.model.storage.key.PinPropertyStorageKey;
+import cc.blynk.server.core.model.storage.key.PinStorageKey;
 import cc.blynk.utils.NumberUtil;
 import cc.blynk.utils.StringUtils;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -12,6 +14,7 @@ import com.fasterxml.jackson.databind.KeyDeserializer;
  * Created by Dmitriy Dumanskiy.
  * Created on 19.11.16.
  */
+@Deprecated
 public class PinStorageKeyDeserializer extends KeyDeserializer {
 
     @Override

@@ -2,10 +2,11 @@ package cc.blynk.server.hardware.handlers.hardware.logic;
 
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
+import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.enums.PinType;
-import cc.blynk.server.core.model.storage.PinPropertyStorageKey;
-import cc.blynk.server.core.model.storage.PinStorageKey;
-import cc.blynk.server.core.model.storage.PinStorageValue;
+import cc.blynk.server.core.model.storage.key.DashPinPropertyStorageKey;
+import cc.blynk.server.core.model.storage.key.DashPinStorageKey;
+import cc.blynk.server.core.model.storage.value.PinStorageValue;
 import cc.blynk.server.core.model.widgets.HardwareSyncWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
@@ -14,6 +15,8 @@ import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.utils.NumberUtil;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
+
+import java.util.Map;
 
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
 import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
@@ -35,13 +38,13 @@ public final class HardwareSyncLogic {
         DashBoard dash = state.dash;
 
         if (message.body.length() == 0) {
-            syncAll(ctx, message.id, dash, deviceId);
+            syncAll(ctx, message.id, state.user.profile, dash, deviceId);
         } else {
-            syncSpecificPins(ctx, message.body, message.id, dash, deviceId);
+            syncSpecificPins(ctx, message.body, message.id, state.user.profile, dash, deviceId);
         }
     }
 
-    private static void syncAll(ChannelHandlerContext ctx, int msgId, DashBoard dash, int deviceId) {
+    private static void syncAll(ChannelHandlerContext ctx, int msgId, Profile profile, DashBoard dash, int deviceId) {
         //return all widgets state
         for (Widget widget : dash.widgets) {
             //one exclusion, no need to sync RTC
@@ -49,10 +52,13 @@ public final class HardwareSyncLogic {
                 ((HardwareSyncWidget) widget).sendHardSync(ctx, msgId, deviceId);
             }
         }
-        //return all static server holders
-        for (var entry : dash.pinsStorage.entrySet()) {
-            PinStorageKey key = entry.getKey();
-            if (deviceId == key.deviceId && !(key instanceof PinPropertyStorageKey) && ctx.channel().isWritable()) {
+
+        for (Map.Entry<DashPinStorageKey, PinStorageValue> entry : profile.pinsStorage.entrySet()) {
+            DashPinStorageKey key = entry.getKey();
+            if (deviceId == key.deviceId
+                    && dash.id == key.dashId
+                    && !(key instanceof DashPinPropertyStorageKey)
+                    && ctx.channel().isWritable()) {
                 for (String value : entry.getValue().values()) {
                     String body = key.makeHardwareBody(value);
                     ctx.write(makeUTF8StringMessage(HARDWARE, msgId, body), ctx.voidPromise());
@@ -66,7 +72,7 @@ public final class HardwareSyncLogic {
     //message format is "vr 22 33"
     //return specific widget state
     private static void syncSpecificPins(ChannelHandlerContext ctx, String messageBody,
-                                         int msgId, DashBoard dash, int deviceId) {
+                                         int msgId, Profile profile, DashBoard dash, int deviceId) {
         String[] bodyParts = messageBody.split(StringUtils.BODY_SEPARATOR_STRING);
 
         if (bodyParts.length < 2 || bodyParts[0].isEmpty()) {
@@ -83,7 +89,7 @@ public final class HardwareSyncLogic {
                 if (ctx.channel().isWritable()) {
                     if (widget == null) {
                         PinStorageValue pinStorageValue =
-                                dash.pinsStorage.get(new PinStorageKey(deviceId, pinType, pin));
+                                profile.pinsStorage.get(new DashPinStorageKey(dash.id, deviceId, pinType, pin));
                         if (pinStorageValue != null) {
                             for (String value : pinStorageValue.values()) {
                                 String body = DataStream.makeHardwareBody(pinType, pin, value);

@@ -16,7 +16,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -299,7 +298,6 @@ public class UserDao {
         clonedDash.updatedAt = clonedDash.createdAt;
         clonedDash.isActive = true;
         clonedDash.eraseWidgetValues();
-        clonedDash.pinsStorage = Collections.emptyMap();
         removeDevicesProvisionedFromDeviceTiles(clonedDash);
 
         clonedDash.addTimers(timerWorker, new UserKey(newUser));

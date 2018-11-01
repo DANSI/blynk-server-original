@@ -2,12 +2,14 @@ package cc.blynk.server.application.handlers.main.logic.dashboard.widget;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
-import cc.blynk.server.core.model.Profile;
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
+import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -36,13 +38,13 @@ public final class MobileCreateWidgetLogic {
     public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
                                        MobileStateHolder state, StringMessage message) {
         //format is "dashId widget_json" or "dashId widgetId templateId widget_json"
-        var split = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
+        String[] split = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
         if (split.length < 2) {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        var dashId = Integer.parseInt(split[0]);
+        int dashId = Integer.parseInt(split[0]);
 
         long widgetAddToId;
         long templateIdAddToId;
@@ -65,10 +67,10 @@ public final class MobileCreateWidgetLogic {
             throw new NotAllowedException("Widget is larger then limit.", message.id);
         }
 
-        var user = state.user;
-        var dash = user.profile.getDashByIdOrThrow(dashId);
+        User user = state.user;
+        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
-        var newWidget = JsonParser.parseWidget(widgetString, message.id);
+        Widget newWidget = JsonParser.parseWidget(widgetString, message.id);
 
         if (newWidget.width < 1 || newWidget.height < 1) {
             throw new NotAllowedException("Widget has wrong dimensions.", message.id);
@@ -76,7 +78,7 @@ public final class MobileCreateWidgetLogic {
 
         log.debug("Creating new widget {} for dashId {}.", widgetString, dashId);
 
-        for (var widget : dash.widgets) {
+        for (Widget widget : dash.widgets) {
             if (widget.id == newWidget.id) {
                 throw new NotAllowedException("Widget with same id already exists.", message.id);
             }
@@ -88,7 +90,7 @@ public final class MobileCreateWidgetLogic {
             }
         }
 
-        var price = newWidget.getPrice();
+        int price = newWidget.getPrice();
         if (user.notEnoughEnergy(price)) {
             log.debug("Not enough energy.");
             ctx.writeAndFlush(energyLimit(message.id), ctx.voidPromise());
@@ -101,12 +103,12 @@ public final class MobileCreateWidgetLogic {
             dash.widgets = ArrayUtil.add(dash.widgets, newWidget, Widget.class);
         } else {
             //right now we can only add to DeviceTiles widget
-            var deviceTiles = (DeviceTiles) dash.getWidgetByIdOrThrow(widgetAddToId);
-            var tileTemplate = deviceTiles.getTileTemplateByIdOrThrow(templateIdAddToId);
+            DeviceTiles deviceTiles = (DeviceTiles) dash.getWidgetByIdOrThrow(widgetAddToId);
+            TileTemplate tileTemplate = deviceTiles.getTileTemplateByIdOrThrow(templateIdAddToId);
             tileTemplate.widgets = ArrayUtil.add(tileTemplate.widgets, newWidget, Widget.class);
         }
 
-        Profile.cleanPinStorage(dash, newWidget, true);
+        user.profile.cleanPinStorage(dash, newWidget, true);
         user.lastModifiedTs = dash.updatedAt;
 
         TimerWorker timerWorker = holder.timerWorker;

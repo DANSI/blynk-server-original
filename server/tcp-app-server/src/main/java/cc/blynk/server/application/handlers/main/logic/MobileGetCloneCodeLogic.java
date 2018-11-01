@@ -12,8 +12,6 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Collections;
-
 import static cc.blynk.server.core.protocol.enums.Command.GET_CLONE_CODE;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeASCIIStringMessage;
 import static cc.blynk.server.internal.CommonByteBufUtil.serverError;
@@ -39,7 +37,6 @@ public final class MobileGetCloneCodeLogic {
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
         DashBoard copiedDash = CopyUtil.deepCopy(dash);
         copiedDash.eraseWidgetValues();
-        copiedDash.pinsStorage = Collections.emptyMap();
 
         String json = JsonParser.toJsonRestrictiveDashboard(copiedDash);
         String qrToken = TokenGeneratorUtil.generateNewToken();

@@ -8,7 +8,7 @@ import cc.blynk.server.core.model.auth.FacebookTokenResponse;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.Tag;
-import cc.blynk.server.core.model.storage.SinglePinStorageValue;
+import cc.blynk.server.core.model.storage.value.SinglePinStorageValue;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.ui.reporting.Report;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;

@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.serialization;
 
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.device.Tag;
 import com.fasterxml.jackson.databind.util.TokenBuffer;
 import org.apache.logging.log4j.LogManager;
@@ -42,6 +43,21 @@ public final class CopyUtil {
             return JsonParser.MAPPER.readValue(tb.asParser(), DashBoard.class);
         } catch (Exception e) {
             log.error("Error during deep copy of dashboard. Reason : {}", e.getMessage());
+            log.debug(e);
+        }
+        return null;
+    }
+
+    public static Profile deepCopy(Profile profile) {
+        if (profile == null) {
+            return null;
+        }
+        try {
+            TokenBuffer tb = new TokenBuffer(JsonParser.MAPPER, false);
+            JsonParser.MAPPER.writeValue(tb, profile);
+            return JsonParser.MAPPER.readValue(tb.asParser(), Profile.class);
+        } catch (Exception e) {
+            log.error("Error during deep copy of profile. Reason : {}", e.getMessage());
             log.debug(e);
         }
         return null;

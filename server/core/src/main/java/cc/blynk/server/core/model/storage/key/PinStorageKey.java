@@ -1,4 +1,4 @@
-package cc.blynk.server.core.model.storage;
+package cc.blynk.server.core.model.storage.key;
 
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
@@ -16,6 +16,7 @@ import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
  * Created by Dmitriy Dumanskiy.
  * Created on 19.11.16.
  */
+@Deprecated
 public class PinStorageKey {
 
     public final int deviceId;

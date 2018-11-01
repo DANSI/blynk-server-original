@@ -1,8 +1,10 @@
-package cc.blynk.server.core.model.storage;
+package cc.blynk.server.core.model.storage.key;
 
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.utils.StringUtils;
+
+import java.util.Objects;
 
 import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
 import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
@@ -12,13 +14,25 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
  * Created by Dmitriy Dumanskiy.
  * Created on 10.06.17.
  */
-public final class PinPropertyStorageKey extends PinStorageKey {
+public final class DashPinPropertyStorageKey extends DashPinStorageKey {
 
     private final WidgetProperty property;
 
-    public PinPropertyStorageKey(int deviceId, PinType pinType, short pin, WidgetProperty property) {
-        super(deviceId, pinType, pin);
+    private DashPinPropertyStorageKey(int dashId, int deviceId, char pinTypeChar, short pin, WidgetProperty property) {
+        super(dashId, deviceId, pinTypeChar, pin);
         this.property = property;
+    }
+
+    public DashPinPropertyStorageKey(int dashId, int deviceId, PinType pinType, short pin, WidgetProperty property) {
+        super(dashId, deviceId, pinType, pin);
+        this.property = property;
+    }
+
+    public DashPinPropertyStorageKey(int dashId, PinPropertyStorageKey pinPropertyStorageKey) {
+        this(dashId, pinPropertyStorageKey.deviceId,
+                pinPropertyStorageKey.pinTypeChar,
+                pinPropertyStorageKey.pin,
+                pinPropertyStorageKey.property);
     }
 
     @Override
@@ -36,23 +50,19 @@ public final class PinPropertyStorageKey extends PinStorageKey {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof PinPropertyStorageKey)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
         if (!super.equals(o)) {
             return false;
         }
-
-        PinPropertyStorageKey that = (PinPropertyStorageKey) o;
-
+        DashPinPropertyStorageKey that = (DashPinPropertyStorageKey) o;
         return property == that.property;
     }
 
     @Override
     public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + (property != null ? property.hashCode() : 0);
-        return result;
+        return Objects.hash(super.hashCode(), property);
     }
 
     @Override

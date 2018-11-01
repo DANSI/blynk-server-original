@@ -9,6 +9,7 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Target;
+import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.processors.BaseProcessorHandler;
 import cc.blynk.server.core.processors.WebhookProcessor;
@@ -107,7 +108,7 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
             case 'u' :
                 //splitting "vu 200000 1"
                 var splitBody = split3(split[1]);
-                processDeviceSelectorCommand(ctx, session, dash, message, splitBody);
+                processDeviceSelectorCommand(ctx, session, state.user.profile, dash, message, splitBody);
                 break;
             case 'w' :
                 splitBody = split3(split[1]);
@@ -148,11 +149,11 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
     }
 
     public static void processDeviceSelectorCommand(ChannelHandlerContext ctx,
-                                                    Session session, DashBoard dash,
+                                                    Session session, Profile profile, DashBoard dash,
                                                     StringMessage message, String[] splitBody) {
         //in format "vu 200000 1"
-        var widgetId = Long.parseLong(splitBody[1]);
-        var deviceSelector = dash.getWidgetByIdOrThrow(widgetId);
+        long widgetId = Long.parseLong(splitBody[1]);
+        Widget deviceSelector = dash.getWidgetByIdOrThrow(widgetId);
         if (deviceSelector instanceof DeviceSelector) {
             var selectedDeviceId = Integer.parseInt(splitBody[2]);
             ((DeviceSelector) deviceSelector).value = selectedDeviceId;
@@ -166,7 +167,7 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
                 MobileStateHolder mobileStateHolder = getAppState(channel);
                 if (mobileStateHolder != null && mobileStateHolder.contains(dash.sharedToken)) {
                     boolean isNewSyncFormat = mobileStateHolder.isNewSyncFormat();
-                    Profile.sendAppSyncs(dash, channel, selectedDeviceId, isNewSyncFormat);
+                    profile.sendAppSyncs(dash, channel, selectedDeviceId, isNewSyncFormat);
                 }
                 channel.flush();
             }

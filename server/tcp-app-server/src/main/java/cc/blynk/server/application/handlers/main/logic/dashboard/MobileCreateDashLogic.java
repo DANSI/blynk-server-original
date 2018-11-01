@@ -3,6 +3,7 @@ package cc.blynk.server.application.handlers.main.logic.dashboard;
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.exceptions.NotAllowedException;
@@ -15,8 +16,6 @@ import cc.blynk.utils.TokenGeneratorUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.Collections;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.energyLimit;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
@@ -36,7 +35,7 @@ public final class MobileCreateDashLogic {
 
     public static void messageReceived(Holder holder, ChannelHandlerContext ctx,
                                        MobileStateHolder state, StringMessage message) {
-        var generateTokensForDevices = true;
+        boolean generateTokensForDevices = true;
         final String dashString;
         if (message.body.startsWith("no_token")) {
             generateTokensForDevices = false;
@@ -54,14 +53,14 @@ public final class MobileCreateDashLogic {
         }
 
         log.debug("Trying to parse user newDash : {}", dashString);
-        var newDash = JsonParser.parseDashboard(dashString, message.id);
+        DashBoard newDash = JsonParser.parseDashboard(dashString, message.id);
 
-        var user = state.user;
+        User user = state.user;
         if (user.profile.dashBoards.length >= holder.limits.dashboardsLimit) {
             throw new QuotaLimitException("Dashboards limit reached.", message.id);
         }
 
-        for (var dashBoard : user.profile.dashBoards) {
+        for (DashBoard dashBoard : user.profile.dashBoards) {
             if (dashBoard.id == newDash.id) {
                 throw new NotAllowedException("Dashboard already exists.", message.id);
             }
@@ -101,7 +100,6 @@ public final class MobileCreateDashLogic {
 
         if (!generateTokensForDevices) {
             newDash.eraseWidgetValues();
-            newDash.pinsStorage = Collections.emptyMap();
         }
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());

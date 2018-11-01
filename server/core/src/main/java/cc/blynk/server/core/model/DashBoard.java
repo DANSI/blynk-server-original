@@ -7,12 +7,13 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.Theme;
 import cc.blynk.server.core.model.serialization.JsonParser;
 import cc.blynk.server.core.model.serialization.View;
-import cc.blynk.server.core.model.storage.PinPropertyStorageKey;
-import cc.blynk.server.core.model.storage.PinStorageKey;
 import cc.blynk.server.core.model.storage.PinStorageKeyDeserializer;
-import cc.blynk.server.core.model.storage.PinStorageValue;
 import cc.blynk.server.core.model.storage.PinStorageValueDeserializer;
-import cc.blynk.server.core.model.storage.SinglePinStorageValue;
+import cc.blynk.server.core.model.storage.key.DashPinPropertyStorageKey;
+import cc.blynk.server.core.model.storage.key.DashPinStorageKey;
+import cc.blynk.server.core.model.storage.key.PinStorageKey;
+import cc.blynk.server.core.model.storage.value.PinStorageValue;
+import cc.blynk.server.core.model.storage.value.SinglePinStorageValue;
 import cc.blynk.server.core.model.widgets.DeviceCleaner;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
@@ -96,6 +97,7 @@ public class DashBoard {
     @JsonView(View.Private.class)
     @JsonDeserialize(keyUsing = PinStorageKeyDeserializer.class,
                      contentUsing = PinStorageValueDeserializer.class)
+    @Deprecated
     public Map<PinStorageKey, PinStorageValue> pinsStorage = Collections.emptyMap();
 
     public boolean updateWidgets(int deviceId, short pin, PinType type, String value) {
@@ -119,13 +121,13 @@ public class DashBoard {
     //multi value widgets has always priority over single value widgets.
     //for example, we have 2 widgets on the same pin, one it terminal, another is value display.
     //so for that pin we have to return multivalue storage
-    public PinStorageValue initStorageValueForStorageKey(PinStorageKey key) {
-        if (!(key instanceof PinPropertyStorageKey)) {
+    public PinStorageValue initStorageValueForStorageKey(DashPinStorageKey key) {
+        if (!(key instanceof DashPinPropertyStorageKey)) {
             for (Widget widget : widgets) {
                 if (widget instanceof OnePinWidget) {
                     OnePinWidget onePinWidget = (OnePinWidget) widget;
                     //pim matches and widget assigned to device selector
-                    if (onePinWidget.isAssignedToDeviceSelector() && key.isSamePin(onePinWidget)) {
+                    if (onePinWidget.isAssignedToDeviceSelector() && key.isSame(id, onePinWidget)) {
                         DeviceSelector deviceSelector = getDeviceSelector(onePinWidget.deviceId);
                         if (deviceSelector != null && ArrayUtil.contains(deviceSelector.deviceIds, key.deviceId)) {
                             if (widget.isMultiValueWidget()) {
@@ -135,7 +137,7 @@ public class DashBoard {
                     }
                 } else if (widget instanceof MultiPinWidget) {
                     MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
-                    if (multiPinWidget.isAssignedToDeviceSelector() && key.isSamePin(multiPinWidget)) {
+                    if (multiPinWidget.isAssignedToDeviceSelector() && key.isSame(id, multiPinWidget)) {
                         DeviceSelector deviceSelector = getDeviceSelector(multiPinWidget.deviceId);
                         if (deviceSelector != null && ArrayUtil.contains(deviceSelector.deviceIds, key.deviceId)) {
                             if (widget.isMultiValueWidget()) {
@@ -149,13 +151,13 @@ public class DashBoard {
                         if (ArrayUtil.contains(template.deviceIds, key.deviceId)) {
                             for (Widget tileWidget : template.widgets) {
                                 if (tileWidget instanceof OnePinWidget) {
-                                    if (key.isSamePin((OnePinWidget) tileWidget)) {
+                                    if (key.isSame(id, (OnePinWidget) tileWidget)) {
                                         if (tileWidget.isMultiValueWidget()) {
                                             return tileWidget.getPinStorageValue();
                                         }
                                     }
                                 } else if (tileWidget instanceof MultiPinWidget) {
-                                    if (key.isSamePin((MultiPinWidget) tileWidget)) {
+                                    if (key.isSame(id, (MultiPinWidget) tileWidget)) {
                                         if (tileWidget.isMultiValueWidget()) {
                                             return tileWidget.getPinStorageValue();
                                         }
