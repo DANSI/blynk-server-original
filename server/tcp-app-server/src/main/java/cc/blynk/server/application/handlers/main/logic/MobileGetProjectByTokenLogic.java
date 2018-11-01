@@ -47,7 +47,7 @@ public final class MobileGetProjectByTokenLogic {
 
             DashBoard dash = publishUser.profile.getDashById(dbFlashedToken.dashId);
             DashBoard copy = CopyUtil.deepCopy(dash);
-            copy.eraseValues();
+            copy.eraseWidgetValues();
 
             if (dash == null) {
                 log.error("Dash with {} id not exists in dashboards.", dbFlashedToken.dashId);

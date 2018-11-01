@@ -72,7 +72,7 @@ public final class MobileCreateTileTemplateLogic {
         deviceTiles.templates = ArrayUtil.add(deviceTiles.templates, newTileTemplate, TileTemplate.class);
         deviceTiles.recreateTilesIfNecessary(newTileTemplate, null);
 
-        dash.cleanPinStorage(deviceTiles, true);
+        user.profile.cleanPinStorage(dash, deviceTiles, true);
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

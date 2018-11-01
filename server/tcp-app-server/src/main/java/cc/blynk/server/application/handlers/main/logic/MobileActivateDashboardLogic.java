@@ -94,7 +94,7 @@ public final class MobileActivateDashboardLogic {
             }
 
             boolean isNewSyncFormat = mobileStateHolder != null && mobileStateHolder.isNewSyncFormat();
-            dash.sendAppSyncs(appChannel, ANY_TARGET, isNewSyncFormat);
+            user.profile.sendAppSyncs(dash, appChannel, ANY_TARGET, isNewSyncFormat);
             appChannel.flush();
         }
     }

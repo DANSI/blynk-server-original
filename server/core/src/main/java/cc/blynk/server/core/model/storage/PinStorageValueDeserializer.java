@@ -1,5 +1,8 @@
 package cc.blynk.server.core.model.storage;
 
+import cc.blynk.server.core.model.storage.value.MultiPinStorageValue;
+import cc.blynk.server.core.model.storage.value.MultiPinStorageValueType;
+import cc.blynk.server.core.model.storage.value.SinglePinStorageValue;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;

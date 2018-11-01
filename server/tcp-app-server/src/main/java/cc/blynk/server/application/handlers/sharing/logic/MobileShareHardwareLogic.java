@@ -6,6 +6,7 @@ import cc.blynk.server.application.handlers.sharing.auth.MobileShareStateHolder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.Target;
@@ -14,7 +15,6 @@ import cc.blynk.server.core.processors.BaseProcessorHandler;
 import cc.blynk.server.core.processors.WebhookProcessor;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.NumberUtil;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -61,7 +61,8 @@ public class MobileShareHardwareLogic extends BaseProcessorHandler {
         String[] dashIdAndTargetIdString = split2Device(split[0]);
         int dashId = Integer.parseInt(dashIdAndTargetIdString[0]);
 
-        DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
+        User user = state.user;
+        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
         //if no active dashboard - do nothing. this could happen only in case of app. bug
         if (!dash.isActive) {
@@ -77,7 +78,7 @@ public class MobileShareHardwareLogic extends BaseProcessorHandler {
         }
 
         if (!dash.isShared) {
-            log.debug("Dashboard is not shared. User : {}, {}", state.user.email, ctx.channel().remoteAddress());
+            log.debug("Dashboard is not shared. User : {}, {}", user.email, ctx.channel().remoteAddress());
             ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
             return;
         }
@@ -108,8 +109,8 @@ public class MobileShareHardwareLogic extends BaseProcessorHandler {
         switch (operation) {
             case 'u' :
                 //splitting "vu 200000 1"
-                String[] splitBody = split3(split[1]);
-                MobileHardwareLogic.processDeviceSelectorCommand(ctx, session, dash, message, splitBody);
+                var splitBody = split3(split[1]);
+                MobileHardwareLogic.processDeviceSelectorCommand(ctx, session, user.profile, dash, message, splitBody);
                 break;
             case 'w' :
                 splitBody = split3(split[1]);
@@ -126,17 +127,17 @@ public class MobileShareHardwareLogic extends BaseProcessorHandler {
                 long now = System.currentTimeMillis();
 
                 for (int deviceId : deviceIds) {
-                    dash.update(deviceId, pin, pinType, value, now);
+                    user.profile.update(dash, deviceId, pin, pinType, value, now);
                 }
 
                 //additional state for tag widget itself
                 if (target.isTag()) {
-                    dash.update(targetId, pin, pinType, value, now);
+                    user.profile.update(dash, targetId, pin, pinType, value, now);
                 }
 
                 String sharedToken = state.token;
                 if (sharedToken != null) {
-                    for (Channel appChannel : session.appChannels) {
+                    for (var appChannel : session.appChannels) {
                         if (appChannel != ctx.channel() && appChannel.isWritable()
                                 && Session.needSync(appChannel, sharedToken)) {
                             appChannel.writeAndFlush(
@@ -152,7 +153,7 @@ public class MobileShareHardwareLogic extends BaseProcessorHandler {
                     ctx.writeAndFlush(deviceNotInNetwork(message.id), ctx.voidPromise());
                 }
 
-                processEventorAndWebhook(state.user, dash, targetId, session, pin, pinType, value, now);
+                processEventorAndWebhook(user, dash, targetId, session, pin, pinType, value, now);
                 break;
         }
     }

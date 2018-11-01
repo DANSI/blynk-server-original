@@ -2,9 +2,11 @@ package cc.blynk.server.core.processors;
 
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Mail;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
@@ -12,6 +14,7 @@ import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.others.eventor.Rule;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinAction;
+import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPropertyPinAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.MailAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.NotificationAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.NotifyAction;
@@ -30,6 +33,7 @@ import org.asynchttpclient.Response;
 
 import static cc.blynk.server.core.protocol.enums.Command.EVENTOR;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
 import static cc.blynk.utils.StringUtils.PIN_PATTERN;
 
 /**
@@ -103,7 +107,9 @@ public class EventorProcessor {
                         for (BaseAction action : rule.actions) {
                             if (action.isValid()) {
                                 if (action instanceof SetPinAction) {
-                                    execute(session, dash, deviceId, (SetPinAction) action, now);
+                                    execute(session, user.profile, dash, deviceId, (SetPinAction) action, now);
+                                } else if (action instanceof SetPropertyPinAction) {
+                                    execute(session, user.profile, dash, deviceId, (SetPropertyPinAction) action, now);
                                 } else if (action instanceof NotificationAction) {
                                     execute(user, dash, triggerValue, (NotificationAction) action);
                                 }
@@ -182,11 +188,26 @@ public class EventorProcessor {
         );
     }
 
-    private void execute(Session session, DashBoard dash, int deviceId, SetPinAction action, long now) {
+    private void execute(Session session, Profile profile, DashBoard dash,
+                         int deviceId, SetPinAction action, long now) {
         String body = action.makeHardwareBody();
         session.sendMessageToHardware(dash.id, HARDWARE, 888, body, deviceId);
         session.sendToApps(HARDWARE, 888, dash.id, deviceId, body);
 
-        dash.update(deviceId, action.dataStream.pin, action.dataStream.pinType, action.value, now);
+        profile.update(dash, deviceId, action.dataStream.pin, action.dataStream.pinType, action.value, now);
+    }
+
+    private void execute(Session session, Profile profile, DashBoard dash,
+                         int deviceId, SetPropertyPinAction action, long now) {
+        String body = action.makeHardwareBody();
+        session.sendToApps(SET_WIDGET_PROPERTY, 888, dash.id, deviceId, body);
+
+        Widget widget = dash.updateProperty(deviceId, action.dataStream.pin, action.property, action.value);
+        //this is possible case for device selector
+        if (widget == null) {
+            profile.putPinPropertyStorageValue(dash, deviceId,
+                    PinType.VIRTUAL, action.dataStream.pin, action.property, action.value);
+        }
+        dash.updatedAt = now;
     }
 }

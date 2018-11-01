@@ -2,10 +2,8 @@ package cc.blynk.server.application.handlers.main.logic.dashboard.tags;
 
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
-import cc.blynk.utils.ArrayUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,9 +37,7 @@ public final class MobileDeleteTagLogic {
 
         log.debug("Deleting tag with id {}.", tagId);
 
-        int existingTagIndex = dash.getTagIndexById(tagId);
-
-        dash.tags = ArrayUtil.remove(dash.tags, existingTagIndex, Tag.class);
+        dash.deleteTag(tagId);
         dash.updatedAt = System.currentTimeMillis();
         user.lastModifiedTs = dash.updatedAt;
 

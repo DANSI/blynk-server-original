@@ -1,5 +1,6 @@
-package cc.blynk.server.core.model.storage;
+package cc.blynk.server.core.model.storage.value;
 
+import cc.blynk.server.core.model.storage.key.DashPinStorageKey;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.structure.BaseLimitedQueue;
 import io.netty.channel.Channel;
@@ -32,7 +33,7 @@ public class MultiPinStorageValue extends PinStorageValue {
     }
 
     @Override
-    public void sendAppSync(Channel appChannel, int dashId, PinStorageKey key, boolean useNewFormat) {
+    public void sendAppSync(Channel appChannel, int dashId, DashPinStorageKey key, boolean useNewFormat) {
         if (values.size() > 0) {
             if (useNewFormat) {
                 Iterator<String> valIterator = values.iterator();

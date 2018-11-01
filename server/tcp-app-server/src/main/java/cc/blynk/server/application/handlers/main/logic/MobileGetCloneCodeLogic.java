@@ -36,7 +36,7 @@ public final class MobileGetCloneCodeLogic {
         //todo all this is very ugly, however takes 5 min for implementation, also this is rare feature
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
         DashBoard copiedDash = CopyUtil.deepCopy(dash);
-        copiedDash.eraseValues();
+        copiedDash.eraseWidgetValues();
 
         String json = JsonParser.toJsonRestrictiveDashboard(copiedDash);
         String qrToken = TokenGeneratorUtil.generateNewToken();

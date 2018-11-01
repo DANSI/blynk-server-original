@@ -5,12 +5,15 @@ import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
+import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.others.eventor.Rule;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.BaseAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPinActionType;
+import cc.blynk.server.core.model.widgets.others.eventor.model.action.SetPropertyPinAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.MailAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.NotifyAction;
 import cc.blynk.server.core.model.widgets.others.eventor.model.action.notification.TwitAction;
@@ -38,6 +41,7 @@ import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.hardware;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.server.core.protocol.enums.Command.HARDWARE;
+import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
 import static cc.blynk.server.core.protocol.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -632,5 +636,40 @@ public class EventorTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1-0 vw 1 ABC"))));
         verify(clientPair.hardwareClient.responseMock, never()).channelRead(any(), eq(produce(888, HARDWARE, b("vw 2 123"))));
         verify(clientPair.appClient.responseMock, never()).channelRead(any(), eq(produce(888, HARDWARE, b("1-0 vw 2 123"))));
+    }
+
+    @Test
+    public void testSetWidgetPropertyViaEventor() throws Exception {
+        clientPair.appClient.send("loadProfileGzipped");
+        Profile profile = clientPair.appClient.parseProfile(1);
+
+        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 4, PinType.VIRTUAL);
+        assertNotNull(widget);
+        assertEquals("Some Text", widget.label);
+
+        DataStream triggerStream = new DataStream((short) 43, PinType.VIRTUAL);
+        SetPropertyPinAction setPropertyPinAction = new SetPropertyPinAction(new DataStream((short) 4, PinType.VIRTUAL),
+                WidgetProperty.LABEL, "MyNewLabel");
+
+        Eventor eventor = new Eventor(new Rule[] {
+                new Rule(triggerStream, null, new StringEqual("abc"), new BaseAction[] {setPropertyPinAction}, true)
+        });
+
+        clientPair.appClient.createWidget(1, eventor);
+        clientPair.appClient.verifyResult(ok(2));
+
+        clientPair.hardwareClient.send("hardware vw 43 abc");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE, b("1-0 vw 43 abc"))));
+        verify(clientPair.hardwareClient.responseMock, never()).channelRead(any(), eq(produce(888, HARDWARE, b("vw 4 label MyNewLabel"))));
+        verify(clientPair.appClient.responseMock, never()).channelRead(any(), eq(produce(888, HARDWARE, b("1-0 4 label MyNewLabel"))));
+        clientPair.appClient.verifyResult(produce(888, SET_WIDGET_PROPERTY, b("1-0 4 label MyNewLabel")));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfileGzipped");
+        profile = clientPair.appClient.parseProfile(1);
+
+        widget = profile.dashBoards[0].findWidgetByPin(0, (short) 4, PinType.VIRTUAL);
+        assertNotNull(widget);
+        assertEquals("MyNewLabel", widget.label);
     }
 }

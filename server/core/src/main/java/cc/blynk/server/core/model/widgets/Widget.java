@@ -5,8 +5,8 @@ import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.model.storage.PinStorageValue;
-import cc.blynk.server.core.model.storage.SinglePinStorageValue;
+import cc.blynk.server.core.model.storage.value.PinStorageValue;
+import cc.blynk.server.core.model.storage.value.SinglePinStorageValue;
 import cc.blynk.server.core.model.widgets.controls.Button;
 import cc.blynk.server.core.model.widgets.controls.LinkButton;
 import cc.blynk.server.core.model.widgets.controls.NumberInput;
@@ -174,6 +174,10 @@ public abstract class Widget implements CopyObject<Widget> {
 
     public abstract void erase();
 
+    /**
+     * WARNING: this method has one exclusion for DeviceTiles, as
+     * Device for Tiles not assigned directly, but assigned via provisioning
+     */
     public abstract boolean isAssignedToDevice(int deviceId);
 
     protected void append(StringBuilder sb, short pin, PinType pinType) {

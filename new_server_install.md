@@ -21,7 +21,7 @@
         && sudo apt-get update -q \
         && sudo apt install -y openjdk-11-jdk
         
-        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.40.0/server-0.40.0.jar"
+        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.40.1/server-0.40.1.jar"
         
 
 server.properties

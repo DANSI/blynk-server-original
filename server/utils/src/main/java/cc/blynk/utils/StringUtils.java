@@ -15,6 +15,7 @@ public final class StringUtils {
     public static final char BODY_SEPARATOR = '\0';
     public static final String BODY_SEPARATOR_STRING = String.valueOf(BODY_SEPARATOR);
     public static final char DEVICE_SEPARATOR = '-';
+    public static final String DEVICE_SEPARATOR_STRING = "-";
 
     public static final Pattern PIN_PATTERN =  Pattern.compile("/pin/", Pattern.LITERAL);
     public static final Pattern PIN_PATTERN_0 =  Pattern.compile("/pin[0]/", Pattern.LITERAL);

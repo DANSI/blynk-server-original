@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model;
 
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.enums.WidgetProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -78,6 +79,10 @@ public class DataStream {
 
     public static String makeHardwareBody(boolean pwmMode, PinType pinType, short pin, String value) {
         return pwmMode ? makeHardwareBody(PinType.ANALOG, pin, value) : makeHardwareBody(pinType, pin, value);
+    }
+
+    public static String makePropertyHardwareBody(short pin, WidgetProperty property, String value) {
+        return "" + pin + BODY_SEPARATOR + property.label + BODY_SEPARATOR + value;
     }
 
     public boolean isSame(short pin, PinType type) {

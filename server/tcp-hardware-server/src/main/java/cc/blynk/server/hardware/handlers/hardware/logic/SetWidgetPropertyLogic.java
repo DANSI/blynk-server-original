@@ -72,22 +72,13 @@ public final class SetWidgetPropertyLogic {
         int deviceId = state.device.id;
         short pin = NumberUtil.parsePin(bodyParts[0]);
 
-        Widget widget = null;
-        for (Widget dashWidget : dash.widgets) {
-            if (dashWidget.isSame(deviceId, pin, PinType.VIRTUAL)) {
-                if (dashWidget.setProperty(widgetProperty, propertyValue)) {
-                    widget = dashWidget;
-                } else {
-                    log.trace("Property {} with value {} not supported for widgetId {} .",
-                            property, propertyValue, dashWidget.id);
-                }
-            }
-        }
-
+        Widget widget = dash.updateProperty(deviceId, pin, widgetProperty, propertyValue);
         //this is possible case for device selector
         if (widget == null) {
-            dash.putPinPropertyStorageValue(deviceId, PinType.VIRTUAL, pin, widgetProperty, propertyValue);
+            state.user.profile.putPinPropertyStorageValue(dash,
+                    deviceId, PinType.VIRTUAL, pin, widgetProperty, propertyValue);
         }
+
         dash.updatedAt = System.currentTimeMillis();
 
         Session session = sessionDao.userSession.get(state.userKey);

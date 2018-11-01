@@ -42,7 +42,7 @@ public class MqttHardwareHandler extends BaseSimpleChannelInboundHandler<MqttMes
 
                 switch (topic.toLowerCase()) {
                     case "hardware" :
-                        hardware.messageReceived(ctx, state, publishMessage);
+                        hardware.messageReceived(state, publishMessage);
                         break;
                 }
 

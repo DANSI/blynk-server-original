@@ -2,6 +2,7 @@ package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.MobileSyncWidget;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import io.netty.channel.Channel;
@@ -30,7 +31,8 @@ public final class MobileSyncLogic {
         int dashId = Integer.parseInt(dashIdAndTargetIdString[0]);
         int targetId = MobileSyncWidget.ANY_TARGET;
 
-        DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
+        User user = state.user;
+        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
         if (dashIdAndTargetIdString.length == 2) {
             targetId = Integer.parseInt(dashIdAndTargetIdString[1]);
@@ -40,7 +42,7 @@ public final class MobileSyncLogic {
         Channel appChannel = ctx.channel();
         MobileStateHolder mobileStateHolder = getAppState(appChannel);
         boolean isNewSyncFormat = mobileStateHolder != null && mobileStateHolder.isNewSyncFormat();
-        dash.sendAppSyncs(appChannel, targetId, isNewSyncFormat);
+        user.profile.sendAppSyncs(dash, appChannel, targetId, isNewSyncFormat);
         ctx.flush();
     }
 

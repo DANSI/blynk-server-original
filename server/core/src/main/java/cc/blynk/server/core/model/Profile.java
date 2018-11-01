@@ -3,7 +3,17 @@ package cc.blynk.server.core.model;
 import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.model.serialization.View;
+import cc.blynk.server.core.model.storage.DashPinStorageKeyDeserializer;
+import cc.blynk.server.core.model.storage.PinStorageValueDeserializer;
+import cc.blynk.server.core.model.storage.key.DashPinPropertyStorageKey;
+import cc.blynk.server.core.model.storage.key.DashPinStorageKey;
+import cc.blynk.server.core.model.storage.value.PinStorageValue;
+import cc.blynk.server.core.model.widgets.MobileSyncWidget;
+import cc.blynk.server.core.model.widgets.MultiPinWidget;
+import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Target;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.graph.GraphDataStream;
@@ -11,12 +21,19 @@ import cc.blynk.server.core.model.widgets.outputs.graph.Superchart;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
+import cc.blynk.server.core.model.widgets.ui.tiles.Tile;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.utils.ArrayUtil;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import io.netty.channel.Channel;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
+import static cc.blynk.server.core.model.widgets.MobileSyncWidget.ANY_TARGET;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_APPS;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DASHBOARDS;
 
@@ -31,7 +48,176 @@ public class Profile {
 
     public volatile App[] apps = EMPTY_APPS;
 
-    public static Widget getWidgetWithLoggedPin(DashBoard dash, int deviceId, short pin, PinType pinType) {
+    @JsonView(View.Private.class)
+    @JsonDeserialize(keyUsing = DashPinStorageKeyDeserializer.class,
+                     contentUsing = PinStorageValueDeserializer.class)
+    public final Map<DashPinStorageKey, PinStorageValue> pinsStorage = new HashMap<>();
+
+    public void cleanPinStorage(DashBoard dash, Widget widget, boolean removeTemplates) {
+        cleanPinStorageInternalWithoutUpdatedAt(dash, widget, true, removeTemplates);
+        dash.updatedAt = System.currentTimeMillis();
+    }
+
+    public void cleanPinStorageForTileTemplate(DashBoard dash, TileTemplate tileTemplate,
+                                               boolean removeProperties) {
+        for (int deviceId : tileTemplate.deviceIds) {
+            for (Widget widget : tileTemplate.widgets) {
+                if (widget instanceof OnePinWidget) {
+                    OnePinWidget onePinWidget = (OnePinWidget) widget;
+                    cleanPinStorage(dash, onePinWidget, deviceId, removeProperties);
+                } else if (widget instanceof MultiPinWidget) {
+                    MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
+                    cleanPinStorage(dash, multiPinWidget, deviceId, removeProperties);
+                }
+            }
+        }
+    }
+
+    private void cleanPinStorage(DashBoard dash,
+                                        MultiPinWidget multiPinWidget, int targetId, boolean removeProperties) {
+        if (multiPinWidget.dataStreams != null) {
+            for (DataStream dataStream : multiPinWidget.dataStreams) {
+                if (dataStream != null && dataStream.isValid()) {
+                    removePinStorageValue(dash, targetId == -1 ? multiPinWidget.deviceId : targetId,
+                            dataStream.pinType, dataStream.pin, removeProperties);
+                }
+            }
+        }
+    }
+
+    private void cleanPinStorage(DashBoard dash, OnePinWidget onePinWidget,
+                                 int targetId, boolean removeProperties) {
+        if (onePinWidget.isValid()) {
+            removePinStorageValue(dash, targetId == -1 ? onePinWidget.deviceId : targetId,
+                    onePinWidget.pinType, onePinWidget.pin, removeProperties);
+        }
+    }
+
+    private void removePinStorageValue(DashBoard dash, int targetId,
+                                       PinType pinType, short pin, boolean removeProperties) {
+        Target target;
+        if (targetId < Tag.START_TAG_ID) {
+            target = dash.getDeviceById(targetId);
+        } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
+            target = dash.getTagById(targetId);
+        } else {
+            //means widget assigned to device selector widget.
+            target = dash.getDeviceSelector(targetId);
+        }
+        if (target != null) {
+            for (int deviceId : target.getAssignedDeviceIds()) {
+                pinsStorage.remove(new DashPinStorageKey(dash.id, deviceId, pinType, pin));
+                if (removeProperties) {
+                    for (WidgetProperty widgetProperty : WidgetProperty.values()) {
+                        pinsStorage.remove(
+                                new DashPinPropertyStorageKey(dash.id, deviceId, pinType, pin, widgetProperty));
+                    }
+                }
+            }
+        }
+    }
+
+    public void sendAppSyncs(DashBoard dash, Channel appChannel, int targetId, boolean useNewFormat) {
+        for (Widget widget : dash.widgets) {
+            if (widget instanceof MobileSyncWidget && appChannel.isWritable()) {
+                ((MobileSyncWidget) widget).sendAppSync(appChannel, dash.id, targetId, useNewFormat);
+            }
+        }
+
+        sendPinStorageSyncs(dash, appChannel, targetId, useNewFormat);
+    }
+
+    private void sendPinStorageSyncs(DashBoard dash, Channel appChannel, int targetId, boolean useNewFormat) {
+        for (Map.Entry<DashPinStorageKey, PinStorageValue> entry : pinsStorage.entrySet()) {
+            DashPinStorageKey key = entry.getKey();
+            if ((targetId == ANY_TARGET || targetId == key.deviceId)
+                    && dash.id == key.dashId
+                    && appChannel.isWritable()) {
+                PinStorageValue pinStorageValue = entry.getValue();
+                pinStorageValue.sendAppSync(appChannel, dash.id, key, useNewFormat);
+            }
+        }
+    }
+
+    public void cleanPinStorage(DashBoard dash, boolean removeProperties,
+                                boolean eraseTemplates) {
+        for (Widget widget : dash.widgets) {
+            cleanPinStorageInternalWithoutUpdatedAt(dash, widget, removeProperties, eraseTemplates);
+        }
+        dash.updatedAt = System.currentTimeMillis();
+    }
+
+    private void cleanPinStorageInternalWithoutUpdatedAt(DashBoard dash, Widget widget,
+                                                         boolean removeProperties, boolean eraseTemplates) {
+        if (widget instanceof OnePinWidget) {
+            OnePinWidget onePinWidget = (OnePinWidget) widget;
+            cleanPinStorage(dash, onePinWidget, -1, removeProperties);
+        } else if (widget instanceof MultiPinWidget) {
+            MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
+            cleanPinStorage(dash, multiPinWidget, -1, removeProperties);
+        } else if (widget instanceof DeviceTiles) {
+            DeviceTiles deviceTiles = (DeviceTiles) widget;
+            cleanPinStorage(dash.id, deviceTiles, removeProperties);
+            if (eraseTemplates) {
+                cleanPinStorageForTemplate(dash, deviceTiles, removeProperties);
+            }
+        }
+    }
+
+    private void cleanPinStorage(int dashId, DeviceTiles deviceTiles, boolean removeProperties) {
+        for (Tile tile : deviceTiles.tiles) {
+            if (tile != null && tile.isValidDataStream()) {
+                DataStream dataStream = tile.dataStream;
+                pinsStorage.remove(new DashPinStorageKey(dashId, tile.deviceId, dataStream.pinType, dataStream.pin));
+                if (removeProperties) {
+                    for (WidgetProperty widgetProperty : WidgetProperty.values()) {
+                        pinsStorage.remove(new DashPinPropertyStorageKey(dashId, tile.deviceId,
+                                dataStream.pinType, dataStream.pin, widgetProperty));
+                    }
+                }
+            }
+        }
+    }
+
+    private void cleanPinStorageForTemplate(DashBoard dash,
+                                                   DeviceTiles deviceTiles, boolean removeProperties) {
+        for (TileTemplate tileTemplate : deviceTiles.templates) {
+            cleanPinStorageForTileTemplate(dash, tileTemplate, removeProperties);
+        }
+    }
+
+    public void cleanPinStorageForDevice(int deviceId) {
+        pinsStorage.entrySet().removeIf(entry -> entry.getKey().deviceId == deviceId);
+    }
+
+    public void update(DashBoard dash, int deviceId, short pin, PinType pinType, String value, long now) {
+        if (!dash.updateWidgets(deviceId, pin, pinType, value)) {
+            //special case. #237 if no widget - storing without widget.
+            putPinStorageValue(dash, deviceId, pinType, pin, value);
+        }
+
+        dash.updatedAt = now;
+    }
+
+    public void putPinPropertyStorageValue(DashBoard dash, int deviceId, PinType type, short pin,
+                                           WidgetProperty property, String value) {
+        putPinStorageValue(dash, new DashPinPropertyStorageKey(dash.id, deviceId, type, pin, property), value);
+    }
+
+    private void putPinStorageValue(DashBoard dash, int deviceId, PinType type, short pin, String value) {
+        putPinStorageValue(dash, new DashPinStorageKey(dash.id, deviceId, type, pin), value);
+    }
+
+    private void putPinStorageValue(DashBoard dash, DashPinStorageKey key, String value) {
+        PinStorageValue pinStorageValue = pinsStorage.get(key);
+        if (pinStorageValue == null) {
+            pinStorageValue = dash.initStorageValueForStorageKey(key);
+            pinsStorage.put(key, pinStorageValue);
+        }
+        pinStorageValue.update(value);
+    }
+
+    public Widget getWidgetWithLoggedPin(DashBoard dash, int deviceId, short pin, PinType pinType) {
         for (Widget widget : dash.widgets) {
             if (widget instanceof Superchart) {
                 Superchart graph = (Superchart) widget;
@@ -62,7 +248,7 @@ public class Profile {
         return null;
     }
 
-    private static boolean isWithinGraph(DashBoard dash, Superchart graph,
+    private boolean isWithinGraph(DashBoard dash, Superchart graph,
                                          short pin, PinType pinType, int deviceId, int... deviceIds) {
         for (GraphDataStream graphDataStream : graph.dataStreams) {
             if (graphDataStream != null && graphDataStream.dataStream != null

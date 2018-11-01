@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.HashSet;
 
+import static cc.blynk.server.core.model.serialization.CopyUtil.copyTags;
 import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 
@@ -36,7 +37,7 @@ public final class MobileUpdateFaceLogic {
                                        User user, StringMessage message) {
         int parentDashId = Integer.parseInt(message.body);
 
-        DashBoard dash = user.profile.getDashByIdOrThrow(parentDashId);
+        DashBoard parent = user.profile.getDashByIdOrThrow(parentDashId);
 
         HashSet<String> appIds = new HashSet<>();
         for (DashBoard dashBoard : user.profile.dashBoards) {
@@ -67,7 +68,8 @@ public final class MobileUpdateFaceLogic {
                     //we found child project-face
                     log.debug("Found face for {}-{}.", existingUser.email, existingUser.appName);
                     try {
-                        existingDash.updateFaceFields(dash);
+                        existingDash.updateFaceFields(parent);
+                        existingDash.tags = copyTags(parent.tags);
                         //do not close connection for initiator
                         if (existingUser != user) {
                             holder.sessionDao.closeAppChannelsByUser(new UserKey(existingUser));

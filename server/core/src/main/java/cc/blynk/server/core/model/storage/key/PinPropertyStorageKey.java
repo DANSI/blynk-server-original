@@ -1,20 +1,21 @@
-package cc.blynk.server.core.model.storage;
+package cc.blynk.server.core.model.storage.key;
 
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.utils.StringUtils;
 
+import static cc.blynk.server.core.model.DataStream.makePropertyHardwareBody;
 import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
-import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
 
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 10.06.17.
  */
+@Deprecated
 public final class PinPropertyStorageKey extends PinStorageKey {
 
-    private final WidgetProperty property;
+    public final WidgetProperty property;
 
     public PinPropertyStorageKey(int deviceId, PinType pinType, short pin, WidgetProperty property) {
         super(deviceId, pinType, pin);
@@ -23,9 +24,10 @@ public final class PinPropertyStorageKey extends PinStorageKey {
 
     @Override
     public String makeHardwareBody(String value) {
-        return "" + pin + BODY_SEPARATOR + property.label + BODY_SEPARATOR + value;
+        return makePropertyHardwareBody(pin, property, value);
     }
 
+    @Override
     public short getCmdType() {
         return SET_WIDGET_PROPERTY;
     }

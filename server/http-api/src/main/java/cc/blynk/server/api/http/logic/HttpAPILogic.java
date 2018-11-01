@@ -27,13 +27,12 @@ import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.serialization.JsonParser;
-import cc.blynk.server.core.model.storage.PinStorageKey;
-import cc.blynk.server.core.model.storage.PinStorageValue;
-import cc.blynk.server.core.model.storage.SinglePinStorageValue;
+import cc.blynk.server.core.model.storage.key.DashPinStorageKey;
+import cc.blynk.server.core.model.storage.value.PinStorageValue;
+import cc.blynk.server.core.model.storage.value.SinglePinStorageValue;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
-import cc.blynk.server.core.model.widgets.notifications.Mail;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
@@ -43,6 +42,7 @@ import cc.blynk.server.core.protocol.exceptions.NoDataException;
 import cc.blynk.server.db.DBManager;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.server.notifications.push.GCMWrapper;
+import cc.blynk.utils.NumberUtil;
 import cc.blynk.utils.StringUtils;
 import cc.blynk.utils.TokenGeneratorUtil;
 import cc.blynk.utils.http.MediaType;
@@ -179,23 +179,24 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         User user = tokenValue.user;
         int deviceId = tokenValue.device.id;
-        DashBoard dashBoard = tokenValue.dash;
+        DashBoard dash = tokenValue.dash;
 
         PinType pinType;
         short pin;
 
         try {
             pinType = PinType.getPinType(pinString.charAt(0));
-            pin = Short.parseShort(pinString.substring(1));
+            pin = NumberUtil.parsePin(pinString.substring(1));
         } catch (NumberFormatException | IllegalCommandBodyException e) {
             log.debug("Wrong pin format. {}", pinString);
             return badRequest("Wrong pin format.");
         }
 
-        Widget widget = dashBoard.findWidgetByPin(deviceId, pin, pinType);
+        Widget widget = dash.findWidgetByPin(deviceId, pin, pinType);
 
         if (widget == null) {
-            PinStorageValue value = dashBoard.pinsStorage.get(new PinStorageKey(deviceId, pinType, pin));
+            PinStorageValue value = user.profile.pinsStorage.get(
+                    new DashPinStorageKey(dash.id, deviceId, pinType, pin));
             if (value == null) {
                 log.debug("Requested pin {} not found. User {}", pinString, user.email);
                 return badRequest("Requested pin doesn't exist in the app.");
@@ -296,7 +297,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         try {
             pinType = PinType.getPinType(pinString.charAt(0));
-            pin = Short.parseShort(pinString.substring(1));
+            pin = NumberUtil.parsePin(pinString.substring(1));
         } catch (NumberFormatException | IllegalCommandBodyException e) {
             log.debug("Wrong pin format. {}", pinString);
             return badRequest("Wrong pin format.");
@@ -345,7 +346,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
         short pin;
         try {
             pinType = PinType.getPinType(pinString.charAt(0));
-            pin = Short.parseShort(pinString.substring(1));
+            pin = NumberUtil.parsePin(pinString.substring(1));
         } catch (NumberFormatException | IllegalCommandBodyException e) {
             log.debug("Wrong pin format. {}", pinString);
             return badRequest("Wrong pin format.");
@@ -439,7 +440,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         try {
             pinType = PinType.getPinType(pinString.charAt(0));
-            pin = Short.parseShort(pinString.substring(1));
+            pin = NumberUtil.parsePin(pinString.substring(1));
         } catch (NumberFormatException | IllegalCommandBodyException e) {
             log.debug("Wrong pin format. {}", pinString);
             return badRequest("Wrong pin format.");
@@ -451,7 +452,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         reportingDao.process(user, dash, deviceId, pin, pinType, pinValue, now);
 
-        dash.update(deviceId, pin, pinType, pinValue, now);
+        user.profile.update(dash, deviceId, pin, pinType, pinValue, now);
         tokenValue.device.dataReceivedAt = now;
 
         String body = makeBody(dash, deviceId, pin, pinType, pinValue);
@@ -504,7 +505,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
 
         try {
             pinType = PinType.getPinType(pinString.charAt(0));
-            pin = Short.parseShort(pinString.substring(1));
+            pin = NumberUtil.parsePin(pinString.substring(1));
         } catch (NumberFormatException | IllegalCommandBodyException e) {
             log.debug("Wrong pin format. {}", pinString);
             return badRequest("Wrong pin format.");
@@ -515,7 +516,7 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
         }
 
         long now = System.currentTimeMillis();
-        dash.update(deviceId, pin, pinType, pinsData[0].value, now);
+        user.profile.update(dash, deviceId, pin, pinType, pinsData[0].value, now);
 
         String body = makeBody(dash, deviceId, pin, pinType, pinsData[0].value);
 
@@ -587,21 +588,21 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
     public Response email(@PathParam("token") String token,
                           EmailPojo message) {
 
-        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
+        var tokenValue = tokenManager.getTokenValueByToken(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
             return badRequest("Invalid token.");
         }
 
-        DashBoard dash = tokenValue.dash;
+        var dash = tokenValue.dash;
 
         if (dash == null || !dash.isActive) {
             log.debug("Project is not active.");
             return badRequest("Project is not active.");
         }
 
-        Mail mail = dash.getMailWidget();
+        var mail = dash.getMailWidget();
 
         if (mail == null) {
             log.debug("No email widget.");

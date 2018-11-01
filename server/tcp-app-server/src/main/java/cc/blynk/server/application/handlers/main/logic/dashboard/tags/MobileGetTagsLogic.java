@@ -24,13 +24,13 @@ public final class MobileGetTagsLogic {
 
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
-        String json = JsonParser.toJson(dash.tags);
-        if (json == null) {
-            json = "[]";
+        String response = JsonParser.toJson(dash.tags);
+        if (response == null) {
+            response = "[]";
         }
 
         if (ctx.channel().isWritable()) {
-            ctx.writeAndFlush(makeUTF8StringMessage(GET_TAGS, message.id, json), ctx.voidPromise());
+            ctx.writeAndFlush(makeUTF8StringMessage(GET_TAGS, message.id, response), ctx.voidPromise());
         }
     }
 

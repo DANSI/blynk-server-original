@@ -102,7 +102,7 @@ public final class MobileDeleteWidgetLogic {
             dash.widgets = ArrayUtil.remove(dash.widgets, index, Widget.class);
         }
 
-        dash.cleanPinStorage(widgetToDelete, true);
+        user.profile.cleanPinStorage(dash, widgetToDelete, true);
 
         if (widgetToDelete instanceof Timer) {
             timerWorker.delete(state.userKey, (Timer) widgetToDelete, dashId, deviceTilesId, templateId);

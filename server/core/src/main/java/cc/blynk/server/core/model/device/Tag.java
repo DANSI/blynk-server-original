@@ -81,7 +81,7 @@ public class Tag implements Target, DeviceCleaner {
 
     @Override
     public void deleteDevice(int deviceId) {
-        this.deviceIds = deleteDeviceFromArray(this.deviceIds, deviceId);
+        this.deviceIds = ArrayUtil.deleteFromArray(this.deviceIds, deviceId);
     }
 
     @Override

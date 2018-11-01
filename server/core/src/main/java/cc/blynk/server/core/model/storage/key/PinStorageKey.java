@@ -1,10 +1,12 @@
-package cc.blynk.server.core.model.storage;
+package cc.blynk.server.core.model.storage.key;
 
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import com.fasterxml.jackson.annotation.JsonValue;
+
+import java.util.Objects;
 
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
@@ -14,6 +16,7 @@ import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
  * Created by Dmitriy Dumanskiy.
  * Created on 19.11.16.
  */
+@Deprecated
 public class PinStorageKey {
 
     public final int deviceId;
@@ -57,27 +60,18 @@ public class PinStorageKey {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof PinStorageKey)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-
         PinStorageKey that = (PinStorageKey) o;
-
-        if (deviceId != that.deviceId) {
-            return false;
-        }
-        if (pin != that.pin) {
-            return false;
-        }
-        return pinTypeChar == that.pinTypeChar;
+        return deviceId == that.deviceId
+                && pin == that.pin
+                && pinTypeChar == that.pinTypeChar;
     }
 
     @Override
     public int hashCode() {
-        int result = deviceId;
-        result = 31 * result + (int) pin;
-        result = 31 * result + (int) pinTypeChar;
-        return result;
+        return Objects.hash(deviceId, pin, pinTypeChar);
     }
 
     @Override

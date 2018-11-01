@@ -59,6 +59,8 @@ public final class MobileUpdateDashLogic {
         updatedDash.addTimers(timerWorker, state.userKey);
 
         existingDash.updateFields(updatedDash);
+        user.profile.cleanPinStorage(existingDash, false, true);
+
         user.lastModifiedTs = existingDash.updatedAt;
 
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());

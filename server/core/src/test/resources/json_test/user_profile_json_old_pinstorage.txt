@@ -1,0 +1,11 @@
+{
+    "dashBoards" :
+        [
+            {
+             "id":1,
+             "name":"My Dashboard",
+             "boardType":"UNO"
+            }
+        ],
+    "pinsStorage": {"1-0-v0":"1","1-0-d111":"2", "1-0-v0-label":"3"}
+}

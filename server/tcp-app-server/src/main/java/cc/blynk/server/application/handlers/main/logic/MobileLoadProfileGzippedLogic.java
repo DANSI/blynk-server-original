@@ -68,7 +68,7 @@ public final class MobileLoadProfileGzippedLogic {
                         //todo ugly. but ok for now
                         String copyString = JsonParser.toJsonRestrictiveDashboard(dash);
                         DashBoard copyDash = JsonParser.parseDashboard(copyString, msgId);
-                        copyDash.eraseValues();
+                        copyDash.eraseWidgetValues();
                         write(ctx, gzipDashRestrictive(copyDash), msgId);
                     }
                 } catch (Exception e) {

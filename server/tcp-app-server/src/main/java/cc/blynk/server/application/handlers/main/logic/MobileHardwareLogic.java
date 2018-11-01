@@ -4,6 +4,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.enums.PinType;
@@ -106,8 +107,8 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
         switch (operation) {
             case 'u' :
                 //splitting "vu 200000 1"
-                String[] splitBody = split3(split[1]);
-                processDeviceSelectorCommand(ctx, session, dash, message, splitBody);
+                var splitBody = split3(split[1]);
+                processDeviceSelectorCommand(ctx, session, state.user.profile, dash, message, splitBody);
                 break;
             case 'w' :
                 splitBody = split3(split[1]);
@@ -123,13 +124,14 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
                 String value = splitBody[2];
                 long now = System.currentTimeMillis();
 
+                Profile profile = state.user.profile;
                 for (int deviceId : deviceIds) {
-                    dash.update(deviceId, pin, pinType, value, now);
+                    profile.update(dash, deviceId, pin, pinType, value, now);
                 }
 
                 //additional state for tag widget itself
                 if (target.isTag()) {
-                    dash.update(targetId, pin, pinType, value, now);
+                    profile.update(dash, targetId, pin, pinType, value, now);
                 }
 
                 //sending to shared dashes and master-master apps
@@ -147,13 +149,13 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
     }
 
     public static void processDeviceSelectorCommand(ChannelHandlerContext ctx,
-                                                    Session session, DashBoard dash,
+                                                    Session session, Profile profile, DashBoard dash,
                                                     StringMessage message, String[] splitBody) {
         //in format "vu 200000 1"
         long widgetId = Long.parseLong(splitBody[1]);
         Widget deviceSelector = dash.getWidgetByIdOrThrow(widgetId);
         if (deviceSelector instanceof DeviceSelector) {
-            int selectedDeviceId = Integer.parseInt(splitBody[2]);
+            var selectedDeviceId = Integer.parseInt(splitBody[2]);
             ((DeviceSelector) deviceSelector).value = selectedDeviceId;
             ctx.write(ok(message.id), ctx.voidPromise());
 
@@ -165,7 +167,7 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
                 MobileStateHolder mobileStateHolder = getAppState(channel);
                 if (mobileStateHolder != null && mobileStateHolder.contains(dash.sharedToken)) {
                     boolean isNewSyncFormat = mobileStateHolder.isNewSyncFormat();
-                    dash.sendAppSyncs(channel, selectedDeviceId, isNewSyncFormat);
+                    profile.sendAppSyncs(dash, channel, selectedDeviceId, isNewSyncFormat);
                 }
                 channel.flush();
             }

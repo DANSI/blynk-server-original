@@ -145,7 +145,7 @@ public final class MobileUpdateWidgetLogic {
                     dash.widgets, newWidget, dash.getWidgetIndexByIdOrThrow(newWidget.id));
         }
 
-        dash.cleanPinStorage(newWidget, true);
+        user.profile.cleanPinStorage(dash, newWidget, true);
         user.lastModifiedTs = dash.updatedAt;
 
         if (prevWidget instanceof Timer) {

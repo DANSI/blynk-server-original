@@ -441,7 +441,7 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         clientPair.appClient.reset();
         clientPair.appClient.send("loadProfileGzipped");
         profile = clientPair.appClient.parseProfile(1);
-        assertEquals(0, profile.dashBoards[0].pinsStorage.size());
+        assertEquals(0, profile.pinsStorage.size());
     }
 
     @Test

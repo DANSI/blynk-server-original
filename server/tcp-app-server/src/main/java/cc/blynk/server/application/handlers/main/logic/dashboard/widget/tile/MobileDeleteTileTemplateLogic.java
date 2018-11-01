@@ -57,7 +57,7 @@ public final class MobileDeleteTileTemplateLogic {
 
         deviceTiles.templates = ArrayUtil.remove(deviceTiles.templates, existingTileIndex, TileTemplate.class);
         deviceTiles.deleteDeviceTilesByTemplateId(tileId);
-        dash.cleanPinStorageForTileTemplate(tileTemplate, true);
+        user.profile.cleanPinStorageForTileTemplate(dash, tileTemplate, true);
 
         dash.updatedAt = System.currentTimeMillis();
 
