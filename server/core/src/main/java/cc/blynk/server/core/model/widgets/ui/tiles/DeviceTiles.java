@@ -290,7 +290,7 @@ public class DeviceTiles extends Widget implements MobileSyncWidget, HardwareSyn
         }
 
         for (TileTemplate tileTemplate : this.templates) {
-            tileTemplate.deviceIds = deleteDeviceFromArray(tileTemplate.deviceIds, deviceId);
+            tileTemplate.deviceIds = ArrayUtil.deleteFromArray(tileTemplate.deviceIds, deviceId);
         }
 
     }

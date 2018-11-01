@@ -253,7 +253,7 @@ public class DashBoard {
         return getWidgetIndexByIdOrThrow(widgets, id);
     }
 
-    public int getTagIndexById(int id) {
+    public int getTagIndexByIdOrThrow(int id) {
         for (int i = 0; i < tags.length; i++) {
             if (tags[i].id == id) {
                 return i;

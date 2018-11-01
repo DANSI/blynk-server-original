@@ -38,7 +38,7 @@ public final class MobileDeleteTagLogic {
 
         log.debug("Deleting tag with id {}.", tagId);
 
-        var existingTagIndex = dash.getTagIndexById(tagId);
+        var existingTagIndex = dash.getTagIndexByIdOrThrow(tagId);
 
         dash.tags = ArrayUtil.remove(dash.tags, existingTagIndex, Tag.class);
         dash.updatedAt = System.currentTimeMillis();

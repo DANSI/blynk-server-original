@@ -1,5 +1,6 @@
 package cc.blynk.server.core.model.widgets.ui.reporting.source;
 
+import cc.blynk.utils.ArrayUtil;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -33,6 +34,6 @@ public class DeviceReportSource extends ReportSource {
 
     @Override
     public void deleteDevice(int deviceId) {
-        this.deviceIds = deleteDeviceFromArray(this.deviceIds, deviceId);
+        this.deviceIds = ArrayUtil.deleteFromArray(this.deviceIds, deviceId);
     }
 }
