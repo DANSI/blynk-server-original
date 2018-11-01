@@ -37,6 +37,10 @@ public class Profile {
 
     public volatile App[] apps = EMPTY_APPS;
 
+    public void cleanPinStorageForDevice(DashBoard dash, int deviceId) {
+        dash.pinsStorage.entrySet().removeIf(entry -> entry.getKey().deviceId == deviceId);
+    }
+
     public void update(DashBoard dash, int deviceId, short pin, PinType pinType, String value, long now) {
         if (!dash.updateWidgets(deviceId, pin, pinType, value)) {
             //special case. #237 if no widget - storing without widget.

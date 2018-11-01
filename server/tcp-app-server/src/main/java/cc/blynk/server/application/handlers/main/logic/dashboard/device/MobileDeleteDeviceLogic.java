@@ -4,6 +4,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -37,21 +38,23 @@ public final class MobileDeleteDeviceLogic {
         int dashId = Integer.parseInt(split[0]);
         int deviceId = Integer.parseInt(split[1]);
 
+        User user = state.user;
         DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
 
         log.debug("Deleting device with id {}.", deviceId);
 
         Device device = dash.deleteDevice(deviceId);
+        user.profile.cleanPinStorageForDevice(dash, deviceId);
         dash.deleteDeviceFromTags(deviceId);
         holder.tokenManager.deleteDevice(device);
         Session session = holder.sessionDao.userSession.get(state.userKey);
         session.closeHardwareChannelByDeviceId(dashId, deviceId);
 
-        state.user.lastModifiedTs = dash.updatedAt;
+        user.lastModifiedTs = dash.updatedAt;
 
         holder.blockingIOProcessor.executeHistory(() -> {
             try {
-                holder.reportingDiskDao.delete(state.user, dashId, deviceId);
+                holder.reportingDiskDao.delete(user, dashId, deviceId);
             } catch (Exception e) {
                 log.warn("Error removing device data. Reason : {}.", e.getMessage());
             }

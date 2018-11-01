@@ -373,10 +373,6 @@ public class DashBoard {
         }
     }
 
-    private void erasePinStorageForDevice(int deviceId) {
-        pinsStorage.entrySet().removeIf(entry -> entry.getKey().deviceId == deviceId);
-    }
-
     private void eraseWidgetValuesForDevice(int deviceId) {
         for (Widget widget : widgets) {
             if (widget.isAssignedToDevice(deviceId)) {
@@ -500,6 +496,37 @@ public class DashBoard {
         }
     }
 
+    public void cleanPinStorage(Widget[] widgets,
+                                boolean removeProperties, boolean eraseTemplates) {
+        for (Widget widget : widgets) {
+            cleanPinStorageInternalWithoutUpdatedAt(widget, removeProperties, eraseTemplates);
+        }
+        this.updatedAt = System.currentTimeMillis();
+    }
+
+    private void cleanPinStorageInternalWithoutUpdatedAt(Widget widget,
+                                                         boolean removeProperties, boolean eraseTemplates) {
+        if (widget instanceof OnePinWidget) {
+            OnePinWidget onePinWidget = (OnePinWidget) widget;
+            cleanPinStorage(this, onePinWidget, -1, removeProperties);
+        } else if (widget instanceof MultiPinWidget) {
+            MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
+            cleanPinStorage(this, multiPinWidget, -1, removeProperties);
+        } else if (widget instanceof DeviceTiles) {
+            DeviceTiles deviceTiles = (DeviceTiles) widget;
+            cleanPinStorage(deviceTiles, removeProperties);
+            if (eraseTemplates) {
+                cleanPinStorageForTemplate(deviceTiles, removeProperties);
+            }
+        }
+    }
+
+    private void cleanPinStorageForTemplate(DeviceTiles deviceTiles, boolean removeProperties) {
+        for (TileTemplate tileTemplate : deviceTiles.templates) {
+            cleanPinStorageForTileTemplate(tileTemplate, removeProperties);
+        }
+    }
+
     //todo add DashboardSettings as Dashboard field
     public void updateSettings(DashboardSettings settings) {
         this.name = settings.name;
@@ -577,43 +604,11 @@ public class DashBoard {
         return copy.toArray(new Widget[newWidgets.length]);
     }
 
-    public void cleanPinStorage(Widget[] widgets,
-                                boolean removeProperties, boolean eraseTemplates) {
-        for (Widget widget : widgets) {
-            cleanPinStorageInternalWithoutUpdatedAt(widget, removeProperties, eraseTemplates);
-        }
-        this.updatedAt = System.currentTimeMillis();
-    }
-
-    private void cleanPinStorageInternalWithoutUpdatedAt(Widget widget,
-                                                         boolean removeProperties, boolean eraseTemplates) {
-        if (widget instanceof OnePinWidget) {
-            OnePinWidget onePinWidget = (OnePinWidget) widget;
-            cleanPinStorage(this, onePinWidget, -1, removeProperties);
-        } else if (widget instanceof MultiPinWidget) {
-            MultiPinWidget multiPinWidget = (MultiPinWidget) widget;
-            cleanPinStorage(this, multiPinWidget, -1, removeProperties);
-        } else if (widget instanceof DeviceTiles) {
-            DeviceTiles deviceTiles = (DeviceTiles) widget;
-            cleanPinStorage(deviceTiles, removeProperties);
-            if (eraseTemplates) {
-                cleanPinStorageForTemplate(deviceTiles, removeProperties);
-            }
-        }
-    }
-
-    private void cleanPinStorageForTemplate(DeviceTiles deviceTiles, boolean removeProperties) {
-        for (TileTemplate tileTemplate : deviceTiles.templates) {
-            cleanPinStorageForTileTemplate(tileTemplate, removeProperties);
-        }
-    }
-
     public Device deleteDevice(int deviceId) {
         int existingDeviceIndex = getDeviceIndexByIdOrThrow(deviceId);
         Device deviceToRemove = this.devices[existingDeviceIndex];
         this.devices = ArrayUtil.remove(this.devices, existingDeviceIndex, Device.class);
         eraseWidgetValuesForDevice(deviceId);
-        erasePinStorageForDevice(deviceId);
         this.updatedAt = System.currentTimeMillis();
         return deviceToRemove;
     }
