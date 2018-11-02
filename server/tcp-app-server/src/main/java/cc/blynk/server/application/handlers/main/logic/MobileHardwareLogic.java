@@ -65,7 +65,8 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
         String[] dashIdAndTargetIdString = split2Device(split[0]);
         int dashId = Integer.parseInt(dashIdAndTargetIdString[0]);
 
-        DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
+        Profile profile = state.user.profile;
+        DashBoard dash = profile.getDashByIdOrThrow(dashId);
 
         //if no active dashboard - do nothing. this could happen only in case of app. bug
         if (!dash.isActive) {
@@ -85,7 +86,7 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
         if (targetId < Tag.START_TAG_ID) {
             target = dash.getDeviceById(targetId);
         } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-            target = dash.getTagById(targetId);
+            target = profile.getTagById(dash, targetId);
         } else {
             //means widget assigned to device selector widget.
             target = dash.getDeviceSelector(targetId);
@@ -124,7 +125,6 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
                 String value = splitBody[2];
                 long now = System.currentTimeMillis();
 
-                Profile profile = state.user.profile;
                 for (int deviceId : deviceIds) {
                     profile.update(dash, deviceId, pin, pinType, value, now);
                 }

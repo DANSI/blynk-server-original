@@ -218,33 +218,6 @@ public class DashBoard {
         return getWidgetIndexByIdOrThrow(widgets, id);
     }
 
-    public void deleteTag(int tagId) {
-        int existingTagIndex = getTagIndexByIdOrThrow(tagId);
-        this.tags = ArrayUtil.remove(this.tags, existingTagIndex, Tag.class);
-    }
-
-    public void addTag(Tag newTag) {
-        this.tags = ArrayUtil.add(tags, newTag, Tag.class);
-    }
-
-    public int getTagIndexByIdOrThrow(int id) {
-        for (int i = 0; i < tags.length; i++) {
-            if (tags[i].id == id) {
-                return i;
-            }
-        }
-        throw new IllegalCommandException("Tag with passed id not found.");
-    }
-
-    public Tag getTagById(int id) {
-        for (Tag tag : tags) {
-            if (tag.id == id) {
-                return tag;
-            }
-        }
-        return null;
-    }
-
     private int getDeviceIndexByIdOrThrow(int id) {
         for (int i = 0; i < devices.length; i++) {
             if (devices[i].id == id) {
@@ -378,12 +351,6 @@ public class DashBoard {
             if (widget instanceof DeviceCleaner) {
                 ((DeviceCleaner) widget).deleteDevice(deviceId);
             }
-        }
-    }
-
-    public void deleteDeviceFromTags(int deviceId) {
-        for (Tag tag : tags) {
-            tag.deleteDevice(deviceId);
         }
     }
 

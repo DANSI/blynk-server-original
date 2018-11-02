@@ -53,6 +53,39 @@ public class Profile {
                      contentUsing = PinStorageValueDeserializer.class)
     public final Map<DashPinStorageKey, PinStorageValue> pinsStorage = new HashMap<>();
 
+    public void deleteTag(DashBoard dash, int tagId) {
+        int existingTagIndex = getTagIndexByIdOrThrow(dash, tagId);
+        dash.tags = ArrayUtil.remove(dash.tags, existingTagIndex, Tag.class);
+    }
+
+    public void addTag(DashBoard dash, Tag newTag) {
+        dash.tags = ArrayUtil.add(dash.tags, newTag, Tag.class);
+    }
+
+    public int getTagIndexByIdOrThrow(DashBoard dash, int id) {
+        for (int i = 0; i < dash.tags.length; i++) {
+            if (dash.tags[i].id == id) {
+                return i;
+            }
+        }
+        throw new IllegalCommandException("Tag with passed id not found.");
+    }
+
+    public Tag getTagById(DashBoard dash, int id) {
+        for (Tag tag : dash.tags) {
+            if (tag.id == id) {
+                return tag;
+            }
+        }
+        return null;
+    }
+
+    public void deleteDeviceFromTags(DashBoard dash, int deviceId) {
+        for (Tag tag : dash.tags) {
+            tag.deleteDevice(deviceId);
+        }
+    }
+
     public void cleanPinStorage(DashBoard dash, Widget widget, boolean removeTemplates) {
         cleanPinStorageInternalWithoutUpdatedAt(dash, widget, true, removeTemplates);
         dash.updatedAt = System.currentTimeMillis();
@@ -99,7 +132,7 @@ public class Profile {
         if (targetId < Tag.START_TAG_ID) {
             target = dash.getDeviceById(targetId);
         } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-            target = dash.getTagById(targetId);
+            target = getTagById(dash, targetId);
         } else {
             //means widget assigned to device selector widget.
             target = dash.getDeviceSelector(targetId);
@@ -271,7 +304,7 @@ public class Profile {
                 if (graphTargetId < Tag.START_TAG_ID) {
                     target = dash.getDeviceById(graphTargetId);
                 } else if (graphTargetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-                    target = dash.getTagById(graphTargetId);
+                    target = getTagById(dash, graphTargetId);
                 } else {
                     //means widget assigned to device selector widget.
                     target = dash.getDeviceSelector(graphTargetId);

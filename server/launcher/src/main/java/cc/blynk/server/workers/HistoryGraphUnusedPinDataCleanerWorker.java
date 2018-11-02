@@ -4,6 +4,7 @@ import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
+import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.widgets.Target;
@@ -75,17 +76,19 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
             if (user.isUpdated(lastStart)) {
                 doNotRemovePaths.clear();
                 try {
-                    for (DashBoard dashBoard : user.profile.dashBoards) {
+                    Profile profile = user.profile;
+                    for (DashBoard dashBoard : profile.dashBoards) {
                         for (Widget widget : dashBoard.widgets) {
                             if (widget instanceof DeviceTiles) {
                                 DeviceTiles deviceTiles = (DeviceTiles) widget;
                                 for (TileTemplate tileTemplate : deviceTiles.templates) {
                                     for (Widget tilesWidget : tileTemplate.widgets) {
-                                        add(doNotRemovePaths, dashBoard, tilesWidget, tileTemplate.deviceIds);
+                                        add(doNotRemovePaths, profile,
+                                                dashBoard, tilesWidget, tileTemplate.deviceIds);
                                     }
                                 }
                             } else {
-                                add(doNotRemovePaths, dashBoard, widget, null);
+                                add(doNotRemovePaths, profile, dashBoard, widget, null);
                             }
                         }
                     }
@@ -100,10 +103,11 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
         return removedFilesCounter;
     }
 
-    private static void add(Set<String> doNotRemovePaths, DashBoard dash, Widget widget, int[] deviceIds) {
+    private static void add(Set<String> doNotRemovePaths, Profile profile,
+                            DashBoard dash, Widget widget, int[] deviceIds) {
         if (widget instanceof Superchart) {
             Superchart enhancedHistoryGraph = (Superchart) widget;
-            add(doNotRemovePaths, dash, enhancedHistoryGraph, deviceIds);
+            add(doNotRemovePaths, profile, dash, enhancedHistoryGraph, deviceIds);
         } else if (widget instanceof ReportingWidget) {
             //reports can't be assigned to device tiles so we ignore deviceIds parameter
             ReportingWidget reportingWidget = (ReportingWidget) widget;
@@ -130,7 +134,8 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
         }
     }
 
-    private static void add(Set<String> doNotRemovePaths, DashBoard dash, Superchart graph, int[] deviceIds) {
+    private static void add(Set<String> doNotRemovePaths, Profile profile,
+                            DashBoard dash, Superchart graph, int[] deviceIds) {
         for (GraphDataStream graphDataStream : graph.dataStreams) {
             if (graphDataStream != null && graphDataStream.dataStream != null && graphDataStream.dataStream.isValid()) {
                 DataStream dataStream = graphDataStream.dataStream;
@@ -142,7 +147,7 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
                     if (targetId < Tag.START_TAG_ID) {
                         target = dash.getDeviceById(targetId);
                     } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-                        target = dash.getTagById(targetId);
+                        target = profile.getTagById(dash, targetId);
                     } else {
                         //means widget assigned to device selector widget.
                         target = dash.getDeviceSelector(targetId);
