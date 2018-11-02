@@ -51,7 +51,7 @@ public class DashPinStorageKey {
         if (multiPinWidget.dataStreams == null || this.dashId != dashId) {
             return false;
         }
-        for (var dataStream : multiPinWidget.dataStreams) {
+        for (DataStream dataStream : multiPinWidget.dataStreams) {
             if (dataStream.isSame(this.pin, PinType.getPinType(this.pinTypeChar))) {
                 return true;
             }

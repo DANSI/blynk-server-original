@@ -107,7 +107,7 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
         switch (operation) {
             case 'u' :
                 //splitting "vu 200000 1"
-                var splitBody = split3(split[1]);
+                String[] splitBody = split3(split[1]);
                 processDeviceSelectorCommand(ctx, session, state.user.profile, dash, message, splitBody);
                 break;
             case 'w' :
@@ -155,7 +155,7 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
         long widgetId = Long.parseLong(splitBody[1]);
         Widget deviceSelector = dash.getWidgetByIdOrThrow(widgetId);
         if (deviceSelector instanceof DeviceSelector) {
-            var selectedDeviceId = Integer.parseInt(splitBody[2]);
+            int selectedDeviceId = Integer.parseInt(splitBody[2]);
             ((DeviceSelector) deviceSelector).value = selectedDeviceId;
             ctx.write(ok(message.id), ctx.voidPromise());
 

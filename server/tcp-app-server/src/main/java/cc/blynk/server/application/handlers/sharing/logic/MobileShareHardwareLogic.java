@@ -15,6 +15,7 @@ import cc.blynk.server.core.processors.BaseProcessorHandler;
 import cc.blynk.server.core.processors.WebhookProcessor;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.NumberUtil;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -109,7 +110,7 @@ public class MobileShareHardwareLogic extends BaseProcessorHandler {
         switch (operation) {
             case 'u' :
                 //splitting "vu 200000 1"
-                var splitBody = split3(split[1]);
+                String[] splitBody = split3(split[1]);
                 MobileHardwareLogic.processDeviceSelectorCommand(ctx, session, user.profile, dash, message, splitBody);
                 break;
             case 'w' :
@@ -137,7 +138,7 @@ public class MobileShareHardwareLogic extends BaseProcessorHandler {
 
                 String sharedToken = state.token;
                 if (sharedToken != null) {
-                    for (var appChannel : session.appChannels) {
+                    for (Channel appChannel : session.appChannels) {
                         if (appChannel != ctx.channel() && appChannel.isWritable()
                                 && Session.needSync(appChannel, sharedToken)) {
                             appChannel.writeAndFlush(
