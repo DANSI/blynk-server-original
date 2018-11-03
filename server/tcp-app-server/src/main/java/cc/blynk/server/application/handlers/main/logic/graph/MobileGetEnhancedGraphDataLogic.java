@@ -3,6 +3,8 @@ package cc.blynk.server.application.handlers.main.logic.graph;
 import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.widgets.Target;
@@ -65,7 +67,8 @@ public final class MobileGetEnhancedGraphDataLogic {
         }
         int skipCount = graphPeriod.numberOfPoints * page;
 
-        DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
+        Profile profile = state.user.profile;
+        DashBoard dash = profile.getDashByIdOrThrow(dashId);
         Widget widget = dash.getWidgetById(widgetId);
 
         //special case for device tiles widget.
@@ -97,9 +100,9 @@ public final class MobileGetEnhancedGraphDataLogic {
             Target target;
             int targetIdUpdated = graphDataStream.getTargetId(targetId);
             if (targetIdUpdated < Tag.START_TAG_ID) {
-                target = dash.getDeviceById(targetIdUpdated);
+                target = profile.getDeviceById(dash, targetIdUpdated);
             } else if (targetIdUpdated < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-                target = dash.getTagById(targetIdUpdated);
+                target = profile.getTagById(dash, targetIdUpdated);
             } else {
                 target = dash.getDeviceSelector(targetIdUpdated);
             }

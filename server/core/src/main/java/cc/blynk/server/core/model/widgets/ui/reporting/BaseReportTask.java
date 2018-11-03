@@ -2,14 +2,13 @@ package cc.blynk.server.core.model.widgets.ui.reporting;
 
 import cc.blynk.server.core.dao.ReportingDiskDao;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
-import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportDataStream;
 import cc.blynk.server.core.model.widgets.ui.reporting.source.ReportSource;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
 import cc.blynk.server.notifications.mail.MailWrapper;
 import cc.blynk.utils.FileUtils;
-import cc.blynk.utils.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,8 +26,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipOutputStream;
 
-import static cc.blynk.utils.StringUtils.removeUnsupportedChars;
-import static cc.blynk.utils.StringUtils.truncate;
+import static cc.blynk.utils.StringUtils.truncateFileName;
 import static java.nio.charset.StandardCharsets.UTF_16;
 
 /**
@@ -83,37 +81,6 @@ public abstract class BaseReportTask implements Runnable {
         }
     }
 
-    private static String getCSVDeviceName(DashBoard dash, int deviceId) {
-        Device device = dash.getDeviceById(deviceId);
-        if (device == null) {
-            return String.valueOf(deviceId);
-        }
-
-        String deviceName = device.name;
-        if (deviceName == null || deviceName.isEmpty()) {
-            return String.valueOf(deviceId);
-        }
-
-        return StringUtils.escapeCSV(deviceName);
-    }
-
-    private static String getDeviceName(DashBoard dash, int deviceId) {
-        Device device = dash.getDeviceById(deviceId);
-        if (device != null) {
-            return truncateFileName(device.name);
-        }
-        return "";
-    }
-
-    private static String truncateFileName(String name) {
-        if (name == null) {
-            return "";
-        }
-
-        String truncated = removeUnsupportedChars(name);
-        return truncate(truncated, 16);
-    }
-
     private void sendEmail(Path output) throws Exception {
         String durationLabel = report.reportType.getDurationLabel().toLowerCase();
         String subj = "Your " + durationLabel + " " + report.getReportName() + " is ready";
@@ -130,8 +97,9 @@ public abstract class BaseReportTask implements Runnable {
                 key.user.email, key.user.appName, key.reportId, date);
 
         try {
-            DashBoard dash = key.user.profile.getDashByIdOrThrow(key.dashId);
-            report.lastRunResult = generateReport(userCsvFolder, dash, now);
+            Profile profile = key.user.profile;
+            DashBoard dash = profile.getDashByIdOrThrow(key.dashId);
+            report.lastRunResult = generateReport(userCsvFolder, profile, dash, now);
         } catch (IllegalCommandException illegalState) {
             report.lastRunResult = ReportResult.ERROR;
             log.debug("Dashboard is not exists anymore for the report {} for user {}. ", report.id, key.user.email);
@@ -147,7 +115,8 @@ public abstract class BaseReportTask implements Runnable {
         return newNow;
     }
 
-    private ReportResult generateReport(Path userCsvFolder, DashBoard dash, long now) throws Exception {
+    private ReportResult generateReport(Path userCsvFolder, Profile profile,
+                                        DashBoard dash, long now) throws Exception {
         int fetchCount = (int) report.reportType.getFetchCount(report.granularityType);
         long startFrom = now - TimeUnit.DAYS.toMillis(report.reportType.getDuration());
         //truncate second, minute, hour, depending of granularity in order to do not filter first point.
@@ -155,7 +124,7 @@ public abstract class BaseReportTask implements Runnable {
         startFrom = (startFrom / report.granularityType.period) * report.granularityType.period;
         Path output = Paths.get(userCsvFolder.toString() + ".zip");
 
-        boolean hasData = generateReport(output, dash, fetchCount, startFrom);
+        boolean hasData = generateReport(output, profile, dash, fetchCount, startFrom);
         if (hasData) {
             sendEmail(output);
             return ReportResult.OK;
@@ -165,20 +134,22 @@ public abstract class BaseReportTask implements Runnable {
         return ReportResult.NO_DATA;
     }
 
-    private boolean generateReport(Path output, DashBoard dash, int fetchCount, long startFrom) throws Exception {
+    private boolean generateReport(Path output, Profile profile,
+                                   DashBoard dash, int fetchCount, long startFrom) throws Exception {
         switch (report.reportOutput) {
             case MERGED_CSV:
-                return merged(output, dash, fetchCount, startFrom);
+                return merged(output, profile, dash, fetchCount, startFrom);
             case CSV_FILE_PER_DEVICE:
-                return filePerDevice(output, dash, fetchCount, startFrom);
+                return filePerDevice(output, profile, dash, fetchCount, startFrom);
             case CSV_FILE_PER_DEVICE_PER_PIN:
             case EXCEL_TAB_PER_DEVICE:
             default:
-                return filePerDevicePerPin(output, dash, fetchCount, startFrom);
+                return filePerDevicePerPin(output, profile, dash, fetchCount, startFrom);
         }
     }
 
-    private boolean merged(Path output, DashBoard dash, int fetchCount, long startFrom) throws Exception {
+    private boolean merged(Path output, Profile profile, DashBoard dash,
+                           int fetchCount, long startFrom) throws Exception {
         boolean atLeastOne = false;
         try (ZipOutputStream zipStream = new ZipOutputStream(Files.newOutputStream(output));
              BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(zipStream, REPORT_ENCODING), size)) {
@@ -188,7 +159,7 @@ public abstract class BaseReportTask implements Runnable {
             for (ReportSource reportSource : report.reportSources) {
                 if (reportSource.isValid()) {
                     for (int deviceId : reportSource.getDeviceIds()) {
-                        String deviceName = getCSVDeviceName(dash, deviceId);
+                        String deviceName = profile.getCSVDeviceName(dash, deviceId);
                         for (ReportDataStream reportDataStream : reportSource.reportDataStreams) {
                             if (reportDataStream.isValid()) {
                                 ByteBuffer onePinData = reportingDiskDao.getByteBufferFromDisk(key.user,
@@ -210,14 +181,15 @@ public abstract class BaseReportTask implements Runnable {
         return atLeastOne;
     }
 
-    private boolean filePerDevice(Path output, DashBoard dash, int fetchCount, long startFrom) throws Exception {
+    private boolean filePerDevice(Path output, Profile profile,
+                                  DashBoard dash, int fetchCount, long startFrom) throws Exception {
         boolean atLeastOne = false;
         try (ZipOutputStream zipStream = new ZipOutputStream(Files.newOutputStream(output));
              BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(zipStream, REPORT_ENCODING), size)) {
             for (ReportSource reportSource : report.reportSources) {
                 if (reportSource.isValid()) {
                     for (int deviceId : reportSource.getDeviceIds()) {
-                        String deviceName = getDeviceName(dash, deviceId);
+                        String deviceName = profile.getDeviceName(dash, deviceId);
                         String deviceFileName = deviceFileName(deviceName, deviceId);
                         ZipEntry zipEntry = new ZipEntry(deviceFileName);
                         zipStream.putNextEntry(zipEntry);
@@ -242,13 +214,14 @@ public abstract class BaseReportTask implements Runnable {
         return atLeastOne;
     }
 
-    private boolean filePerDevicePerPin(Path output, DashBoard dash, int fetchCount, long startFrom) throws Exception {
+    private boolean filePerDevicePerPin(Path output, Profile profile,
+                                        DashBoard dash, int fetchCount, long startFrom) throws Exception {
         boolean atLeastOne = false;
         try (ZipOutputStream zipStream = new ZipOutputStream(Files.newOutputStream(output))) {
             for (ReportSource reportSource : report.reportSources) {
                 if (reportSource.isValid()) {
                     for (int deviceId : reportSource.getDeviceIds()) {
-                        String deviceName = getDeviceName(dash, deviceId);
+                        String deviceName = profile.getDeviceName(dash, deviceId);
                         for (ReportDataStream reportDataStream : reportSource.reportDataStreams) {
                             if (reportDataStream.isValid()) {
                                 ByteBuffer onePinData = reportingDiskDao.getByteBufferFromDisk(key.user,

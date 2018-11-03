@@ -133,7 +133,7 @@ public final class MobileExportGraphDataLogic {
 
                             Path path = reportingDao.csvGenerator.createCSV(
                                     user, dash.id, deviceId, dataStream.pinType, dataStream.pin, deviceIds);
-                            Device device = dash.getDeviceById(deviceId);
+                            Device device = user.profile.getDeviceById(dash, deviceId);
                             String name = (device == null || device.name == null) ? dashName : device.name;
                             pinsCSVFilePath.add(new DeviceFileLink(path, name, dataStream.pinType, dataStream.pin));
                         } catch (Exception e) {

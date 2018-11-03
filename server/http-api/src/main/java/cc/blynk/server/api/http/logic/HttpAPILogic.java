@@ -33,6 +33,7 @@ import cc.blynk.server.core.model.storage.value.SinglePinStorageValue;
 import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.notifications.Mail;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
@@ -588,21 +589,21 @@ public class HttpAPILogic extends TokenBaseHttpHandler {
     public Response email(@PathParam("token") String token,
                           EmailPojo message) {
 
-        var tokenValue = tokenManager.getTokenValueByToken(token);
+        TokenValue tokenValue = tokenManager.getTokenValueByToken(token);
 
         if (tokenValue == null) {
             log.debug("Requested token {} not found.", token);
             return badRequest("Invalid token.");
         }
 
-        var dash = tokenValue.dash;
+        DashBoard dash = tokenValue.dash;
 
         if (dash == null || !dash.isActive) {
             log.debug("Project is not active.");
             return badRequest("Project is not active.");
         }
 
-        var mail = dash.getMailWidget();
+        Mail mail = dash.getMailWidget();
 
         if (mail == null) {
             log.debug("No email widget.");

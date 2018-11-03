@@ -79,18 +79,19 @@ public class TimerWorker implements Runnable {
     private void init(ConcurrentMap<UserKey, User> users) {
         int counter = 0;
         for (Map.Entry<UserKey, User> entry : users.entrySet()) {
-            for (DashBoard dashBoard : entry.getValue().profile.dashBoards) {
-                for (Widget widget : dashBoard.widgets) {
+            for (DashBoard dash : entry.getValue().profile.dashBoards) {
+                int dashId = dash.id;
+                for (Widget widget : dash.widgets) {
                     if (widget instanceof DeviceTiles) {
                         DeviceTiles deviceTiles = (DeviceTiles) widget;
-                        counter += deviceTiles.addTimers(this, entry.getKey(), dashBoard.id);
+                        counter += deviceTiles.addTimers(this, entry.getKey(), dashId);
                     } else if (widget instanceof Timer) {
                         Timer timer = (Timer) widget;
-                        add(entry.getKey(), timer, dashBoard.id, -1, -1);
+                        add(entry.getKey(), timer, dashId, -1, -1);
                         counter++;
                     } else if (widget instanceof Eventor) {
                         Eventor eventor = (Eventor) widget;
-                        add(entry.getKey(), eventor, dashBoard.id);
+                        add(entry.getKey(), eventor, dashId);
                         counter++;
                     }
                 }
@@ -259,9 +260,9 @@ public class TimerWorker implements Runnable {
                     Target target;
                     int targetId = key.deviceId;
                     if (targetId < Tag.START_TAG_ID) {
-                        target = dash.getDeviceById(targetId);
+                        target = profile.getDeviceById(dash, targetId);
                     } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-                        target = dash.getTagById(targetId);
+                        target = profile.getTagById(dash, targetId);
                     } else {
                         //means widget assigned to device selector widget.
                         target = dash.getDeviceSelector(targetId);

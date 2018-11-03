@@ -64,7 +64,7 @@ public final class MobileCreateDeviceLogic {
             }
         }
 
-        dash.addDevice(newDevice);
+        user.profile.addDevice(dash, newDevice);
 
         String newToken = TokenGeneratorUtil.generateNewToken();
         holder.tokenManager.assignToken(user, dash, newDevice, newToken);

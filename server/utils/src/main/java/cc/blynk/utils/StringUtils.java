@@ -167,6 +167,15 @@ public final class StringUtils {
         return name;
     }
 
+    public static String truncateFileName(String name) {
+        if (name == null) {
+            return "";
+        }
+
+        String truncated = removeUnsupportedChars(name);
+        return truncate(truncated, 16);
+    }
+
     public static boolean isReadOperation(String body) {
         return body.length() > 1 && body.charAt(1) == 'r';
     }

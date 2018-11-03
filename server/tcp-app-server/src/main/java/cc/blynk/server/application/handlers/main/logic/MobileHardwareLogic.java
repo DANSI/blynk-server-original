@@ -65,7 +65,8 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
         String[] dashIdAndTargetIdString = split2Device(split[0]);
         int dashId = Integer.parseInt(dashIdAndTargetIdString[0]);
 
-        DashBoard dash = state.user.profile.getDashByIdOrThrow(dashId);
+        Profile profile = state.user.profile;
+        DashBoard dash = profile.getDashByIdOrThrow(dashId);
 
         //if no active dashboard - do nothing. this could happen only in case of app. bug
         if (!dash.isActive) {
@@ -83,9 +84,9 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
         //sending message only if widget assigned to device or tag has assigned devices
         Target target;
         if (targetId < Tag.START_TAG_ID) {
-            target = dash.getDeviceById(targetId);
+            target = profile.getDeviceById(dash, targetId);
         } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-            target = dash.getTagById(targetId);
+            target = profile.getTagById(dash, targetId);
         } else {
             //means widget assigned to device selector widget.
             target = dash.getDeviceSelector(targetId);
@@ -107,7 +108,7 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
         switch (operation) {
             case 'u' :
                 //splitting "vu 200000 1"
-                var splitBody = split3(split[1]);
+                String[] splitBody = split3(split[1]);
                 processDeviceSelectorCommand(ctx, session, state.user.profile, dash, message, splitBody);
                 break;
             case 'w' :
@@ -124,7 +125,6 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
                 String value = splitBody[2];
                 long now = System.currentTimeMillis();
 
-                Profile profile = state.user.profile;
                 for (int deviceId : deviceIds) {
                     profile.update(dash, deviceId, pin, pinType, value, now);
                 }
@@ -155,7 +155,7 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
         long widgetId = Long.parseLong(splitBody[1]);
         Widget deviceSelector = dash.getWidgetByIdOrThrow(widgetId);
         if (deviceSelector instanceof DeviceSelector) {
-            var selectedDeviceId = Integer.parseInt(splitBody[2]);
+            int selectedDeviceId = Integer.parseInt(splitBody[2]);
             ((DeviceSelector) deviceSelector).value = selectedDeviceId;
             ctx.write(ok(message.id), ctx.voidPromise());
 

@@ -1,0 +1,1742 @@
+01:19:56.485 INFO  - DB url : jdbc:postgresql://localhost:5432/blynk?tcpKeepAlive=true&socketTimeout=150
+01:19:56.490 INFO  - DB user : test
+01:19:56.491 INFO  - Connecting to DB...
+01:19:56.493 DEBUG - HikariPool-1 - configuration:
+01:19:56.497 DEBUG - allowPoolSuspension.............false
+01:19:56.497 DEBUG - autoCommit......................false
+01:19:56.497 DEBUG - catalog.........................none
+01:19:56.497 DEBUG - connectionInitSql...............none
+01:19:56.498 DEBUG - connectionTestQuery............."SELECT 1"
+01:19:56.498 DEBUG - connectionTimeout...............30000
+01:19:56.498 DEBUG - dataSource......................none
+01:19:56.498 DEBUG - dataSourceClassName.............none
+01:19:56.498 DEBUG - dataSourceJNDI..................none
+01:19:56.499 DEBUG - dataSourceProperties............{password=<masked>}
+01:19:56.499 DEBUG - driverClassName.................none
+01:19:56.500 DEBUG - healthCheckProperties...........{}
+01:19:56.500 DEBUG - healthCheckRegistry.............none
+01:19:56.500 DEBUG - idleTimeout.....................600000
+01:19:56.500 DEBUG - initializationFailTimeout.......1
+01:19:56.500 DEBUG - isolateInternalQueries..........false
+01:19:56.501 DEBUG - jdbcUrl.........................jdbc:postgresql://localhost:5432/blynk?tcpKeepAlive=true&socketTimeout=150
+01:19:56.501 DEBUG - leakDetectionThreshold..........0
+01:19:56.501 DEBUG - maxLifetime.....................0
+01:19:56.501 DEBUG - maximumPoolSize.................5
+01:19:56.501 DEBUG - metricRegistry..................none
+01:19:56.502 DEBUG - metricsTrackerFactory...........none
+01:19:56.502 DEBUG - minimumIdle.....................5
+01:19:56.502 DEBUG - password........................<masked>
+01:19:56.502 DEBUG - poolName........................"HikariPool-1"
+01:19:56.503 DEBUG - readOnly........................false
+01:19:56.503 DEBUG - registerMbeans..................false
+01:19:56.503 DEBUG - scheduledExecutor...............none
+01:19:56.503 DEBUG - schema..........................none
+01:19:56.503 DEBUG - threadFactory...................internal
+01:19:56.504 DEBUG - transactionIsolation............default
+01:19:56.504 DEBUG - username........................"test"
+01:19:56.504 DEBUG - validationTimeout...............5000
+01:19:56.506 INFO  - HikariPool-1 - Starting...
+01:19:56.518 DEBUG - Loaded driver with class name org.postgresql.Driver for jdbcUrl=jdbc:postgresql://localhost:5432/blynk?tcpKeepAlive=true&socketTimeout=150
+01:19:56.692 DEBUG - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@65e61854
+01:19:56.694 INFO  - HikariPool-1 - Start completed.
+01:19:56.711 INFO  - Connected to database successfully.
+01:19:56.734 DEBUG - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@7df48c75
+01:19:56.796 DEBUG - HikariPool-1 - Pool stats (total=2, active=2, idle=0, waiting=0)
+01:19:56.820 DEBUG - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@73336dbb
+01:19:56.834 DEBUG - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@320e6780
+01:19:56.847 DEBUG - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@6bc0d290
+01:19:56.847 DEBUG - HikariPool-1 - After adding stats (total=5, active=2, idle=3, waiting=0)
+01:19:56.866 DEBUG - HikariPool-1 - Executed rollback on connection org.postgresql.jdbc.PgConnection@7df48c75 due to dirty commit state on close().
+01:19:56.866 ERROR - Error getting token host. Reason : ERROR: invalid byte sequence for encoding "UTF8": 0x00
+01:19:56.869 INFO  - HikariPool-1 - Shutdown initiated...
+01:19:56.869 DEBUG - HikariPool-1 - Before shutdown stats (total=5, active=1, idle=4, waiting=0)
+01:19:56.871 DEBUG - HikariPool-1 - Closing connection org.postgresql.jdbc.PgConnection@7df48c75: (connection evicted)
+01:19:56.873 DEBUG - HikariPool-1 - Closing connection org.postgresql.jdbc.PgConnection@73336dbb: (connection evicted)
+01:19:56.875 DEBUG - HikariPool-1 - Closing connection org.postgresql.jdbc.PgConnection@320e6780: (connection evicted)
+01:19:56.877 DEBUG - HikariPool-1 - Closing connection org.postgresql.jdbc.PgConnection@6bc0d290: (connection evicted)
+01:19:56.878 DEBUG - HikariPool-1 - After shutdown stats (total=0, active=0, idle=0, waiting=0)
+01:19:56.878 INFO  - HikariPool-1 - Shutdown completed.
+01:19:56.881 INFO  - Reporting DB url : jdbc:postgresql://localhost:5432/blynk_reporting?tcpKeepAlive=true&socketTimeout=150
+01:19:56.882 INFO  - Reporting DB user : test
+01:19:56.882 INFO  - Connecting to reporting DB...
+01:19:56.882 DEBUG - HikariPool-2 - configuration:
+01:19:56.883 DEBUG - allowPoolSuspension.............false
+01:19:56.884 DEBUG - autoCommit......................false
+01:19:56.884 DEBUG - catalog.........................none
+01:19:56.884 DEBUG - connectionInitSql...............none
+01:19:56.884 DEBUG - connectionTestQuery............."SELECT 1"
+01:19:56.884 DEBUG - connectionTimeout...............30000
+01:19:56.885 DEBUG - dataSource......................none
+01:19:56.885 DEBUG - dataSourceClassName.............none
+01:19:56.885 DEBUG - dataSourceJNDI..................none
+01:19:56.885 DEBUG - dataSourceProperties............{password=<masked>}
+01:19:56.885 DEBUG - driverClassName.................none
+01:19:56.885 DEBUG - healthCheckProperties...........{}
+01:19:56.885 DEBUG - healthCheckRegistry.............none
+01:19:56.886 DEBUG - idleTimeout.....................600000
+01:19:56.886 DEBUG - initializationFailTimeout.......1
+01:19:56.886 DEBUG - isolateInternalQueries..........false
+01:19:56.886 DEBUG - jdbcUrl.........................jdbc:postgresql://localhost:5432/blynk_reporting?tcpKeepAlive=true&socketTimeout=150
+01:19:56.886 DEBUG - leakDetectionThreshold..........0
+01:19:56.886 DEBUG - maxLifetime.....................0
+01:19:56.887 DEBUG - maximumPoolSize.................5
+01:19:56.887 DEBUG - metricRegistry..................none
+01:19:56.887 DEBUG - metricsTrackerFactory...........none
+01:19:56.887 DEBUG - minimumIdle.....................5
+01:19:56.887 DEBUG - password........................<masked>
+01:19:56.887 DEBUG - poolName........................"HikariPool-2"
+01:19:56.887 DEBUG - readOnly........................false
+01:19:56.888 DEBUG - registerMbeans..................false
+01:19:56.888 DEBUG - scheduledExecutor...............none
+01:19:56.888 DEBUG - schema..........................none
+01:19:56.888 DEBUG - threadFactory...................internal
+01:19:56.888 DEBUG - transactionIsolation............default
+01:19:56.888 DEBUG - username........................"test"
+01:19:56.888 DEBUG - validationTimeout...............5000
+01:19:56.889 INFO  - HikariPool-2 - Starting...
+01:19:56.889 DEBUG - Loaded driver with class name org.postgresql.Driver for jdbcUrl=jdbc:postgresql://localhost:5432/blynk_reporting?tcpKeepAlive=true&socketTimeout=150
+01:19:56.902 DEBUG - HikariPool-2 - Added connection org.postgresql.jdbc.PgConnection@46074492
+01:19:56.903 INFO  - HikariPool-2 - Start completed.
+01:19:56.904 INFO  - Connected to reporting database successfully.
+01:19:56.917 DEBUG - HikariPool-2 - Added connection org.postgresql.jdbc.PgConnection@4c024d8b
+01:19:56.928 INFO  - Storing MINUTE reporting...
+01:19:56.929 INFO  - Storing MINUTE reporting finished. Time 1. Records saved 0
+01:19:56.930 INFO  - Storing HOURLY reporting...
+01:19:56.931 INFO  - Storing HOURLY reporting finished. Time 1. Records saved 0
+01:19:56.931 INFO  - Storing DAILY reporting...
+01:19:56.933 INFO  - Storing DAILY reporting finished. Time 2. Records saved 0
+01:19:56.933 INFO  - Storing MINUTE reporting...
+01:19:56.933 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.933 INFO  - Storing HOURLY reporting...
+01:19:56.934 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.934 INFO  - Storing DAILY reporting...
+01:19:56.934 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.934 INFO  - Storing MINUTE reporting...
+01:19:56.934 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.934 INFO  - Storing HOURLY reporting...
+01:19:56.934 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.935 INFO  - Storing DAILY reporting...
+01:19:56.935 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.935 INFO  - Storing MINUTE reporting...
+01:19:56.935 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.935 INFO  - Storing HOURLY reporting...
+01:19:56.935 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.936 INFO  - Storing DAILY reporting...
+01:19:56.936 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.936 INFO  - Storing MINUTE reporting...
+01:19:56.936 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.936 INFO  - Storing HOURLY reporting...
+01:19:56.936 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.937 INFO  - Storing DAILY reporting...
+01:19:56.937 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.937 INFO  - Storing MINUTE reporting...
+01:19:56.937 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.937 INFO  - Storing HOURLY reporting...
+01:19:56.937 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.938 INFO  - Storing DAILY reporting...
+01:19:56.938 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.938 INFO  - Storing MINUTE reporting...
+01:19:56.938 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.938 INFO  - Storing HOURLY reporting...
+01:19:56.938 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.938 INFO  - Storing DAILY reporting...
+01:19:56.939 INFO  - Storing DAILY reporting finished. Time 1. Records saved 0
+01:19:56.939 INFO  - Storing MINUTE reporting...
+01:19:56.939 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.939 INFO  - Storing HOURLY reporting...
+01:19:56.939 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.939 INFO  - Storing DAILY reporting...
+01:19:56.940 INFO  - Storing DAILY reporting finished. Time 1. Records saved 0
+01:19:56.940 INFO  - Storing MINUTE reporting...
+01:19:56.940 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.940 INFO  - Storing HOURLY reporting...
+01:19:56.940 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.940 INFO  - Storing DAILY reporting...
+01:19:56.940 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.941 INFO  - Storing MINUTE reporting...
+01:19:56.941 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.941 INFO  - Storing HOURLY reporting...
+01:19:56.941 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.941 INFO  - Storing DAILY reporting...
+01:19:56.941 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.941 INFO  - Storing MINUTE reporting...
+01:19:56.942 INFO  - Storing MINUTE reporting finished. Time 1. Records saved 0
+01:19:56.942 INFO  - Storing HOURLY reporting...
+01:19:56.942 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.942 INFO  - Storing DAILY reporting...
+01:19:56.942 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.942 INFO  - Storing MINUTE reporting...
+01:19:56.943 INFO  - Storing MINUTE reporting finished. Time 1. Records saved 0
+01:19:56.943 INFO  - Storing HOURLY reporting...
+01:19:56.943 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.943 INFO  - Storing DAILY reporting...
+01:19:56.943 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.943 INFO  - Storing MINUTE reporting...
+01:19:56.943 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.944 INFO  - Storing HOURLY reporting...
+01:19:56.944 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.944 INFO  - Storing DAILY reporting...
+01:19:56.944 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.944 INFO  - Storing MINUTE reporting...
+01:19:56.944 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.944 INFO  - Storing HOURLY reporting...
+01:19:56.945 INFO  - Storing HOURLY reporting finished. Time 1. Records saved 0
+01:19:56.945 INFO  - Storing DAILY reporting...
+01:19:56.945 DEBUG - HikariPool-2 - Added connection org.postgresql.jdbc.PgConnection@3f8b040
+01:19:56.945 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.945 INFO  - Storing MINUTE reporting...
+01:19:56.945 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.945 INFO  - Storing HOURLY reporting...
+01:19:56.945 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.946 INFO  - Storing DAILY reporting...
+01:19:56.946 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.946 INFO  - Storing MINUTE reporting...
+01:19:56.946 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.946 INFO  - Storing HOURLY reporting...
+01:19:56.946 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.946 INFO  - Storing DAILY reporting...
+01:19:56.947 INFO  - Storing DAILY reporting finished. Time 1. Records saved 0
+01:19:56.947 INFO  - Storing MINUTE reporting...
+01:19:56.947 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.947 INFO  - Storing HOURLY reporting...
+01:19:56.947 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.947 INFO  - Storing DAILY reporting...
+01:19:56.947 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.948 INFO  - Storing MINUTE reporting...
+01:19:56.948 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.948 INFO  - Storing HOURLY reporting...
+01:19:56.948 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.948 INFO  - Storing DAILY reporting...
+01:19:56.948 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.948 INFO  - Storing MINUTE reporting...
+01:19:56.949 INFO  - Storing MINUTE reporting finished. Time 1. Records saved 0
+01:19:56.949 INFO  - Storing HOURLY reporting...
+01:19:56.949 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.949 INFO  - Storing DAILY reporting...
+01:19:56.949 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.949 INFO  - Storing MINUTE reporting...
+01:19:56.949 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.950 INFO  - Storing HOURLY reporting...
+01:19:56.950 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.950 INFO  - Storing DAILY reporting...
+01:19:56.950 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.950 INFO  - Storing MINUTE reporting...
+01:19:56.950 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.950 INFO  - Storing HOURLY reporting...
+01:19:56.951 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.951 INFO  - Storing DAILY reporting...
+01:19:56.951 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.951 INFO  - Storing MINUTE reporting...
+01:19:56.951 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.951 INFO  - Storing HOURLY reporting...
+01:19:56.951 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.951 INFO  - Storing DAILY reporting...
+01:19:56.952 INFO  - Storing DAILY reporting finished. Time 1. Records saved 0
+01:19:56.952 INFO  - Storing MINUTE reporting...
+01:19:56.952 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.952 INFO  - Storing HOURLY reporting...
+01:19:56.952 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.952 INFO  - Storing DAILY reporting...
+01:19:56.952 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.953 INFO  - Storing MINUTE reporting...
+01:19:56.953 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.953 INFO  - Storing HOURLY reporting...
+01:19:56.953 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.953 INFO  - Storing DAILY reporting...
+01:19:56.953 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.953 INFO  - Storing MINUTE reporting...
+01:19:56.953 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.954 INFO  - Storing HOURLY reporting...
+01:19:56.954 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.954 INFO  - Storing DAILY reporting...
+01:19:56.954 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.954 INFO  - Storing MINUTE reporting...
+01:19:56.954 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.954 INFO  - Storing HOURLY reporting...
+01:19:56.955 INFO  - Storing HOURLY reporting finished. Time 1. Records saved 0
+01:19:56.955 INFO  - Storing DAILY reporting...
+01:19:56.955 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.955 INFO  - Storing MINUTE reporting...
+01:19:56.955 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.955 INFO  - Storing HOURLY reporting...
+01:19:56.955 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.956 INFO  - Storing DAILY reporting...
+01:19:56.956 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.956 INFO  - Storing MINUTE reporting...
+01:19:56.956 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.956 INFO  - Storing HOURLY reporting...
+01:19:56.956 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.956 INFO  - Storing DAILY reporting...
+01:19:56.956 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.957 INFO  - Storing MINUTE reporting...
+01:19:56.957 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.957 INFO  - Storing HOURLY reporting...
+01:19:56.957 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.957 INFO  - Storing DAILY reporting...
+01:19:56.957 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.957 INFO  - Storing MINUTE reporting...
+01:19:56.958 INFO  - Storing MINUTE reporting finished. Time 1. Records saved 0
+01:19:56.958 INFO  - Storing HOURLY reporting...
+01:19:56.958 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.958 INFO  - Storing DAILY reporting...
+01:19:56.958 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.959 INFO  - Storing MINUTE reporting...
+01:19:56.959 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.959 INFO  - Storing HOURLY reporting...
+01:19:56.959 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.959 INFO  - Storing DAILY reporting...
+01:19:56.959 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.959 INFO  - Storing MINUTE reporting...
+01:19:56.959 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.960 INFO  - Storing HOURLY reporting...
+01:19:56.960 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.960 INFO  - Storing DAILY reporting...
+01:19:56.960 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.960 INFO  - Storing MINUTE reporting...
+01:19:56.960 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.960 INFO  - Storing HOURLY reporting...
+01:19:56.960 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.961 INFO  - Storing DAILY reporting...
+01:19:56.961 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.961 INFO  - Storing MINUTE reporting...
+01:19:56.961 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.961 INFO  - Storing HOURLY reporting...
+01:19:56.961 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.961 INFO  - Storing DAILY reporting...
+01:19:56.961 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.961 INFO  - Storing MINUTE reporting...
+01:19:56.962 INFO  - Storing MINUTE reporting finished. Time 1. Records saved 0
+01:19:56.962 INFO  - Storing HOURLY reporting...
+01:19:56.962 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.962 INFO  - Storing DAILY reporting...
+01:19:56.962 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.962 INFO  - Storing MINUTE reporting...
+01:19:56.962 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.962 INFO  - Storing HOURLY reporting...
+01:19:56.963 INFO  - Storing HOURLY reporting finished. Time 1. Records saved 0
+01:19:56.963 INFO  - Storing DAILY reporting...
+01:19:56.963 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.963 INFO  - Storing MINUTE reporting...
+01:19:56.963 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.963 INFO  - Storing HOURLY reporting...
+01:19:56.963 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.963 INFO  - Storing DAILY reporting...
+01:19:56.964 INFO  - Storing DAILY reporting finished. Time 1. Records saved 0
+01:19:56.964 INFO  - Storing MINUTE reporting...
+01:19:56.964 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.964 INFO  - Storing HOURLY reporting...
+01:19:56.964 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.964 INFO  - Storing DAILY reporting...
+01:19:56.964 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.964 INFO  - Storing MINUTE reporting...
+01:19:56.965 INFO  - Storing MINUTE reporting finished. Time 1. Records saved 0
+01:19:56.965 DEBUG - HikariPool-2 - Added connection org.postgresql.jdbc.PgConnection@5dc8dba1
+01:19:56.965 INFO  - Storing HOURLY reporting...
+01:19:56.965 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.965 INFO  - Storing DAILY reporting...
+01:19:56.965 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.965 INFO  - Storing MINUTE reporting...
+01:19:56.965 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.966 INFO  - Storing HOURLY reporting...
+01:19:56.966 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.966 INFO  - Storing DAILY reporting...
+01:19:56.966 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.966 INFO  - Storing MINUTE reporting...
+01:19:56.966 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.966 INFO  - Storing HOURLY reporting...
+01:19:56.966 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.967 INFO  - Storing DAILY reporting...
+01:19:56.967 INFO  - Storing DAILY reporting finished. Time 1. Records saved 0
+01:19:56.967 INFO  - Storing MINUTE reporting...
+01:19:56.967 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.967 INFO  - Storing HOURLY reporting...
+01:19:56.967 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.967 INFO  - Storing DAILY reporting...
+01:19:56.967 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.967 INFO  - Storing MINUTE reporting...
+01:19:56.968 INFO  - Storing MINUTE reporting finished. Time 1. Records saved 0
+01:19:56.968 INFO  - Storing HOURLY reporting...
+01:19:56.968 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.968 INFO  - Storing DAILY reporting...
+01:19:56.968 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.968 INFO  - Storing MINUTE reporting...
+01:19:56.968 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.969 INFO  - Storing HOURLY reporting...
+01:19:56.969 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.969 INFO  - Storing DAILY reporting...
+01:19:56.969 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.969 INFO  - Storing MINUTE reporting...
+01:19:56.969 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.969 INFO  - Storing HOURLY reporting...
+01:19:56.969 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.970 INFO  - Storing DAILY reporting...
+01:19:56.970 INFO  - Storing DAILY reporting finished. Time 1. Records saved 0
+01:19:56.970 INFO  - Storing MINUTE reporting...
+01:19:56.970 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.970 INFO  - Storing HOURLY reporting...
+01:19:56.970 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.970 INFO  - Storing DAILY reporting...
+01:19:56.970 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.970 INFO  - Storing MINUTE reporting...
+01:19:56.971 INFO  - Storing MINUTE reporting finished. Time 1. Records saved 0
+01:19:56.971 INFO  - Storing HOURLY reporting...
+01:19:56.971 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.971 INFO  - Storing DAILY reporting...
+01:19:56.971 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.971 INFO  - Storing MINUTE reporting...
+01:19:56.971 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.972 INFO  - Storing HOURLY reporting...
+01:19:56.972 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.972 INFO  - Storing DAILY reporting...
+01:19:56.972 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.972 INFO  - Storing MINUTE reporting...
+01:19:56.972 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.972 INFO  - Storing HOURLY reporting...
+01:19:56.972 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.972 INFO  - Storing DAILY reporting...
+01:19:56.973 INFO  - Storing DAILY reporting finished. Time 1. Records saved 0
+01:19:56.973 INFO  - Storing MINUTE reporting...
+01:19:56.973 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.973 INFO  - Storing HOURLY reporting...
+01:19:56.973 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.973 INFO  - Storing DAILY reporting...
+01:19:56.973 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.973 INFO  - Storing MINUTE reporting...
+01:19:56.974 INFO  - Storing MINUTE reporting finished. Time 1. Records saved 0
+01:19:56.974 INFO  - Storing HOURLY reporting...
+01:19:56.974 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.974 INFO  - Storing DAILY reporting...
+01:19:56.974 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.974 INFO  - Storing MINUTE reporting...
+01:19:56.974 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.974 INFO  - Storing HOURLY reporting...
+01:19:56.975 INFO  - Storing HOURLY reporting finished. Time 1. Records saved 0
+01:19:56.975 INFO  - Storing DAILY reporting...
+01:19:56.975 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.975 INFO  - Storing MINUTE reporting...
+01:19:56.975 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.975 INFO  - Storing HOURLY reporting...
+01:19:56.975 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.975 INFO  - Storing DAILY reporting...
+01:19:56.976 INFO  - Storing DAILY reporting finished. Time 1. Records saved 0
+01:19:56.976 INFO  - Storing MINUTE reporting...
+01:19:56.976 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.976 INFO  - Storing HOURLY reporting...
+01:19:56.976 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.976 INFO  - Storing DAILY reporting...
+01:19:56.976 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.976 INFO  - Storing MINUTE reporting...
+01:19:56.977 INFO  - Storing MINUTE reporting finished. Time 1. Records saved 0
+01:19:56.977 INFO  - Storing HOURLY reporting...
+01:19:56.977 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.977 INFO  - Storing DAILY reporting...
+01:19:56.977 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.977 INFO  - Storing MINUTE reporting...
+01:19:56.977 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.977 INFO  - Storing HOURLY reporting...
+01:19:56.978 INFO  - Storing HOURLY reporting finished. Time 1. Records saved 0
+01:19:56.978 INFO  - Storing DAILY reporting...
+01:19:56.978 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.978 INFO  - Storing MINUTE reporting...
+01:19:56.978 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.978 INFO  - Storing HOURLY reporting...
+01:19:56.978 DEBUG - Using SLF4J as the default logging framework
+01:19:56.978 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.979 INFO  - Storing DAILY reporting...
+01:19:56.979 INFO  - Storing DAILY reporting finished. Time 1. Records saved 0
+01:19:56.979 INFO  - Storing MINUTE reporting...
+01:19:56.979 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.979 INFO  - Storing HOURLY reporting...
+01:19:56.979 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.979 INFO  - Storing DAILY reporting...
+01:19:56.980 INFO  - Storing DAILY reporting finished. Time 1. Records saved 0
+01:19:56.980 INFO  - Storing MINUTE reporting...
+01:19:56.980 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:19:56.980 INFO  - Storing HOURLY reporting...
+01:19:56.980 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.980 INFO  - Storing DAILY reporting...
+01:19:56.980 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.980 INFO  - Storing MINUTE reporting...
+01:19:56.981 INFO  - Storing MINUTE reporting finished. Time 1. Records saved 0
+01:19:56.981 INFO  - Storing HOURLY reporting...
+01:19:56.981 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:19:56.981 INFO  - Storing DAILY reporting...
+01:19:56.981 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:19:56.982 DEBUG - -Dio.netty.noUnsafe: false
+01:19:56.982 DEBUG - Java version: 10
+01:19:56.983 DEBUG - sun.misc.Unsafe.theUnsafe: available
+01:19:56.984 DEBUG - sun.misc.Unsafe.copyMemory: available
+01:19:56.984 DEBUG - HikariPool-2 - Added connection org.postgresql.jdbc.PgConnection@3231b401
+01:19:56.984 DEBUG - java.nio.Buffer.address: available
+01:19:56.984 DEBUG - direct buffer constructor: unavailable
+java.lang.UnsupportedOperationException: Reflective setAccessible(true) disabled
+	at io.netty.util.internal.ReflectionUtil.trySetAccessible(ReflectionUtil.java:31) ~[netty-common-4.1.31.Final.jar:4.1.31.Final]
+	at io.netty.util.internal.PlatformDependent0$4.run(PlatformDependent0.java:224) ~[netty-common-4.1.31.Final.jar:4.1.31.Final]
+	at java.security.AccessController.doPrivileged(Native Method) ~[?:?]
+	at io.netty.util.internal.PlatformDependent0.<clinit>(PlatformDependent0.java:218) [netty-common-4.1.31.Final.jar:4.1.31.Final]
+	at io.netty.util.internal.PlatformDependent.isAndroid(PlatformDependent.java:212) [netty-common-4.1.31.Final.jar:4.1.31.Final]
+	at io.netty.util.internal.PlatformDependent.<clinit>(PlatformDependent.java:80) [netty-common-4.1.31.Final.jar:4.1.31.Final]
+	at io.netty.util.ConstantPool.<init>(ConstantPool.java:32) [netty-common-4.1.31.Final.jar:4.1.31.Final]
+	at io.netty.util.AttributeKey$1.<init>(AttributeKey.java:27) [netty-common-4.1.31.Final.jar:4.1.31.Final]
+	at io.netty.util.AttributeKey.<clinit>(AttributeKey.java:27) [netty-common-4.1.31.Final.jar:4.1.31.Final]
+	at cc.blynk.server.core.dao.SessionDao.<clinit>(SessionDao.java:30) [classes/:?]
+	at cc.blynk.server.db.RealtimeStatsDBTest.testRealTimeStatsInsertWroks(RealtimeStatsDBTest.java:77) [test-classes/:?]
+	at jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:?]
+	at jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:?]
+	at jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:?]
+	at java.lang.reflect.Method.invoke(Method.java:564) ~[?:?]
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) [junit-4.12.jar:4.12]
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) [junit-4.12.jar:4.12]
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) [junit-4.12.jar:4.12]
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) [junit-4.12.jar:4.12]
+	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:26) [junit-4.12.jar:4.12]
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) [junit-4.12.jar:4.12]
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) [junit-4.12.jar:4.12]
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) [junit-4.12.jar:4.12]
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) [junit-4.12.jar:4.12]
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) [junit-4.12.jar:4.12]
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) [junit-4.12.jar:4.12]
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) [junit-4.12.jar:4.12]
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) [junit-4.12.jar:4.12]
+	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:26) [junit-4.12.jar:4.12]
+	at org.junit.internal.runners.statements.RunAfters.evaluate(RunAfters.java:27) [junit-4.12.jar:4.12]
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:363) [junit-4.12.jar:4.12]
+	at org.apache.maven.surefire.junit4.JUnit4Provider.execute(JUnit4Provider.java:252) [surefire-junit4-2.12.4.jar:2.12.4]
+	at org.apache.maven.surefire.junit4.JUnit4Provider.executeTestSet(JUnit4Provider.java:141) [surefire-junit4-2.12.4.jar:2.12.4]
+	at org.apache.maven.surefire.junit4.JUnit4Provider.invoke(JUnit4Provider.java:112) [surefire-junit4-2.12.4.jar:2.12.4]
+	at jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:?]
+	at jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:?]
+	at jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:?]
+	at java.lang.reflect.Method.invoke(Method.java:564) ~[?:?]
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray(ReflectionUtils.java:189) [surefire-api-2.12.4.jar:2.12.4]
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:165) [surefire-booter-2.12.4.jar:2.12.4]
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:85) [surefire-booter-2.12.4.jar:2.12.4]
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:115) [surefire-booter-2.12.4.jar:2.12.4]
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:75) [surefire-booter-2.12.4.jar:2.12.4]
+01:19:56.989 DEBUG - java.nio.Bits.unaligned: available, true
+01:19:56.990 DEBUG - jdk.internal.misc.Unsafe.allocateUninitializedArray(int): unavailable
+java.lang.IllegalAccessException: class io.netty.util.internal.PlatformDependent0$6 cannot access class jdk.internal.misc.Unsafe (in module java.base) because module java.base does not export jdk.internal.misc to unnamed module @5922ae77
+	at jdk.internal.reflect.Reflection.newIllegalAccessException(Reflection.java:360) ~[?:?]
+	at java.lang.reflect.AccessibleObject.checkAccess(AccessibleObject.java:589) ~[?:?]
+	at java.lang.reflect.Method.invoke(Method.java:556) ~[?:?]
+	at io.netty.util.internal.PlatformDependent0$6.run(PlatformDependent0.java:334) ~[netty-common-4.1.31.Final.jar:4.1.31.Final]
+	at java.security.AccessController.doPrivileged(Native Method) ~[?:?]
+	at io.netty.util.internal.PlatformDependent0.<clinit>(PlatformDependent0.java:325) [netty-common-4.1.31.Final.jar:4.1.31.Final]
+	at io.netty.util.internal.PlatformDependent.isAndroid(PlatformDependent.java:212) [netty-common-4.1.31.Final.jar:4.1.31.Final]
+	at io.netty.util.internal.PlatformDependent.<clinit>(PlatformDependent.java:80) [netty-common-4.1.31.Final.jar:4.1.31.Final]
+	at io.netty.util.ConstantPool.<init>(ConstantPool.java:32) [netty-common-4.1.31.Final.jar:4.1.31.Final]
+	at io.netty.util.AttributeKey$1.<init>(AttributeKey.java:27) [netty-common-4.1.31.Final.jar:4.1.31.Final]
+	at io.netty.util.AttributeKey.<clinit>(AttributeKey.java:27) [netty-common-4.1.31.Final.jar:4.1.31.Final]
+	at cc.blynk.server.core.dao.SessionDao.<clinit>(SessionDao.java:30) [classes/:?]
+	at cc.blynk.server.db.RealtimeStatsDBTest.testRealTimeStatsInsertWroks(RealtimeStatsDBTest.java:77) [test-classes/:?]
+	at jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:?]
+	at jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:?]
+	at jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:?]
+	at java.lang.reflect.Method.invoke(Method.java:564) ~[?:?]
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) [junit-4.12.jar:4.12]
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) [junit-4.12.jar:4.12]
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) [junit-4.12.jar:4.12]
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) [junit-4.12.jar:4.12]
+	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:26) [junit-4.12.jar:4.12]
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) [junit-4.12.jar:4.12]
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) [junit-4.12.jar:4.12]
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) [junit-4.12.jar:4.12]
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) [junit-4.12.jar:4.12]
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) [junit-4.12.jar:4.12]
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) [junit-4.12.jar:4.12]
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) [junit-4.12.jar:4.12]
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) [junit-4.12.jar:4.12]
+	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:26) [junit-4.12.jar:4.12]
+	at org.junit.internal.runners.statements.RunAfters.evaluate(RunAfters.java:27) [junit-4.12.jar:4.12]
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:363) [junit-4.12.jar:4.12]
+	at org.apache.maven.surefire.junit4.JUnit4Provider.execute(JUnit4Provider.java:252) [surefire-junit4-2.12.4.jar:2.12.4]
+	at org.apache.maven.surefire.junit4.JUnit4Provider.executeTestSet(JUnit4Provider.java:141) [surefire-junit4-2.12.4.jar:2.12.4]
+	at org.apache.maven.surefire.junit4.JUnit4Provider.invoke(JUnit4Provider.java:112) [surefire-junit4-2.12.4.jar:2.12.4]
+	at jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:?]
+	at jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:?]
+	at jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:?]
+	at java.lang.reflect.Method.invoke(Method.java:564) ~[?:?]
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray(ReflectionUtils.java:189) [surefire-api-2.12.4.jar:2.12.4]
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:165) [surefire-booter-2.12.4.jar:2.12.4]
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:85) [surefire-booter-2.12.4.jar:2.12.4]
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:115) [surefire-booter-2.12.4.jar:2.12.4]
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:75) [surefire-booter-2.12.4.jar:2.12.4]
+01:19:56.992 DEBUG - java.nio.DirectByteBuffer.<init>(long, int): unavailable
+01:19:56.992 DEBUG - sun.misc.Unsafe: available
+01:19:56.992 DEBUG - maxDirectMemory: 8424259584 bytes (maybe)
+01:19:56.992 DEBUG - -Dio.netty.tmpdir: /tmp (java.io.tmpdir)
+01:19:56.992 DEBUG - -Dio.netty.bitMode: 64 (sun.arch.data.model)
+01:19:56.993 DEBUG - -Dio.netty.maxDirectMemory: -1 bytes
+01:19:56.993 DEBUG - -Dio.netty.uninitializedArrayAllocationThreshold: -1
+01:19:56.994 DEBUG - java.nio.ByteBuffer.cleaner(): available
+01:19:56.994 DEBUG - -Dio.netty.noPreferDirect: false
+01:19:56.995 INFO  - Region : test. Host : 127.0.0.1.
+01:19:56.997 INFO  - Reports : 0
+01:19:57.003 DEBUG - HikariPool-2 - Pool stats (total=5, active=1, idle=4, waiting=0)
+01:19:57.004 DEBUG - -Dio.netty.threadLocalMap.stringBuilder.initialSize: 1024
+01:19:57.005 DEBUG - -Dio.netty.threadLocalMap.stringBuilder.maxSize: 4096
+01:19:57.013 DEBUG - -Dio.netty.leakDetection.level: simple
+01:19:57.013 DEBUG - -Dio.netty.leakDetection.targetRecords: 4
+01:19:57.014 DEBUG - -Dio.netty.allocator.numHeapArenas: 16
+01:19:57.014 DEBUG - -Dio.netty.allocator.numDirectArenas: 16
+01:19:57.014 DEBUG - -Dio.netty.allocator.pageSize: 8192
+01:19:57.014 DEBUG - -Dio.netty.allocator.maxOrder: 11
+01:19:57.014 DEBUG - -Dio.netty.allocator.chunkSize: 16777216
+01:19:57.014 DEBUG - -Dio.netty.allocator.tinyCacheSize: 512
+01:19:57.014 DEBUG - -Dio.netty.allocator.smallCacheSize: 256
+01:19:57.014 DEBUG - -Dio.netty.allocator.normalCacheSize: 64
+01:19:57.014 DEBUG - -Dio.netty.allocator.maxCachedBufferCapacity: 32768
+01:19:57.014 DEBUG - -Dio.netty.allocator.cacheTrimInterval: 8192
+01:19:57.014 DEBUG - -Dio.netty.allocator.useCacheForAllThreads: true
+01:19:57.020 DEBUG - -Dio.netty.allocator.type: pooled
+01:19:57.020 DEBUG - -Dio.netty.threadLocalDirectBufferSize: 0
+01:19:57.020 DEBUG - -Dio.netty.maxThreadLocalCharBufferSize: 16384
+01:19:57.114 INFO  - Removing old reporting records...
+01:19:57.116 INFO  - Removing finished. Minute records 0, hour records 0. Time 2
+01:19:57.284 DEBUG - HikariPool-2 - Executed rollback on connection org.postgresql.jdbc.PgConnection@4c024d8b due to dirty commit state on close().
+01:19:57.285 INFO  - HikariPool-2 - Shutdown initiated...
+01:19:57.285 DEBUG - HikariPool-2 - Before shutdown stats (total=5, active=1, idle=4, waiting=0)
+01:19:57.286 DEBUG - HikariPool-2 - Closing connection org.postgresql.jdbc.PgConnection@4c024d8b: (connection evicted)
+01:19:57.287 DEBUG - HikariPool-2 - Closing connection org.postgresql.jdbc.PgConnection@3f8b040: (connection evicted)
+01:19:57.288 DEBUG - HikariPool-2 - Closing connection org.postgresql.jdbc.PgConnection@5dc8dba1: (connection evicted)
+01:19:57.288 DEBUG - HikariPool-2 - Closing connection org.postgresql.jdbc.PgConnection@3231b401: (connection evicted)
+01:19:57.291 DEBUG - HikariPool-2 - After shutdown stats (total=0, active=0, idle=0, waiting=0)
+01:19:57.291 INFO  - HikariPool-2 - Shutdown completed.
+01:19:57.293 INFO  - Reporting DB url : jdbc:postgresql://localhost:5432/blynk_reporting?tcpKeepAlive=true&socketTimeout=150
+01:19:57.293 INFO  - Reporting DB user : test
+01:19:57.293 INFO  - Connecting to reporting DB...
+01:19:57.294 DEBUG - HikariPool-3 - configuration:
+01:19:57.295 DEBUG - allowPoolSuspension.............false
+01:19:57.295 DEBUG - autoCommit......................false
+01:19:57.295 DEBUG - catalog.........................none
+01:19:57.295 DEBUG - connectionInitSql...............none
+01:19:57.296 DEBUG - connectionTestQuery............."SELECT 1"
+01:19:57.296 DEBUG - connectionTimeout...............30000
+01:19:57.296 DEBUG - dataSource......................none
+01:19:57.296 DEBUG - dataSourceClassName.............none
+01:19:57.296 DEBUG - dataSourceJNDI..................none
+01:19:57.296 DEBUG - dataSourceProperties............{password=<masked>}
+01:19:57.296 DEBUG - driverClassName.................none
+01:19:57.296 DEBUG - healthCheckProperties...........{}
+01:19:57.297 DEBUG - healthCheckRegistry.............none
+01:19:57.297 DEBUG - idleTimeout.....................600000
+01:19:57.297 DEBUG - initializationFailTimeout.......1
+01:19:57.297 DEBUG - isolateInternalQueries..........false
+01:19:57.297 DEBUG - jdbcUrl.........................jdbc:postgresql://localhost:5432/blynk_reporting?tcpKeepAlive=true&socketTimeout=150
+01:19:57.297 DEBUG - leakDetectionThreshold..........0
+01:19:57.297 DEBUG - maxLifetime.....................0
+01:19:57.298 DEBUG - maximumPoolSize.................5
+01:19:57.298 DEBUG - metricRegistry..................none
+01:19:57.298 DEBUG - metricsTrackerFactory...........none
+01:19:57.298 DEBUG - minimumIdle.....................5
+01:19:57.298 DEBUG - password........................<masked>
+01:19:57.298 DEBUG - poolName........................"HikariPool-3"
+01:19:57.298 DEBUG - readOnly........................false
+01:19:57.298 DEBUG - registerMbeans..................false
+01:19:57.299 DEBUG - scheduledExecutor...............none
+01:19:57.299 DEBUG - schema..........................none
+01:19:57.299 DEBUG - threadFactory...................internal
+01:19:57.299 DEBUG - transactionIsolation............default
+01:19:57.299 DEBUG - username........................"test"
+01:19:57.299 DEBUG - validationTimeout...............5000
+01:19:57.299 INFO  - HikariPool-3 - Starting...
+01:19:57.300 DEBUG - Loaded driver with class name org.postgresql.Driver for jdbcUrl=jdbc:postgresql://localhost:5432/blynk_reporting?tcpKeepAlive=true&socketTimeout=150
+01:19:57.321 DEBUG - HikariPool-3 - Added connection org.postgresql.jdbc.PgConnection@52eacb4b
+01:19:57.321 INFO  - HikariPool-3 - Start completed.
+01:19:57.321 INFO  - Connected to reporting database successfully.
+01:19:57.333 DEBUG - HikariPool-3 - Added connection org.postgresql.jdbc.PgConnection@697c8e0c
+01:19:57.340 INFO  - Storing raw reporting...
+01:19:57.348 INFO  - Storing raw reporting finished. Time 8. Records saved 1
+01:19:57.357 INFO  - Storing raw reporting...
+01:19:57.365 INFO  - Storing raw reporting finished. Time 8. Records saved 1
+01:19:57.366 INFO  - HikariPool-3 - Shutdown initiated...
+01:19:57.366 DEBUG - HikariPool-3 - Before shutdown stats (total=2, active=1, idle=1, waiting=0)
+01:19:57.366 DEBUG - HikariPool-3 - Closing connection org.postgresql.jdbc.PgConnection@697c8e0c: (connection evicted)
+01:19:57.368 DEBUG - HikariPool-3 - After shutdown stats (total=0, active=0, idle=0, waiting=0)
+01:19:57.368 INFO  - HikariPool-3 - Shutdown completed.
+01:19:57.370 INFO  - DB url : jdbc:postgresql://localhost:5432/blynk?tcpKeepAlive=true&socketTimeout=150
+01:19:57.370 INFO  - DB user : test
+01:19:57.370 INFO  - Connecting to DB...
+01:19:57.370 DEBUG - HikariPool-4 - configuration:
+01:19:57.371 DEBUG - allowPoolSuspension.............false
+01:19:57.371 DEBUG - autoCommit......................false
+01:19:57.371 DEBUG - catalog.........................none
+01:19:57.371 DEBUG - connectionInitSql...............none
+01:19:57.371 DEBUG - connectionTestQuery............."SELECT 1"
+01:19:57.371 DEBUG - connectionTimeout...............30000
+01:19:57.371 DEBUG - dataSource......................none
+01:19:57.372 DEBUG - dataSourceClassName.............none
+01:19:57.372 DEBUG - dataSourceJNDI..................none
+01:19:57.372 DEBUG - dataSourceProperties............{password=<masked>}
+01:19:57.372 DEBUG - driverClassName.................none
+01:19:57.372 DEBUG - healthCheckProperties...........{}
+01:19:57.372 DEBUG - healthCheckRegistry.............none
+01:19:57.372 DEBUG - idleTimeout.....................600000
+01:19:57.372 DEBUG - initializationFailTimeout.......1
+01:19:57.372 DEBUG - isolateInternalQueries..........false
+01:19:57.372 DEBUG - jdbcUrl.........................jdbc:postgresql://localhost:5432/blynk?tcpKeepAlive=true&socketTimeout=150
+01:19:57.372 DEBUG - leakDetectionThreshold..........0
+01:19:57.372 DEBUG - maxLifetime.....................0
+01:19:57.372 DEBUG - maximumPoolSize.................5
+01:19:57.373 DEBUG - metricRegistry..................none
+01:19:57.373 DEBUG - metricsTrackerFactory...........none
+01:19:57.373 DEBUG - minimumIdle.....................5
+01:19:57.373 DEBUG - password........................<masked>
+01:19:57.373 DEBUG - poolName........................"HikariPool-4"
+01:19:57.373 DEBUG - readOnly........................false
+01:19:57.373 DEBUG - registerMbeans..................false
+01:19:57.373 DEBUG - scheduledExecutor...............none
+01:19:57.373 DEBUG - schema..........................none
+01:19:57.373 DEBUG - threadFactory...................internal
+01:19:57.373 DEBUG - transactionIsolation............default
+01:19:57.373 DEBUG - username........................"test"
+01:19:57.373 DEBUG - validationTimeout...............5000
+01:19:57.374 INFO  - HikariPool-4 - Starting...
+01:19:57.374 DEBUG - Loaded driver with class name org.postgresql.Driver for jdbcUrl=jdbc:postgresql://localhost:5432/blynk?tcpKeepAlive=true&socketTimeout=150
+01:19:57.389 DEBUG - HikariPool-4 - Added connection org.postgresql.jdbc.PgConnection@29539e36
+01:19:57.390 INFO  - HikariPool-4 - Start completed.
+01:19:57.391 INFO  - Connected to database successfully.
+01:19:57.402 DEBUG - HikariPool-4 - Added connection org.postgresql.jdbc.PgConnection@a924110
+01:19:57.415 INFO  - Select flashed token 0fab09381e144ff6a65a109e2a5a29d1.
+01:19:57.476 DEBUG - HikariPool-4 - Added connection org.postgresql.jdbc.PgConnection@4baf4b2b
+01:19:57.477 INFO  - Select flashed token 123.
+01:19:57.479 INFO  - HikariPool-4 - Shutdown initiated...
+01:19:57.479 DEBUG - HikariPool-4 - Before shutdown stats (total=3, active=2, idle=1, waiting=0)
+01:19:57.479 DEBUG - HikariPool-4 - Closing connection org.postgresql.jdbc.PgConnection@4baf4b2b: (connection evicted)
+01:19:57.481 DEBUG - HikariPool-4 - After shutdown stats (total=0, active=0, idle=0, waiting=0)
+01:19:57.481 INFO  - HikariPool-4 - Shutdown completed.
+01:19:57.483 INFO  - DB url : jdbc:postgresql://localhost:5432/blynk?tcpKeepAlive=true&socketTimeout=150
+01:19:57.483 INFO  - DB user : test
+01:19:57.483 INFO  - Connecting to DB...
+01:19:57.483 DEBUG - HikariPool-5 - configuration:
+01:19:57.484 DEBUG - allowPoolSuspension.............false
+01:19:57.484 DEBUG - autoCommit......................false
+01:19:57.484 DEBUG - catalog.........................none
+01:19:57.484 DEBUG - connectionInitSql...............none
+01:19:57.484 DEBUG - connectionTestQuery............."SELECT 1"
+01:19:57.484 DEBUG - connectionTimeout...............30000
+01:19:57.484 DEBUG - dataSource......................none
+01:19:57.484 DEBUG - dataSourceClassName.............none
+01:19:57.484 DEBUG - dataSourceJNDI..................none
+01:19:57.485 DEBUG - dataSourceProperties............{password=<masked>}
+01:19:57.485 DEBUG - driverClassName.................none
+01:19:57.485 DEBUG - healthCheckProperties...........{}
+01:19:57.485 DEBUG - healthCheckRegistry.............none
+01:19:57.485 DEBUG - idleTimeout.....................600000
+01:19:57.485 DEBUG - initializationFailTimeout.......1
+01:19:57.485 DEBUG - isolateInternalQueries..........false
+01:19:57.485 DEBUG - jdbcUrl.........................jdbc:postgresql://localhost:5432/blynk?tcpKeepAlive=true&socketTimeout=150
+01:19:57.485 DEBUG - leakDetectionThreshold..........0
+01:19:57.485 DEBUG - maxLifetime.....................0
+01:19:57.485 DEBUG - maximumPoolSize.................5
+01:19:57.485 DEBUG - metricRegistry..................none
+01:19:57.485 DEBUG - metricsTrackerFactory...........none
+01:19:57.485 DEBUG - minimumIdle.....................5
+01:19:57.486 DEBUG - password........................<masked>
+01:19:57.486 DEBUG - poolName........................"HikariPool-5"
+01:19:57.486 DEBUG - readOnly........................false
+01:19:57.486 DEBUG - registerMbeans..................false
+01:19:57.486 DEBUG - scheduledExecutor...............none
+01:19:57.486 DEBUG - schema..........................none
+01:19:57.486 DEBUG - threadFactory...................internal
+01:19:57.486 DEBUG - transactionIsolation............default
+01:19:57.486 DEBUG - username........................"test"
+01:19:57.486 DEBUG - validationTimeout...............5000
+01:19:57.486 INFO  - HikariPool-5 - Starting...
+01:19:57.487 DEBUG - Loaded driver with class name org.postgresql.Driver for jdbcUrl=jdbc:postgresql://localhost:5432/blynk?tcpKeepAlive=true&socketTimeout=150
+01:19:57.499 DEBUG - HikariPool-5 - Added connection org.postgresql.jdbc.PgConnection@1fe8d51b
+01:19:57.500 INFO  - HikariPool-5 - Start completed.
+01:19:57.500 INFO  - Connected to database successfully.
+01:19:57.512 DEBUG - HikariPool-5 - Added connection org.postgresql.jdbc.PgConnection@19275ca0
+01:19:57.557 INFO  - HikariPool-5 - Shutdown initiated...
+01:19:57.557 DEBUG - HikariPool-5 - Before shutdown stats (total=2, active=1, idle=1, waiting=0)
+01:19:57.558 DEBUG - HikariPool-5 - Closing connection org.postgresql.jdbc.PgConnection@19275ca0: (connection evicted)
+01:19:57.559 DEBUG - HikariPool-5 - After shutdown stats (total=0, active=0, idle=0, waiting=0)
+01:19:57.559 INFO  - HikariPool-5 - Shutdown completed.
+01:19:57.561 INFO  - DB url : jdbc:postgresql://localhost:5432/blynk?tcpKeepAlive=true&socketTimeout=150
+01:19:57.561 INFO  - DB user : test
+01:19:57.561 INFO  - Connecting to DB...
+01:19:57.561 DEBUG - HikariPool-6 - configuration:
+01:19:57.562 DEBUG - allowPoolSuspension.............false
+01:19:57.562 DEBUG - autoCommit......................false
+01:19:57.562 DEBUG - catalog.........................none
+01:19:57.562 DEBUG - connectionInitSql...............none
+01:19:57.562 DEBUG - connectionTestQuery............."SELECT 1"
+01:19:57.562 DEBUG - connectionTimeout...............30000
+01:19:57.562 DEBUG - dataSource......................none
+01:19:57.562 DEBUG - dataSourceClassName.............none
+01:19:57.562 DEBUG - dataSourceJNDI..................none
+01:19:57.562 DEBUG - dataSourceProperties............{password=<masked>}
+01:19:57.562 DEBUG - driverClassName.................none
+01:19:57.563 DEBUG - healthCheckProperties...........{}
+01:19:57.563 DEBUG - healthCheckRegistry.............none
+01:19:57.563 DEBUG - idleTimeout.....................600000
+01:19:57.563 DEBUG - initializationFailTimeout.......1
+01:19:57.563 DEBUG - isolateInternalQueries..........false
+01:19:57.563 DEBUG - jdbcUrl.........................jdbc:postgresql://localhost:5432/blynk?tcpKeepAlive=true&socketTimeout=150
+01:19:57.563 DEBUG - leakDetectionThreshold..........0
+01:19:57.563 DEBUG - maxLifetime.....................0
+01:19:57.563 DEBUG - maximumPoolSize.................5
+01:19:57.563 DEBUG - metricRegistry..................none
+01:19:57.563 DEBUG - metricsTrackerFactory...........none
+01:19:57.563 DEBUG - minimumIdle.....................5
+01:19:57.563 DEBUG - password........................<masked>
+01:19:57.563 DEBUG - poolName........................"HikariPool-6"
+01:19:57.563 DEBUG - readOnly........................false
+01:19:57.563 DEBUG - registerMbeans..................false
+01:19:57.564 DEBUG - scheduledExecutor...............none
+01:19:57.564 DEBUG - schema..........................none
+01:19:57.564 DEBUG - threadFactory...................internal
+01:19:57.564 DEBUG - transactionIsolation............default
+01:19:57.564 DEBUG - username........................"test"
+01:19:57.564 DEBUG - validationTimeout...............5000
+01:19:57.564 INFO  - HikariPool-6 - Starting...
+01:19:57.564 DEBUG - Loaded driver with class name org.postgresql.Driver for jdbcUrl=jdbc:postgresql://localhost:5432/blynk?tcpKeepAlive=true&socketTimeout=150
+01:19:57.577 DEBUG - HikariPool-6 - Added connection org.postgresql.jdbc.PgConnection@72bca894
+01:19:57.577 INFO  - HikariPool-6 - Start completed.
+01:19:57.578 INFO  - Connected to database successfully.
+01:19:57.588 DEBUG - HikariPool-6 - Added connection org.postgresql.jdbc.PgConnection@461a8afc
+01:19:57.616 INFO  - Storing users...
+01:19:57.677 DEBUG - HikariPool-6 - Pool stats (total=2, active=2, idle=0, waiting=0)
+01:19:57.687 DEBUG - HikariPool-6 - Added connection org.postgresql.jdbc.PgConnection@48dd6c4f
+01:19:57.697 DEBUG - HikariPool-6 - Added connection org.postgresql.jdbc.PgConnection@4ce2e18c
+01:19:57.710 DEBUG - HikariPool-6 - Added connection org.postgresql.jdbc.PgConnection@9e06674
+01:19:57.710 DEBUG - HikariPool-6 - After adding stats (total=5, active=2, idle=3, waiting=0)
+01:19:57.865 INFO  - Storing users finished. Time 249. Users saved 1
+01:19:57.872 INFO  - Loaded 1 users.
+01:19:57.882 INFO  - Loaded 0 users.
+01:19:57.896 INFO  - Storing users...
+01:19:58.427 INFO  - Storing users finished. Time 531. Users saved 10000
+01:19:58.593 INFO  - Loaded 10000 users.
+01:19:58.640 INFO  - Storing users...
+01:19:58.648 INFO  - Storing users finished. Time 8. Users saved 3
+01:19:58.665 INFO  - Redeem select for 5d7883323cfb45939c6ac4ff4c939cd7
+01:19:58.674 INFO  - Redeem select for 5d7883323cfb45939c6ac4ff4c939cd7
+01:19:58.681 INFO  - Storing users...
+01:19:58.690 INFO  - Storing users finished. Time 9. Users saved 1
+01:19:58.690 INFO  - Storing users...
+01:19:58.698 INFO  - Storing users finished. Time 8. Users saved 1
+01:19:58.699 INFO  - Loaded 1 users.
+01:19:58.713 INFO  - Storing users...
+01:19:58.723 INFO  - Storing users finished. Time 10. Users saved 1
+01:19:58.725 INFO  - Loaded 1 users.
+01:19:58.732 INFO  - Storing users...
+01:19:58.740 INFO  - Storing users finished. Time 8. Users saved 2
+01:19:58.740 INFO  - Loaded 2 users.
+01:19:58.749 INFO  - Storing users...
+01:19:58.756 INFO  - Storing users finished. Time 7. Users saved 1
+01:19:58.767 INFO  - Redeem select for 123
+01:19:58.773 INFO  - Redeem select for 4885eccbe9c8420c862153e21a92048c
+01:19:58.774 INFO  - Redeem select for 123
+01:19:58.782 INFO  - HikariPool-6 - Shutdown initiated...
+01:19:58.782 DEBUG - HikariPool-6 - Before shutdown stats (total=5, active=2, idle=3, waiting=0)
+01:19:58.783 DEBUG - HikariPool-6 - Closing connection org.postgresql.jdbc.PgConnection@48dd6c4f: (connection evicted)
+01:19:58.784 DEBUG - HikariPool-6 - Closing connection org.postgresql.jdbc.PgConnection@4ce2e18c: (connection evicted)
+01:19:58.784 DEBUG - HikariPool-6 - Closing connection org.postgresql.jdbc.PgConnection@9e06674: (connection evicted)
+01:19:58.785 DEBUG - HikariPool-6 - After shutdown stats (total=0, active=0, idle=0, waiting=0)
+01:19:58.786 INFO  - HikariPool-6 - Shutdown completed.
+01:19:58.790 INFO  - Adding token for dima@mail.us user to the pool
+01:19:58.870 DEBUG - Removing v1 pin data for dashId 1, deviceId 0.
+01:19:58.957 INFO  - Using data dir '123'
+01:19:59.064 INFO  - Using data dir '/tmp/blynk'
+01:19:59.070 DEBUG - Starting reading user DB.
+01:19:59.076 DEBUG - Reading user DB finished.
+01:19:59.077 INFO  - Using data dir '/tmp/blynk'
+01:19:59.077 DEBUG - Starting reading user DB.
+01:19:59.078 DEBUG - Reading user DB finished.
+01:19:59.078 INFO  - Using data dir '/tmp/blynk'
+01:19:59.080 INFO  - Using data dir '/tmp/blynk'
+01:19:59.080 DEBUG - Starting reading user DB.
+01:19:59.081 DEBUG - Reading user DB finished.
+01:19:59.082 INFO  - Using data dir '/tmp/blynk'
+01:27:18.919 INFO  - DB url : jdbc:postgresql://localhost:5432/blynk?tcpKeepAlive=true&socketTimeout=150
+01:27:18.923 INFO  - DB user : test
+01:27:18.924 INFO  - Connecting to DB...
+01:27:18.927 DEBUG - HikariPool-1 - configuration:
+01:27:18.932 DEBUG - allowPoolSuspension.............false
+01:27:18.932 DEBUG - autoCommit......................false
+01:27:18.932 DEBUG - catalog.........................none
+01:27:18.933 DEBUG - connectionInitSql...............none
+01:27:18.933 DEBUG - connectionTestQuery............."SELECT 1"
+01:27:18.933 DEBUG - connectionTimeout...............30000
+01:27:18.933 DEBUG - dataSource......................none
+01:27:18.934 DEBUG - dataSourceClassName.............none
+01:27:18.934 DEBUG - dataSourceJNDI..................none
+01:27:18.935 DEBUG - dataSourceProperties............{password=<masked>}
+01:27:18.935 DEBUG - driverClassName.................none
+01:27:18.935 DEBUG - healthCheckProperties...........{}
+01:27:18.936 DEBUG - healthCheckRegistry.............none
+01:27:18.936 DEBUG - idleTimeout.....................600000
+01:27:18.936 DEBUG - initializationFailTimeout.......1
+01:27:18.936 DEBUG - isolateInternalQueries..........false
+01:27:18.937 DEBUG - jdbcUrl.........................jdbc:postgresql://localhost:5432/blynk?tcpKeepAlive=true&socketTimeout=150
+01:27:18.937 DEBUG - leakDetectionThreshold..........0
+01:27:18.937 DEBUG - maxLifetime.....................0
+01:27:18.937 DEBUG - maximumPoolSize.................5
+01:27:18.938 DEBUG - metricRegistry..................none
+01:27:18.938 DEBUG - metricsTrackerFactory...........none
+01:27:18.938 DEBUG - minimumIdle.....................5
+01:27:18.939 DEBUG - password........................<masked>
+01:27:18.939 DEBUG - poolName........................"HikariPool-1"
+01:27:18.939 DEBUG - readOnly........................false
+01:27:18.939 DEBUG - registerMbeans..................false
+01:27:18.940 DEBUG - scheduledExecutor...............none
+01:27:18.940 DEBUG - schema..........................none
+01:27:18.940 DEBUG - threadFactory...................internal
+01:27:18.940 DEBUG - transactionIsolation............default
+01:27:18.941 DEBUG - username........................"test"
+01:27:18.941 DEBUG - validationTimeout...............5000
+01:27:18.943 INFO  - HikariPool-1 - Starting...
+01:27:18.969 DEBUG - Loaded driver with class name org.postgresql.Driver for jdbcUrl=jdbc:postgresql://localhost:5432/blynk?tcpKeepAlive=true&socketTimeout=150
+01:27:19.270 DEBUG - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@2484f433
+01:27:19.272 INFO  - HikariPool-1 - Start completed.
+01:27:19.294 INFO  - Connected to database successfully.
+01:27:19.321 DEBUG - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@3bf25259
+01:27:19.373 DEBUG - HikariPool-1 - Pool stats (total=2, active=1, idle=1, waiting=0)
+01:27:19.401 DEBUG - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@3535ab57
+01:27:19.416 DEBUG - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@7408a16c
+01:27:19.434 DEBUG - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@5dc1452e
+01:27:19.435 DEBUG - HikariPool-1 - After adding stats (total=5, active=2, idle=3, waiting=0)
+01:27:19.441 DEBUG - HikariPool-1 - Executed rollback on connection org.postgresql.jdbc.PgConnection@3bf25259 due to dirty commit state on close().
+01:27:19.441 ERROR - Error getting token host. Reason : ERROR: invalid byte sequence for encoding "UTF8": 0x00
+01:27:19.445 INFO  - HikariPool-1 - Shutdown initiated...
+01:27:19.445 DEBUG - HikariPool-1 - Before shutdown stats (total=5, active=1, idle=4, waiting=0)
+01:27:19.449 DEBUG - HikariPool-1 - Closing connection org.postgresql.jdbc.PgConnection@3bf25259: (connection evicted)
+01:27:19.461 DEBUG - HikariPool-1 - Closing connection org.postgresql.jdbc.PgConnection@3535ab57: (connection evicted)
+01:27:19.464 DEBUG - HikariPool-1 - Closing connection org.postgresql.jdbc.PgConnection@7408a16c: (connection evicted)
+01:27:19.467 DEBUG - HikariPool-1 - Closing connection org.postgresql.jdbc.PgConnection@5dc1452e: (connection evicted)
+01:27:19.473 DEBUG - HikariPool-1 - After shutdown stats (total=0, active=0, idle=0, waiting=0)
+01:27:19.474 INFO  - HikariPool-1 - Shutdown completed.
+01:27:19.477 INFO  - Reporting DB url : jdbc:postgresql://localhost:5432/blynk_reporting?tcpKeepAlive=true&socketTimeout=150
+01:27:19.478 INFO  - Reporting DB user : test
+01:27:19.478 INFO  - Connecting to reporting DB...
+01:27:19.478 DEBUG - HikariPool-2 - configuration:
+01:27:19.479 DEBUG - allowPoolSuspension.............false
+01:27:19.479 DEBUG - autoCommit......................false
+01:27:19.480 DEBUG - catalog.........................none
+01:27:19.480 DEBUG - connectionInitSql...............none
+01:27:19.480 DEBUG - connectionTestQuery............."SELECT 1"
+01:27:19.480 DEBUG - connectionTimeout...............30000
+01:27:19.480 DEBUG - dataSource......................none
+01:27:19.480 DEBUG - dataSourceClassName.............none
+01:27:19.481 DEBUG - dataSourceJNDI..................none
+01:27:19.481 DEBUG - dataSourceProperties............{password=<masked>}
+01:27:19.481 DEBUG - driverClassName.................none
+01:27:19.481 DEBUG - healthCheckProperties...........{}
+01:27:19.481 DEBUG - healthCheckRegistry.............none
+01:27:19.482 DEBUG - idleTimeout.....................600000
+01:27:19.482 DEBUG - initializationFailTimeout.......1
+01:27:19.482 DEBUG - isolateInternalQueries..........false
+01:27:19.482 DEBUG - jdbcUrl.........................jdbc:postgresql://localhost:5432/blynk_reporting?tcpKeepAlive=true&socketTimeout=150
+01:27:19.482 DEBUG - leakDetectionThreshold..........0
+01:27:19.483 DEBUG - maxLifetime.....................0
+01:27:19.483 DEBUG - maximumPoolSize.................5
+01:27:19.483 DEBUG - metricRegistry..................none
+01:27:19.483 DEBUG - metricsTrackerFactory...........none
+01:27:19.483 DEBUG - minimumIdle.....................5
+01:27:19.484 DEBUG - password........................<masked>
+01:27:19.484 DEBUG - poolName........................"HikariPool-2"
+01:27:19.484 DEBUG - readOnly........................false
+01:27:19.486 DEBUG - registerMbeans..................false
+01:27:19.486 DEBUG - scheduledExecutor...............none
+01:27:19.486 DEBUG - schema..........................none
+01:27:19.486 DEBUG - threadFactory...................internal
+01:27:19.487 DEBUG - transactionIsolation............default
+01:27:19.487 DEBUG - username........................"test"
+01:27:19.487 DEBUG - validationTimeout...............5000
+01:27:19.487 INFO  - HikariPool-2 - Starting...
+01:27:19.488 DEBUG - Loaded driver with class name org.postgresql.Driver for jdbcUrl=jdbc:postgresql://localhost:5432/blynk_reporting?tcpKeepAlive=true&socketTimeout=150
+01:27:19.502 DEBUG - HikariPool-2 - Added connection org.postgresql.jdbc.PgConnection@3bffddff
+01:27:19.503 INFO  - HikariPool-2 - Start completed.
+01:27:19.504 INFO  - Connected to reporting database successfully.
+01:27:19.517 DEBUG - HikariPool-2 - Added connection org.postgresql.jdbc.PgConnection@553a1a53
+01:27:19.531 INFO  - Storing MINUTE reporting...
+01:27:19.555 DEBUG - HikariPool-2 - Executed rollback on connection org.postgresql.jdbc.PgConnection@553a1a53 due to dirty commit state on close().
+01:27:19.563 DEBUG - HikariPool-2 - Added connection org.postgresql.jdbc.PgConnection@1ac0f4bf
+01:27:19.555 ERROR - Error inserting reporting data in DB.
+java.sql.BatchUpdateException: Batch entry 0 INSERT INTO reporting_average_minute (email, project_id, device_id, pin, pin_type, ts, value) VALUES ('test@test.com', 32, 0, 32, 2, '2932129-02-09 13:29:00+00', 1.0) was aborted: ERROR: timestamp out of range: "2932129-02-09 13:29:00+00"  Call getNextException to see other errors in the batch.
+	at org.postgresql.jdbc.BatchResultHandler.handleError(BatchResultHandler.java:148) ~[postgresql-42.2.5.jar:42.2.5]
+	at org.postgresql.core.ResultHandlerDelegate.handleError(ResultHandlerDelegate.java:50) ~[postgresql-42.2.5.jar:42.2.5]
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2184) ~[postgresql-42.2.5.jar:42.2.5]
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:481) ~[postgresql-42.2.5.jar:42.2.5]
+	at org.postgresql.jdbc.PgStatement.executeBatch(PgStatement.java:840) ~[postgresql-42.2.5.jar:42.2.5]
+	at org.postgresql.jdbc.PgPreparedStatement.executeBatch(PgPreparedStatement.java:1538) ~[postgresql-42.2.5.jar:42.2.5]
+	at com.zaxxer.hikari.pool.ProxyStatement.executeBatch(ProxyStatement.java:128) ~[HikariCP-3.2.0.jar:?]
+	at com.zaxxer.hikari.pool.HikariProxyPreparedStatement.executeBatch(HikariProxyPreparedStatement.java) ~[HikariCP-3.2.0.jar:?]
+	at cc.blynk.server.db.dao.ReportingDBDao.insert(ReportingDBDao.java:295) [classes/:?]
+	at cc.blynk.server.db.ReportingDBManager.lambda$insertReporting$0(ReportingDBManager.java:99) [classes/:?]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1135) [?:?]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635) [?:?]
+	at java.lang.Thread.run(Thread.java:844) [?:?]
+Caused by: org.postgresql.util.PSQLException: ERROR: timestamp out of range: "2932129-02-09 13:29:00+00"
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2440) ~[postgresql-42.2.5.jar:42.2.5]
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2183) ~[postgresql-42.2.5.jar:42.2.5]
+	... 10 more
+01:27:19.570 INFO  - Storing MINUTE reporting finished. Time 36. Records saved 0
+01:27:19.570 INFO  - Storing HOURLY reporting...
+01:27:19.571 INFO  - Storing HOURLY reporting finished. Time 1. Records saved 0
+01:27:19.571 INFO  - Storing DAILY reporting...
+01:27:19.571 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.571 INFO  - Storing MINUTE reporting...
+01:27:19.572 INFO  - Storing MINUTE reporting finished. Time 1. Records saved 0
+01:27:19.572 INFO  - Storing HOURLY reporting...
+01:27:19.572 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.572 INFO  - Storing DAILY reporting...
+01:27:19.572 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.572 INFO  - Storing MINUTE reporting...
+01:27:19.572 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.572 INFO  - Storing HOURLY reporting...
+01:27:19.573 INFO  - Storing HOURLY reporting finished. Time 1. Records saved 0
+01:27:19.573 INFO  - Storing DAILY reporting...
+01:27:19.573 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.573 INFO  - Storing MINUTE reporting...
+01:27:19.573 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.574 INFO  - Storing HOURLY reporting...
+01:27:19.574 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.574 INFO  - Storing DAILY reporting...
+01:27:19.574 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.574 INFO  - Storing MINUTE reporting...
+01:27:19.575 INFO  - Storing MINUTE reporting finished. Time 1. Records saved 0
+01:27:19.575 INFO  - Storing HOURLY reporting...
+01:27:19.575 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.575 INFO  - Storing DAILY reporting...
+01:27:19.575 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.575 INFO  - Storing MINUTE reporting...
+01:27:19.576 INFO  - Storing MINUTE reporting finished. Time 1. Records saved 0
+01:27:19.576 INFO  - Storing HOURLY reporting...
+01:27:19.576 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.576 INFO  - Storing DAILY reporting...
+01:27:19.576 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.576 INFO  - Storing MINUTE reporting...
+01:27:19.577 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.577 INFO  - Storing HOURLY reporting...
+01:27:19.577 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.577 INFO  - Storing DAILY reporting...
+01:27:19.577 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.577 INFO  - Storing MINUTE reporting...
+01:27:19.578 INFO  - Storing MINUTE reporting finished. Time 1. Records saved 0
+01:27:19.578 INFO  - Storing HOURLY reporting...
+01:27:19.578 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.578 INFO  - Storing DAILY reporting...
+01:27:19.578 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.581 INFO  - Storing MINUTE reporting...
+01:27:19.581 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.582 INFO  - Storing HOURLY reporting...
+01:27:19.582 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.582 INFO  - Storing DAILY reporting...
+01:27:19.582 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.582 INFO  - Storing MINUTE reporting...
+01:27:19.583 INFO  - Storing MINUTE reporting finished. Time 1. Records saved 0
+01:27:19.583 INFO  - Storing HOURLY reporting...
+01:27:19.583 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.584 INFO  - Storing DAILY reporting...
+01:27:19.584 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.584 INFO  - Storing MINUTE reporting...
+01:27:19.584 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.585 INFO  - Storing HOURLY reporting...
+01:27:19.585 INFO  - Storing HOURLY reporting finished. Time 1. Records saved 0
+01:27:19.585 INFO  - Storing DAILY reporting...
+01:27:19.585 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.585 INFO  - Storing MINUTE reporting...
+01:27:19.586 INFO  - Storing MINUTE reporting finished. Time 1. Records saved 0
+01:27:19.586 INFO  - Storing HOURLY reporting...
+01:27:19.586 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.586 INFO  - Storing DAILY reporting...
+01:27:19.586 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.586 INFO  - Storing MINUTE reporting...
+01:27:19.587 INFO  - Storing MINUTE reporting finished. Time 1. Records saved 0
+01:27:19.587 INFO  - Storing HOURLY reporting...
+01:27:19.587 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.587 INFO  - Storing DAILY reporting...
+01:27:19.587 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.588 INFO  - Storing MINUTE reporting...
+01:27:19.588 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.588 INFO  - Storing HOURLY reporting...
+01:27:19.588 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.588 INFO  - Storing DAILY reporting...
+01:27:19.589 INFO  - Storing DAILY reporting finished. Time 1. Records saved 0
+01:27:19.589 INFO  - Storing MINUTE reporting...
+01:27:19.589 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.589 INFO  - Storing HOURLY reporting...
+01:27:19.589 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.590 INFO  - Storing DAILY reporting...
+01:27:19.590 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.590 INFO  - Storing MINUTE reporting...
+01:27:19.590 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.590 INFO  - Storing HOURLY reporting...
+01:27:19.590 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.591 INFO  - Storing DAILY reporting...
+01:27:19.591 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.591 INFO  - Storing MINUTE reporting...
+01:27:19.591 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.591 INFO  - Storing HOURLY reporting...
+01:27:19.592 INFO  - Storing HOURLY reporting finished. Time 1. Records saved 0
+01:27:19.592 INFO  - Storing DAILY reporting...
+01:27:19.592 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.592 INFO  - Storing MINUTE reporting...
+01:27:19.593 INFO  - Storing MINUTE reporting finished. Time 1. Records saved 0
+01:27:19.593 INFO  - Storing HOURLY reporting...
+01:27:19.593 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.593 INFO  - Storing DAILY reporting...
+01:27:19.594 INFO  - Storing DAILY reporting finished. Time 1. Records saved 0
+01:27:19.594 INFO  - Storing MINUTE reporting...
+01:27:19.594 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.594 INFO  - Storing HOURLY reporting...
+01:27:19.594 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.595 INFO  - Storing DAILY reporting...
+01:27:19.595 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.595 INFO  - Storing MINUTE reporting...
+01:27:19.595 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.596 INFO  - Storing HOURLY reporting...
+01:27:19.596 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.596 INFO  - Storing DAILY reporting...
+01:27:19.596 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.596 INFO  - Storing MINUTE reporting...
+01:27:19.596 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.597 INFO  - Storing HOURLY reporting...
+01:27:19.597 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.597 INFO  - Storing DAILY reporting...
+01:27:19.597 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.597 INFO  - Storing MINUTE reporting...
+01:27:19.598 INFO  - Storing MINUTE reporting finished. Time 1. Records saved 0
+01:27:19.605 INFO  - Storing HOURLY reporting...
+01:27:19.606 INFO  - Storing HOURLY reporting finished. Time 1. Records saved 0
+01:27:19.606 INFO  - Storing DAILY reporting...
+01:27:19.606 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.606 INFO  - Storing MINUTE reporting...
+01:27:19.606 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.606 INFO  - Storing HOURLY reporting...
+01:27:19.606 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.607 INFO  - Storing DAILY reporting...
+01:27:19.607 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.607 INFO  - Storing MINUTE reporting...
+01:27:19.607 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.607 INFO  - Storing HOURLY reporting...
+01:27:19.607 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.607 INFO  - Storing DAILY reporting...
+01:27:19.608 INFO  - Storing DAILY reporting finished. Time 1. Records saved 0
+01:27:19.608 INFO  - Storing MINUTE reporting...
+01:27:19.608 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.608 INFO  - Storing HOURLY reporting...
+01:27:19.608 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.608 INFO  - Storing DAILY reporting...
+01:27:19.608 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.608 INFO  - Storing MINUTE reporting...
+01:27:19.609 INFO  - Storing MINUTE reporting finished. Time 1. Records saved 0
+01:27:19.611 INFO  - Storing HOURLY reporting...
+01:27:19.612 INFO  - Storing HOURLY reporting finished. Time 1. Records saved 0
+01:27:19.612 INFO  - Storing DAILY reporting...
+01:27:19.612 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.612 INFO  - Storing MINUTE reporting...
+01:27:19.612 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.612 INFO  - Storing HOURLY reporting...
+01:27:19.612 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.612 INFO  - Storing DAILY reporting...
+01:27:19.613 INFO  - Storing DAILY reporting finished. Time 1. Records saved 0
+01:27:19.613 INFO  - Storing MINUTE reporting...
+01:27:19.613 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.613 INFO  - Storing HOURLY reporting...
+01:27:19.613 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.613 INFO  - Storing DAILY reporting...
+01:27:19.614 INFO  - Storing DAILY reporting finished. Time 1. Records saved 0
+01:27:19.614 INFO  - Storing MINUTE reporting...
+01:27:19.609 DEBUG - HikariPool-2 - Pool stats (total=3, active=1, idle=2, waiting=0)
+01:27:19.614 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.614 INFO  - Storing HOURLY reporting...
+01:27:19.615 INFO  - Storing HOURLY reporting finished. Time 1. Records saved 0
+01:27:19.615 INFO  - Storing DAILY reporting...
+01:27:19.615 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.616 INFO  - Storing MINUTE reporting...
+01:27:19.616 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.616 INFO  - Storing HOURLY reporting...
+01:27:19.616 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.616 INFO  - Storing DAILY reporting...
+01:27:19.617 INFO  - Storing DAILY reporting finished. Time 1. Records saved 0
+01:27:19.617 INFO  - Storing MINUTE reporting...
+01:27:19.617 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.617 INFO  - Storing HOURLY reporting...
+01:27:19.617 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.617 INFO  - Storing DAILY reporting...
+01:27:19.617 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.617 DEBUG - Using SLF4J as the default logging framework
+01:27:19.617 INFO  - Storing MINUTE reporting...
+01:27:19.617 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.617 INFO  - Storing HOURLY reporting...
+01:27:19.618 INFO  - Storing HOURLY reporting finished. Time 1. Records saved 0
+01:27:19.618 INFO  - Storing DAILY reporting...
+01:27:19.618 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.618 INFO  - Storing MINUTE reporting...
+01:27:19.618 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.618 INFO  - Storing HOURLY reporting...
+01:27:19.618 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.618 INFO  - Storing DAILY reporting...
+01:27:19.618 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.619 INFO  - Storing MINUTE reporting...
+01:27:19.619 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.619 INFO  - Storing HOURLY reporting...
+01:27:19.619 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.619 INFO  - Storing DAILY reporting...
+01:27:19.619 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.619 INFO  - Storing MINUTE reporting...
+01:27:19.619 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.620 INFO  - Storing HOURLY reporting...
+01:27:19.620 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.620 INFO  - Storing DAILY reporting...
+01:27:19.620 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.620 INFO  - Storing MINUTE reporting...
+01:27:19.620 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.621 INFO  - Storing HOURLY reporting...
+01:27:19.621 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.621 INFO  - Storing DAILY reporting...
+01:27:19.621 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.621 DEBUG - -Dio.netty.noUnsafe: false
+01:27:19.621 INFO  - Storing MINUTE reporting...
+01:27:19.621 DEBUG - Java version: 10
+01:27:19.621 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.622 INFO  - Storing HOURLY reporting...
+01:27:19.622 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.622 INFO  - Storing DAILY reporting...
+01:27:19.622 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.622 INFO  - Storing MINUTE reporting...
+01:27:19.622 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.623 INFO  - Storing HOURLY reporting...
+01:27:19.623 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.623 INFO  - Storing DAILY reporting...
+01:27:19.623 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.623 DEBUG - sun.misc.Unsafe.theUnsafe: available
+01:27:19.623 INFO  - Storing MINUTE reporting...
+01:27:19.623 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.629 INFO  - Storing HOURLY reporting...
+01:27:19.624 DEBUG - sun.misc.Unsafe.copyMemory: available
+01:27:19.629 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.629 INFO  - Storing DAILY reporting...
+01:27:19.630 INFO  - Storing DAILY reporting finished. Time 1. Records saved 0
+01:27:19.630 INFO  - Storing MINUTE reporting...
+01:27:19.630 DEBUG - java.nio.Buffer.address: available
+01:27:19.630 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.630 INFO  - Storing HOURLY reporting...
+01:27:19.630 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.630 INFO  - Storing DAILY reporting...
+01:27:19.631 INFO  - Storing DAILY reporting finished. Time 1. Records saved 0
+01:27:19.631 INFO  - Storing MINUTE reporting...
+01:27:19.631 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.631 INFO  - Storing HOURLY reporting...
+01:27:19.631 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.631 INFO  - Storing DAILY reporting...
+01:27:19.632 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.632 INFO  - Storing MINUTE reporting...
+01:27:19.632 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.632 INFO  - Storing HOURLY reporting...
+01:27:19.632 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.632 INFO  - Storing DAILY reporting...
+01:27:19.633 INFO  - Storing DAILY reporting finished. Time 1. Records saved 0
+01:27:19.633 INFO  - Storing MINUTE reporting...
+01:27:19.633 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.633 INFO  - Storing HOURLY reporting...
+01:27:19.633 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.633 INFO  - Storing DAILY reporting...
+01:27:19.633 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.634 INFO  - Storing MINUTE reporting...
+01:27:19.634 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.634 INFO  - Storing HOURLY reporting...
+01:27:19.634 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.630 DEBUG - direct buffer constructor: unavailable
+java.lang.UnsupportedOperationException: Reflective setAccessible(true) disabled
+	at io.netty.util.internal.ReflectionUtil.trySetAccessible(ReflectionUtil.java:31) ~[netty-common-4.1.31.Final.jar:4.1.31.Final]
+	at io.netty.util.internal.PlatformDependent0$4.run(PlatformDependent0.java:224) ~[netty-common-4.1.31.Final.jar:4.1.31.Final]
+	at java.security.AccessController.doPrivileged(Native Method) ~[?:?]
+	at io.netty.util.internal.PlatformDependent0.<clinit>(PlatformDependent0.java:218) [netty-common-4.1.31.Final.jar:4.1.31.Final]
+	at io.netty.util.internal.PlatformDependent.isAndroid(PlatformDependent.java:212) [netty-common-4.1.31.Final.jar:4.1.31.Final]
+	at io.netty.util.internal.PlatformDependent.<clinit>(PlatformDependent.java:80) [netty-common-4.1.31.Final.jar:4.1.31.Final]
+	at io.netty.util.ConstantPool.<init>(ConstantPool.java:32) [netty-common-4.1.31.Final.jar:4.1.31.Final]
+	at io.netty.util.AttributeKey$1.<init>(AttributeKey.java:27) [netty-common-4.1.31.Final.jar:4.1.31.Final]
+	at io.netty.util.AttributeKey.<clinit>(AttributeKey.java:27) [netty-common-4.1.31.Final.jar:4.1.31.Final]
+	at cc.blynk.server.core.dao.SessionDao.<clinit>(SessionDao.java:30) [classes/:?]
+	at cc.blynk.server.db.RealtimeStatsDBTest.testRealTimeStatsInsertWroks(RealtimeStatsDBTest.java:77) [test-classes/:?]
+	at jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:?]
+	at jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:?]
+	at jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:?]
+	at java.lang.reflect.Method.invoke(Method.java:564) ~[?:?]
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) [junit-4.12.jar:4.12]
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) [junit-4.12.jar:4.12]
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) [junit-4.12.jar:4.12]
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) [junit-4.12.jar:4.12]
+	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:26) [junit-4.12.jar:4.12]
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) [junit-4.12.jar:4.12]
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) [junit-4.12.jar:4.12]
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) [junit-4.12.jar:4.12]
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) [junit-4.12.jar:4.12]
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) [junit-4.12.jar:4.12]
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) [junit-4.12.jar:4.12]
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) [junit-4.12.jar:4.12]
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) [junit-4.12.jar:4.12]
+	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:26) [junit-4.12.jar:4.12]
+	at org.junit.internal.runners.statements.RunAfters.evaluate(RunAfters.java:27) [junit-4.12.jar:4.12]
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:363) [junit-4.12.jar:4.12]
+	at org.apache.maven.surefire.junit4.JUnit4Provider.execute(JUnit4Provider.java:252) [surefire-junit4-2.12.4.jar:2.12.4]
+	at org.apache.maven.surefire.junit4.JUnit4Provider.executeTestSet(JUnit4Provider.java:141) [surefire-junit4-2.12.4.jar:2.12.4]
+	at org.apache.maven.surefire.junit4.JUnit4Provider.invoke(JUnit4Provider.java:112) [surefire-junit4-2.12.4.jar:2.12.4]
+	at jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:?]
+	at jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:?]
+	at jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:?]
+	at java.lang.reflect.Method.invoke(Method.java:564) ~[?:?]
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray(ReflectionUtils.java:189) [surefire-api-2.12.4.jar:2.12.4]
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:165) [surefire-booter-2.12.4.jar:2.12.4]
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:85) [surefire-booter-2.12.4.jar:2.12.4]
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:115) [surefire-booter-2.12.4.jar:2.12.4]
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:75) [surefire-booter-2.12.4.jar:2.12.4]
+01:27:19.634 INFO  - Storing DAILY reporting...
+01:27:19.635 INFO  - Storing DAILY reporting finished. Time 1. Records saved 0
+01:27:19.635 INFO  - Storing MINUTE reporting...
+01:27:19.635 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.635 INFO  - Storing HOURLY reporting...
+01:27:19.635 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.635 INFO  - Storing DAILY reporting...
+01:27:19.635 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.636 INFO  - Storing MINUTE reporting...
+01:27:19.636 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.636 INFO  - Storing HOURLY reporting...
+01:27:19.636 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.636 INFO  - Storing DAILY reporting...
+01:27:19.636 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.637 INFO  - Storing MINUTE reporting...
+01:27:19.637 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.637 INFO  - Storing HOURLY reporting...
+01:27:19.637 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.637 DEBUG - java.nio.Bits.unaligned: available, true
+01:27:19.637 INFO  - Storing DAILY reporting...
+01:27:19.638 INFO  - Storing DAILY reporting finished. Time 1. Records saved 0
+01:27:19.638 INFO  - Storing MINUTE reporting...
+01:27:19.638 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.638 INFO  - Storing HOURLY reporting...
+01:27:19.639 INFO  - Storing HOURLY reporting finished. Time 1. Records saved 0
+01:27:19.639 INFO  - Storing DAILY reporting...
+01:27:19.639 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.639 INFO  - Storing MINUTE reporting...
+01:27:19.639 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.640 INFO  - Storing HOURLY reporting...
+01:27:19.640 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.640 INFO  - Storing DAILY reporting...
+01:27:19.640 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.640 INFO  - Storing MINUTE reporting...
+01:27:19.641 INFO  - Storing MINUTE reporting finished. Time 1. Records saved 0
+01:27:19.641 INFO  - Storing HOURLY reporting...
+01:27:19.641 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.641 INFO  - Storing DAILY reporting...
+01:27:19.641 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.642 INFO  - Storing MINUTE reporting...
+01:27:19.642 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.642 INFO  - Storing HOURLY reporting...
+01:27:19.642 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.642 INFO  - Storing DAILY reporting...
+01:27:19.643 INFO  - Storing DAILY reporting finished. Time 1. Records saved 0
+01:27:19.643 INFO  - Storing MINUTE reporting...
+01:27:19.640 DEBUG - jdk.internal.misc.Unsafe.allocateUninitializedArray(int): unavailable
+java.lang.IllegalAccessException: class io.netty.util.internal.PlatformDependent0$6 cannot access class jdk.internal.misc.Unsafe (in module java.base) because module java.base does not export jdk.internal.misc to unnamed module @615fda0a
+	at jdk.internal.reflect.Reflection.newIllegalAccessException(Reflection.java:360) ~[?:?]
+	at java.lang.reflect.AccessibleObject.checkAccess(AccessibleObject.java:589) ~[?:?]
+	at java.lang.reflect.Method.invoke(Method.java:556) ~[?:?]
+	at io.netty.util.internal.PlatformDependent0$6.run(PlatformDependent0.java:334) ~[netty-common-4.1.31.Final.jar:4.1.31.Final]
+	at java.security.AccessController.doPrivileged(Native Method) ~[?:?]
+	at io.netty.util.internal.PlatformDependent0.<clinit>(PlatformDependent0.java:325) [netty-common-4.1.31.Final.jar:4.1.31.Final]
+	at io.netty.util.internal.PlatformDependent.isAndroid(PlatformDependent.java:212) [netty-common-4.1.31.Final.jar:4.1.31.Final]
+	at io.netty.util.internal.PlatformDependent.<clinit>(PlatformDependent.java:80) [netty-common-4.1.31.Final.jar:4.1.31.Final]
+	at io.netty.util.ConstantPool.<init>(ConstantPool.java:32) [netty-common-4.1.31.Final.jar:4.1.31.Final]
+	at io.netty.util.AttributeKey$1.<init>(AttributeKey.java:27) [netty-common-4.1.31.Final.jar:4.1.31.Final]
+	at io.netty.util.AttributeKey.<clinit>(AttributeKey.java:27) [netty-common-4.1.31.Final.jar:4.1.31.Final]
+	at cc.blynk.server.core.dao.SessionDao.<clinit>(SessionDao.java:30) [classes/:?]
+	at cc.blynk.server.db.RealtimeStatsDBTest.testRealTimeStatsInsertWroks(RealtimeStatsDBTest.java:77) [test-classes/:?]
+	at jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:?]
+	at jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:?]
+	at jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:?]
+	at java.lang.reflect.Method.invoke(Method.java:564) ~[?:?]
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50) [junit-4.12.jar:4.12]
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12) [junit-4.12.jar:4.12]
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47) [junit-4.12.jar:4.12]
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17) [junit-4.12.jar:4.12]
+	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:26) [junit-4.12.jar:4.12]
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325) [junit-4.12.jar:4.12]
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78) [junit-4.12.jar:4.12]
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57) [junit-4.12.jar:4.12]
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290) [junit-4.12.jar:4.12]
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71) [junit-4.12.jar:4.12]
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288) [junit-4.12.jar:4.12]
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58) [junit-4.12.jar:4.12]
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268) [junit-4.12.jar:4.12]
+	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:26) [junit-4.12.jar:4.12]
+	at org.junit.internal.runners.statements.RunAfters.evaluate(RunAfters.java:27) [junit-4.12.jar:4.12]
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:363) [junit-4.12.jar:4.12]
+	at org.apache.maven.surefire.junit4.JUnit4Provider.execute(JUnit4Provider.java:252) [surefire-junit4-2.12.4.jar:2.12.4]
+	at org.apache.maven.surefire.junit4.JUnit4Provider.executeTestSet(JUnit4Provider.java:141) [surefire-junit4-2.12.4.jar:2.12.4]
+	at org.apache.maven.surefire.junit4.JUnit4Provider.invoke(JUnit4Provider.java:112) [surefire-junit4-2.12.4.jar:2.12.4]
+	at jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:?]
+	at jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:?]
+	at jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:?]
+	at java.lang.reflect.Method.invoke(Method.java:564) ~[?:?]
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray(ReflectionUtils.java:189) [surefire-api-2.12.4.jar:2.12.4]
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:165) [surefire-booter-2.12.4.jar:2.12.4]
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:85) [surefire-booter-2.12.4.jar:2.12.4]
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:115) [surefire-booter-2.12.4.jar:2.12.4]
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:75) [surefire-booter-2.12.4.jar:2.12.4]
+01:27:19.644 DEBUG - java.nio.DirectByteBuffer.<init>(long, int): unavailable
+01:27:19.645 DEBUG - sun.misc.Unsafe: available
+01:27:19.646 DEBUG - maxDirectMemory: 8424259584 bytes (maybe)
+01:27:19.646 DEBUG - -Dio.netty.tmpdir: /tmp (java.io.tmpdir)
+01:27:19.646 DEBUG - -Dio.netty.bitMode: 64 (sun.arch.data.model)
+01:27:19.647 DEBUG - -Dio.netty.maxDirectMemory: -1 bytes
+01:27:19.647 DEBUG - -Dio.netty.uninitializedArrayAllocationThreshold: -1
+01:27:19.648 DEBUG - java.nio.ByteBuffer.cleaner(): available
+01:27:19.648 DEBUG - -Dio.netty.noPreferDirect: false
+01:27:19.643 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.649 INFO  - Region : test. Host : 127.0.0.1.
+01:27:19.649 INFO  - Storing HOURLY reporting...
+01:27:19.649 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.650 INFO  - Storing DAILY reporting...
+01:27:19.650 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.650 INFO  - Storing MINUTE reporting...
+01:27:19.650 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.650 INFO  - Storing HOURLY reporting...
+01:27:19.651 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.651 INFO  - Storing DAILY reporting...
+01:27:19.651 DEBUG - HikariPool-2 - Added connection org.postgresql.jdbc.PgConnection@1f2d9d36
+01:27:19.652 INFO  - Storing DAILY reporting finished. Time 1. Records saved 0
+01:27:19.652 INFO  - Storing MINUTE reporting...
+01:27:19.652 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.652 INFO  - Storing HOURLY reporting...
+01:27:19.652 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.652 INFO  - Storing DAILY reporting...
+01:27:19.653 INFO  - Storing DAILY reporting finished. Time 1. Records saved 0
+01:27:19.653 INFO  - Storing MINUTE reporting...
+01:27:19.653 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.653 INFO  - Storing HOURLY reporting...
+01:27:19.653 INFO  - Reports : 0
+01:27:19.653 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.654 INFO  - Storing DAILY reporting...
+01:27:19.654 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.654 INFO  - Storing MINUTE reporting...
+01:27:19.654 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.654 INFO  - Storing HOURLY reporting...
+01:27:19.655 INFO  - Storing HOURLY reporting finished. Time 1. Records saved 0
+01:27:19.655 INFO  - Storing DAILY reporting...
+01:27:19.655 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.655 INFO  - Storing MINUTE reporting...
+01:27:19.655 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.656 INFO  - Storing HOURLY reporting...
+01:27:19.656 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.656 INFO  - Storing DAILY reporting...
+01:27:19.656 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.656 INFO  - Storing MINUTE reporting...
+01:27:19.656 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.656 INFO  - Storing HOURLY reporting...
+01:27:19.656 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.656 INFO  - Storing DAILY reporting...
+01:27:19.657 INFO  - Storing DAILY reporting finished. Time 1. Records saved 0
+01:27:19.657 INFO  - Storing MINUTE reporting...
+01:27:19.657 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.657 INFO  - Storing HOURLY reporting...
+01:27:19.657 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.657 INFO  - Storing DAILY reporting...
+01:27:19.657 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.658 INFO  - Storing MINUTE reporting...
+01:27:19.658 INFO  - Storing MINUTE reporting finished. Time 0. Records saved 0
+01:27:19.658 INFO  - Storing HOURLY reporting...
+01:27:19.658 INFO  - Storing HOURLY reporting finished. Time 0. Records saved 0
+01:27:19.658 INFO  - Storing DAILY reporting...
+01:27:19.658 INFO  - Storing DAILY reporting finished. Time 0. Records saved 0
+01:27:19.670 DEBUG - -Dio.netty.threadLocalMap.stringBuilder.initialSize: 1024
+01:27:19.670 DEBUG - -Dio.netty.threadLocalMap.stringBuilder.maxSize: 4096
+01:27:19.671 DEBUG - HikariPool-2 - Added connection org.postgresql.jdbc.PgConnection@2b904989
+01:27:19.671 DEBUG - HikariPool-2 - After adding stats (total=5, active=1, idle=4, waiting=0)
+01:27:19.681 DEBUG - -Dio.netty.leakDetection.level: simple
+01:27:19.682 DEBUG - -Dio.netty.leakDetection.targetRecords: 4
+01:27:19.684 DEBUG - -Dio.netty.allocator.numHeapArenas: 16
+01:27:19.684 DEBUG - -Dio.netty.allocator.numDirectArenas: 16
+01:27:19.684 DEBUG - -Dio.netty.allocator.pageSize: 8192
+01:27:19.685 DEBUG - -Dio.netty.allocator.maxOrder: 11
+01:27:19.685 DEBUG - -Dio.netty.allocator.chunkSize: 16777216
+01:27:19.685 DEBUG - -Dio.netty.allocator.tinyCacheSize: 512
+01:27:19.685 DEBUG - -Dio.netty.allocator.smallCacheSize: 256
+01:27:19.686 DEBUG - -Dio.netty.allocator.normalCacheSize: 64
+01:27:19.686 DEBUG - -Dio.netty.allocator.maxCachedBufferCapacity: 32768
+01:27:19.686 DEBUG - -Dio.netty.allocator.cacheTrimInterval: 8192
+01:27:19.686 DEBUG - -Dio.netty.allocator.useCacheForAllThreads: true
+01:27:19.695 DEBUG - -Dio.netty.allocator.type: pooled
+01:27:19.695 DEBUG - -Dio.netty.threadLocalDirectBufferSize: 0
+01:27:19.705 DEBUG - -Dio.netty.maxThreadLocalCharBufferSize: 16384
+01:27:19.823 INFO  - Removing old reporting records...
+01:27:19.825 INFO  - Removing finished. Minute records 0, hour records 0. Time 2
+01:27:20.017 DEBUG - HikariPool-2 - Executed rollback on connection org.postgresql.jdbc.PgConnection@553a1a53 due to dirty commit state on close().
+01:27:20.017 INFO  - HikariPool-2 - Shutdown initiated...
+01:27:20.018 DEBUG - HikariPool-2 - Before shutdown stats (total=5, active=1, idle=4, waiting=0)
+01:27:20.019 DEBUG - HikariPool-2 - Closing connection org.postgresql.jdbc.PgConnection@553a1a53: (connection evicted)
+01:27:20.022 DEBUG - HikariPool-2 - Closing connection org.postgresql.jdbc.PgConnection@1ac0f4bf: (connection evicted)
+01:27:20.023 DEBUG - HikariPool-2 - Closing connection org.postgresql.jdbc.PgConnection@1f2d9d36: (connection evicted)
+01:27:20.023 DEBUG - HikariPool-2 - Closing connection org.postgresql.jdbc.PgConnection@2b904989: (connection evicted)
+01:27:20.029 DEBUG - HikariPool-2 - After shutdown stats (total=0, active=0, idle=0, waiting=0)
+01:27:20.030 INFO  - HikariPool-2 - Shutdown completed.
+01:27:20.051 INFO  - Reporting DB url : jdbc:postgresql://localhost:5432/blynk_reporting?tcpKeepAlive=true&socketTimeout=150
+01:27:20.051 INFO  - Reporting DB user : test
+01:27:20.051 INFO  - Connecting to reporting DB...
+01:27:20.051 DEBUG - HikariPool-3 - configuration:
+01:27:20.053 DEBUG - allowPoolSuspension.............false
+01:27:20.053 DEBUG - autoCommit......................false
+01:27:20.053 DEBUG - catalog.........................none
+01:27:20.053 DEBUG - connectionInitSql...............none
+01:27:20.053 DEBUG - connectionTestQuery............."SELECT 1"
+01:27:20.054 DEBUG - connectionTimeout...............30000
+01:27:20.054 DEBUG - dataSource......................none
+01:27:20.054 DEBUG - dataSourceClassName.............none
+01:27:20.054 DEBUG - dataSourceJNDI..................none
+01:27:20.054 DEBUG - dataSourceProperties............{password=<masked>}
+01:27:20.054 DEBUG - driverClassName.................none
+01:27:20.054 DEBUG - healthCheckProperties...........{}
+01:27:20.054 DEBUG - healthCheckRegistry.............none
+01:27:20.055 DEBUG - idleTimeout.....................600000
+01:27:20.055 DEBUG - initializationFailTimeout.......1
+01:27:20.055 DEBUG - isolateInternalQueries..........false
+01:27:20.055 DEBUG - jdbcUrl.........................jdbc:postgresql://localhost:5432/blynk_reporting?tcpKeepAlive=true&socketTimeout=150
+01:27:20.055 DEBUG - leakDetectionThreshold..........0
+01:27:20.055 DEBUG - maxLifetime.....................0
+01:27:20.055 DEBUG - maximumPoolSize.................5
+01:27:20.055 DEBUG - metricRegistry..................none
+01:27:20.056 DEBUG - metricsTrackerFactory...........none
+01:27:20.056 DEBUG - minimumIdle.....................5
+01:27:20.056 DEBUG - password........................<masked>
+01:27:20.056 DEBUG - poolName........................"HikariPool-3"
+01:27:20.056 DEBUG - readOnly........................false
+01:27:20.056 DEBUG - registerMbeans..................false
+01:27:20.056 DEBUG - scheduledExecutor...............none
+01:27:20.056 DEBUG - schema..........................none
+01:27:20.057 DEBUG - threadFactory...................internal
+01:27:20.057 DEBUG - transactionIsolation............default
+01:27:20.057 DEBUG - username........................"test"
+01:27:20.057 DEBUG - validationTimeout...............5000
+01:27:20.057 INFO  - HikariPool-3 - Starting...
+01:27:20.058 DEBUG - Loaded driver with class name org.postgresql.Driver for jdbcUrl=jdbc:postgresql://localhost:5432/blynk_reporting?tcpKeepAlive=true&socketTimeout=150
+01:27:20.072 DEBUG - HikariPool-3 - Added connection org.postgresql.jdbc.PgConnection@73393584
+01:27:20.073 INFO  - HikariPool-3 - Start completed.
+01:27:20.073 INFO  - Connected to reporting database successfully.
+01:27:20.112 DEBUG - HikariPool-3 - Added connection org.postgresql.jdbc.PgConnection@671965e3
+01:27:20.149 INFO  - Storing raw reporting...
+01:27:20.157 INFO  - Storing raw reporting finished. Time 8. Records saved 1
+01:27:20.165 INFO  - Storing raw reporting...
+01:27:20.185 DEBUG - HikariPool-3 - Pool stats (total=2, active=2, idle=0, waiting=0)
+01:27:20.204 DEBUG - HikariPool-3 - Added connection org.postgresql.jdbc.PgConnection@69de8770
+01:27:20.207 INFO  - Storing raw reporting finished. Time 42. Records saved 1
+01:27:20.208 INFO  - HikariPool-3 - Shutdown initiated...
+01:27:20.209 DEBUG - HikariPool-3 - Before shutdown stats (total=3, active=1, idle=2, waiting=0)
+01:27:20.209 DEBUG - HikariPool-3 - Closing connection org.postgresql.jdbc.PgConnection@671965e3: (connection evicted)
+01:27:20.210 DEBUG - HikariPool-3 - Closing connection org.postgresql.jdbc.PgConnection@69de8770: (connection evicted)
+01:27:20.229 DEBUG - HikariPool-3 - Added connection org.postgresql.jdbc.PgConnection@28e38d4b
+01:27:20.230 DEBUG - HikariPool-3 - Closing connection org.postgresql.jdbc.PgConnection@28e38d4b: (connection evicted)
+01:27:20.235 DEBUG - HikariPool-3 - After shutdown stats (total=0, active=0, idle=0, waiting=0)
+01:27:20.235 INFO  - HikariPool-3 - Shutdown completed.
+01:27:20.237 INFO  - DB url : jdbc:postgresql://localhost:5432/blynk?tcpKeepAlive=true&socketTimeout=150
+01:27:20.237 INFO  - DB user : test
+01:27:20.237 INFO  - Connecting to DB...
+01:27:20.237 DEBUG - HikariPool-4 - configuration:
+01:27:20.238 DEBUG - allowPoolSuspension.............false
+01:27:20.239 DEBUG - autoCommit......................false
+01:27:20.239 DEBUG - catalog.........................none
+01:27:20.239 DEBUG - connectionInitSql...............none
+01:27:20.239 DEBUG - connectionTestQuery............."SELECT 1"
+01:27:20.239 DEBUG - connectionTimeout...............30000
+01:27:20.239 DEBUG - dataSource......................none
+01:27:20.239 DEBUG - dataSourceClassName.............none
+01:27:20.239 DEBUG - dataSourceJNDI..................none
+01:27:20.239 DEBUG - dataSourceProperties............{password=<masked>}
+01:27:20.239 DEBUG - driverClassName.................none
+01:27:20.239 DEBUG - healthCheckProperties...........{}
+01:27:20.240 DEBUG - healthCheckRegistry.............none
+01:27:20.240 DEBUG - idleTimeout.....................600000
+01:27:20.240 DEBUG - initializationFailTimeout.......1
+01:27:20.240 DEBUG - isolateInternalQueries..........false
+01:27:20.240 DEBUG - jdbcUrl.........................jdbc:postgresql://localhost:5432/blynk?tcpKeepAlive=true&socketTimeout=150
+01:27:20.240 DEBUG - leakDetectionThreshold..........0
+01:27:20.240 DEBUG - maxLifetime.....................0
+01:27:20.240 DEBUG - maximumPoolSize.................5
+01:27:20.240 DEBUG - metricRegistry..................none
+01:27:20.240 DEBUG - metricsTrackerFactory...........none
+01:27:20.241 DEBUG - minimumIdle.....................5
+01:27:20.241 DEBUG - password........................<masked>
+01:27:20.241 DEBUG - poolName........................"HikariPool-4"
+01:27:20.241 DEBUG - readOnly........................false
+01:27:20.241 DEBUG - registerMbeans..................false
+01:27:20.241 DEBUG - scheduledExecutor...............none
+01:27:20.241 DEBUG - schema..........................none
+01:27:20.241 DEBUG - threadFactory...................internal
+01:27:20.241 DEBUG - transactionIsolation............default
+01:27:20.241 DEBUG - username........................"test"
+01:27:20.241 DEBUG - validationTimeout...............5000
+01:27:20.242 INFO  - HikariPool-4 - Starting...
+01:27:20.242 DEBUG - Loaded driver with class name org.postgresql.Driver for jdbcUrl=jdbc:postgresql://localhost:5432/blynk?tcpKeepAlive=true&socketTimeout=150
+01:27:20.257 DEBUG - HikariPool-4 - Added connection org.postgresql.jdbc.PgConnection@750fe12e
+01:27:20.257 INFO  - HikariPool-4 - Start completed.
+01:27:20.258 INFO  - Connected to database successfully.
+01:27:20.274 DEBUG - HikariPool-4 - Added connection org.postgresql.jdbc.PgConnection@3cfdff8a
+01:27:20.315 INFO  - Select flashed token 718de45cdfc5496f8dded4dc26f8ff74.
+01:27:20.357 DEBUG - HikariPool-4 - Pool stats (total=2, active=2, idle=0, waiting=0)
+01:27:20.372 DEBUG - HikariPool-4 - Added connection org.postgresql.jdbc.PgConnection@7a646dd6
+01:27:20.387 DEBUG - HikariPool-4 - Added connection org.postgresql.jdbc.PgConnection@2a415ad
+01:27:20.402 DEBUG - HikariPool-4 - Added connection org.postgresql.jdbc.PgConnection@74ab804f
+01:27:20.402 DEBUG - HikariPool-4 - After adding stats (total=5, active=2, idle=3, waiting=0)
+01:27:20.466 INFO  - Select flashed token 123.
+01:27:20.467 INFO  - HikariPool-4 - Shutdown initiated...
+01:27:20.468 DEBUG - HikariPool-4 - Before shutdown stats (total=5, active=2, idle=3, waiting=0)
+01:27:20.468 DEBUG - HikariPool-4 - Closing connection org.postgresql.jdbc.PgConnection@7a646dd6: (connection evicted)
+01:27:20.472 DEBUG - HikariPool-4 - Closing connection org.postgresql.jdbc.PgConnection@2a415ad: (connection evicted)
+01:27:20.474 DEBUG - HikariPool-4 - Closing connection org.postgresql.jdbc.PgConnection@74ab804f: (connection evicted)
+01:27:20.475 DEBUG - HikariPool-4 - After shutdown stats (total=0, active=0, idle=0, waiting=0)
+01:27:20.477 INFO  - HikariPool-4 - Shutdown completed.
+01:27:20.479 INFO  - DB url : jdbc:postgresql://localhost:5432/blynk?tcpKeepAlive=true&socketTimeout=150
+01:27:20.479 INFO  - DB user : test
+01:27:20.479 INFO  - Connecting to DB...
+01:27:20.479 DEBUG - HikariPool-5 - configuration:
+01:27:20.480 DEBUG - allowPoolSuspension.............false
+01:27:20.480 DEBUG - autoCommit......................false
+01:27:20.480 DEBUG - catalog.........................none
+01:27:20.481 DEBUG - connectionInitSql...............none
+01:27:20.481 DEBUG - connectionTestQuery............."SELECT 1"
+01:27:20.481 DEBUG - connectionTimeout...............30000
+01:27:20.481 DEBUG - dataSource......................none
+01:27:20.481 DEBUG - dataSourceClassName.............none
+01:27:20.481 DEBUG - dataSourceJNDI..................none
+01:27:20.481 DEBUG - dataSourceProperties............{password=<masked>}
+01:27:20.481 DEBUG - driverClassName.................none
+01:27:20.500 DEBUG - healthCheckProperties...........{}
+01:27:20.501 DEBUG - healthCheckRegistry.............none
+01:27:20.501 DEBUG - idleTimeout.....................600000
+01:27:20.501 DEBUG - initializationFailTimeout.......1
+01:27:20.501 DEBUG - isolateInternalQueries..........false
+01:27:20.501 DEBUG - jdbcUrl.........................jdbc:postgresql://localhost:5432/blynk?tcpKeepAlive=true&socketTimeout=150
+01:27:20.501 DEBUG - leakDetectionThreshold..........0
+01:27:20.501 DEBUG - maxLifetime.....................0
+01:27:20.502 DEBUG - maximumPoolSize.................5
+01:27:20.502 DEBUG - metricRegistry..................none
+01:27:20.502 DEBUG - metricsTrackerFactory...........none
+01:27:20.502 DEBUG - minimumIdle.....................5
+01:27:20.502 DEBUG - password........................<masked>
+01:27:20.502 DEBUG - poolName........................"HikariPool-5"
+01:27:20.502 DEBUG - readOnly........................false
+01:27:20.502 DEBUG - registerMbeans..................false
+01:27:20.503 DEBUG - scheduledExecutor...............none
+01:27:20.503 DEBUG - schema..........................none
+01:27:20.503 DEBUG - threadFactory...................internal
+01:27:20.503 DEBUG - transactionIsolation............default
+01:27:20.503 DEBUG - username........................"test"
+01:27:20.503 DEBUG - validationTimeout...............5000
+01:27:20.503 INFO  - HikariPool-5 - Starting...
+01:27:20.504 DEBUG - Loaded driver with class name org.postgresql.Driver for jdbcUrl=jdbc:postgresql://localhost:5432/blynk?tcpKeepAlive=true&socketTimeout=150
+01:27:20.529 DEBUG - HikariPool-5 - Added connection org.postgresql.jdbc.PgConnection@3aacf32a
+01:27:20.530 INFO  - HikariPool-5 - Start completed.
+01:27:20.531 INFO  - Connected to database successfully.
+01:27:20.549 DEBUG - HikariPool-5 - Added connection org.postgresql.jdbc.PgConnection@4bb111d6
+01:27:20.630 DEBUG - HikariPool-5 - Pool stats (total=2, active=2, idle=0, waiting=0)
+01:27:20.645 DEBUG - HikariPool-5 - Added connection org.postgresql.jdbc.PgConnection@4576f6d0
+01:27:20.663 DEBUG - HikariPool-5 - Added connection org.postgresql.jdbc.PgConnection@41497aa6
+01:27:20.688 DEBUG - HikariPool-5 - Added connection org.postgresql.jdbc.PgConnection@44bfceb
+01:27:20.688 DEBUG - HikariPool-5 - After adding stats (total=5, active=2, idle=3, waiting=0)
+01:27:20.771 INFO  - HikariPool-5 - Shutdown initiated...
+01:27:20.772 DEBUG - HikariPool-5 - Before shutdown stats (total=5, active=1, idle=4, waiting=0)
+01:27:20.772 DEBUG - HikariPool-5 - Closing connection org.postgresql.jdbc.PgConnection@4bb111d6: (connection evicted)
+01:27:20.774 DEBUG - HikariPool-5 - Closing connection org.postgresql.jdbc.PgConnection@4576f6d0: (connection evicted)
+01:27:20.774 DEBUG - HikariPool-5 - Closing connection org.postgresql.jdbc.PgConnection@41497aa6: (connection evicted)
+01:27:20.777 DEBUG - HikariPool-5 - Closing connection org.postgresql.jdbc.PgConnection@44bfceb: (connection evicted)
+01:27:20.780 DEBUG - HikariPool-5 - After shutdown stats (total=0, active=0, idle=0, waiting=0)
+01:27:20.780 INFO  - HikariPool-5 - Shutdown completed.
+01:27:20.783 INFO  - DB url : jdbc:postgresql://localhost:5432/blynk?tcpKeepAlive=true&socketTimeout=150
+01:27:20.783 INFO  - DB user : test
+01:27:20.784 INFO  - Connecting to DB...
+01:27:20.784 DEBUG - HikariPool-6 - configuration:
+01:27:20.784 DEBUG - allowPoolSuspension.............false
+01:27:20.785 DEBUG - autoCommit......................false
+01:27:20.785 DEBUG - catalog.........................none
+01:27:20.785 DEBUG - connectionInitSql...............none
+01:27:20.785 DEBUG - connectionTestQuery............."SELECT 1"
+01:27:20.785 DEBUG - connectionTimeout...............30000
+01:27:20.785 DEBUG - dataSource......................none
+01:27:20.785 DEBUG - dataSourceClassName.............none
+01:27:20.788 DEBUG - dataSourceJNDI..................none
+01:27:20.792 DEBUG - dataSourceProperties............{password=<masked>}
+01:27:20.792 DEBUG - driverClassName.................none
+01:27:20.792 DEBUG - healthCheckProperties...........{}
+01:27:20.792 DEBUG - healthCheckRegistry.............none
+01:27:20.792 DEBUG - idleTimeout.....................600000
+01:27:20.793 DEBUG - initializationFailTimeout.......1
+01:27:20.793 DEBUG - isolateInternalQueries..........false
+01:27:20.793 DEBUG - jdbcUrl.........................jdbc:postgresql://localhost:5432/blynk?tcpKeepAlive=true&socketTimeout=150
+01:27:20.793 DEBUG - leakDetectionThreshold..........0
+01:27:20.793 DEBUG - maxLifetime.....................0
+01:27:20.793 DEBUG - maximumPoolSize.................5
+01:27:20.793 DEBUG - metricRegistry..................none
+01:27:20.793 DEBUG - metricsTrackerFactory...........none
+01:27:20.793 DEBUG - minimumIdle.....................5
+01:27:20.793 DEBUG - password........................<masked>
+01:27:20.793 DEBUG - poolName........................"HikariPool-6"
+01:27:20.794 DEBUG - readOnly........................false
+01:27:20.794 DEBUG - registerMbeans..................false
+01:27:20.794 DEBUG - scheduledExecutor...............none
+01:27:20.794 DEBUG - schema..........................none
+01:27:20.794 DEBUG - threadFactory...................internal
+01:27:20.794 DEBUG - transactionIsolation............default
+01:27:20.794 DEBUG - username........................"test"
+01:27:20.794 DEBUG - validationTimeout...............5000
+01:27:20.794 INFO  - HikariPool-6 - Starting...
+01:27:20.800 DEBUG - Loaded driver with class name org.postgresql.Driver for jdbcUrl=jdbc:postgresql://localhost:5432/blynk?tcpKeepAlive=true&socketTimeout=150
+01:27:20.819 DEBUG - HikariPool-6 - Added connection org.postgresql.jdbc.PgConnection@443dbe42
+01:27:20.819 INFO  - HikariPool-6 - Start completed.
+01:27:20.824 INFO  - Connected to database successfully.
+01:27:20.848 DEBUG - HikariPool-6 - Added connection org.postgresql.jdbc.PgConnection@cb19e64
+01:27:20.919 DEBUG - HikariPool-6 - Pool stats (total=2, active=2, idle=0, waiting=0)
+01:27:20.939 DEBUG - HikariPool-6 - Added connection org.postgresql.jdbc.PgConnection@2767182
+01:27:20.959 DEBUG - HikariPool-6 - Added connection org.postgresql.jdbc.PgConnection@649f514
+01:27:20.974 INFO  - Storing users...
+01:27:20.993 DEBUG - HikariPool-6 - Added connection org.postgresql.jdbc.PgConnection@434b7bb9
+01:27:20.993 DEBUG - HikariPool-6 - After adding stats (total=5, active=2, idle=3, waiting=0)
+01:27:21.715 INFO  - Storing users finished. Time 741. Users saved 1
+01:27:21.730 INFO  - Loaded 1 users.
+01:27:21.824 INFO  - Loaded 0 users.
+01:27:21.840 INFO  - Storing users...
+01:27:22.628 INFO  - Storing users finished. Time 788. Users saved 10000
+01:27:22.853 INFO  - Loaded 10000 users.
+01:27:22.973 INFO  - Storing users...
+01:27:22.981 INFO  - Storing users finished. Time 8. Users saved 3
+01:27:23.073 INFO  - Redeem select for 93093d6d87104b6baf2fa366ffacab2f
+01:27:23.115 INFO  - Redeem select for 93093d6d87104b6baf2fa366ffacab2f
+01:27:23.173 INFO  - Storing users...
+01:27:23.223 INFO  - Storing users finished. Time 50. Users saved 1
+01:27:23.223 INFO  - Storing users...
+01:27:23.273 INFO  - Storing users finished. Time 50. Users saved 1
+01:27:23.275 INFO  - Loaded 1 users.
+01:27:23.333 INFO  - Storing users...
+01:27:23.398 INFO  - Storing users finished. Time 65. Users saved 1
+01:27:23.401 INFO  - Loaded 1 users.
+01:27:23.441 INFO  - Storing users...
+01:27:23.490 INFO  - Storing users finished. Time 49. Users saved 2
+01:27:23.491 INFO  - Loaded 2 users.
+01:27:23.566 INFO  - Storing users...
+01:27:23.640 INFO  - Storing users finished. Time 74. Users saved 1
+01:27:23.736 INFO  - Redeem select for 123
+01:27:23.773 INFO  - Redeem select for 79e48b858d904289b0da706f337ec541
+01:27:23.774 INFO  - Redeem select for 123
+01:27:23.775 INFO  - HikariPool-6 - Shutdown initiated...
+01:27:23.776 DEBUG - HikariPool-6 - Before shutdown stats (total=5, active=2, idle=3, waiting=0)
+01:27:23.776 DEBUG - HikariPool-6 - Closing connection org.postgresql.jdbc.PgConnection@2767182: (connection evicted)
+01:27:23.778 DEBUG - HikariPool-6 - Closing connection org.postgresql.jdbc.PgConnection@649f514: (connection evicted)
+01:27:23.780 DEBUG - HikariPool-6 - Closing connection org.postgresql.jdbc.PgConnection@434b7bb9: (connection evicted)
+01:27:23.781 DEBUG - HikariPool-6 - After shutdown stats (total=0, active=0, idle=0, waiting=0)
+01:27:23.781 INFO  - HikariPool-6 - Shutdown completed.
+01:27:23.788 INFO  - Adding token for dima@mail.us user to the pool
+01:27:23.878 DEBUG - Removing v1 pin data for dashId 1, deviceId 0.
+01:27:23.989 INFO  - Using data dir '123'
+01:27:24.080 INFO  - Using data dir '/tmp/blynk'
+01:27:24.088 DEBUG - Starting reading user DB.
+01:27:24.095 DEBUG - Reading user DB finished.
+01:27:24.096 INFO  - Using data dir '/tmp/blynk'
+01:27:24.096 DEBUG - Starting reading user DB.
+01:27:24.097 DEBUG - Reading user DB finished.
+01:27:24.097 INFO  - Using data dir '/tmp/blynk'
+01:27:24.098 INFO  - Using data dir '/tmp/blynk'
+01:27:24.098 DEBUG - Starting reading user DB.
+01:27:24.099 DEBUG - Reading user DB finished.
+01:27:24.100 INFO  - Using data dir '/tmp/blynk'

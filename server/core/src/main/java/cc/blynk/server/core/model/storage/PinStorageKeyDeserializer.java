@@ -23,7 +23,7 @@ public class PinStorageKeyDeserializer extends KeyDeserializer {
         String[] split = StringUtils.split3(StringUtils.DEVICE_SEPARATOR, key);
 
         int deviceId = Integer.parseInt(split[0]);
-        var pinType = PinType.getPinType(split[1].charAt(0));
+        PinType pinType = PinType.getPinType(split[1].charAt(0));
         short pin = 0;
         try {
             pin = NumberUtil.parsePin(split[1].substring(1));
