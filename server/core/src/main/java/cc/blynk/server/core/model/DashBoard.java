@@ -218,15 +218,6 @@ public class DashBoard {
         return getWidgetIndexByIdOrThrow(widgets, id);
     }
 
-    private int getDeviceIndexByIdOrThrow(int id) {
-        for (int i = 0; i < devices.length; i++) {
-            if (devices[i].id == id) {
-                return i;
-            }
-        }
-        throw new IllegalCommandException("Device with passed id not found.");
-    }
-
     public boolean hasWidgetsByDeviceId(int deviceId) {
         for (Widget widget : widgets) {
             if (widget.isAssignedToDevice(deviceId)) {
@@ -234,15 +225,6 @@ public class DashBoard {
             }
         }
         return false;
-    }
-
-    public Device getDeviceById(int id) {
-        for (Device device : devices) {
-            if (device.id == id) {
-                return device;
-            }
-        }
-        return null;
     }
 
     public DeviceSelector getDeviceSelector(long targetId) {
@@ -343,7 +325,7 @@ public class DashBoard {
         }
     }
 
-    private void eraseWidgetValuesForDevice(int deviceId) {
+    public void eraseWidgetValuesForDevice(int deviceId) {
         for (Widget widget : widgets) {
             if (widget.isAssignedToDevice(deviceId)) {
                 widget.erase();
@@ -442,20 +424,6 @@ public class DashBoard {
         }
 
         return copy.toArray(new Widget[newWidgets.length]);
-    }
-
-    public Device deleteDevice(int deviceId) {
-        int existingDeviceIndex = getDeviceIndexByIdOrThrow(deviceId);
-        Device deviceToRemove = this.devices[existingDeviceIndex];
-        this.devices = ArrayUtil.remove(this.devices, existingDeviceIndex, Device.class);
-        eraseWidgetValuesForDevice(deviceId);
-        this.updatedAt = System.currentTimeMillis();
-        return deviceToRemove;
-    }
-
-    public void addDevice(Device device) {
-        this.devices = ArrayUtil.add(this.devices, device, Device.class);
-        this.updatedAt = System.currentTimeMillis();
     }
 
     public Widget updateProperty(int deviceId, short pin, WidgetProperty widgetProperty, String propertyValue) {

@@ -99,7 +99,7 @@ public final class MobileGetEnhancedGraphDataLogic {
             Target target;
             int targetIdUpdated = graphDataStream.getTargetId(targetId);
             if (targetIdUpdated < Tag.START_TAG_ID) {
-                target = dash.getDeviceById(targetIdUpdated);
+                target = profile.getDeviceById(dash, targetIdUpdated);
             } else if (targetIdUpdated < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
                 target = profile.getTagById(dash, targetIdUpdated);
             } else {

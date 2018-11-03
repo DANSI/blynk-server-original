@@ -131,7 +131,7 @@ public class ReadingWidgetsWorker implements Runnable {
     private boolean sameDeviceId(Profile profile, DashBoard dash, int targetId, int channelDeviceId) {
         Target target;
         if (targetId < Tag.START_TAG_ID) {
-            target = dash.getDeviceById(targetId);
+            target = profile.getDeviceById(dash, targetId);
         } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
             target = profile.getTagById(dash, targetId);
         } else {

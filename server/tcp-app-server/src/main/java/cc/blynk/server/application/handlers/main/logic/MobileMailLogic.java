@@ -59,7 +59,7 @@ public class MobileMailLogic {
                 //dashId deviceId
                 if (splitBody.length == 2) {
                     int deviceId = Integer.parseInt(splitBody[1]);
-                    Device device = dash.getDeviceById(deviceId);
+                    Device device = user.profile.getDeviceById(dash, deviceId);
 
                     if (device == null || device.token == null) {
                         log.debug("Wrong device id.");

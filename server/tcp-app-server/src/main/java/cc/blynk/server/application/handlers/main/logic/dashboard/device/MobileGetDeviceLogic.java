@@ -27,7 +27,7 @@ public final class MobileGetDeviceLogic {
         int deviceId = Integer.parseInt(split[1]);
 
         DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
-        Device device = dash.getDeviceById(deviceId);
+        Device device = user.profile.getDeviceById(dash, deviceId);
         if (device == null) {
             ctx.writeAndFlush(illegalCommandBody(message.id), ctx.voidPromise());
         } else {

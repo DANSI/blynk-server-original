@@ -44,6 +44,7 @@ module cc.blynk.core {
     exports cc.blynk.server.workers;
     exports cc.blynk.server.core.model.storage.key;
     exports cc.blynk.server.core.model.storage.value;
+    exports cc.blynk.server.core.model.widgets.ui;
     requires cc.blynk.server.notifications.mail;
     requires cc.blynk.server.notifications.push;
     requires cc.blynk.server.notifications.sms;

@@ -145,7 +145,7 @@ public class HistoryGraphUnusedPinDataCleanerWorker implements Runnable {
                     Target target;
                     int targetId = graphDataStream.targetId;
                     if (targetId < Tag.START_TAG_ID) {
-                        target = dash.getDeviceById(targetId);
+                        target = profile.getDeviceById(dash, targetId);
                     } else if (targetId < DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
                         target = profile.getTagById(dash, targetId);
                     } else {
