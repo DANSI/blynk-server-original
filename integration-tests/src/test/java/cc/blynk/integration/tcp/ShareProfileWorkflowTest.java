@@ -194,7 +194,8 @@ public class ShareProfileWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.createDash(dash);
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(2)));
 
-        DashboardSettings settings = new DashboardSettings(dash.name, true, Theme.Blynk, false, false, false, false);
+        DashboardSettings settings = new DashboardSettings(dash.name,
+                true, Theme.Blynk, false, false, false, false, 0, false);
 
         clientPair.appClient.send("updateSettings 2\0" + JsonParser.toJson(settings));
         clientPair.appClient.verifyResult(ok(3));
