@@ -90,7 +90,6 @@ public class Profile {
 
     public void addDevice(DashBoard dash, Device device) {
         dash.devices = ArrayUtil.add(dash.devices, device, Device.class);
-        dash.updatedAt = System.currentTimeMillis();
     }
 
     public Device deleteDevice(DashBoard dash, int deviceId) {
@@ -98,7 +97,6 @@ public class Profile {
         Device deviceToRemove = dash.devices[existingDeviceIndex];
         dash.devices = ArrayUtil.remove(dash.devices, existingDeviceIndex, Device.class);
         dash.eraseWidgetValuesForDevice(deviceId);
-        dash.updatedAt = System.currentTimeMillis();
         return deviceToRemove;
     }
 

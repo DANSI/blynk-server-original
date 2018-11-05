@@ -50,7 +50,7 @@ public final class MobileDeleteDeviceLogic {
         Session session = holder.sessionDao.userSession.get(state.userKey);
         session.closeHardwareChannelByDeviceId(dashId, deviceId);
 
-        user.lastModifiedTs = dash.updatedAt;
+        user.lastModifiedTs = System.currentTimeMillis();
 
         holder.blockingIOProcessor.executeHistory(() -> {
             try {
