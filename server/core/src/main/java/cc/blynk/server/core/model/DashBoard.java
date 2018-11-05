@@ -358,6 +358,8 @@ public class DashBoard {
         this.isAppConnectedOn = settings.isAppConnectedOn;
         this.isNotificationsOff = settings.isNotificationsOff;
         this.widgetBackgroundOn = settings.widgetBackgroundOn;
+        this.color = settings.color;
+        this.isDefaultColor = settings.isDefaultColor;
         this.updatedAt = System.currentTimeMillis();
     }
 
