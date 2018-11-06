@@ -57,6 +57,15 @@ public class Profile {
                      contentUsing = PinStorageValueDeserializer.class)
     public final Map<DashPinStorageKey, PinStorageValue> pinsStorage = new HashMap<>();
 
+    //todo this method is very wrong, need to something with it.
+    private static final DashBoard EMPTY_DASH = new DashBoard();
+    public DashBoard getFirstDashOrEmpty() {
+        if (dashBoards.length == 0) {
+            return EMPTY_DASH;
+        }
+        return dashBoards[0];
+    }
+
     public String getDeviceName(DashBoard dash, int deviceId) {
         Device device = getDeviceById(dash, deviceId);
         if (device != null) {

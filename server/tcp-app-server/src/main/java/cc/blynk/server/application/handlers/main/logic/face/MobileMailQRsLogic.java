@@ -4,7 +4,9 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.TextHolder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.auth.User;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.enums.ProvisionType;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.DBManager;
@@ -50,13 +52,13 @@ public final class MobileMailQRsLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        var split = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
+        String[] split = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
-        var dashId = Integer.parseInt(split[0]);
-        var dash = user.profile.getDashByIdOrThrow(dashId);
+        int dashId = Integer.parseInt(split[0]);
+        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
-        var appId = split[1];
-        var app = user.profile.getAppById(appId);
+        String appId = split[1];
+        App app = user.profile.getAppById(appId);
 
         if (app == null) {
             log.debug("App with passed id not found.");
@@ -71,22 +73,23 @@ public final class MobileMailQRsLogic {
         }
 
         log.debug("Sending app preview email to {}, provision type {}", user.email, app.provisionType);
-        makePublishPreviewEmail(ctx, dash, app.provisionType, user.email, app.name, appId, message.id);
+        makePublishPreviewEmail(ctx, user, dash, app.provisionType, app.name, appId, message.id);
     }
 
-    private void makePublishPreviewEmail(ChannelHandlerContext ctx, DashBoard dash,
-                                         ProvisionType provisionType, String to,
+    private void makePublishPreviewEmail(ChannelHandlerContext ctx, User user, DashBoard dash,
+                                         ProvisionType provisionType,
                                          String publishAppName, String publishAppId, int msgId) {
         String subj = publishAppName + " - App details";
         Channel channel = ctx.channel();
         String dashName = dash.getNameOrDefault();
+        String to = user.email;
         if (provisionType == ProvisionType.DYNAMIC) {
             blockingIOProcessor.execute(() -> {
                 try {
-                    var newToken = TokenGeneratorUtil.generateNewToken();
-                    var qrHolder = new QrHolder(dash.id, -1, null, newToken,
+                    String newToken = TokenGeneratorUtil.generateNewToken();
+                    QrHolder qrHolder = new QrHolder(dash.id, -1, null, newToken,
                                 QRCode.from(newToken).to(ImageType.JPG).stream().toByteArray());
-                    var flashedToken = new FlashedToken(to, newToken, publishAppId, dash.id, -1);
+                    FlashedToken flashedToken = new FlashedToken(to, newToken, publishAppId, dash.id, -1);
 
                     if (!dbManager.insertFlashedTokens(flashedToken)) {
                         throw new Exception("App Publishing Preview requires enabled DB.");
@@ -105,8 +108,8 @@ public final class MobileMailQRsLogic {
         } else {
             blockingIOProcessor.execute(() -> {
                 try {
-                    var qrHolders = makeQRs(to, publishAppId, dash);
-                    var sb = new StringBuilder();
+                    QrHolder[] qrHolders = makeQRs(user, publishAppId, dash);
+                    StringBuilder sb = new StringBuilder();
                     for (QrHolder qrHolder : qrHolders) {
                         qrHolder.attach(sb);
                     }
@@ -126,17 +129,17 @@ public final class MobileMailQRsLogic {
     }
 
 
-    private QrHolder[] makeQRs(String username, String appId, DashBoard dash) throws Exception {
-        var tokensCount = dash.devices.length;
-        var qrHolders = new QrHolder[tokensCount];
-        var flashedTokens = new FlashedToken[tokensCount];
+    private QrHolder[] makeQRs(User user, String appId, DashBoard dash) throws Exception {
+        int tokensCount = dash.devices.length;
+        QrHolder[] qrHolders = new QrHolder[tokensCount];
+        FlashedToken[] flashedTokens = new FlashedToken[tokensCount];
 
-        var i = 0;
-        for (var device : dash.devices) {
-            var newToken = TokenGeneratorUtil.generateNewToken();
+        int i = 0;
+        for (Device device : dash.devices) {
+            String newToken = TokenGeneratorUtil.generateNewToken();
             qrHolders[i] = new QrHolder(dash.id, device.id, device.name, newToken,
                     QRCode.from(newToken).to(ImageType.JPG).stream().toByteArray());
-            flashedTokens[i++] = new FlashedToken(username, newToken, appId, dash.id, device.id);
+            flashedTokens[i++] = new FlashedToken(user.email, newToken, appId, dash.id, device.id);
         }
 
         if (!dbManager.insertFlashedTokens(flashedTokens)) {
