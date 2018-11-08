@@ -101,10 +101,10 @@ public final class StringUtils {
 
         final int i2 = body.indexOf(separator, i1 + 1);
         if (i2 == -1) {
-            return new String[] {body.substring(0, i1), body.substring(i1 + 1, body.length())};
+            return new String[] {body.substring(0, i1), body.substring(i1 + 1)};
         }
 
-        return new String[] {body.substring(0, i1), body.substring(i1 + 1, i2), body.substring(i2 + 1, body.length())};
+        return new String[] {body.substring(0, i1), body.substring(i1 + 1, i2), body.substring(i2 + 1)};
     }
 
     public static String[] split3(String body) {
@@ -121,7 +121,7 @@ public final class StringUtils {
             return new String[] {body};
         }
 
-        return new String[] {body.substring(0, i1), body.substring(i1 + 1, body.length())};
+        return new String[] {body.substring(0, i1), body.substring(i1 + 1)};
     }
 
     public static String[] split2(String body) {
@@ -151,7 +151,7 @@ public final class StringUtils {
         return sb.toString();
     }
 
-    public static String removeUnsupportedChars(String name) {
+    private static String removeUnsupportedChars(String name) {
         return NOT_SUPPORTED_CHARS.matcher(name).replaceAll("");
     }
 
