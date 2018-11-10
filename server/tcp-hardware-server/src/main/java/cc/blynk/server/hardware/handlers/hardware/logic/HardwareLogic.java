@@ -84,7 +84,7 @@ public class HardwareLogic extends BaseProcessorHandler {
             user.profile.update(dash, deviceId, pin, pinType, value, now);
             device.dataReceivedAt = now;
 
-            Session session = sessionDao.userSession.get(userKey);
+            Session session = sessionDao.get(userKey);
             processEventorAndWebhook(user, dash, deviceId, session, pin, pinType, value, now);
 
             if (dash.isActive) {

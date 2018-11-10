@@ -33,7 +33,7 @@ public class MobileChannelStateHandler extends ChannelInboundHandlerAdapter {
     public void channelInactive(ChannelHandlerContext ctx) {
         var state = getAppState(ctx.channel());
         if (state != null) {
-            var session = sessionDao.userSession.get(state.userKey);
+            var session = sessionDao.get(state.userKey);
             if (session != null) {
                 log.trace("Application channel disconnect. {}", ctx.channel());
 

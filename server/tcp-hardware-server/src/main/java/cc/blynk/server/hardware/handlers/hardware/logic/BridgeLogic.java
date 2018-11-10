@@ -50,7 +50,7 @@ public class BridgeLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
-        var session = sessionDao.userSession.get(state.userKey);
+        var session = sessionDao.get(state.userKey);
         var split = split3(message.body);
 
         if (split.length < 3) {
