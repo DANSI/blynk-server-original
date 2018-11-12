@@ -73,15 +73,16 @@ public final class MobileMailQRsLogic {
         }
 
         log.debug("Sending app preview email to {}, provision type {}", user.email, app.provisionType);
-        makePublishPreviewEmail(ctx, dash, app.provisionType, user.email, app.name, appId, message.id);
+        makePublishPreviewEmail(ctx, user, dash, app.provisionType, app.name, appId, message.id);
     }
 
-    private void makePublishPreviewEmail(ChannelHandlerContext ctx, DashBoard dash,
-                                         ProvisionType provisionType, String to,
+    private void makePublishPreviewEmail(ChannelHandlerContext ctx, User user, DashBoard dash,
+                                         ProvisionType provisionType,
                                          String publishAppName, String publishAppId, int msgId) {
         String subj = publishAppName + " - App details";
         Channel channel = ctx.channel();
         String dashName = dash.getNameOrDefault();
+        String to = user.email;
         if (provisionType == ProvisionType.DYNAMIC) {
             blockingIOProcessor.execute(() -> {
                 try {
@@ -107,7 +108,7 @@ public final class MobileMailQRsLogic {
         } else {
             blockingIOProcessor.execute(() -> {
                 try {
-                    QrHolder[] qrHolders = makeQRs(to, publishAppId, dash);
+                    QrHolder[] qrHolders = makeQRs(user, publishAppId, dash);
                     StringBuilder sb = new StringBuilder();
                     for (QrHolder qrHolder : qrHolders) {
                         qrHolder.attach(sb);
@@ -128,7 +129,7 @@ public final class MobileMailQRsLogic {
     }
 
 
-    private QrHolder[] makeQRs(String username, String appId, DashBoard dash) throws Exception {
+    private QrHolder[] makeQRs(User user, String appId, DashBoard dash) throws Exception {
         int tokensCount = dash.devices.length;
         QrHolder[] qrHolders = new QrHolder[tokensCount];
         FlashedToken[] flashedTokens = new FlashedToken[tokensCount];
@@ -138,7 +139,7 @@ public final class MobileMailQRsLogic {
             String newToken = TokenGeneratorUtil.generateNewToken();
             qrHolders[i] = new QrHolder(dash.id, device.id, device.name, newToken,
                     QRCode.from(newToken).to(ImageType.JPG).stream().toByteArray());
-            flashedTokens[i++] = new FlashedToken(username, newToken, appId, dash.id, device.id);
+            flashedTokens[i++] = new FlashedToken(user.email, newToken, appId, dash.id, device.id);
         }
 
         if (!dbManager.insertFlashedTokens(flashedTokens)) {

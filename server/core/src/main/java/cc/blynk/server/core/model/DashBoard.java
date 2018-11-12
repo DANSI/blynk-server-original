@@ -339,8 +339,7 @@ public class DashBoard {
     public void addTimers(TimerWorker timerWorker, UserKey userKey) {
         for (Widget widget : widgets) {
             if (widget instanceof DeviceTiles) {
-                DeviceTiles deviceTiles = (DeviceTiles) widget;
-                deviceTiles.addTimers(timerWorker, userKey, id);
+                timerWorker.add(userKey, (DeviceTiles) widget, id);
             } else if (widget instanceof Timer) {
                 timerWorker.add(userKey, (Timer) widget, id, -1L, -1L);
             } else if (widget instanceof Eventor) {
@@ -358,6 +357,8 @@ public class DashBoard {
         this.isAppConnectedOn = settings.isAppConnectedOn;
         this.isNotificationsOff = settings.isNotificationsOff;
         this.widgetBackgroundOn = settings.widgetBackgroundOn;
+        this.color = settings.color;
+        this.isDefaultColor = settings.isDefaultColor;
         this.updatedAt = System.currentTimeMillis();
     }
 

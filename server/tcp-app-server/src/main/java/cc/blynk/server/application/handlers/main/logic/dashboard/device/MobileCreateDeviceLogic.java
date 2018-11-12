@@ -69,7 +69,7 @@ public final class MobileCreateDeviceLogic {
         String newToken = TokenGeneratorUtil.generateNewToken();
         holder.tokenManager.assignToken(user, dash, newDevice, newToken);
 
-        user.lastModifiedTs = dash.updatedAt;
+        user.lastModifiedTs = System.currentTimeMillis();
 
         if (ctx.channel().isWritable()) {
             ctx.writeAndFlush(

@@ -56,7 +56,7 @@ public class MobileHardwareLogic extends BaseProcessorHandler {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, MobileStateHolder state, StringMessage message) {
-        Session session = sessionDao.userSession.get(state.userKey);
+        Session session = sessionDao.get(state.userKey);
 
         //here expecting command in format "1-200000 vw 88 1"
         String[] split = split2(message.body);

@@ -3,7 +3,6 @@ package cc.blynk.server.hardware.handlers.hardware.logic;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
 import cc.blynk.server.core.dao.TokenValue;
-import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.server.hardware.internal.BridgeForwardMessage;
@@ -51,8 +50,8 @@ public class BridgeLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
-        Session session = sessionDao.userSession.get(state.userKey);
-        String[] split = split3(message.body);
+        var session = sessionDao.get(state.userKey);
+        var split = split3(message.body);
 
         if (split.length < 3) {
             log.error("Wrong bridge body. '{}'", message.body);
@@ -60,10 +59,10 @@ public class BridgeLogic {
             return;
         }
 
-        String bridgePin = split[0];
+        var bridgePin = split[0];
 
         if (isInit(split[1])) {
-            String token = split[2];
+            var token = split[2];
             if (sendToMap == null) {
                 sendToMap = new HashMap<>();
             }
@@ -74,7 +73,7 @@ public class BridgeLogic {
             }
 
             //sendToMap may be already initialized, so checking it first.
-            TokenValue tokenValue = sendToMap.get(token);
+            var tokenValue = sendToMap.get(token);
             if (tokenValue == null) {
                 tokenValue = tokenManager.getTokenValueByToken(token);
                 if (tokenValue == null) {
@@ -99,21 +98,21 @@ public class BridgeLogic {
                 return;
             }
 
-            TokenValue tokenvalue = sendToMap.get(bridgePin);
+            var tokenvalue = sendToMap.get(bridgePin);
             if (tokenvalue == null) {
                 log.debug("No token. Bridge not initialized. {}", state.user.email);
                 ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
                 return;
             }
 
-            String body = message.body.substring(message.body.indexOf(StringUtils.BODY_SEPARATOR_STRING) + 1);
-            StringMessage bridgeMessage = new StringMessage(message.id, BRIDGE, body);
+            var body = message.body.substring(message.body.indexOf(StringUtils.BODY_SEPARATOR_STRING) + 1);
+            var bridgeMessage = new StringMessage(message.id, BRIDGE, body);
 
-            int targetDeviceId = tokenvalue.device.id;
-            int targetDashId = tokenvalue.dash.id;
+            var targetDeviceId = tokenvalue.device.id;
+            var targetDashId = tokenvalue.dash.id;
 
             if (session.hardwareChannels.size() > 1) {
-                boolean messageWasSent = false;
+                var messageWasSent = false;
                 for (Channel channel : session.hardwareChannels) {
                     if (channel != ctx.channel() && channel.isWritable()) {
                         HardwareStateHolder hardwareState = getHardState(channel);

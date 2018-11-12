@@ -1,6 +1,7 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.tags;
 
 import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -40,7 +41,8 @@ public final class MobileCreateTagLogic {
             throw new IllegalCommandException("Income tag message is empty.");
         }
 
-        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
+        Profile profile = user.profile;
+        DashBoard dash = profile.getDashByIdOrThrow(dashId);
 
         Tag newTag = JsonParser.parseTag(deviceString, message.id);
 
@@ -56,7 +58,7 @@ public final class MobileCreateTagLogic {
             }
         }
 
-        user.profile.addTag(dash, newTag);
+        profile.addTag(dash, newTag);
         user.lastModifiedTs = System.currentTimeMillis();
 
         if (ctx.channel().isWritable()) {

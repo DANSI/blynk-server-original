@@ -10,12 +10,12 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.EventLoop;
-import io.netty.util.internal.ConcurrentSet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.deviceOffline;
 import static cc.blynk.server.internal.CommonByteBufUtil.makeUTF8StringMessage;
@@ -36,8 +36,8 @@ public class Session {
     private static final Logger log = LogManager.getLogger(Session.class);
 
     public final EventLoop initialEventLoop;
-    public final Set<Channel> appChannels = new ConcurrentSet<>();
-    public final Set<Channel> hardwareChannels = new ConcurrentSet<>();
+    public final Set<Channel> appChannels = ConcurrentHashMap.newKeySet();
+    public final Set<Channel> hardwareChannels = ConcurrentHashMap.newKeySet();
 
     private final ChannelFutureListener appRemover = future -> appChannels.remove(future.channel());
     private final ChannelFutureListener hardRemover = future -> hardwareChannels.remove(future.channel());

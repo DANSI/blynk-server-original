@@ -60,7 +60,7 @@ public class OTALogic extends AuthHeadersBaseHttpHandler {
             return badRequest("Invalid auth credentials.");
         }
 
-        Session session = sessionDao.userSession.get(new UserKey(user));
+        Session session = sessionDao.get(new UserKey(user));
         if (session == null) {
             log.debug("No session for user {}.", user.email);
             return badRequest("Device wasn't connected yet.");

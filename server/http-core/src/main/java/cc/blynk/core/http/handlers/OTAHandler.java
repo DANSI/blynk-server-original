@@ -140,7 +140,7 @@ public class OTAHandler extends UploadHandler {
         int dashId = tokenValue.dash.id;
         int deviceId = tokenValue.device.id;
 
-        Session session = sessionDao.userSession.get(new UserKey(user));
+        Session session = sessionDao.get(new UserKey(user));
         if (session == null) {
             log.debug("No session for user {}.", user.email);
             return badRequest("Device wasn't connected yet.");

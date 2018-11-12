@@ -51,7 +51,6 @@ public final class MobileUpdateDashSettingLogic {
         DashboardSettings settings = JsonParser.parseDashboardSettings(dashSettingsString, message.id);
 
         User user = state.user;
-
         DashBoard existingDash = user.profile.getDashByIdOrThrow(dashId);
 
         existingDash.updateSettings(settings);

@@ -1,9 +1,6 @@
 package cc.blynk.server.application.handlers.main;
 
-import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.core.dao.SessionDao;
-import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.protocol.enums.Command;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -34,13 +31,13 @@ public class MobileChannelStateHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
-        MobileStateHolder state = getAppState(ctx.channel());
+        var state = getAppState(ctx.channel());
         if (state != null) {
-            Session session = sessionDao.userSession.get(state.userKey);
+            var session = sessionDao.get(state.userKey);
             if (session != null) {
                 log.trace("Application channel disconnect. {}", ctx.channel());
 
-                for (DashBoard dashBoard : state.user.profile.dashBoards) {
+                for (var dashBoard : state.user.profile.dashBoards) {
                     if (dashBoard.isAppConnectedOn && dashBoard.isActive) {
                         log.trace("{}-{}. Sending App Disconnected event to hardware.",
                                 state.user.email, state.user.appName);

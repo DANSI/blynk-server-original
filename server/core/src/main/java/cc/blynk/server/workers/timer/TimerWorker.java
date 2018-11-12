@@ -84,7 +84,7 @@ public class TimerWorker implements Runnable {
                 for (Widget widget : dash.widgets) {
                     if (widget instanceof DeviceTiles) {
                         DeviceTiles deviceTiles = (DeviceTiles) widget;
-                        counter += deviceTiles.addTimers(this, entry.getKey(), dashId);
+                        counter += add(entry.getKey(), deviceTiles, dashId);
                     } else if (widget instanceof Timer) {
                         Timer timer = (Timer) widget;
                         add(entry.getKey(), timer, dashId, -1, -1);
@@ -98,6 +98,19 @@ public class TimerWorker implements Runnable {
             }
         }
         log.info("Timers : {}", counter);
+    }
+
+    public int add(UserKey userKey, DeviceTiles deviceTiles, int dashId) {
+        int counter = 0;
+        for (TileTemplate template : deviceTiles.templates) {
+            for (Widget widgetInTemplate : template.widgets) {
+                if (widgetInTemplate instanceof Timer) {
+                    add(userKey, (Timer) widgetInTemplate, dashId, deviceTiles.id, template.id);
+                    counter++;
+                }
+            }
+        }
+        return counter;
     }
 
     public void add(UserKey userKey, Eventor eventor, int dashId) {
@@ -292,7 +305,7 @@ public class TimerWorker implements Runnable {
     }
 
     private void triggerTimer(SessionDao sessionDao, UserKey userKey, String value, int dashId, int[] deviceIds) {
-        Session session = sessionDao.userSession.get(userKey);
+        Session session = sessionDao.get(userKey);
         if (session != null) {
             if (!session.sendMessageToHardware(dashId, HARDWARE, TIMER_MSG_ID, value, deviceIds)) {
                 actuallySendTimers++;

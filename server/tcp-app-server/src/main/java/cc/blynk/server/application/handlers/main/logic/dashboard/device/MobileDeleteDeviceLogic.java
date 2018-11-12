@@ -47,10 +47,10 @@ public final class MobileDeleteDeviceLogic {
         user.profile.cleanPinStorageForDevice(deviceId);
         user.profile.deleteDeviceFromTags(dash, deviceId);
         holder.tokenManager.deleteDevice(device);
-        Session session = holder.sessionDao.userSession.get(state.userKey);
+        Session session = holder.sessionDao.get(state.userKey);
         session.closeHardwareChannelByDeviceId(dashId, deviceId);
 
-        user.lastModifiedTs = dash.updatedAt;
+        user.lastModifiedTs = System.currentTimeMillis();
 
         holder.blockingIOProcessor.executeHistory(() -> {
             try {

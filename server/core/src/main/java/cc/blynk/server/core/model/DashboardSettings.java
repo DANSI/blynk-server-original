@@ -25,6 +25,10 @@ public final class DashboardSettings {
 
     public final boolean widgetBackgroundOn;
 
+    public final int color;
+
+    public final boolean isDefaultColor;
+
     @JsonCreator
     public DashboardSettings(@JsonProperty("name") String name,
                              @JsonProperty("isShared") boolean isShared,
@@ -32,7 +36,9 @@ public final class DashboardSettings {
                              @JsonProperty("keepScreenOn") boolean keepScreenOn,
                              @JsonProperty("isAppConnectedOn") boolean isAppConnectedOn,
                              @JsonProperty("isNotificationsOff") boolean isNotificationsOff,
-                             @JsonProperty("widgetBackgroundOn") boolean widgetBackgroundOn) {
+                             @JsonProperty("widgetBackgroundOn") boolean widgetBackgroundOn,
+                             @JsonProperty("color") int color,
+                             @JsonProperty("isDefaultColor") boolean isDefaultColor) {
         this.name = name;
         this.isShared = isShared;
         this.theme = theme == null ? Theme.Blynk : theme;
@@ -40,5 +46,7 @@ public final class DashboardSettings {
         this.isAppConnectedOn = isAppConnectedOn;
         this.isNotificationsOff = isNotificationsOff;
         this.widgetBackgroundOn = widgetBackgroundOn;
+        this.color = color;
+        this.isDefaultColor = isDefaultColor;
     }
 }

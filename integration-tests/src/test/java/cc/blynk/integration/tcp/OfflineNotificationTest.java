@@ -121,7 +121,8 @@ public class OfflineNotificationTest extends SingleServerInstancePerTest {
 
     @Test
     public void testTurnOffNotifications() throws Exception{
-        DashboardSettings settings = new DashboardSettings("New Name", true, Theme.BlynkLight, true, true, true, false);
+        DashboardSettings settings = new DashboardSettings("New Name",
+                true, Theme.BlynkLight, true, true, true, false, 0, false);
 
         clientPair.appClient.send("updateSettings 1\0" + JsonParser.toJson(settings));
         clientPair.appClient.verifyResult(ok(1));
@@ -160,7 +161,8 @@ public class OfflineNotificationTest extends SingleServerInstancePerTest {
 
         assertEquals(1, devices[1].id);
 
-        settings = new DashboardSettings("New Name", true, Theme.BlynkLight, true, true, false, false);
+        settings = new DashboardSettings("New Name",
+                true, Theme.BlynkLight, true, true, false, false, 0, false);
         clientPair.appClient.send("updateSettings 1\0" + JsonParser.toJson(settings));
         clientPair.appClient.verifyResult(ok(5));
 
@@ -175,7 +177,8 @@ public class OfflineNotificationTest extends SingleServerInstancePerTest {
 
     @Test
     public void testTurnOffNotificationsAndNoDevices() throws Exception{
-        DashboardSettings settings = new DashboardSettings("New Name", true, Theme.BlynkLight, true, true, true, false);
+        DashboardSettings settings = new DashboardSettings("New Name",
+                true, Theme.BlynkLight, true, true, true, false, 0, false);
 
         clientPair.appClient.send("updateSettings 1\0" + JsonParser.toJson(settings));
         clientPair.appClient.verifyResult(ok(1));

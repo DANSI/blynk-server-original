@@ -49,7 +49,7 @@ public final class MobileRefreshTokenLogic {
 
         String token = holder.tokenManager.refreshToken(user, dash, device);
 
-        Session session = holder.sessionDao.userSession.get(state.userKey);
+        Session session = holder.sessionDao.get(state.userKey);
         session.closeHardwareChannelByDeviceId(dashId, deviceId);
 
         if (ctx.channel().isWritable()) {

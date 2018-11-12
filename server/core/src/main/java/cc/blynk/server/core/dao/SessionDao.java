@@ -32,6 +32,10 @@ public class SessionDao {
 
     public final ConcurrentHashMap<UserKey, Session> userSession = new ConcurrentHashMap<>();
 
+    public Session get(UserKey userKey) {
+        return userSession.get(userKey);
+    }
+
     //threadsafe
     public Session getOrCreateSessionByUser(UserKey key, EventLoop initialEventLoop) {
         Session group = userSession.get(key);
