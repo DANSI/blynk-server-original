@@ -44,6 +44,8 @@ public class DeviceTiles extends Widget implements MobileSyncWidget, HardwareSyn
 
     public boolean disableWhenOffline;
 
+    public boolean stretchToBottom;
+
     public void deleteDeviceTilesByTemplateId(long deviceTileId) {
         ArrayList<Tile> list = new ArrayList<>();
         for (Tile tile : tiles) {
