@@ -11,8 +11,6 @@ public class Tabs extends NoPinWidget {
 
     public Tab[] tabs;
 
-    public boolean bubbleOn;
-
     public volatile int color;
 
     public int activeTxtColor;
