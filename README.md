@@ -56,7 +56,7 @@ messages between Blynk mobile application and various microcontroller boards and
 [ ![Build Status](https://travis-ci.org/blynkkk/blynk-server.svg?branch=master)](https://travis-ci.org/blynkkk/blynk-server)
 
 ## Requirements
-- Java 8/10 required (OpenJDK, Oracle) 
+- Java 8/11 required (OpenJDK, Oracle) 
 - Any OS that can run java 
 - At least 30 MB of RAM (could be less with tuning)
 - Open ports 9443 (for app and hardware with ssl), 8080 (for hardware without ssl)
@@ -67,10 +67,10 @@ For Windows download Java [here](http://download.oracle.com/otn-pub/java/jdk/10.
 
 ## Quick local server setup
 
-+ Make sure you are using Java 10
++ Make sure you are using Java 11
 
         java -version
-        Output: java version "10"
+        Output: java version "11"
 
 + Run the server on default 'hardware port 8080' and default 'application port 9443' (SSL port)
 
@@ -598,9 +598,9 @@ As an output you'll retrieve server.crt and server.pem files that you need to pr
 
 ### Install java for Ubuntu
 
-        sudo add-apt-repository ppa:linuxuprising/java
-        sudo apt-get update
-        sudo apt-get install oracle-java10-installer
+        sudo add-apt-repository ppa:openjdk-r/ppa \
+        && sudo apt-get update -q \
+        && sudo apt install -y openjdk-11-jdk
         
 or if above doesn't work:
 
