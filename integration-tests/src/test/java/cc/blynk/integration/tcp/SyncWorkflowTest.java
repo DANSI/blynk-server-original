@@ -3,6 +3,7 @@ package cc.blynk.integration.tcp;
 import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.integration.model.tcp.TestHardClient;
 import cc.blynk.server.core.dao.UserKey;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.BoardType;
@@ -565,6 +566,65 @@ public class SyncWorkflowTest extends SingleServerInstancePerTest {
 
         hardClient2.sync();
         verify(hardClient2.responseMock, timeout(100)).channelRead(any(), eq(produce(2, HARDWARE, b("vw 119 1"))));
+    }
+
+    @Test
+    public void testHardSyncSinglePinFor2DEvices() throws Exception {
+        Device device1 = new Device(1, "My Device", BoardType.ESP32_Dev_Board);
+        Device device2 = new Device(2, "My Device2", BoardType.ESP32_Dev_Board);
+
+        DashBoard dash = new DashBoard();
+        dash.id = 2;
+        dash.name = "123";
+        dash.isActive = true;
+
+        clientPair.appClient.createDash(dash);
+        clientPair.appClient.verifyResult(ok(1));
+
+        Device tempDevice1;
+        clientPair.appClient.createDevice(1, device1);
+        tempDevice1 = clientPair.appClient.parseDevice(2);
+        assertNotNull(tempDevice1);
+        assertNotNull(tempDevice1.token);
+        clientPair.appClient.verifyResult(createDevice(2, tempDevice1));
+
+        Device tempDevice2;
+        clientPair.appClient.createDevice(2, device2);
+        tempDevice2 = clientPair.appClient.parseDevice(3);
+        assertNotNull(tempDevice2);
+        assertNotNull(tempDevice2.token);
+        clientPair.appClient.verifyResult(createDevice(3, tempDevice2));
+
+        //set pin state from the app
+        clientPair.appClient.send("hardware 1-1 vw 44 444");
+        clientPair.appClient.send("hardware 2-2 vw 44 445");
+
+        TestHardClient hardClient1 = new TestHardClient("localhost", properties.getHttpPort());
+        hardClient1.start();
+        hardClient1.login(tempDevice1.token);
+        hardClient1.verifyResult(ok(1));
+        hardClient1.reset();
+
+        TestHardClient hardClient2 = new TestHardClient("localhost", properties.getHttpPort());
+        hardClient2.start();
+        hardClient2.login(tempDevice2.token);
+        hardClient2.verifyResult(ok(1));
+        hardClient2.reset();
+
+        hardClient1.sync(PinType.VIRTUAL, 44);
+        hardClient1.verifyResult(produce(1, HARDWARE, b("vw 44 444")));
+
+        hardClient2.sync(PinType.VIRTUAL, 44);
+        hardClient2.verifyResult(produce(1, HARDWARE, b("vw 44 445")));
+
+        hardClient1.send("hardware vw 45 555");
+        hardClient2.send("hardware vw 45 556");
+
+        hardClient1.sync(PinType.VIRTUAL, 45);
+        hardClient1.verifyResult(produce(3, HARDWARE, b("vw 45 555")));
+
+        hardClient2.sync(PinType.VIRTUAL, 45);
+        hardClient2.verifyResult(produce(3, HARDWARE, b("vw 45 556")));
     }
 
 }
