@@ -1810,6 +1810,95 @@ public class ReportingTest extends BaseTest {
     }
 
     @Test
+    public void testStreamsAreCorrectlyFiltered() throws Exception {
+        String tempDir = holder.props.getProperty("data.folder");
+        Path userReportFolder = Paths.get(tempDir, "data", getUserName());
+        if (Files.notExists(userReportFolder)) {
+            Files.createDirectories(userReportFolder);
+        }
+        Path pinReportingDataPath11 = Paths.get(tempDir, "data", getUserName(),
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 1, GraphGranularityType.MINUTE));
+        Path pinReportingDataPath12 = Paths.get(tempDir, "data", getUserName(),
+                ReportingDiskDao.generateFilename(1, 0, PinType.VIRTUAL, (short) 2, GraphGranularityType.MINUTE));
+        long now = System.currentTimeMillis();
+        FileUtils.write(pinReportingDataPath11, 1.11D, now);
+        FileUtils.write(pinReportingDataPath12, 1.12D, now);
+
+        ReportDataStream reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Temperature", true);
+        ReportDataStream reportDataStream2 = new ReportDataStream((short) 2, PinType.VIRTUAL, "Temperature2", true);
+        ReportSource reportSource = new TileTemplateReportSource(
+                new ReportDataStream[] {reportDataStream, reportDataStream2},
+                1,
+                new int[] {0}
+        );
+
+        ReportingWidget reportingWidget = new ReportingWidget();
+        reportingWidget.height = 1;
+        reportingWidget.width = 1;
+        reportingWidget.reportSources = new ReportSource[] {
+                reportSource
+        };
+
+        clientPair.appClient.createWidget(1, reportingWidget);
+        clientPair.appClient.verifyResult(ok(1));
+
+        reportDataStream = new ReportDataStream((short) 1, PinType.VIRTUAL, "Temperature", false);
+        Report report = new Report(1, "OneTime Report",
+                new ReportSource[] {new TileTemplateReportSource(
+                        new ReportDataStream[] {reportDataStream, reportDataStream2},
+                        1,
+                        new int[] {0}
+                )},
+                new OneTimeReport(TimeUnit.DAYS.toMillis(1)), "test@gmail.com",
+                GraphGranularityType.MINUTE, true, CSV_FILE_PER_DEVICE_PER_PIN,
+                Format.ISO_SIMPLE, ZoneId.of("UTC"), 0, 0, null);
+
+        clientPair.appClient.createReport(1, report);
+        report = clientPair.appClient.parseReportFromResponse(2);
+        assertNotNull(report);
+        assertEquals(0, report.nextReportAt);
+        assertEquals(0, report.lastReportAt);
+
+        verify(holder.mailWrapper, never()).sendReportEmail(eq("test@gmail.com"),
+                any(),
+                any(),
+                any());
+
+        clientPair.appClient.exportReport(1, 1);
+        report = clientPair.appClient.parseReportFromResponse(3);
+        assertNotNull(report);
+        assertEquals(0, report.nextReportAt);
+        assertEquals(System.currentTimeMillis(), report.lastReportAt, 2000);
+        assertEquals(OK, report.lastRunResult);
+
+        String date = LocalDate.now(report.tzName).toString();
+        String filename = getUserName() + "_Blynk_" + report.id + "_" + date + ".zip";
+        verify(holder.mailWrapper, timeout(3000)).sendReportEmail(eq("test@gmail.com"),
+                eq("Your one time OneTime Report is ready"),
+                eq("http://127.0.0.1:18080/" + filename),
+                eq("Report name: OneTime Report<br>Period: One time"));
+        sleep(200);
+        assertEquals(1, holder.reportScheduler.getCompletedTaskCount());
+        assertEquals(1, holder.reportScheduler.getTaskCount());
+        assertEquals(0, holder.reportScheduler.map.size());
+        assertEquals(0, holder.reportScheduler.getActiveCount());
+
+        Path result = Paths.get(FileUtils.CSV_DIR,
+                getUserName() + "_" + AppNameUtil.BLYNK + "_" + report.id + "_" + date + ".zip");
+        assertTrue(Files.exists(result));
+        String resultCsvString = readStringFromFirstZipEntry(result);
+        assertNotNull(resultCsvString);
+        String[] split = resultCsvString.split("[,\n]");
+        String nowFormatted = DateTimeFormatter
+                .ofPattern(Format.ISO_SIMPLE.pattern)
+                .withZone(ZoneId.of("UTC"))
+                .format(Instant.ofEpochMilli(now));
+        assertEquals(2, split.length);
+        assertEquals(nowFormatted, split[0]);
+        assertEquals(1.12D, Double.parseDouble(split[1]), 0.0001);
+    }
+
+    @Test
     public void testExportIsLimited() throws Exception {
         String tempDir = holder.props.getProperty("data.folder");
         Path userReportFolder = Paths.get(tempDir, "data", getUserName());

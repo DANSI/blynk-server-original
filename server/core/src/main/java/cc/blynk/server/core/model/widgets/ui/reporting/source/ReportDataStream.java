@@ -37,7 +37,7 @@ public class ReportDataStream {
     }
 
     public boolean isValid() {
-        return DataStream.isValid(pin, pinType);
+        return this.isSelected && DataStream.isValid(pin, pinType);
     }
 
     public String formatForFileName() {
