@@ -183,6 +183,10 @@ public class DBManager implements Closeable {
         return null;
     }
 
+    public boolean dbIsNotEnabled() {
+        return ds == null;
+    }
+
     public boolean isDBEnabled() {
         return !(ds == null || ds.isClosed());
     }
