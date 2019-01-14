@@ -115,6 +115,8 @@ public final class MobileUpdateWidgetLogic {
             DeviceTiles newDeviceTiles = (DeviceTiles) newWidget;
             newDeviceTiles.tiles = prevDeviceTiles.tiles;
             newDeviceTiles.templates = prevDeviceTiles.templates;
+        } else {
+            newWidget.updateValue(prevWidget);
         }
 
         if (newWidget instanceof ReportingWidget) {

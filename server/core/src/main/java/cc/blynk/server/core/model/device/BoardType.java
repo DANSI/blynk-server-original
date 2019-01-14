@@ -84,13 +84,15 @@ public enum BoardType {
 
     public final String label;
 
+    private static final BoardType[] values = values();
+
     BoardType(String label) {
         this.label = label;
     }
 
     @JsonCreator
     public static BoardType fromLabel(String label) {
-        for (BoardType type : BoardType.values()) {
+        for (BoardType type : values) {
             if (type.label.equals(label)) {
                 return type;
             }

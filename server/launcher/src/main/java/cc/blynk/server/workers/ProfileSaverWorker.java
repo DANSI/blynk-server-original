@@ -50,7 +50,7 @@ public class ProfileSaverWorker implements Runnable, Closeable {
             dbManager.saveUsers(users);
 
             //backup only for local mode
-            if (!dbManager.isDBEnabled() && users.size() > 0) {
+            if (dbManager.dbIsNotEnabled() && users.size() > 0) {
                 archiveUser(now);
             }
 
@@ -65,6 +65,7 @@ public class ProfileSaverWorker implements Runnable, Closeable {
     private void archiveUser(long now) {
         if (now - backupTs > 86_400_000) {
             //it is time for backup, once per day.
+            log.info("Backup for user DB started...");
             backupTs = now;
             for (User user : userDao.users.values()) {
                 try {
@@ -74,6 +75,7 @@ public class ProfileSaverWorker implements Runnable, Closeable {
                     //ignore
                 }
             }
+            log.info("Backup for user DB finished.");
         }
     }
 
