@@ -3,6 +3,7 @@ package cc.blynk.integration.tcp;
 import cc.blynk.integration.SingleServerInstancePerTest;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.enums.PinType;
+import cc.blynk.server.core.model.widgets.OnePinWidget;
 import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.outputs.ValueDisplay;
 import cc.blynk.server.core.model.widgets.ui.DeviceSelector;
@@ -23,9 +24,8 @@ import static cc.blynk.integration.TestUtil.illegalCommandBody;
 import static cc.blynk.integration.TestUtil.notAllowed;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.server.core.protocol.enums.Response.NOT_ALLOWED;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.timeout;
@@ -166,14 +166,18 @@ public class WidgetWorkflowTest extends SingleServerInstancePerTest {
     // https://github.com/blynkkk/blynk-server/issues/1266
     public void testWidgetValueNotChangedAfterUpdate() throws Exception {
         clientPair.appClient.createWidget(1, "{\"id\":82561, \"width\":1, \"height\":1,\"type\":\"BUTTON\", \"value\":\"1\"}");
+        clientPair.appClient.send("loadProfileGzipped");
+        Profile profile = clientPair.appClient.parseProfile(2);
+        assertNotNull(profile);
+        Widget widget = profile.dashBoards[0].getWidgetById(82561);
+        assertEquals("1", ((OnePinWidget) widget).value);
+
         clientPair.appClient.updateWidget(1, "{\"id\":82561, \"width\":2, \"height\":2,\"type\":\"BUTTON\"}");
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.parseProfile(3);
-        Widget widget = profile.dashBoards[0].getWidgetById(82561);
-        assertThat(widget.getJsonValue(), is(equalTo("[\"1\"]")));
-
-        clientPair.appClient.deleteWidget(1, 82561);
+        profile = clientPair.appClient.parseProfile(4);
+        widget = profile.dashBoards[0].getWidgetById(82561);
+        assertEquals("1", ((OnePinWidget) widget).value);
     }
 
 }
