@@ -216,7 +216,7 @@ public class Profile {
             for (int deviceId : target.getAssignedDeviceIds()) {
                 pinsStorage.remove(new DashPinStorageKey(dash.id, deviceId, pinType, pin));
                 if (removeProperties) {
-                    for (WidgetProperty widgetProperty : WidgetProperty.values()) {
+                    for (WidgetProperty widgetProperty : WidgetProperty.getValues()) {
                         pinsStorage.remove(
                                 new DashPinPropertyStorageKey(dash.id, deviceId, pinType, pin, widgetProperty));
                     }
@@ -278,7 +278,7 @@ public class Profile {
                 DataStream dataStream = tile.dataStream;
                 pinsStorage.remove(new DashPinStorageKey(dashId, tile.deviceId, dataStream.pinType, dataStream.pin));
                 if (removeProperties) {
-                    for (WidgetProperty widgetProperty : WidgetProperty.values()) {
+                    for (WidgetProperty widgetProperty : WidgetProperty.getValues()) {
                         pinsStorage.remove(new DashPinPropertyStorageKey(dashId, tile.deviceId,
                                 dataStream.pinType, dataStream.pin, widgetProperty));
                     }

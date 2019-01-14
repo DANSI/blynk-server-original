@@ -282,7 +282,7 @@ public class ReportingDiskDao implements Closeable {
         log.debug("Removing {}{} pin data for dashId {}, deviceId {}.", pinType.pintTypeChar, pin, dashId, deviceId);
         String userReportingDir = getUserReportingFolderPath(user).toString();
 
-        for (GraphGranularityType reportGranularity : GraphGranularityType.values()) {
+        for (GraphGranularityType reportGranularity : GraphGranularityType.getValues()) {
             delete(userReportingDir, dashId, deviceId, pinType, pin, reportGranularity);
         }
     }

@@ -31,6 +31,8 @@ public enum WidgetProperty {
 
     public final String label;
 
+    private static final WidgetProperty[] values = values();
+
     WidgetProperty(String label) {
         this.label = label;
     }
@@ -87,5 +89,9 @@ public enum WidgetProperty {
     @Override
     public String toString() {
         return label;
+    }
+
+    public static WidgetProperty[] getValues() {
+        return values;
     }
 }
