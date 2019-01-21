@@ -6,8 +6,6 @@ import cc.blynk.server.core.model.widgets.MultiPinWidget;
 import cc.blynk.server.core.model.widgets.OnePinWidget;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-import java.util.Objects;
-
 import static cc.blynk.server.core.protocol.enums.Command.APP_SYNC;
 import static cc.blynk.utils.StringUtils.DEVICE_SEPARATOR;
 
@@ -75,16 +73,28 @@ public class DashPinStorageKey {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
+
         DashPinStorageKey that = (DashPinStorageKey) o;
-        return dashId == that.dashId
-                && deviceId == that.deviceId
-                && pin == that.pin
-                && pinTypeChar == that.pinTypeChar;
+
+        if (dashId != that.dashId) {
+            return false;
+        }
+        if (deviceId != that.deviceId) {
+            return false;
+        }
+        if (pin != that.pin) {
+            return false;
+        }
+        return pinTypeChar == that.pinTypeChar;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(dashId, deviceId, pin, pinTypeChar);
+        int result = dashId;
+        result = 31 * result + deviceId;
+        result = 31 * result + (int) pin;
+        result = 31 * result + (int) pinTypeChar;
+        return result;
     }
 
     @Override

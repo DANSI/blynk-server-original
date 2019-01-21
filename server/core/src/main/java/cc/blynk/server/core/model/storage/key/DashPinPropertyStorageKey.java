@@ -4,8 +4,6 @@ import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.utils.StringUtils;
 
-import java.util.Objects;
-
 import static cc.blynk.server.core.model.DataStream.makePropertyHardwareBody;
 import static cc.blynk.server.core.protocol.enums.Command.SET_WIDGET_PROPERTY;
 
@@ -56,13 +54,17 @@ public final class DashPinPropertyStorageKey extends DashPinStorageKey {
         if (!super.equals(o)) {
             return false;
         }
+
         DashPinPropertyStorageKey that = (DashPinPropertyStorageKey) o;
+
         return property == that.property;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), property);
+        int result = super.hashCode();
+        result = 31 * result + (property != null ? property.hashCode() : 0);
+        return result;
     }
 
     @Override

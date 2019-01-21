@@ -2,8 +2,6 @@ package cc.blynk.server.core.protocol.model.messages;
 
 import cc.blynk.server.core.protocol.enums.Command;
 
-import java.util.Objects;
-
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -41,13 +39,19 @@ public abstract class MessageBase {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
+
         MessageBase that = (MessageBase) o;
-        return command == that.command
-                && id == that.id;
+
+        if (command != that.command) {
+            return false;
+        }
+        return id == that.id;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(command, id);
+        int result = (int) command;
+        result = 31 * result + id;
+        return result;
     }
 }
