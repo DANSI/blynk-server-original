@@ -384,7 +384,7 @@ public class Profile {
                     //means widget assigned to device selector widget.
                     target = dash.getDeviceSelector(graphTargetId);
                 }
-                if (target != null && ArrayUtil.contains(target.getAssignedDeviceIds(), deviceId)) {
+                if (target != null && target.contains(deviceId)) {
                     return true;
                 }
             }

@@ -16,6 +16,8 @@ public interface Target {
 
     int getDeviceId();
 
+    boolean contains(int deviceId);
+
     default boolean isTag() {
         return false;
     }
