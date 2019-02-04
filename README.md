@@ -63,7 +63,7 @@ messages between Blynk mobile application and various microcontroller boards and
 
 [Ubuntu java installation instruction](#install-java-for-ubuntu).
 
-For Windows download Java [here](http://download.oracle.com/otn-pub/java/jdk/10.0.1+10/fb4372174a714e6b8c52526dc134031e/jdk-10.0.1_windows-x64_bin.exe) and install. 
+For Windows download Java [here](https://www.oracle.com/technetwork/java/javase/downloads/jdk11-downloads-5066655.html) and install. 
 
 ## Quick local server setup
 
