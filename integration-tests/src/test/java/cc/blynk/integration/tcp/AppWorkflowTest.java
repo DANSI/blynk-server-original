@@ -126,9 +126,10 @@ public class AppWorkflowTest extends SingleServerInstancePerTest {
 
         clientPair.appClient.send("deleteApp " + app.id);
         clientPair.appClient.verifyResult(ok(2));
+        clientPair.appClient.reset();
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.parseProfile(3);
+        Profile profile = clientPair.appClient.parseProfile(1);
         assertNotNull(profile);
 
         assertNotNull(profile.apps);

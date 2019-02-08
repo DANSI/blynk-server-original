@@ -35,6 +35,7 @@ import static cc.blynk.integration.TestUtil.appSync;
 import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.createDevice;
 import static cc.blynk.integration.TestUtil.createTag;
+import static cc.blynk.integration.TestUtil.deviceOffline;
 import static cc.blynk.integration.TestUtil.hardware;
 import static cc.blynk.integration.TestUtil.hardwareConnected;
 import static cc.blynk.integration.TestUtil.ok;
@@ -384,9 +385,11 @@ public class DeviceWorkflowTest extends SingleServerInstancePerTest {
 
         clientPair.hardwareClient.stop().await();
         device0.status = Status.OFFLINE;
+        clientPair.appClient.verifyResult(deviceOffline(0, "1-0"));
 
+        clientPair.appClient.reset();
         clientPair.appClient.send("getDevices 1");
-        devices = clientPair.appClient.parseDevices(2);
+        devices = clientPair.appClient.parseDevices(1);
 
         assertNotNull(devices);
         assertEquals(1, devices.length);

@@ -40,6 +40,7 @@ import java.util.List;
 
 import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.createDevice;
+import static cc.blynk.integration.TestUtil.deviceOffline;
 import static cc.blynk.integration.TestUtil.hardware;
 import static cc.blynk.integration.TestUtil.hardwareConnected;
 import static cc.blynk.integration.TestUtil.illegalCommand;
@@ -172,13 +173,15 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
 
         clientPair.appClient.deleteDevice(1, 0);
         clientPair.appClient.verifyResult(ok(1));
+        clientPair.appClient.verifyResult(deviceOffline(0, "1-0"));
+        clientPair.appClient.reset();
 
         clientPair.appClient.send("getDevices 1");
-        Device[] devices = clientPair.appClient.parseDevices(2);
+        Device[] devices = clientPair.appClient.parseDevices(1);
         assertEquals(0, devices.length);
 
         clientPair.appClient.send("emailQr 1\0" + app.id);
-        clientPair.appClient.verifyResult(ok(3));
+        clientPair.appClient.verifyResult(ok(2));
 
         FlashedToken flashedToken = getFlashedTokenByDevice();
         assertNotNull(flashedToken);
@@ -799,15 +802,17 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
 
         clientPair.appClient.deleteDash(1);
         clientPair.appClient.verifyResult(ok(5));
+        clientPair.appClient.verifyResult(deviceOffline(0, "1-0"));
+        clientPair.appClient.reset();
 
         clientPair.appClient.send("loadProfileGzipped");
-        Profile profile = clientPair.appClient.parseProfile(6);
+        Profile profile = clientPair.appClient.parseProfile(1);
         assertNotNull(profile);
         assertNotNull(profile.dashBoards);
         assertEquals(1, profile.dashBoards.length);
 
         clientPair.appClient.send("loadProfileGzipped 2");
-        String response = clientPair.appClient.getBody(7);
+        String response = clientPair.appClient.getBody(2);
         assertNotNull(response);
     }
 
