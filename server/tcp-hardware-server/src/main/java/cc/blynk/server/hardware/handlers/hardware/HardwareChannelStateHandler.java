@@ -125,9 +125,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
 
         @Override
         public void run() {
-            final long now = System.currentTimeMillis();
-            if (device.status == Status.OFFLINE
-                    && now - device.disconnectTime >= notification.notifyWhenOfflineIgnorePeriod) {
+            if (device.status == Status.OFFLINE) {
                 notification.push(gcmWrapper,
                         message,
                         dashId
