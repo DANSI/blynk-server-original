@@ -210,6 +210,17 @@ public class AppMailTest extends SingleServerInstancePerTest {
     }
 
     @Test
+    public void testEmailFromAppOverridesEmailFromHardware() throws Exception {
+        //adding email widget
+        clientPair.appClient.createWidget(1, "{\"id\":432, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"to\":\"test@mail.ua\", \"type\":\"EMAIL\"}");
+        clientPair.appClient.verifyResult(ok(1));
+
+        clientPair.hardwareClient.send("email to@to.com subj body");
+        verify(holder.mailWrapper, timeout(500)).sendHtml(eq("test@mail.ua"), eq("subj"), eq("body"));
+        clientPair.hardwareClient.verifyResult(ok(1));
+    }
+
+    @Test
     public void testEmailWorkWithNoEmailInApp() throws Exception {
         //adding email widget
         clientPair.appClient.createWidget(1, "{\"id\":432, \"width\":1, \"height\":1, \"x\":0, \"y\":0, \"width\":1, \"height\":1, \"type\":\"EMAIL\"}");
