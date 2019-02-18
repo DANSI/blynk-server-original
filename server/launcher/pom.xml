@@ -29,6 +29,7 @@
                                         <Main-Class>cc.blynk.server.launcher.ServerLauncher</Main-Class>
                                         <Build-Number>${project.version}</Build-Number>
                                         <Build-By>Blynk Inc.</Build-By>
+                                        <Multi-Release>true</Multi-Release>
                                     </manifestEntries>
                                 </transformer>
                             </transformers>
