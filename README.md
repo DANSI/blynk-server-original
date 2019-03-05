@@ -150,7 +150,7 @@ That's it!
         
 + To enable server auto restart find /etc/rc.local file and add:
 
-        java -jar /home/pi/server-0.41.2.jar -dataFolder /home/pi/Blynk &
+        java -jar /home/pi/server-0.41.2-java8.jar -dataFolder /home/pi/Blynk &
         
 + Or if the approach above doesn't work, execute 
        
@@ -158,7 +158,7 @@ That's it!
 
 add the following line
 
-        @reboot java -jar /home/pi/server-0.41.2.jar -dataFolder /home/pi/Blynk &
+        @reboot java -jar /home/pi/server-0.41.2-java8.jar -dataFolder /home/pi/Blynk &
         
 save and exit.
 
@@ -286,7 +286,7 @@ do the same with ```mail.properties``` via ```-mailConfig``` and ```sms.properti
  
 For example:
 
-    java -jar server-0.41.2.jar -dataFolder /home/pi/Blynk -serverConfig /home/pi/someFolder/server.properties
+    java -jar server-0.41.2-java8.jar -dataFolder /home/pi/Blynk -serverConfig /home/pi/someFolder/server.properties
 
 Available server options:
 
