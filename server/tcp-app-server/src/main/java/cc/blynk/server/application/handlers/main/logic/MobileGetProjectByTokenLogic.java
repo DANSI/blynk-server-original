@@ -55,12 +55,6 @@ public final class MobileGetProjectByTokenLogic {
 
             copy.eraseWidgetValues();
 
-            if (dash == null) {
-                log.error("Dash with {} id not exists in dashboards.", dbFlashedToken.dashId);
-                ctx.writeAndFlush(notAllowed(message.id), ctx.voidPromise());
-                return;
-            }
-
             write(ctx, JsonParser.gzipDashRestrictive(copy), message.id);
         });
     }
