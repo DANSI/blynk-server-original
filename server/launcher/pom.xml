@@ -3,7 +3,7 @@
     <parent>
         <artifactId>server</artifactId>
         <groupId>cc.blynk.server</groupId>
-        <version>0.41.3-SNAPSHOT</version>
+        <version>0.41.4-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -29,6 +29,7 @@
                                         <Main-Class>cc.blynk.server.launcher.ServerLauncher</Main-Class>
                                         <Build-Number>${project.version}</Build-Number>
                                         <Build-By>Blynk Inc.</Build-By>
+                                        <Multi-Release>true</Multi-Release>
                                     </manifestEntries>
                                 </transformer>
                             </transformers>

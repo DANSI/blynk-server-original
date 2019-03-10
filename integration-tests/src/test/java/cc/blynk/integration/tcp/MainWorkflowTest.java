@@ -44,6 +44,7 @@ import java.util.List;
 import static cc.blynk.integration.TestUtil.appIsOutdated;
 import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.createDevice;
+import static cc.blynk.integration.TestUtil.deviceOffline;
 import static cc.blynk.integration.TestUtil.hardware;
 import static cc.blynk.integration.TestUtil.hardwareConnected;
 import static cc.blynk.integration.TestUtil.illegalCommand;
@@ -602,41 +603,43 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
 
         clientPair.appClient.deleteDash(1);
         clientPair.appClient.verifyResult(illegalCommand(6));
+        clientPair.appClient.verifyResult(deviceOffline(0, "1-0"));
+        clientPair.appClient.reset();
 
         Profile responseProfile;
         DashBoard responseDash;
 
         clientPair.appClient.send("loadProfileGzipped");
-        responseProfile = clientPair.appClient.parseProfile(7);
+        responseProfile = clientPair.appClient.parseProfile(1);
         responseProfile.dashBoards[0].updatedAt = 0;
         responseProfile.dashBoards[0].createdAt = 0;
         assertEquals("{\"dashBoards\":[{\"id\":10,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false,\"widgetBackgroundOn\":false,\"color\":-1,\"isDefaultColor\":true}]}", responseProfile.toString());
 
         clientPair.appClient.send("loadProfileGzipped 10");
-        responseDash = clientPair.appClient.parseDash(8);
+        responseDash = clientPair.appClient.parseDash(2);
         responseDash.updatedAt = 0;
         responseDash.createdAt = 0;
         assertEquals("{\"id\":10,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":false,\"widgetBackgroundOn\":false,\"color\":-1,\"isDefaultColor\":true}", responseDash.toString());
 
         clientPair.appClient.send("loadProfileGzipped 1");
-        clientPair.appClient.verifyResult(illegalCommand(9));
+        clientPair.appClient.verifyResult(illegalCommand(3));
 
         clientPair.appClient.activate(10);
-        clientPair.appClient.verifyResult(new ResponseMessage(10, DEVICE_NOT_IN_NETWORK));
+        clientPair.appClient.verifyResult(new ResponseMessage(4, DEVICE_NOT_IN_NETWORK));
 
         clientPair.appClient.send("loadProfileGzipped");
-        responseProfile = clientPair.appClient.parseProfile(11);
+        responseProfile = clientPair.appClient.parseProfile(5);
         responseProfile.dashBoards[0].updatedAt = 0;
         responseProfile.dashBoards[0].createdAt = 0;
         String expectedProfile = "{\"dashBoards\":[{\"id\":10,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":true,\"widgetBackgroundOn\":false,\"color\":-1,\"isDefaultColor\":true}]}";
         assertEquals(expectedProfile, responseProfile.toString());
 
         clientPair.appClient.updateDash("{\"id\":10,\"name\":\"test board update\",\"keepScreenOn\":false,\"isShared\":false,\"isActive\":false}");
-        clientPair.appClient.verifyResult(ok(2));
+        clientPair.appClient.verifyResult(ok(6));
 
         expectedProfile = "{\"dashBoards\":[{\"id\":10,\"parentId\":-1,\"isPreview\":false,\"name\":\"test board update\",\"createdAt\":0,\"updatedAt\":0,\"theme\":\"Blynk\",\"keepScreenOn\":false,\"isAppConnectedOn\":false,\"isNotificationsOff\":false,\"isShared\":false,\"isActive\":true,\"widgetBackgroundOn\":false,\"color\":-1,\"isDefaultColor\":true}]}";
         clientPair.appClient.send("loadProfileGzipped");
-        responseProfile = clientPair.appClient.parseProfile(13);
+        responseProfile = clientPair.appClient.parseProfile(7);
         responseProfile.dashBoards[0].updatedAt = 0;
         responseProfile.dashBoards[0].createdAt = 0;
         assertEquals(expectedProfile, responseProfile.toString());
@@ -1207,15 +1210,8 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
     @Test
     public void testRefreshTokenClosesExistingConnections() throws Exception {
         clientPair.appClient.send("refreshToken 1");
-        String newToken = clientPair.appClient.getBody();
-        assertNotNull(newToken);
-        assertEquals(32, newToken.length());
+        clientPair.appClient.verifyResult(deviceOffline(0, "1-0"));
         assertTrue(clientPair.hardwareClient.isClosed());
-
-        TestHardClient hardClient = new TestHardClient("localhost", properties.getHttpPort());
-        hardClient.start();
-        hardClient.login(newToken);
-        verify(hardClient.responseMock, timeout(1000)).channelRead(any(), eq(ok(1)));
     }
 
     @Test

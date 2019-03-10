@@ -500,6 +500,7 @@ public class NotificationsLogicTest extends SingleServerInstancePerTest {
 
         String expectedJson = new AndroidGCMMessage("token", Priority.normal, "Your My Device went offline.", 1).toJson();
         assertEquals(expectedJson, message.toJson());
+        clientPair.appClient.verifyResult(deviceOffline(0, "1-0"));
     }
 
     @Test

@@ -61,6 +61,11 @@ public class Tag implements Target, DeviceCleaner {
     }
 
     @Override
+    public boolean contains(int deviceId) {
+        return ArrayUtil.contains(this.deviceIds, deviceId);
+    }
+
+    @Override
     public int getDeviceId() {
         return deviceIds[0];
     }

@@ -1,7 +1,5 @@
 package cc.blynk.server.admin.http.response;
 
-import java.util.Objects;
-
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -32,14 +30,23 @@ public final class IpNameResponse {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
+
         IpNameResponse that = (IpNameResponse) o;
-        return Objects.equals(name, that.name)
-                && Objects.equals(ip, that.ip)
-                && Objects.equals(type, that.type);
+
+        if (name != null ? !name.equals(that.name) : that.name != null) {
+            return false;
+        }
+        if (ip != null ? !ip.equals(that.ip) : that.ip != null) {
+            return false;
+        }
+        return type != null ? type.equals(that.type) : that.type == null;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, ip, type);
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (ip != null ? ip.hashCode() : 0);
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        return result;
     }
 }

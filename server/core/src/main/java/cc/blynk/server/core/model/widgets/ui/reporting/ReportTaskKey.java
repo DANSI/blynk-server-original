@@ -2,8 +2,6 @@ package cc.blynk.server.core.model.widgets.ui.reporting;
 
 import cc.blynk.server.core.model.auth.User;
 
-import java.util.Objects;
-
 public class ReportTaskKey {
 
     public final User user;
@@ -26,14 +24,23 @@ public class ReportTaskKey {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
+
         ReportTaskKey that = (ReportTaskKey) o;
-        return dashId == that.dashId
-                && reportId == that.reportId
-                && Objects.equals(user, that.user);
+
+        if (dashId != that.dashId) {
+            return false;
+        }
+        if (reportId != that.reportId) {
+            return false;
+        }
+        return user != null ? user.equals(that.user) : that.user == null;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(user, dashId, reportId);
+        int result = user != null ? user.hashCode() : 0;
+        result = 31 * result + dashId;
+        result = 31 * result + reportId;
+        return result;
     }
 }

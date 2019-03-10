@@ -88,51 +88,57 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
         Notification notification = dashBoard.getNotificationWidget();
 
         if (notification != null && notification.notifyWhenOffline) {
-            sendPushNotification(ctx, notification, dashBoard.id, device);
+            sendPushNotification(ctx, session, notification, dashBoard, device);
         } else if (!dashBoard.isNotificationsOff) {
             session.sendOfflineMessageToApps(dashBoard.id, device.id);
         }
     }
 
-    private void sendPushNotification(ChannelHandlerContext ctx,
-                                      Notification notification, int dashId, Device device) {
+    private void sendPushNotification(ChannelHandlerContext ctx, Session session,
+                                      Notification notification, DashBoard dash, Device device) {
         String deviceName = ((device == null || device.name == null) ? "device" : device.name);
         String message = pushNotificationBody.replace(Placeholders.DEVICE_NAME, deviceName);
         if (notification.notifyWhenOfflineIgnorePeriod == 0 || device == null) {
+            if (!dash.isNotificationsOff && device != null) {
+                session.sendOfflineMessageToApps(dash.id, device.id);
+            }
             notification.push(gcmWrapper,
                     message,
-                    dashId
+                    dash.id
             );
         } else {
             //delayed notification
             //https://github.com/blynkkk/blynk-server/issues/493
-            ctx.executor().schedule(new DelayedPush(device, notification, message, dashId),
+            ctx.executor().schedule(new DelayedPush(session, device, notification, message, dash),
                     notification.notifyWhenOfflineIgnorePeriod, TimeUnit.MILLISECONDS);
         }
     }
 
     private final class DelayedPush implements Runnable {
 
+        private final Session session;
         private final Device device;
         private final Notification notification;
         private final String message;
-        private final int dashId;
+        private final DashBoard dash;
 
-        DelayedPush(Device device, Notification notification, String message, int dashId) {
+        DelayedPush(Session session, Device device, Notification notification, String message, DashBoard dash) {
+            this.session = session;
             this.device = device;
             this.notification = notification;
             this.message = message;
-            this.dashId = dashId;
+            this.dash = dash;
         }
 
         @Override
         public void run() {
-            final long now = System.currentTimeMillis();
-            if (device.status == Status.OFFLINE
-                    && now - device.disconnectTime >= notification.notifyWhenOfflineIgnorePeriod) {
+            if (device.status == Status.OFFLINE) {
+                if (!dash.isNotificationsOff) {
+                    session.sendOfflineMessageToApps(dash.id, device.id);
+                }
                 notification.push(gcmWrapper,
                         message,
-                        dashId
+                        dash.id
                 );
             }
         }

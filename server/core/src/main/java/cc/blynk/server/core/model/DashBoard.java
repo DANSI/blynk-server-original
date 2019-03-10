@@ -39,7 +39,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Objects;
 
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_DEVICES;
 import static cc.blynk.server.internal.EmptyArraysUtil.EMPTY_TAGS;
@@ -447,15 +446,23 @@ public class DashBoard {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
+
         DashBoard dashBoard = (DashBoard) o;
-        return id == dashBoard.id
-                && Objects.equals(name, dashBoard.name)
-                && Arrays.equals(widgets, dashBoard.widgets);
+
+        if (id != dashBoard.id) {
+            return false;
+        }
+        if (name != null ? !name.equals(dashBoard.name) : dashBoard.name != null) {
+            return false;
+        }
+        // Probably incorrect - comparing Object[] arrays with Arrays.equals
+        return Arrays.equals(widgets, dashBoard.widgets);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(id, name);
+        int result = id;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + Arrays.hashCode(widgets);
         return result;
     }

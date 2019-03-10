@@ -72,9 +72,15 @@ public class MailLogic extends NotificationBase {
         String body;
 
         if (bodyParts.length == 3) {
-            to = bodyParts[0]
-                    .replace(Placeholders.VENDOR_EMAIL, vendorEmail)
-                    .replace(Placeholders.DEVICE_OWNER_EMAIL, user.email);
+            //if widget has no TO field
+            if (mail.to == null || mail.to.isEmpty()) {
+                to = bodyParts[0]
+                        .replace(Placeholders.VENDOR_EMAIL, vendorEmail)
+                        .replace(Placeholders.DEVICE_OWNER_EMAIL, user.email);
+            } else {
+                //if widget has to field it has priority over hardware field
+                to = mail.to;
+            }
             subj = bodyParts[1];
             body = bodyParts[2];
         } else {

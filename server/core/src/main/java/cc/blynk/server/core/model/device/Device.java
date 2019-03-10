@@ -84,6 +84,11 @@ public class Device implements Target {
     }
 
     @Override
+    public boolean contains(int deviceId) {
+        return this.id == deviceId;
+    }
+
+    @Override
     public int getDeviceId() {
         return id;
     }
