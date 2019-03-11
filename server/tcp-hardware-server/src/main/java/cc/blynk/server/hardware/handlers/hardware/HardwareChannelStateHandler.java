@@ -134,10 +134,13 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
                 if (!dash.isNotificationsOff) {
                     session.sendOfflineMessageToApps(dash.id, device.id);
                 }
-                notification.push(gcmWrapper,
-                        message,
-                        dash.id
-                );
+                long now = System.currentTimeMillis();
+                if (now - device.disconnectTime >= notification.notifyWhenOfflineIgnorePeriod) {
+                    notification.push(gcmWrapper,
+                            message,
+                            dash.id
+                    );
+                }
             }
         }
     }
