@@ -64,6 +64,17 @@ public class Device implements Target {
         this.boardType = boardType;
     }
 
+    public Device(Device device) {
+        this.id = device.id;
+        this.name = device.name;
+        this.boardType = device.boardType;
+        this.connectionType = device.connectionType;
+        this.address = device.address;
+        this.vendor = device.vendor;
+        this.iconName = device.iconName;
+        this.isUserIcon = device.isUserIcon;
+    }
+
     public Device() {
     }
 
