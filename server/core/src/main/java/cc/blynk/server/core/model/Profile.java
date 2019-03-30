@@ -226,13 +226,12 @@ public class Profile {
     }
 
     public void sendAppSyncs(DashBoard dash, Channel appChannel, int targetId, boolean useNewFormat) {
+        sendPinStorageSyncs(dash, appChannel, targetId, useNewFormat);
         for (Widget widget : dash.widgets) {
             if (widget instanceof MobileSyncWidget && appChannel.isWritable()) {
                 ((MobileSyncWidget) widget).sendAppSync(appChannel, dash.id, targetId, useNewFormat);
             }
         }
-
-        sendPinStorageSyncs(dash, appChannel, targetId, useNewFormat);
     }
 
     private void sendPinStorageSyncs(DashBoard dash, Channel appChannel, int targetId, boolean useNewFormat) {
