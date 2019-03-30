@@ -20,6 +20,9 @@ public class Device implements Target {
 
     public volatile BoardType boardType;
 
+    //used for bluetooth
+    public volatile String address;
+
     @JsonView(View.Private.class)
     public volatile String token;
 
@@ -97,6 +100,7 @@ public class Device implements Target {
         this.name = newDevice.name;
         this.vendor = newDevice.vendor;
         this.boardType = newDevice.boardType;
+        this.address = newDevice.address;
         this.connectionType = newDevice.connectionType;
         this.iconName = newDevice.iconName;
         this.isUserIcon = newDevice.isUserIcon;

@@ -10,6 +10,7 @@ import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.ui.Tabs;
+import cc.blynk.server.core.model.widgets.ui.TimeInput;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
@@ -116,7 +117,12 @@ public final class MobileUpdateWidgetLogic {
             newDeviceTiles.tiles = prevDeviceTiles.tiles;
             newDeviceTiles.templates = prevDeviceTiles.templates;
         } else {
-            newWidget.updateValue(prevWidget);
+            //this is special widgets that should not preserve values on update
+            if (!(newWidget instanceof Timer)
+                    && !(newWidget instanceof ReportingWidget)
+                    && !(newWidget instanceof TimeInput)) {
+                newWidget.updateValue(prevWidget);
+            }
         }
 
         if (newWidget instanceof ReportingWidget) {
