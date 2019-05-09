@@ -517,7 +517,7 @@ public class NotificationsLogicTest extends SingleServerInstancePerTest {
         channelFuture.await();
 
         clientPair.appClient.getDevice(1, 0);
-        Device device = clientPair.appClient.parseDevice(2);
+        Device device = clientPair.appClient.parseDevice(3);
 
         TestHardClient newHardClient = new TestHardClient("localhost", tcpHardPort);
         newHardClient.start();
