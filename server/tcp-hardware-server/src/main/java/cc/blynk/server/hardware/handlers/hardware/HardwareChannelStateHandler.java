@@ -96,10 +96,10 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
                                       Notification notification, DashBoard dash, Device device) {
         var deviceName = ((device == null || device.name == null) ? "device" : device.name);
         var message = pushNotificationBody.replace(Placeholders.DEVICE_NAME, deviceName);
+        if (!dash.isNotificationsOff && device != null) {
+            session.sendOfflineMessageToApps(dash.id, device.id);
+        }
         if (notification.notifyWhenOfflineIgnorePeriod == 0 || device == null) {
-            if (!dash.isNotificationsOff && device != null) {
-                session.sendOfflineMessageToApps(dash.id, device.id);
-            }
             notification.push(gcmWrapper,
                     message,
                     dash.id
