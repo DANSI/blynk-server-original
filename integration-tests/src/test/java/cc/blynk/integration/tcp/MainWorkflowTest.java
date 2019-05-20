@@ -544,7 +544,7 @@ public class MainWorkflowTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(notAllowed(1)));
 
         clientPair.appClient.send("addEnergy " + "1000" + "\0" + "A3B93EE9-BC65-499E-A660-F2A84F2AF1FC");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(notAllowed(2)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(ok(2)));
 
         clientPair.appClient.send("addEnergy " + "1000" + "\0" + "com.blynk.energy.280001461578468247");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(notAllowed(3)));
