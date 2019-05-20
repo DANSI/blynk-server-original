@@ -110,7 +110,7 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
             //delayed notification
             //https://github.com/blynkkk/blynk-server/issues/493
             ctx.executor().schedule(new DelayedPush(session, device, notification, message, dash),
-                    notification.notifyWhenOfflineIgnorePeriod, TimeUnit.MILLISECONDS);
+                                    notification.notifyWhenOfflineIgnorePeriod, TimeUnit.MILLISECONDS);
         }
     }
 
@@ -139,8 +139,8 @@ public class HardwareChannelStateHandler extends ChannelInboundHandlerAdapter {
                 long now = System.currentTimeMillis();
                 if (now - device.disconnectTime >= notification.notifyWhenOfflineIgnorePeriod) {
                     notification.push(gcmWrapper,
-                            message,
-                            dash.id
+                                      message,
+                                      dash.id
                     );
                 }
             }

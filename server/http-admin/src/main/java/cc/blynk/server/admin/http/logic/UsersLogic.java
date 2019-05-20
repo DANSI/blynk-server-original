@@ -27,6 +27,7 @@ import cc.blynk.server.db.DBManager;
 import cc.blynk.utils.SHA256Util;
 import cc.blynk.utils.TokenGeneratorUtil;
 import cc.blynk.utils.http.MediaType;
+import cc.blynk.utils.validators.BlynkEmailValidator;
 import io.netty.channel.ChannelHandler;
 
 import java.util.List;
@@ -160,6 +161,10 @@ public class UsersLogic extends CookiesBaseHttpHandler {
         //as name is used as salt for pass generation
         if (!updatedUser.email.equals(oldUser.email) && updatedUser.pass.equals(oldUser.pass)) {
             return badRequest("You need also change password when changing email.");
+        }
+
+        if (BlynkEmailValidator.isNotValidEmail(updatedUser.email)) {
+            return badRequest("Wring email address.");
         }
 
         //user name was changed
