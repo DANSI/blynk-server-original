@@ -401,6 +401,7 @@ public class DashBoard {
         for (Widget widget : widgets) {
             widget.isDefaultColor = false;
         }
+        this.updatedAt = System.currentTimeMillis();
     }
 
     private static Widget[] copyWidgetsAndPreservePrevValues(Widget[] oldWidgets, Widget[] newWidgets) {
