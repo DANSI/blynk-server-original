@@ -16,6 +16,7 @@ import cc.blynk.server.core.model.widgets.controls.SegmentedControl;
 import cc.blynk.server.core.model.widgets.controls.Slider;
 import cc.blynk.server.core.model.widgets.controls.Step;
 import cc.blynk.server.core.model.widgets.controls.StyledButton;
+import cc.blynk.server.core.model.widgets.controls.Switch;
 import cc.blynk.server.core.model.widgets.controls.Terminal;
 import cc.blynk.server.core.model.widgets.controls.TextInput;
 import cc.blynk.server.core.model.widgets.controls.Timer;
@@ -30,6 +31,7 @@ import cc.blynk.server.core.model.widgets.others.Bluetooth;
 import cc.blynk.server.core.model.widgets.others.BluetoothSerial;
 import cc.blynk.server.core.model.widgets.others.Bridge;
 import cc.blynk.server.core.model.widgets.others.Player;
+import cc.blynk.server.core.model.widgets.others.TextWidget;
 import cc.blynk.server.core.model.widgets.others.Video;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
@@ -96,6 +98,7 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
         @JsonSubTypes.Type(value = QR.class, name = "QR"),
         @JsonSubTypes.Type(value = TimeInput.class, name = "TIME_INPUT"),
         @JsonSubTypes.Type(value = SegmentedControl.class, name = "SEGMENTED_CONTROL"),
+        @JsonSubTypes.Type(value = Switch.class, name = "SWITCH"),
 
         //outputs
         @JsonSubTypes.Type(value = LED.class, name = "LED"),
@@ -142,6 +145,7 @@ import static cc.blynk.utils.StringUtils.BODY_SEPARATOR;
         @JsonSubTypes.Type(value = Map.class, name = "MAP"),
         @JsonSubTypes.Type(value = DeviceSelector.class, name = "DEVICE_SELECTOR"),
         @JsonSubTypes.Type(value = DeviceTiles.class, name = "DEVICE_TILES"),
+        @JsonSubTypes.Type(value = TextWidget.class, name = "TEXT"),
 
         @JsonSubTypes.Type(value = WebHook.class, name = "WEBHOOK")
 

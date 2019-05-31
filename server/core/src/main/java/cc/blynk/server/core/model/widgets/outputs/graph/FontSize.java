@@ -7,6 +7,6 @@ package cc.blynk.server.core.model.widgets.outputs.graph;
  */
 public enum FontSize {
 
-    LARGE, MEDIUM, SMALL
+    LARGE, MEDIUM, SMALL, AUTO
 
 }
