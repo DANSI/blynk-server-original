@@ -49,10 +49,6 @@ public final class FileLoaderUtil {
         return readFileAsString("static/reset/reset-email.html");
     }
 
-    public static String readNewServerUpTemplateAsString() {
-        return readFileAsString("static/reset/new-server-up.html");
-    }
-
     public static String readAppResetEmailConfirmationTemplateAsString() {
         return readFileAsString("static/reset/reset-email-app-confirmation.html");
     }

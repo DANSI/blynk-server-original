@@ -1,6 +1,7 @@
 package cc.blynk.server.core.model.widgets.notifications;
 
 import cc.blynk.server.core.model.widgets.NoPinWidget;
+import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.utils.http.ContentType;
 
 /**
@@ -10,9 +11,18 @@ import cc.blynk.utils.http.ContentType;
  */
 public class Mail extends NoPinWidget {
 
-    public String to;
+    public volatile String to;
 
-    public ContentType contentType = ContentType.TEXT_HTML;
+    public volatile ContentType contentType = ContentType.TEXT_HTML;
+
+    @Override
+    public void updateValue(Widget oldWidget) {
+        if (oldWidget instanceof Mail) {
+            Mail oldMailWidget = (Mail) oldWidget;
+            this.to = oldMailWidget.to;
+            this.contentType = oldMailWidget.contentType;
+        }
+    }
 
     @Override
     public int getPrice() {

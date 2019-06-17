@@ -70,6 +70,7 @@ public final class MobileUpdateFaceLogic {
                     try {
                         existingDash.updateFaceFields(parent);
                         existingDash.tags = copyTags(parent.tags);
+                        existingUser.lastModifiedTs = System.currentTimeMillis();
                         //do not close connection for initiator
                         if (existingUser != user) {
                             holder.sessionDao.closeAppChannelsByUser(new UserKey(existingUser));
