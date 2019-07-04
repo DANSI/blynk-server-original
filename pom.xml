@@ -19,7 +19,7 @@
 
     <groupId>cc.blynk</groupId>
     <artifactId>blynk</artifactId>
-    <version>0.41.8-SNAPSHOT</version>
+    <version>0.41.9-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <scm>
@@ -156,10 +156,10 @@
         <maven-checkstyle-plugin.version>3.0.0</maven-checkstyle-plugin.version>
 
         <!-- dependencies -->
-        <netty.version>4.1.36.Final</netty.version>
+        <netty.version>4.1.37.Final</netty.version>
         <netty.boring.ssl.version>2.0.25.Final</netty.boring.ssl.version>
         <log4j2.version>2.11.2</log4j2.version>
-        <jackson-databind.version>2.9.9</jackson-databind.version>
+        <jackson-databind.version>2.9.9.1</jackson-databind.version>
         <disruptor.version>3.4.2</disruptor.version>
         <async-http-client.version>2.8.1</async-http-client.version>
         <postgresql.version>42.2.5</postgresql.version>
