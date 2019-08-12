@@ -19,14 +19,14 @@
 
     <groupId>cc.blynk</groupId>
     <artifactId>blynk</artifactId>
-    <version>0.41.10-SNAPSHOT</version>
+    <version>0.41.10</version>
     <packaging>pom</packaging>
 
     <scm>
         <url>https://github.com/blynkkk/blynk-server.git</url>
         <connection>scm:git:ssh://git@github.com/blynkkk/blynk-server.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/blynkkk/blynk-server.git</developerConnection>
-        <tag>v0.41.2-SNAPSHOT</tag>
+        <tag>v0.41.10</tag>
     </scm>
 
     <developers>
