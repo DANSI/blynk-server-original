@@ -173,11 +173,10 @@
 
         <!-- test dependencies -->
         <httpclient.version>4.5.2</httpclient.version>
-        <commons-lang3.version>3.4</commons-lang3.version>
+        <commons-lang3.version>3.7</commons-lang3.version>
         <junit.version>4.12</junit.version>
         <mockito-core.version>2.18.3</mockito-core.version>
         <commons-io.version>2.5</commons-io.version>
-        <commons-lang.version>3.7</commons-lang.version>
         <jmh-core.version>1.19</jmh-core.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
