@@ -19,7 +19,7 @@
 
     <groupId>cc.blynk</groupId>
     <artifactId>blynk</artifactId>
-    <version>0.41.9-SNAPSHOT</version>
+    <version>0.41.11-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <scm>
@@ -156,27 +156,26 @@
         <maven-checkstyle-plugin.version>3.0.0</maven-checkstyle-plugin.version>
 
         <!-- dependencies -->
-        <netty.version>4.1.37.Final</netty.version>
+        <netty.version>4.1.38.Final</netty.version>
         <netty.boring.ssl.version>2.0.25.Final</netty.boring.ssl.version>
-        <log4j2.version>2.11.2</log4j2.version>
-        <jackson-databind.version>2.9.9.1</jackson-databind.version>
+        <log4j2.version>2.12.0</log4j2.version>
+        <jackson-databind.version>2.9.9.3</jackson-databind.version>
         <disruptor.version>3.4.2</disruptor.version>
-        <async-http-client.version>2.8.1</async-http-client.version>
-        <postgresql.version>42.2.5</postgresql.version>
+        <async-http-client.version>2.10.1</async-http-client.version>
+        <postgresql.version>42.2.6</postgresql.version>
         <HikariCP.version>3.3.1</HikariCP.version>
         <qrgen.version>2.2.0</qrgen.version>
-        <bcpg-jdk15on.version>1.61</bcpg-jdk15on.version>
+        <bcpg-jdk15on.version>1.62</bcpg-jdk15on.version>
         <acme4j-client.version>2.7</acme4j-client.version>
         <javax.mail.version>1.6.2</javax.mail.version>
         <javax.activation.version>1.2.0</javax.activation.version>
 
         <!-- test dependencies -->
         <httpclient.version>4.5.2</httpclient.version>
-        <commons-lang3.version>3.4</commons-lang3.version>
+        <commons-lang3.version>3.7</commons-lang3.version>
         <junit.version>4.12</junit.version>
         <mockito-core.version>2.18.3</mockito-core.version>
         <commons-io.version>2.5</commons-io.version>
-        <commons-lang.version>3.7</commons-lang.version>
         <jmh-core.version>1.19</jmh-core.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

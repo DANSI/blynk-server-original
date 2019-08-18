@@ -25,6 +25,11 @@ public class Mail extends NoPinWidget {
     }
 
     @Override
+    public void erase() {
+        this.to = null;
+    }
+
+    @Override
     public int getPrice() {
         return 100;
     }

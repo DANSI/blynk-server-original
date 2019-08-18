@@ -4,6 +4,7 @@ import cc.blynk.server.Holder;
 import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.core.dao.SessionDao;
 import cc.blynk.server.core.dao.TokenManager;
+import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.App;
 import cc.blynk.server.core.model.auth.User;
@@ -27,11 +28,13 @@ public final class MobileDeleteAppLogic {
     private final TokenManager tokenManager;
     private final TimerWorker timerWorker;
     private final SessionDao sessionDao;
+    private final UserDao userDao;
 
     public MobileDeleteAppLogic(Holder holder) {
         this.tokenManager = holder.tokenManager;
         this.timerWorker = holder.timerWorker;
         this.sessionDao = holder.sessionDao;
+        this.userDao = holder.userDao;
     }
 
     public void messageReceived(ChannelHandlerContext ctx, MobileStateHolder state, StringMessage message) {
@@ -45,7 +48,14 @@ public final class MobileDeleteAppLogic {
             throw new NotAllowedException("App with passed is not exists.", message.id);
         }
 
-        int[] projectIds = user.profile.apps[existingAppIndex].projectIds;
+        App app = user.profile.apps[existingAppIndex];
+        int[] projectIds = app.projectIds;
+
+        for (User tmpUser : userDao.users.values()) {
+            if (app.id.equals(tmpUser.appName) && !user.email.equals(tmpUser.email)) {
+                throw new NotAllowedException("App has users assigned. You can't remove it.", message.id);
+            }
+        }
 
         ArrayList<DashBoard> result = new ArrayList<>();
         for (DashBoard dash : user.profile.dashBoards) {
