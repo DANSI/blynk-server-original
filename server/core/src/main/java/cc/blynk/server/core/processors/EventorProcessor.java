@@ -128,14 +128,9 @@ public class EventorProcessor {
     private void email(User user, DashBoard dash, String subject, String body) {
         Mail mail = dash.getMailWidget();
 
-        if (mail == null) {
-            log.debug("User has no mail widget.");
-            return;
-        }
-
         user.checkDailyEmailLimit();
 
-        String to = (mail.to == null || mail.to.isEmpty()) ? user.email : mail.to;
+        String to = (mail == null || mail.to == null || mail.to.isEmpty()) ? user.email : mail.to;
 
         if (BlynkEmailValidator.isNotValidEmail(to)) {
             log.error("Invalid mail receiver: {}.", to);
