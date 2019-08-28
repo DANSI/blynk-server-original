@@ -27,6 +27,7 @@ import static cc.blynk.server.internal.CommonByteBufUtil.illegalCommand;
 import static cc.blynk.server.internal.CommonByteBufUtil.notAllowed;
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
 import static cc.blynk.server.internal.CommonByteBufUtil.serverError;
+import static cc.blynk.utils.StringUtils.encode;
 
 @ChannelHandler.Sharable
 public class MobileResetPasswordHandler extends SimpleChannelInboundHandler<ResetPasswordMessage> {
@@ -160,7 +161,7 @@ public class MobileResetPasswordHandler extends SimpleChannelInboundHandler<Rese
 
         String resetUrl = "http://" + host + "/restore?token=" + token + "&email=" + trimmedEmail;
         String body = resetEmailBody.replace(Placeholders.RESET_URL, resetUrl);
-        String qrString = appName.toLowerCase() + "://restore?token=" + token + "&email=" + trimmedEmail;
+        String qrString = appName.toLowerCase() + "://restore?token=" + token + "&email=" + encode(trimmedEmail);
         byte[] qrBytes = QRCode.from(qrString).to(ImageType.JPG).withSize(250, 250).stream().toByteArray();
         QrHolder qrHolder = new ResetQrHolder("resetPassQr.jpg", qrBytes);
 

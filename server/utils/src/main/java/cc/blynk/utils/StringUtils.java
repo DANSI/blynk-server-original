@@ -1,5 +1,7 @@
 package cc.blynk.utils;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.regex.Pattern;
 
@@ -179,4 +181,13 @@ public final class StringUtils {
     public static boolean isReadOperation(String body) {
         return body.length() > 1 && body.charAt(1) == 'r';
     }
+
+    public static String encode(String s) {
+        try {
+            return URLEncoder.encode(s, StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            return s;
+        }
+    }
+
 }
