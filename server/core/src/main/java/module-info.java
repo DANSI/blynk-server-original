@@ -62,7 +62,7 @@ module cc.blynk.core {
     requires com.zaxxer.hikari;
     requires java.sql;
     requires com.fasterxml.jackson.databind;
-    requires jackson.annotations;
+    requires com.fasterxml.jackson.annotation;
     requires org.apache.logging.log4j;
     requires com.fasterxml.jackson.core;
 }

@@ -5,7 +5,7 @@
  */
 open module cc.blynk.server.notifications.push {
     requires org.apache.logging.log4j;
-    requires jackson.annotations;
+    requires com.fasterxml.jackson.annotation;
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
     requires io.netty.codec.http;

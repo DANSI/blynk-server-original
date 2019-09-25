@@ -157,14 +157,14 @@
         <maven-checkstyle-plugin.version>3.0.0</maven-checkstyle-plugin.version>
 
         <!-- dependencies -->
-        <netty.version>4.1.39.Final</netty.version>
+        <netty.version>4.1.41.Final</netty.version>
         <netty.boring.ssl.version>2.0.25.Final</netty.boring.ssl.version>
         <log4j2.version>2.12.1</log4j2.version>
-        <jackson-databind.version>2.9.9.3</jackson-databind.version>
+        <jackson-databind.version>2.9.10</jackson-databind.version>
         <disruptor.version>3.4.2</disruptor.version>
-        <async-http-client.version>2.10.1</async-http-client.version>
-        <postgresql.version>42.2.6</postgresql.version>
-        <HikariCP.version>3.3.1</HikariCP.version>
+        <async-http-client.version>2.10.2</async-http-client.version>
+        <postgresql.version>42.2.8</postgresql.version>
+        <HikariCP.version>3.4.1</HikariCP.version>
         <qrgen.version>2.2.0</qrgen.version>
         <bcpg-jdk15on.version>1.62</bcpg-jdk15on.version>
         <acme4j-client.version>2.7</acme4j-client.version>
