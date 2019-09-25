@@ -3,6 +3,7 @@ package cc.blynk.server.core.processors;
 import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.DataStream;
 import cc.blynk.server.core.model.auth.Session;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.widgets.others.webhook.Header;
 import cc.blynk.server.core.model.widgets.others.webhook.WebHook;
@@ -24,6 +25,7 @@ import java.util.regex.Matcher;
 
 import static cc.blynk.server.core.protocol.enums.Command.WEB_HOOKS;
 import static cc.blynk.utils.StringUtils.DATETIME_PATTERN;
+import static cc.blynk.utils.StringUtils.DEVICE_OWNER_EMAIL;
 import static cc.blynk.utils.StringUtils.GENERIC_PLACEHOLDER;
 import static cc.blynk.utils.StringUtils.PIN_PATTERN;
 import static cc.blynk.utils.StringUtils.PIN_PATTERN_0;
@@ -68,7 +70,7 @@ public class WebhookProcessor extends NotificationBase {
         this.webhookFailureLimit = failureLimit;
     }
 
-    public void process(Session session, DashBoard dash, int deviceId, short pin,
+    public void process(User user, Session session, DashBoard dash, int deviceId, short pin,
                         PinType pinType, String triggerValue, long now) {
         WebHook webhook = dash.findWebhookByPin(deviceId, pin, pinType);
         if (webhook == null) {
@@ -78,12 +80,12 @@ public class WebhookProcessor extends NotificationBase {
         checkIfNotificationQuotaLimitIsNotReached(now);
 
         if (webhook.isNotFailed(webhookFailureLimit) && webhook.url != null) {
-            process(session, dash.id, deviceId, webhook, triggerValue);
+            process(user, session, dash.id, deviceId, webhook, triggerValue);
         }
     }
 
-    private void process(Session session, int dashId, int deviceId,  WebHook webHook, String triggerValue) {
-        String newUrl = format(webHook.url, triggerValue);
+    private void process(User user, Session session, int dashId, int deviceId,  WebHook webHook, String triggerValue) {
+        String newUrl = format(webHook.url, triggerValue, user.email);
 
         if (!WebHook.isValidUrl(newUrl)) {
             return;
@@ -114,7 +116,7 @@ public class WebhookProcessor extends NotificationBase {
                     builder.setHeader(header.name, header.value);
                     if (webHook.body != null && !webHook.body.isEmpty()) {
                         if (CONTENT_TYPE.equals(header.name)) {
-                            String newBody = format(webHook.body, triggerValue);
+                            String newBody = format(webHook.body, triggerValue, user.email);
                             log.trace("Webhook formatted body : {}", newBody);
                             builder.setBody(newBody);
                         }
@@ -123,7 +125,7 @@ public class WebhookProcessor extends NotificationBase {
             }
         }
 
-        log.trace("Sending webhook. ", webHook);
+        log.trace("Sending webhook. {}", webHook);
         builder.execute(new AsyncCompletionHandler<Response>() {
 
             private int length = 0;
@@ -184,7 +186,7 @@ public class WebhookProcessor extends NotificationBase {
         }
     }
 
-    private static String format(String data, String triggerValue) {
+    private static String format(String data, String triggerValue, String ownerEmail) {
         //this is an ugly hack to make it work with Blynk HTTP API.
         String quotedValue = Matcher.quoteReplacement(triggerValue);
         data = PIN_PATTERN.matcher(data).replaceFirst(quotedValue);
@@ -214,6 +216,7 @@ public class WebhookProcessor extends NotificationBase {
             default :
                 data = GENERIC_PLACEHOLDER.matcher(data).replaceFirst(quotedValue);
                 data = DATETIME_PATTERN.matcher(data).replaceFirst(Instant.now().toString());
+                data = DEVICE_OWNER_EMAIL.matcher(data).replaceFirst(ownerEmail);
         }
         return data;
     }

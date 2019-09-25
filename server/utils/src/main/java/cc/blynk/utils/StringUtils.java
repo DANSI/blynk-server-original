@@ -1,5 +1,7 @@
 package cc.blynk.utils;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.regex.Pattern;
 
@@ -32,6 +34,7 @@ public final class StringUtils {
     private static final Pattern NOT_SUPPORTED_CHARS = Pattern.compile("[\\\\/:*?\"<>| ]");
 
     public static final Pattern DATETIME_PATTERN =  Pattern.compile("/datetime_iso/", Pattern.LITERAL);
+    public static final Pattern DEVICE_OWNER_EMAIL =  Pattern.compile("device_owner_email", Pattern.LITERAL);
     public static final String WEBSOCKET_PATH = "/websocket";
     public static final String WEBSOCKET_WEB_PATH = "/dashws";
 
@@ -179,4 +182,13 @@ public final class StringUtils {
     public static boolean isReadOperation(String body) {
         return body.length() > 1 && body.charAt(1) == 'r';
     }
+
+    public static String encode(String s) {
+        try {
+            return URLEncoder.encode(s, StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            return s;
+        }
+    }
+
 }

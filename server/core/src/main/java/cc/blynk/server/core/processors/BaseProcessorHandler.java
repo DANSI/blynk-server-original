@@ -31,7 +31,7 @@ public abstract class BaseProcessorHandler {
                                             PinType pinType, String value, long now) {
         try {
             eventorProcessor.process(user, session, dash, deviceId, pin, pinType, value, now);
-            webhookProcessor.process(session, dash, deviceId, pin, pinType, value, now);
+            webhookProcessor.process(user, session, dash, deviceId, pin, pinType, value, now);
         } catch (QuotaLimitException qle) {
             log.debug("User {} reached notification limit for eventor/webhook.", user.name);
         } catch (IllegalArgumentException iae) {
