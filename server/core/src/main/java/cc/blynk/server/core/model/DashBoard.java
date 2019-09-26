@@ -255,7 +255,7 @@ public class DashBoard {
         throw new IllegalCommandException("Widget with passed id not found.");
     }
 
-    private static Widget getWidgetById(Widget[] widgets, long id) {
+    public static Widget getWidgetById(Widget[] widgets, long id) {
         for (Widget widget : widgets) {
             if (widget.id == id) {
                 return widget;

@@ -19,6 +19,7 @@ import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.notifications.Twitter;
 import cc.blynk.server.core.model.widgets.outputs.Gauge;
 import cc.blynk.server.core.model.widgets.outputs.graph.FontSize;
+import cc.blynk.server.core.model.widgets.ui.TimeInput;
 import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.model.widgets.ui.tiles.TileTemplate;
 import cc.blynk.server.core.model.widgets.ui.tiles.templates.PageTileTemplate;
@@ -38,6 +39,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import static cc.blynk.integration.TestUtil.appSync;
 import static cc.blynk.integration.TestUtil.b;
 import static cc.blynk.integration.TestUtil.createDevice;
 import static cc.blynk.integration.TestUtil.deviceOffline;
@@ -919,6 +921,138 @@ public class PublishingPreviewFlow extends SingleServerInstancePerTestWithDB {
 
         hardClient1.send("hardware vw 1 100");
         appClient2.verifyResult(hardware(2, "1-0 vw 1 100"));
+    }
+
+    @Test
+    public void testTimeInputInTheFaceAndDeviceTilesIsNotErasedByParentFaceUpdate() throws Exception {
+        DashBoard dashBoard = new DashBoard();
+        dashBoard.id = 10;
+        dashBoard.parentId = 1;
+        dashBoard.isPreview = true;
+        dashBoard.name = "Face Edit Test";
+
+        clientPair.appClient.createDash(dashBoard);
+
+        Device device0 = new Device(0, "My Dashboard", BoardType.Arduino_UNO);
+        clientPair.appClient.createDevice(dashBoard.id, device0);
+        device0 = clientPair.appClient.parseDevice(2);
+        clientPair.appClient.verifyResult(createDevice(2, device0));
+
+        Device device2 = new Device(2, "My Dashboard", BoardType.Arduino_UNO);
+        clientPair.appClient.createDevice(dashBoard.id, device2);
+        device2 = clientPair.appClient.parseDevice(3);
+        clientPair.appClient.verifyResult(createDevice(3, device2));
+
+        clientPair.appClient.send("createApp {\"theme\":\"Blynk\",\"provisionType\":\"STATIC\",\"color\":0,\"name\":\"AppPreview\",\"icon\":\"myIcon\",\"projectIds\":[10]}");
+        App app = clientPair.appClient.parseApp(4);
+        assertNotNull(app);
+        assertNotNull(app.id);
+
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = 21321;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+
+        //creating manually widget for child project
+        clientPair.appClient.createWidget(dashBoard.id, deviceTiles);
+        clientPair.appClient.verifyResult(ok(5));
+
+        TileTemplate tileTemplate = new PageTileTemplate(1,
+                                                         null, new int[] {2}, "123", "name", "iconName", BoardType.ESP8266, null,
+                                                         false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
+
+        clientPair.appClient.send("createTemplate " + b("10 " + deviceTiles.id + " ")
+                                          + MAPPER.writeValueAsString(tileTemplate));
+        clientPair.appClient.verifyResult(ok(6));
+
+        TimeInput timeInput = new TimeInput();
+        timeInput.width = 2;
+        timeInput.height = 1;
+        timeInput.id = 333;
+        timeInput.pin = 77;
+        timeInput.pinType = PinType.VIRTUAL;
+        clientPair.appClient.createWidget(dashBoard.id, deviceTiles.id, tileTemplate.id, timeInput);
+        clientPair.appClient.verifyResult(ok(7));
+
+        TestAppClient appClient2 = new TestAppClient(properties);
+        appClient2.start();
+
+        appClient2.register("test@blynk.cc", "a", app.id);
+        appClient2.verifyResult(ok(1));
+
+        appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
+        appClient2.verifyResult(ok(2));
+
+        appClient2.send("loadProfileGzipped");
+        Profile profile = appClient2.parseProfile(3);
+        assertEquals(1, profile.dashBoards.length);
+        dashBoard = profile.dashBoards[0];
+        assertNotNull(dashBoard);
+        assertEquals(1, dashBoard.id);
+        assertEquals(1, dashBoard.parentId);
+        assertEquals(1, dashBoard.widgets.length);
+        assertTrue(dashBoard.widgets[0] instanceof DeviceTiles);
+        deviceTiles = (DeviceTiles) dashBoard.getWidgetById(deviceTiles.id);
+        assertNotNull(deviceTiles.tiles);
+        assertNotNull(deviceTiles.templates);
+        assertEquals(0, deviceTiles.tiles.length);
+        assertEquals(1, deviceTiles.templates.length);
+        timeInput = (TimeInput) deviceTiles.getWidgetById(timeInput.id);
+        assertNotNull(timeInput);
+        assertNull(timeInput.value);
+
+        Device provisionedDevice = new Device();
+        provisionedDevice.id = 0;
+        provisionedDevice.name = "123";
+        provisionedDevice.boardType = BoardType.ESP8266;
+        appClient2.createDevice(1, provisionedDevice);
+        provisionedDevice = appClient2.parseDevice(4);
+        assertNotNull(provisionedDevice);
+
+        appClient2.send("hardware 1-0 vw " + b("77 82800 82860 Europe/Kiev 1"));
+
+        appClient2.send("loadProfileGzipped");
+        profile = appClient2.parseProfile(6);
+        assertEquals(1, profile.dashBoards.length);
+        dashBoard = profile.dashBoards[0];
+        assertNotNull(dashBoard);
+        assertEquals(1, dashBoard.id);
+        assertEquals(1, dashBoard.parentId);
+        assertEquals(1, dashBoard.widgets.length);
+        assertTrue(dashBoard.widgets[0] instanceof DeviceTiles);
+        deviceTiles = (DeviceTiles) dashBoard.getWidgetById(deviceTiles.id);
+        assertNotNull(deviceTiles.tiles);
+        assertNotNull(deviceTiles.templates);
+        assertEquals(0, deviceTiles.tiles.length);
+        assertEquals(1, deviceTiles.templates.length);
+        timeInput = (TimeInput) deviceTiles.getWidgetById(timeInput.id);
+        assertNotNull(timeInput);
+        assertNull(timeInput.value);
+
+        appClient2.sync(dashBoard.id, provisionedDevice.id);
+        appClient2.verifyResult(ok(7));
+        appClient2.verifyResult(appSync(1111, "1-0 vw 77 82800 82860 Europe/Kiev 1"));
+
+        clientPair.appClient.send("updateFace 1");
+        clientPair.appClient.verifyResult(ok(8));
+
+        if (!appClient2.isClosed()) {
+            sleep(300);
+        }
+        assertTrue(appClient2.isClosed());
+
+        appClient2 = new TestAppClient(properties);
+        appClient2.start();
+
+        appClient2.login("test@blynk.cc", "a", "Android", "1.10.4", app.id);
+        appClient2.verifyResult(ok(1));
+
+        appClient2.sync(dashBoard.id, provisionedDevice.id);
+        appClient2.verifyResult(ok(2));
+        appClient2.verifyResult(appSync(1111, "1-0 vw 77 82800 82860 Europe/Kiev 1"));
     }
 
     private QrHolder[] makeQRs(Device[] devices, int dashId) throws Exception {
