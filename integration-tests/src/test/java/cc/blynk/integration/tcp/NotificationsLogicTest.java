@@ -7,6 +7,7 @@ import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.Profile;
 import cc.blynk.server.core.model.device.BoardType;
 import cc.blynk.server.core.model.device.Device;
+import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.notifications.push.android.AndroidGCMMessage;
 import cc.blynk.server.notifications.push.enums.Priority;
@@ -27,6 +28,7 @@ import static cc.blynk.integration.TestUtil.notAllowed;
 import static cc.blynk.integration.TestUtil.ok;
 import static cc.blynk.integration.TestUtil.parseProfile;
 import static cc.blynk.integration.TestUtil.readTestUserProfile;
+import static cc.blynk.integration.TestUtil.sleep;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -604,6 +606,82 @@ public class NotificationsLogicTest extends SingleServerInstancePerTest {
         clientPair.hardwareClient.stop();
         clientPair.appClient.verifyResult(deviceOffline(0, "1-0"));
         appClient.verifyResult(deviceOffline(0, "1-0"));
+    }
+
+    @Test
+    public void multipleAccountsOnTheSameDevice() throws Exception {
+        TestAppClient appClient = new TestAppClient(properties);
+        appClient.start();
+
+        appClient.login(getUserName(), "1", "iOS", "1.10.2");
+        appClient.verifyResult(ok(1));
+
+        appClient.send("addPushToken 1\0uid\0token");
+        appClient.verifyResult(ok(2));
+
+        appClient.send("loadProfileGzipped");
+        Profile profile = appClient.parseProfile(3);
+
+        Notification notification = profile.getDashById(1).getNotificationWidget();
+        assertNotNull(notification);
+        assertEquals(1, notification.androidTokens.size());
+        assertEquals(1, notification.iOSTokens.size());
+
+        appClient.reset();
+
+        TestAppClient appClient2 = new TestAppClient(properties);
+        appClient2.start();
+
+        appClient2.register("testuser@test.com", "1", AppNameUtil.BLYNK);
+        appClient2.verifyResult(ok(1));
+
+        appClient2.login("testuser@test.com", "1", "iOS", "1.10.2");
+        appClient2.verifyResult(ok(2));
+
+        DashBoard dash = new DashBoard();
+        dash.id = 5;
+        dash.name = "test";
+        Notification notif = new Notification();
+        notif.x = 1;
+        notif.y = 1;
+        notif.width = 1;
+        notif.height = 1;
+        notif.id = 22;
+        dash.widgets = new Widget[] {
+                notif
+        };
+        dash.activate();
+        appClient2.createDash(dash);
+        appClient2.verifyResult(ok(3));
+
+        appClient2.send("addPushToken 5\0uid\0token222");
+        appClient2.verifyResult(ok(4));
+
+        appClient2.send("loadProfileGzipped");
+        profile = appClient2.parseProfile(5);
+
+        notification = profile.getDashById(5).getNotificationWidget();
+        assertNotNull(notification);
+        assertEquals(0, notification.androidTokens.size());
+        assertEquals(1, notification.iOSTokens.size());
+        appClient2.reset();
+
+        //waiting for another thread to remove the duplicate
+        sleep(500);
+
+        appClient.send("loadProfileGzipped");
+        profile = appClient.parseProfile(1);
+        notification = profile.getDashById(1).getNotificationWidget();
+        assertNotNull(notification);
+        assertEquals(1, notification.androidTokens.size());
+        assertEquals(0, notification.iOSTokens.size());
+
+        appClient2.send("loadProfileGzipped");
+        profile = appClient2.parseProfile(1);
+        notification = profile.getDashById(5).getNotificationWidget();
+        assertNotNull(notification);
+        assertEquals(0, notification.androidTokens.size());
+        assertEquals(1, notification.iOSTokens.size());
     }
 
 

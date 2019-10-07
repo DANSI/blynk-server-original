@@ -37,6 +37,7 @@ public class MobileShareHandler extends BaseSimpleChannelInboundHandler<StringMe
     public final MobileShareStateHolder state;
     private final Holder holder;
     private final MobileShareHardwareLogic hardwareApp;
+    private final MobileAddPushLogic mobileAddPushLogic;
 
     public MobileShareHandler(Holder holder, MobileShareStateHolder state) {
         super(StringMessage.class);
@@ -44,7 +45,7 @@ public class MobileShareHandler extends BaseSimpleChannelInboundHandler<StringMe
         this.holder = holder;
 
         this.hardwareApp = new MobileShareHardwareLogic(holder, state.userKey.email);
-
+        this.mobileAddPushLogic = new MobileAddPushLogic(holder);
     }
 
     @Override
@@ -58,7 +59,7 @@ public class MobileShareHandler extends BaseSimpleChannelInboundHandler<StringMe
                 LoadSharedProfileGzippedLogic.messageReceived(ctx, state, msg);
                 break;
             case ADD_PUSH_TOKEN :
-                MobileAddPushLogic.messageReceived(ctx, state, msg);
+                mobileAddPushLogic.messageReceived(ctx, state, msg);
                 break;
             case GET_ENHANCED_GRAPH_DATA :
                 MobileGetEnhancedGraphDataLogic.messageReceived(holder, ctx, state, msg);
