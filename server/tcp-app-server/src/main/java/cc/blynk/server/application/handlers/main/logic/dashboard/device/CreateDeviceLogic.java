@@ -2,6 +2,7 @@ package cc.blynk.server.application.handlers.main.logic.dashboard.device;
 
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.dao.TokenManager;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.serialization.JsonParser;
@@ -36,26 +37,26 @@ public class CreateDeviceLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        var split = split2(message.body);
+        String[] split = split2(message.body);
 
         if (split.length < 2) {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        var dashId = Integer.parseInt(split[0]);
-        var deviceString = split[1];
+        int dashId = Integer.parseInt(split[0]);
+        String deviceString = split[1];
 
         if (deviceString == null || deviceString.isEmpty()) {
             throw new IllegalCommandException("Income device message is empty.");
         }
 
-        var dash = user.profile.getDashByIdOrThrow(dashId);
+        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
         if (dash.devices.length > deviceLimit) {
             throw new NotAllowedException("Device limit is reached.", message.id);
         }
 
-        var newDevice = JsonParser.parseDevice(deviceString, message.id);
+        Device newDevice = JsonParser.parseDevice(deviceString, message.id);
 
         log.debug("Creating new device {}.", deviceString);
 
@@ -63,7 +64,7 @@ public class CreateDeviceLogic {
             throw new IllegalCommandException("Income device message is not valid.");
         }
 
-        for (var device : dash.devices) {
+        for (Device device : dash.devices) {
             if (device.id == newDevice.id) {
                 throw new NotAllowedException("Device with same id already exists.", message.id);
             }
@@ -71,7 +72,7 @@ public class CreateDeviceLogic {
 
         dash.devices = ArrayUtil.add(dash.devices, newDevice, Device.class);
 
-        var newToken = TokenGeneratorUtil.generateNewToken();
+        String newToken = TokenGeneratorUtil.generateNewToken();
         tokenManager.assignToken(user, dash, newDevice, newToken);
 
         dash.updatedAt = System.currentTimeMillis();

@@ -23,7 +23,7 @@ public class DeviceFileLink {
     }
 
     public static String makeBody(String downLoadUrl, List<DeviceFileLink> fileUrls) {
-        var sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         sb.append("<html><body>");
         for (DeviceFileLink link : fileUrls) {
             sb.append(link.makeAHRef(downLoadUrl)).append("<br>");

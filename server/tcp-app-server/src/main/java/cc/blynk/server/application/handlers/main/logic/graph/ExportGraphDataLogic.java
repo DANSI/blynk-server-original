@@ -114,21 +114,21 @@ public class ExportGraphDataLogic {
         @Override
         public void run() {
             try {
-                var dashName = dash.getNameOrEmpty();
-                var pinsCSVFilePath = new ArrayList<DeviceFileLink>();
-                var deviceId = historyGraph.deviceId;
-                for (var dataStream : historyGraph.dataStreams) {
+                String dashName = dash.getNameOrEmpty();
+                ArrayList<DeviceFileLink> pinsCSVFilePath = new ArrayList<>();
+                int deviceId = historyGraph.deviceId;
+                for (DataStream dataStream : historyGraph.dataStreams) {
                     if (dataStream != null) {
                         try {
-                            var deviceIds = new int[] {deviceId};
+                            int[] deviceIds = new int[] {deviceId};
                             //special case, this is not actually a deviceId but device selector widget id
                             if (deviceId >= DeviceSelector.DEVICE_SELECTOR_STARTING_ID) {
-                                var deviceSelector = dash.getWidgetById(deviceId);
+                                Widget deviceSelector = dash.getWidgetById(deviceId);
                                 if (deviceSelector instanceof DeviceSelector) {
                                     deviceIds = ((DeviceSelector) deviceSelector).deviceIds;
                                 }
                             }
-                            var path = reportingDao.csvGenerator.createCSV(
+                            Path path = reportingDao.csvGenerator.createCSV(
                                     user, dash.id, deviceId, dataStream.pinType, dataStream.pin, deviceIds);
                             Device device = dash.getDeviceById(deviceId);
                             String name = (device == null || device.name == null) ? dashName : device.name;
@@ -142,7 +142,7 @@ public class ExportGraphDataLogic {
                 if (pinsCSVFilePath.size() == 0) {
                     ctx.writeAndFlush(noData(msgId), ctx.voidPromise());
                 } else {
-                    var title = "History graph data for project " + dashName;
+                    String title = "History graph data for project " + dashName;
                     String bodyWithLinks = DeviceFileLink.makeBody(csvDownloadUrl, pinsCSVFilePath);
                     mailWrapper.sendHtml(user.email, title, bodyWithLinks);
                     ctx.writeAndFlush(ok(msgId), ctx.voidPromise());

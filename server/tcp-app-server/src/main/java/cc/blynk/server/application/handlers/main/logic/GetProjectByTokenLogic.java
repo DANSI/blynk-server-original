@@ -3,10 +3,13 @@ package cc.blynk.server.application.handlers.main.logic;
 import cc.blynk.server.Holder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.UserDao;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.serialization.JsonParser;
+import cc.blynk.server.core.protocol.model.messages.BinaryMessage;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.db.DBManager;
+import cc.blynk.server.db.model.FlashedToken;
 import cc.blynk.utils.AppNameUtil;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -37,10 +40,10 @@ public class GetProjectByTokenLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        var token = message.body;
+        String token = message.body;
 
         blockingIOProcessor.executeDB(() -> {
-            var dbFlashedToken = dbManager.selectFlashedToken(token);
+            FlashedToken dbFlashedToken = dbManager.selectFlashedToken(token);
 
             if (dbFlashedToken == null) {
                 log.error("{} token not exists for app {}.", token, user.appName);
@@ -48,9 +51,9 @@ public class GetProjectByTokenLogic {
                 return;
             }
 
-            var publishUser = userDao.getByName(dbFlashedToken.email, AppNameUtil.BLYNK);
+            User publishUser = userDao.getByName(dbFlashedToken.email, AppNameUtil.BLYNK);
 
-            var dash = publishUser.profile.getDashById(dbFlashedToken.dashId);
+            DashBoard dash = publishUser.profile.getDashById(dbFlashedToken.dashId);
 
             if (dash == null) {
                 log.error("Dash with {} id not exists in dashboards.", dbFlashedToken.dashId);
@@ -64,7 +67,7 @@ public class GetProjectByTokenLogic {
 
     public static void write(ChannelHandlerContext ctx, byte[] data, int msgId) {
         if (ctx.channel().isWritable()) {
-            var outputMsg = makeBinaryMessage(GET_PROJECT_BY_TOKEN, msgId, data);
+            BinaryMessage outputMsg = makeBinaryMessage(GET_PROJECT_BY_TOKEN, msgId, data);
             ctx.writeAndFlush(outputMsg, ctx.voidPromise());
         }
     }

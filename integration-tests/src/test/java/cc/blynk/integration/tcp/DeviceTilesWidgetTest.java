@@ -1931,7 +1931,7 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
 
     @Test
     public void testDeviceTileAndWidgetWithMultipleValues() throws Exception {
-        var deviceTiles = new DeviceTiles();
+        DeviceTiles deviceTiles = new DeviceTiles();
         deviceTiles.id = 21321;
         deviceTiles.x = 8;
         deviceTiles.y = 8;
@@ -1941,14 +1941,14 @@ public class DeviceTilesWidgetTest extends IntegrationBase {
         clientPair.appClient.createWidget(1, deviceTiles);
         clientPair.appClient.verifyResult(ok(1));
 
-        var tileTemplate = new PageTileTemplate(1,
+        PageTileTemplate tileTemplate = new PageTileTemplate(1,
                 null, new int[] {0}, "name", "name", "iconName", "ESP8266", new DataStream((byte) 5, PinType.VIRTUAL),
                 false, null, null, null, 0, 0, FontSize.LARGE, false, 2);
 
         clientPair.appClient.createTemplate(1, deviceTiles.id, tileTemplate);
         clientPair.appClient.verifyResult(ok(2));
 
-        var terminal = new Terminal();
+        Terminal terminal = new Terminal();
         terminal.width = 2;
         terminal.height = 2;
         terminal.pin = 6;

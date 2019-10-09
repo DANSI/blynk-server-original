@@ -1,6 +1,8 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
 import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.widgets.Widget;
@@ -34,7 +36,7 @@ public class SetWidgetPropertyLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
-        var bodyParts = split3(message.body);
+        String[] bodyParts = split3(message.body);
 
         if (bodyParts.length != 3) {
             log.debug("SetWidgetProperty command body has wrong format. {}", message.body);
@@ -42,8 +44,8 @@ public class SetWidgetPropertyLogic {
             return;
         }
 
-        var property = bodyParts[1];
-        var propertyValue = bodyParts[2];
+        String property = bodyParts[1];
+        String propertyValue = bodyParts[2];
 
         if (property.length() == 0 || propertyValue.length() == 0) {
             log.debug("SetWidgetProperty command body has wrong format. {}", message.body);
@@ -51,13 +53,13 @@ public class SetWidgetPropertyLogic {
             return;
         }
 
-        var dash = state.dash;
+        DashBoard dash = state.dash;
 
         if (!dash.isActive) {
             return;
         }
 
-        var widgetProperty = WidgetProperty.getProperty(property);
+        WidgetProperty widgetProperty = WidgetProperty.getProperty(property);
 
         if (widgetProperty == null) {
             log.debug("Unsupported set property {}.", property);
@@ -65,8 +67,8 @@ public class SetWidgetPropertyLogic {
             return;
         }
 
-        var deviceId = state.device.id;
-        var pin = Byte.parseByte(bodyParts[0]);
+        int deviceId = state.device.id;
+        byte pin = Byte.parseByte(bodyParts[0]);
 
         Widget widget = null;
         for (Widget dashWidget : dash.widgets) {
@@ -88,7 +90,7 @@ public class SetWidgetPropertyLogic {
             dash.putPinPropertyStorageValue(deviceId, PinType.VIRTUAL, pin, widgetProperty, propertyValue);
         }
 
-        var session = sessionDao.userSession.get(state.userKey);
+        Session session = sessionDao.userSession.get(state.userKey);
         session.sendToApps(SET_WIDGET_PROPERTY, message.id, dash.id, deviceId, message.body);
         ctx.writeAndFlush(ok(message.id), ctx.voidPromise());
     }

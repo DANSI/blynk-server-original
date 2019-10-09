@@ -39,7 +39,7 @@ final class JobLauncher {
 
         long startDelay;
 
-        var reportingWorker = new ReportingWorker(
+        ReportingWorker reportingWorker = new ReportingWorker(
                 holder.reportingDiskDao,
                 ReportingUtil.getReportingFolder(holder.props.getProperty("data.folder")),
                 holder.reportingDBManager
@@ -51,13 +51,14 @@ final class JobLauncher {
         scheduler.scheduleAtFixedRate(reportingWorker, startDelay,
                 AverageAggregatorProcessor.MINUTE, MILLISECONDS);
 
-        var profileSaverWorker = new ProfileSaverWorker(holder.userDao, holder.fileManager, holder.dbManager);
+        ProfileSaverWorker profileSaverWorker =
+                new ProfileSaverWorker(holder.userDao, holder.fileManager, holder.dbManager);
 
         //running 1 sec later after reporting
         scheduler.scheduleAtFixedRate(profileSaverWorker, startDelay + 1000,
                 holder.props.getIntProperty("profile.save.worker.period"), MILLISECONDS);
 
-        var statsWorker = new StatsWorker(holder);
+        StatsWorker statsWorker = new StatsWorker(holder);
         scheduler.scheduleAtFixedRate(statsWorker, 1000,
                 holder.props.getIntProperty("stats.print.worker.period"), MILLISECONDS);
 
@@ -70,12 +71,12 @@ final class JobLauncher {
         scheduler.scheduleAtFixedRate(holder.tokenManager::clearTemporaryTokens, 7, 1, DAYS);
 
         //running once every 3 day
-        var reportingDataDiskCleaner =
+        HistoryGraphUnusedPinDataCleanerWorker reportingDataDiskCleaner =
                 new HistoryGraphUnusedPinDataCleanerWorker(holder.userDao, holder.reportingDiskDao);
         //once every 3 days
         scheduler.scheduleAtFixedRate(reportingDataDiskCleaner, 72, 72, HOURS);
 
-        var reportingTruncateWorker = new ReportingTruncateWorker(holder.reportingDiskDao);
+        ReportingTruncateWorker reportingTruncateWorker = new ReportingTruncateWorker(holder.reportingDiskDao);
         //once every week
         scheduler.scheduleAtFixedRate(reportingTruncateWorker, 1, 144, HOURS);
 
@@ -83,7 +84,7 @@ final class JobLauncher {
         startDelay = 1000 - (System.currentTimeMillis() % 1000);
 
         //separate thread for timer and reading widgets
-        var ses = Executors.newScheduledThreadPool(1, BlynkTPFactory.build("TimerAndReading"));
+        ScheduledExecutorService ses = Executors.newScheduledThreadPool(1, BlynkTPFactory.build("TimerAndReading"));
         ses.scheduleAtFixedRate(holder.timerWorker, startDelay, 1000, MILLISECONDS);
         ses.scheduleAtFixedRate(holder.readingWidgetsWorker, startDelay + 400, 1000, MILLISECONDS);
 

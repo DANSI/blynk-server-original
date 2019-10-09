@@ -1,6 +1,8 @@
 package cc.blynk.server.hardware.handlers.hardware.logic;
 
 import cc.blynk.server.core.dao.ota.OTAManager;
+import cc.blynk.server.core.model.DashBoard;
+import cc.blynk.server.core.model.device.Device;
 import cc.blynk.server.core.model.device.HardwareInfo;
 import cc.blynk.server.core.model.widgets.others.rtc.RTC;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
@@ -42,14 +44,14 @@ public class BlynkInternalLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, HardwareStateHolder state, StringMessage message) {
-        var messageParts = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
+        String[] messageParts = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
         if (messageParts.length == 0 || messageParts[0].length() == 0) {
             ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
             return;
         }
 
-        var cmd = messageParts[0];
+        String cmd = messageParts[0];
 
         switch (cmd.charAt(0)) {
             case 'v' : //ver
@@ -72,8 +74,8 @@ public class BlynkInternalLogic {
     }
 
     private void sendRTC(ChannelHandlerContext ctx, HardwareStateHolder state, int msgId) {
-        var dashBoard = state.dash;
-        var rtc = dashBoard.getWidgetByType(RTC.class);
+        DashBoard dashBoard = state.dash;
+        RTC rtc = dashBoard.getWidgetByType(RTC.class);
         if (rtc != null && ctx.channel().isWritable()) {
             ctx.writeAndFlush(makeASCIIStringMessage(BLYNK_INTERNAL, msgId, "rtc" + BODY_SEPARATOR + rtc.getTime()),
                     ctx.voidPromise());
@@ -82,20 +84,20 @@ public class BlynkInternalLogic {
 
     private void parseHardwareInfo(ChannelHandlerContext ctx, String[] messageParts,
                                    HardwareStateHolder state, int msgId) {
-        var hardwareInfo = new HardwareInfo(messageParts);
-        var newHardwareInterval = hardwareInfo.heartbeatInterval;
+        HardwareInfo hardwareInfo = new HardwareInfo(messageParts);
+        int newHardwareInterval = hardwareInfo.heartbeatInterval;
 
         log.trace("Info command. heartbeat interval {}", newHardwareInterval);
 
         if (hardwareIdleTimeout != 0 && newHardwareInterval > 0) {
-            var newReadTimeout = (int) Math.ceil(newHardwareInterval * 2.3D);
+            int newReadTimeout = (int) Math.ceil(newHardwareInterval * 2.3D);
             log.debug("Changing read timeout interval to {}", newReadTimeout);
             ctx.pipeline().replace(IdleStateHandler.class,
                     "H_IdleStateHandler_Replaced", new IdleStateHandler(newReadTimeout, 0, 0));
         }
 
-        var dashBoard = state.dash;
-        var device = state.device;
+        DashBoard dashBoard = state.dash;
+        Device device = state.device;
 
         if (device != null) {
             otaManager.initiateHardwareUpdate(ctx, state.userKey, hardwareInfo, dashBoard, device);

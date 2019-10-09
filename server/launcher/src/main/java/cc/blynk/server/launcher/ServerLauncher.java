@@ -91,7 +91,7 @@ public final class ServerLauncher {
         globalProps.put("table.rows.pool.size", "100");
         globalProps.put("csv.export.data.points.max", "43200");
 
-        for (var entry : globalProps.entrySet()) {
+        for (Map.Entry<String, String> entry : globalProps.entrySet()) {
             String name = entry.getKey();
             String value = serverProperties.getProperty(name, entry.getValue());
             System.setProperty(name, value);

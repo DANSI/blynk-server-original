@@ -22,7 +22,7 @@ public final class AppStateHolderUtil {
     }
 
     private static AppStateHolder getAppState(ChannelPipeline pipeline) {
-        var handler = pipeline.get(AppHandler.class);
+        AppHandler handler = pipeline.get(AppHandler.class);
         if (handler == null) {
             return getShareState(pipeline);
         }
@@ -34,7 +34,7 @@ public final class AppStateHolderUtil {
     }
 
     private static AppShareStateHolder getShareState(ChannelPipeline pipeline) {
-        var handler = pipeline.get(AppShareHandler.class);
+        AppShareHandler handler = pipeline.get(AppShareHandler.class);
         return handler == null ? null : handler.state;
     }
 

@@ -1,5 +1,6 @@
 package cc.blynk.server.core.protocol.enums;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -139,95 +140,99 @@ public final class Command {
     }
 
     //all this code just to make logging more user-friendly
-    public static final Map<Short, String> VALUES_NAME = Map.ofEntries(
-            Map.entry(RESPONSE, "Response"),
-            Map.entry(REDEEM, "Redeem"),
-            Map.entry(HARDWARE_CONNECTED, "HardwareConnected"),
-            Map.entry(REGISTER, "Register"),
-            Map.entry(LOGIN, "Login"),
-            Map.entry(HARDWARE_LOGIN, "LoginHardware"),
-            Map.entry(LOGOUT, "Logout"),
-            Map.entry(LOAD_PROFILE_GZIPPED, "LoadProfile"),
-            Map.entry(APP_SYNC, "AppSync"),
-            Map.entry(SHARING, "Sharing"),
-            Map.entry(GET_TOKEN, "GetToken"),
-            Map.entry(ASSIGN_TOKEN, "AssignToken"),
-            Map.entry(PING, "Ping"), Map.entry(SMS, "Sms"),
-            Map.entry(ACTIVATE_DASHBOARD, "Activate"),
-            Map.entry(DEACTIVATE_DASHBOARD, "Deactivate"),
-            Map.entry(REFRESH_TOKEN, "RefreshToken"),
-            Map.entry(GET_GRAPH_DATA, "GetGraphDataRequest"),
-            Map.entry(GET_ENHANCED_GRAPH_DATA, "GetEnhancedGraphDataRequest"),
-            Map.entry(DELETE_ENHANCED_GRAPH_DATA, "DeleteEnhancedGraphDataRequest"),
-            Map.entry(GET_GRAPH_DATA_RESPONSE, "GetGraphDataResponse"),
-            Map.entry(EXPORT_GRAPH_DATA, "ExportGraphData"),
-            Map.entry(SET_WIDGET_PROPERTY, "setWidgetProperty"),
-            Map.entry(BRIDGE, "Bridge"),
-            Map.entry(HARDWARE, "Hardware"),
-            Map.entry(GET_SHARE_TOKEN, "GetShareToken"),
-            Map.entry(REFRESH_SHARE_TOKEN, "RefreshShareToken"),
-            Map.entry(SHARE_LOGIN, "ShareLogin"),
-            Map.entry(CREATE_DASH, "CreateProject"),
-            Map.entry(UPDATE_DASH, "UpdateProject"),
-            Map.entry(DELETE_DASH, "DeleteProject"),
-            Map.entry(HARDWARE_SYNC, "HardwareSync"),
-            Map.entry(BLYNK_INTERNAL, "Internal"),
-            Map.entry(ADD_PUSH_TOKEN, "AddPushToken"),
-            Map.entry(TWEET, "Tweet"), Map.entry(EMAIL, "Email"),
-            Map.entry(PUSH_NOTIFICATION, "Push"),
-            Map.entry(CREATE_WIDGET, "CreateWidget"),
-            Map.entry(UPDATE_WIDGET, "UpdateWidget"),
-            Map.entry(DELETE_WIDGET, "DeleteWidget"),
-            Map.entry(GET_WIDGET, "GetWidget"),
-            Map.entry(CREATE_TILE_TEMPLATE, "CreateTileTemplate"),
-            Map.entry(UPDATE_TILE_TEMPLATE, "UpdateTileTemplate"),
-            Map.entry(DELETE_TILE_TEMPLATE, "DeleteTileTemplate"),
-            Map.entry(CREATE_DEVICE, "CreateDevice"),
-            Map.entry(UPDATE_DEVICE, "UpdateDevice"),
-            Map.entry(DELETE_DEVICE, "DeleteDevice"),
-            Map.entry(GET_DEVICES, "GetDevices"),
-            Map.entry(ADD_ENERGY, "AddEnergy"),
-            Map.entry(GET_ENERGY, "GetEnergy"),
-            Map.entry(UPDATE_PROJECT_SETTINGS, "UpdateProjectSettings"),
-            Map.entry(GET_SERVER, "GetServer"),
-            Map.entry(CONNECT_REDIRECT, "ConnectRedirect"),
-            Map.entry(CREATE_APP, "CreateApp"),
-            Map.entry(UPDATE_APP, "UpdateApp"),
-            Map.entry(DELETE_APP, "DeleteApp"),
-            Map.entry(GET_PROJECT_BY_TOKEN, "GetProjectByToken"),
-            Map.entry(EMAIL_QR, "MailQRs"),
-            Map.entry(UPDATE_FACE, "UpdateFace"),
-            Map.entry(GET_PROVISION_TOKEN, "getProvisionToken"),
-            Map.entry(RESOLVE_EVENT, "resolveEvent"),
-            Map.entry(DELETE_DEVICE_DATA, "deleteDeviceData"),
-            Map.entry(HARDWARE_LOG_EVENT, "HardwareLogEvent"),
-            Map.entry(HARDWARE_RESEND_FROM_BLUETOOTH, "HardwareResendFromBluetooth"),
-            Map.entry(GET_CLONE_CODE, "GetCloneCode"),
-            Map.entry(GET_PROJECT_BY_CLONE_CODE, "GetProjectByCloneCode"),
-            Map.entry(DEVICE_OFFLINE, "deviceOffline"),
-            Map.entry(OUTDATED_APP_NOTIFICATION, "outdatedAppNotification"),
-            Map.entry(TRACK_DEVICE, "trackDevice"),
-            Map.entry(CREATE_REPORT, "createReport"),
-            Map.entry(UPDATE_REPORT, "updateReport"),
-            Map.entry(DELETE_REPORT, "deleteReport"),
-            Map.entry(EXPORT_REPORT, "exportReport"),
-            Map.entry(RESET_PASSWORD, "resetPass"),
-            Map.entry(HTTP_IS_HARDWARE_CONNECTED, "HttpIsHardwareConnected"),
-            Map.entry(HTTP_IS_APP_CONNECTED, "HttpIsAppConnected"),
-            Map.entry(HTTP_GET_PIN_DATA, "HttpGetPinData"),
-            Map.entry(HTTP_UPDATE_PIN_DATA, "HttpUpdatePinData"),
-            Map.entry(HTTP_NOTIFY, "HttpNotify"),
-            Map.entry(HTTP_EMAIL, "HttpEmail"),
-            Map.entry(HTTP_GET_PROJECT, "HttpGetProject"),
-            Map.entry(HTTP_QR, "QR"),
-            Map.entry(HTTP_CLONE, "Clone"),
-            Map.entry(HTTP_GET_HISTORY_DATA, "HttpGetHistoryData"),
-            Map.entry(HTTP_START_OTA, "HttpStartOTA"),
-            Map.entry(HTTP_TOTAL, "HttpTotal"),
-            Map.entry(WEB_SOCKETS, "WebSockets"),
-            Map.entry(EVENTOR, "Eventor"),
-            Map.entry(WEB_HOOKS, "WebHooks")
-    );
+    public static final Map<Short, String> VALUES_NAME = new HashMap<Short, String>() {
+        {
+            put(RESPONSE, "Response");
+            put(REDEEM, "Redeem");
+            put(HARDWARE_CONNECTED, "HardwareConnected");
+            put(REGISTER, "Register");
+            put(LOGIN, "Login");
+            put(HARDWARE_LOGIN, "LoginHardware");
+            put(LOGOUT, "Logout");
+            put(LOAD_PROFILE_GZIPPED, "LoadProfile");
+            put(APP_SYNC, "AppSync");
+            put(SHARING, "Sharing");
+            put(GET_TOKEN, "GetToken");
+            put(ASSIGN_TOKEN, "AssignToken");
+            put(PING, "Ping");
+            put(SMS, "Sms");
+            put(ACTIVATE_DASHBOARD, "Activate");
+            put(DEACTIVATE_DASHBOARD, "Deactivate");
+            put(REFRESH_TOKEN, "RefreshToken");
+            put(GET_GRAPH_DATA, "GetGraphDataRequest");
+            put(GET_ENHANCED_GRAPH_DATA, "GetEnhancedGraphDataRequest");
+            put(DELETE_ENHANCED_GRAPH_DATA, "DeleteEnhancedGraphDataRequest");
+            put(GET_GRAPH_DATA_RESPONSE, "GetGraphDataResponse");
+            put(EXPORT_GRAPH_DATA, "ExportGraphData");
+            put(SET_WIDGET_PROPERTY, "setWidgetProperty");
+            put(BRIDGE, "Bridge");
+            put(HARDWARE, "Hardware");
+            put(GET_SHARE_TOKEN, "GetShareToken");
+            put(REFRESH_SHARE_TOKEN, "RefreshShareToken");
+            put(SHARE_LOGIN, "ShareLogin");
+            put(CREATE_DASH, "CreateProject");
+            put(UPDATE_DASH, "UpdateProject");
+            put(DELETE_DASH, "DeleteProject");
+            put(HARDWARE_SYNC, "HardwareSync");
+            put(BLYNK_INTERNAL, "Internal");
+            put(ADD_PUSH_TOKEN, "AddPushToken");
+            put(TWEET, "Tweet");
+            put(EMAIL, "Email");
+            put(PUSH_NOTIFICATION, "Push");
+            put(CREATE_WIDGET, "CreateWidget");
+            put(UPDATE_WIDGET, "UpdateWidget");
+            put(DELETE_WIDGET, "DeleteWidget");
+            put(GET_WIDGET, "GetWidget");
+            put(CREATE_TILE_TEMPLATE, "CreateTileTemplate");
+            put(UPDATE_TILE_TEMPLATE, "UpdateTileTemplate");
+            put(DELETE_TILE_TEMPLATE, "DeleteTileTemplate");
+            put(CREATE_DEVICE, "CreateDevice");
+            put(UPDATE_DEVICE, "UpdateDevice");
+            put(DELETE_DEVICE, "DeleteDevice");
+            put(GET_DEVICES, "GetDevices");
+            put(ADD_ENERGY, "AddEnergy");
+            put(GET_ENERGY, "GetEnergy");
+            put(UPDATE_PROJECT_SETTINGS, "UpdateProjectSettings");
+            put(GET_SERVER, "GetServer");
+            put(CONNECT_REDIRECT, "ConnectRedirect");
+            put(CREATE_APP, "CreateApp");
+            put(UPDATE_APP, "UpdateApp");
+            put(DELETE_APP, "DeleteApp");
+            put(GET_PROJECT_BY_TOKEN, "GetProjectByToken");
+            put(EMAIL_QR, "MailQRs");
+            put(UPDATE_FACE, "UpdateFace");
+            put(GET_PROVISION_TOKEN, "getProvisionToken");
+            put(RESOLVE_EVENT, "resolveEvent");
+            put(DELETE_DEVICE_DATA, "deleteDeviceData");
+            put(HARDWARE_LOG_EVENT, "HardwareLogEvent");
+            put(HARDWARE_RESEND_FROM_BLUETOOTH, "HardwareResendFromBluetooth");
+            put(GET_CLONE_CODE, "GetCloneCode");
+            put(GET_PROJECT_BY_CLONE_CODE, "GetProjectByCloneCode");
+            put(DEVICE_OFFLINE, "deviceOffline");
+            put(OUTDATED_APP_NOTIFICATION, "outdatedAppNotification");
+            put(TRACK_DEVICE, "trackDevice");
+            put(CREATE_REPORT, "createReport");
+            put(UPDATE_REPORT, "updateReport");
+            put(DELETE_REPORT, "deleteReport");
+            put(EXPORT_REPORT, "exportReport");
+            put(RESET_PASSWORD, "resetPass");
+            put(HTTP_IS_HARDWARE_CONNECTED, "HttpIsHardwareConnected");
+            put(HTTP_IS_APP_CONNECTED, "HttpIsAppConnected");
+            put(HTTP_GET_PIN_DATA, "HttpGetPinData");
+            put(HTTP_UPDATE_PIN_DATA, "HttpUpdatePinData");
+            put(HTTP_NOTIFY, "HttpNotify");
+            put(HTTP_EMAIL, "HttpEmail");
+            put(HTTP_GET_PROJECT, "HttpGetProject");
+            put(HTTP_QR, "QR");
+            put(HTTP_CLONE, "Clone");
+            put(HTTP_GET_HISTORY_DATA, "HttpGetHistoryData");
+            put(HTTP_START_OTA, "HttpStartOTA");
+            put(HTTP_TOTAL, "HttpTotal");
+            put(WEB_SOCKETS, "WebSockets");
+            put(EVENTOR, "Eventor");
+            put(WEB_HOOKS, "WebHooks");
+        }
+    };
 
     public static String getNameByValue(short val) {
         return VALUES_NAME.get(val);

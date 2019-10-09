@@ -1,5 +1,6 @@
 package cc.blynk.server.application.handlers.main.logic.dashboard.tags;
 
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.device.Tag;
 import cc.blynk.server.core.protocol.exceptions.IllegalCommandException;
@@ -25,20 +26,20 @@ public final class DeleteTagLogic {
     }
 
     public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        var split = split2(message.body);
+        String[] split = split2(message.body);
 
         if (split.length < 2) {
             throw new IllegalCommandException("Wrong income message format.");
         }
 
-        var dashId = Integer.parseInt(split[0]);
-        var tagId = Integer.parseInt(split[1]);
+        int dashId = Integer.parseInt(split[0]);
+        int tagId = Integer.parseInt(split[1]);
 
-        var dash = user.profile.getDashByIdOrThrow(dashId);
+        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
 
         log.debug("Deleting tag with id {}.", tagId);
 
-        var existingTagIndex = dash.getTagIndexById(tagId);
+        int existingTagIndex = dash.getTagIndexById(tagId);
 
         dash.tags = ArrayUtil.remove(dash.tags, existingTagIndex, Tag.class);
         dash.updatedAt = System.currentTimeMillis();

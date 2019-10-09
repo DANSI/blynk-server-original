@@ -1,8 +1,10 @@
 package cc.blynk.server.application.handlers.main.logic;
 
 import cc.blynk.server.core.dao.SessionDao;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.enums.WidgetProperty;
+import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
@@ -28,7 +30,7 @@ public final class AppSetWidgetPropertyLogic {
     }
 
     public static void messageReceived(ChannelHandlerContext ctx, User user, StringMessage message) {
-        var splitBody = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
+        String[] splitBody = message.body.split(StringUtils.BODY_SEPARATOR_STRING);
 
         if (splitBody.length != 4) {
             log.debug("AppSetWidgetProperty command body has wrong format. {}", message.body);
@@ -36,10 +38,10 @@ public final class AppSetWidgetPropertyLogic {
             return;
         }
 
-        var dashId = Integer.parseInt(splitBody[0]);
-        var widgetId = Long.parseLong(splitBody[1]);
-        var property = splitBody[2];
-        var propertyValue = splitBody[3];
+        int dashId = Integer.parseInt(splitBody[0]);
+        long widgetId = Long.parseLong(splitBody[1]);
+        String property = splitBody[2];
+        String propertyValue = splitBody[3];
 
         if (property.length() == 0 || propertyValue.length() == 0) {
             log.debug("AppSetWidgetProperty command body has wrong format. {}", message.body);
@@ -47,7 +49,7 @@ public final class AppSetWidgetPropertyLogic {
             return;
         }
 
-        var widgetProperty = WidgetProperty.getProperty(property);
+        WidgetProperty widgetProperty = WidgetProperty.getProperty(property);
 
         if (widgetProperty == null) {
             log.debug("Unsupported app set property {}.", property);
@@ -55,9 +57,9 @@ public final class AppSetWidgetPropertyLogic {
             return;
         }
 
-        var dash = user.profile.getDashByIdOrThrow(dashId);
+        DashBoard dash = user.profile.getDashByIdOrThrow(dashId);
         //for now supporting only virtual pins
-        var widget = dash.getWidgetById(widgetId);
+        Widget widget = dash.getWidgetById(widgetId);
         if (widget == null) {
             widget = dash.getWidgetByIdInDeviceTilesOrThrow(widgetId);
         }

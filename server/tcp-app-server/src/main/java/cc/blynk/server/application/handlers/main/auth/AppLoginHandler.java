@@ -75,7 +75,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, LoginMessage message) {
-        var messageParts = message.body.split(BODY_SEPARATOR_STRING);
+        String[] messageParts = message.body.split(BODY_SEPARATOR_STRING);
 
         if (messageParts.length < 2) {
             log.error("Wrong income message format.");
@@ -83,9 +83,9 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
             return;
         }
 
-        var email = messageParts[0].toLowerCase();
+        String email = messageParts[0].toLowerCase();
 
-        var version = messageParts.length > 3
+        Version version = messageParts.length > 3
                 ? new Version(messageParts[2], messageParts[3])
                 : Version.UNKNOWN_VERSION;
 
@@ -151,7 +151,7 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
 
     private void blynkLogin(ChannelHandlerContext ctx, int msgId, String email, String pass,
                             Version version, String appName) {
-        var user = holder.userDao.getByName(email, appName);
+        User user = holder.userDao.getByName(email, appName);
 
         if (user == null) {
             log.warn("User '{}' not registered. {}", email, ctx.channel().remoteAddress());
@@ -175,20 +175,20 @@ public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage>
     }
 
     private void login(ChannelHandlerContext ctx, int messageId, User user, Version version) {
-        var pipeline = (DefaultChannelPipeline) ctx.pipeline();
+        DefaultChannelPipeline pipeline = (DefaultChannelPipeline) ctx.pipeline();
         cleanPipeline(pipeline);
 
-        var appStateHolder = new AppStateHolder(user, version);
+        AppStateHolder appStateHolder = new AppStateHolder(user, version);
         pipeline.addLast("AAppHandler", new AppHandler(holder, appStateHolder));
 
-        var channel = ctx.channel();
+        Channel channel = ctx.channel();
 
         //todo back compatibility code. remove in future.
         if (user.region == null || user.region.isEmpty()) {
             user.region = holder.props.region;
         }
 
-        var session = holder.sessionDao.getOrCreateSessionByUser(appStateHolder.userKey, channel.eventLoop());
+        Session session = holder.sessionDao.getOrCreateSessionByUser(appStateHolder.userKey, channel.eventLoop());
         if (session.isSameEventLoop(channel)) {
             completeLogin(channel, session, user, messageId, version);
         } else {

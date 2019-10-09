@@ -39,7 +39,7 @@ public class PinStorageValueDeserializer extends JsonDeserializer {
                     JsonNode values = multiValueNode.get("values");
                     if (values != null) {
                         if (values.isArray()) {
-                            for (var objNode : values) {
+                            for (JsonNode objNode : values) {
                                 multiPinStorageValue.values.add(objNode.textValue());
                             }
                         }

@@ -43,7 +43,7 @@ public class DeleteDashLogic {
     }
 
     public void messageReceived(ChannelHandlerContext ctx, AppStateHolder state, StringMessage message) {
-        var dashId = Integer.parseInt(message.body);
+        int dashId = Integer.parseInt(message.body);
 
         deleteDash(state, dashId);
         state.user.lastModifiedTs = System.currentTimeMillis();

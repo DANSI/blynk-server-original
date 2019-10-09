@@ -33,7 +33,7 @@ public final class Version {
      */
     private static int parseToSingleInt(String version) {
         try {
-            var parts = split3('.', version);
+            String[] parts = split3('.', version);
             return parse(parts);
         } catch (Exception e) {
             log.debug("Error parsing app versionSingleNumber {}. Reason : {}.", version, e.getMessage());

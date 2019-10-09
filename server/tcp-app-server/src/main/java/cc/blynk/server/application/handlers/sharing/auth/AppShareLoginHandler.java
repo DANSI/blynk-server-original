@@ -6,7 +6,10 @@ import cc.blynk.server.application.handlers.main.auth.GetServerHandler;
 import cc.blynk.server.application.handlers.main.auth.RegisterHandler;
 import cc.blynk.server.application.handlers.main.auth.Version;
 import cc.blynk.server.application.handlers.sharing.AppShareHandler;
+import cc.blynk.server.core.dao.SharedTokenValue;
+import cc.blynk.server.core.model.DashBoard;
 import cc.blynk.server.core.model.auth.Session;
+import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.protocol.model.messages.appllication.sharing.ShareLoginMessage;
 import cc.blynk.server.handlers.DefaultReregisterHandler;
 import cc.blynk.server.handlers.common.UserNotLoggedHandler;
@@ -44,14 +47,14 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ShareLoginMessage message) {
-        var messageParts = message.body.split("\0");
+        String[] messageParts = message.body.split("\0");
 
         if (messageParts.length < 2) {
             log.error("Wrong income message format.");
             ctx.writeAndFlush(illegalCommand(message.id), ctx.voidPromise());
         } else {
-            var uid = messageParts.length == 5 ? messageParts[4] : null;
-            var version = messageParts.length > 3
+            String uid = messageParts.length == 5 ? messageParts[4] : null;
+            Version version = messageParts.length > 3
                     ? new Version(messageParts[2], messageParts[3])
                     : Version.UNKNOWN_VERSION;
             appLogin(ctx, message.id, messageParts[0], messageParts[1], version, uid);
@@ -60,9 +63,9 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
 
     private void appLogin(ChannelHandlerContext ctx, int messageId, String email,
                           String token, Version version, String uid) {
-        var userName = email.toLowerCase();
+        String userName = email.toLowerCase();
 
-        var tokenValue = holder.tokenManager.getUserBySharedToken(token);
+        SharedTokenValue tokenValue = holder.tokenManager.getUserBySharedToken(token);
 
         if (tokenValue == null || !tokenValue.user.email.equals(userName)) {
             log.debug("Share token is invalid. User : {}, token {}, {}",
@@ -71,10 +74,10 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
             return;
         }
 
-        var user = tokenValue.user;
-        var dashId = tokenValue.dashId;
+        User user = tokenValue.user;
+        int dashId = tokenValue.dashId;
 
-        var dash = user.profile.getDashById(dashId);
+        DashBoard dash = user.profile.getDashById(dashId);
         if (!dash.isShared) {
             log.debug("Dashboard is not shared. User : {}, token {}, {}",
                     userName, token, ctx.channel().remoteAddress());
@@ -83,10 +86,10 @@ public class AppShareLoginHandler extends SimpleChannelInboundHandler<ShareLogin
         }
 
         cleanPipeline(ctx.pipeline());
-        var appShareStateHolder = new AppShareStateHolder(user, version, token, dashId);
+        AppShareStateHolder appShareStateHolder = new AppShareStateHolder(user, version, token, dashId);
         ctx.pipeline().addLast("AAppSHareHandler", new AppShareHandler(holder, appShareStateHolder));
 
-        var session = holder.sessionDao.getOrCreateSessionByUser(
+        Session session = holder.sessionDao.getOrCreateSessionByUser(
                 appShareStateHolder.userKey, ctx.channel().eventLoop());
 
         if (session.isSameEventLoop(ctx)) {

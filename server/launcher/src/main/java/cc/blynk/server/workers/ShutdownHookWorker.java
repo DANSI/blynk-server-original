@@ -33,7 +33,7 @@ public class ShutdownHookWorker implements Runnable {
         System.out.println("Catch shutdown hook.");
         System.out.println("Stopping servers...");
 
-        for (var server : servers) {
+        for (BaseServer server : servers) {
             try {
                 server.close().sync();
             } catch (Throwable t) {

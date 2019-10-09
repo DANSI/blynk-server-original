@@ -1,9 +1,11 @@
 package cc.blynk.utils.properties;
 
 import java.io.File;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.CodeSource;
 import java.util.Map;
 import java.util.Properties;
 
@@ -24,7 +26,7 @@ public abstract class BaseProperties extends Properties {
 
     BaseProperties(Map<String, String> cmdProperties, String serverConfig) {
         this.jarPath = getJarPath();
-        var propertiesFileName = cmdProperties.get(serverConfig);
+        String propertiesFileName = cmdProperties.get(serverConfig);
         if (propertiesFileName == null) {
             initProperties(serverConfig);
         } else {
@@ -35,8 +37,8 @@ public abstract class BaseProperties extends Properties {
 
     private static String getJarPath() {
         try {
-            var codeSource = BaseProperties.class.getProtectionDomain().getCodeSource();
-            var jarFile = new File(codeSource.getLocation().toURI().getPath());
+            CodeSource codeSource = BaseProperties.class.getProtectionDomain().getCodeSource();
+            File jarFile = new File(codeSource.getLocation().toURI().getPath());
             return jarFile.getParentFile().getPath();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -52,9 +54,9 @@ public abstract class BaseProperties extends Properties {
     private void initProperties(String filePropertiesName) {
         readFromClassPath(filePropertiesName);
 
-        var curDirPath = Paths.get(jarPath, filePropertiesName);
+        Path curDirPath = Paths.get(jarPath, filePropertiesName);
         if (Files.exists(curDirPath)) {
-            try (var curFolder = Files.newInputStream(curDirPath)) {
+            try (InputStream curFolder = Files.newInputStream(curDirPath)) {
                 load(curFolder);
             } catch (Exception e) {
                 throw new RuntimeException("Error getting properties file : " + filePropertiesName, e);
@@ -68,7 +70,7 @@ public abstract class BaseProperties extends Properties {
             filePropertiesName = "/" + filePropertiesName;
         }
 
-        try (var classPath = BaseProperties.class.getResourceAsStream(filePropertiesName)) {
+        try (InputStream classPath = BaseProperties.class.getResourceAsStream(filePropertiesName)) {
             if (classPath != null) {
                 load(classPath);
             }
@@ -85,7 +87,7 @@ public abstract class BaseProperties extends Properties {
 
         readFromClassPath(SERVER_PROPERTIES_FILENAME);
 
-        try (var curFolder = Files.newInputStream(path)) {
+        try (InputStream curFolder = Files.newInputStream(path)) {
             load(curFolder);
         } catch (Exception e) {
             System.out.println("Error reading properties file : '" + path + "'. Reason : " + e.getMessage());
@@ -98,7 +100,7 @@ public abstract class BaseProperties extends Properties {
     }
 
     public int getIntProperty(String propertyName, int defaultValue) {
-        var prop = getProperty(propertyName);
+        String prop = getProperty(propertyName);
         if (prop == null || prop.isEmpty()) {
             return defaultValue;
         }
@@ -118,7 +120,7 @@ public abstract class BaseProperties extends Properties {
     }
 
     public long getLongProperty(String propertyName, long defaultValue) {
-        var prop = getProperty(propertyName);
+        String prop = getProperty(propertyName);
         if (prop == null || prop.isEmpty()) {
             return defaultValue;
         }
@@ -126,7 +128,7 @@ public abstract class BaseProperties extends Properties {
     }
 
     public String[] getCommaSeparatedValueAsArray(String propertyName) {
-        var val = getProperty(propertyName);
+        String val = getProperty(propertyName);
         if (val == null) {
             return null;
         }
