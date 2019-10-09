@@ -1,7 +1,6 @@
 package cc.blynk.utils;
 
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.regex.Pattern;
 
@@ -185,7 +184,7 @@ public final class StringUtils {
 
     public static String encode(String s) {
         try {
-            return URLEncoder.encode(s, StandardCharsets.UTF_8);
+            return URLEncoder.encode(s, "UTF-8");
         } catch (Exception e) {
             return s;
         }
