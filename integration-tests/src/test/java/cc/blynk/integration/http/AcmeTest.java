@@ -76,11 +76,11 @@ public class AcmeTest extends BaseTest {
     public void testWorker() throws Exception {
         AcmeClient acmeClient = Mockito.mock(AcmeClient.class);
         SslContextHolder sslContextHolder = Mockito.mock(SslContextHolder.class);
-        CertificateRenewalWorker certificateRenewalWorker = new CertificateRenewalWorker(sslContextHolder, 7);
+        CertificateRenewalWorker certificateRenewalWorker = new CertificateRenewalWorker(sslContextHolder);
         certificateRenewalWorker.run();
         verify(acmeClient, times(0)).requestCertificate();
 
-        certificateRenewalWorker = new CertificateRenewalWorker(sslContextHolder, 100);
+        certificateRenewalWorker = new CertificateRenewalWorker(sslContextHolder);
         certificateRenewalWorker.run();
         verify(acmeClient, times(1)).requestCertificate();
     }
