@@ -10,6 +10,7 @@ import cc.blynk.server.core.model.widgets.controls.Timer;
 import cc.blynk.server.core.model.widgets.notifications.Mail;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.model.widgets.others.eventor.Eventor;
+import cc.blynk.server.core.model.widgets.others.rtc.RTC;
 import cc.blynk.server.core.model.widgets.ui.Tabs;
 import cc.blynk.server.core.model.widgets.ui.TimeInput;
 import cc.blynk.server.core.model.widgets.ui.reporting.ReportingWidget;
@@ -122,7 +123,8 @@ public final class MobileUpdateWidgetLogic {
             if (!(newWidget instanceof Timer)
                     && !(newWidget instanceof ReportingWidget)
                     && !(newWidget instanceof TimeInput)
-                    && !(newWidget instanceof Mail)) {
+                    && !(newWidget instanceof Mail)
+                    && !(newWidget instanceof RTC)) {
                 newWidget.updateValue(prevWidget);
             }
         }
