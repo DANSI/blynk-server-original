@@ -43,7 +43,7 @@ public class Config {
     @Override
     public String toString() {
         try {
-            return JsonParser.MAPPER.writeValueAsString(this);
+            return JsonParser.toJson(this);
         } catch (Exception e) {
             return "{}";
         }

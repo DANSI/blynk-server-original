@@ -2,6 +2,7 @@ package cc.blynk.server.core.model.widgets.others.rtc;
 
 import cc.blynk.server.core.model.enums.PinMode;
 import cc.blynk.server.core.model.widgets.NoPinWidget;
+import cc.blynk.server.core.model.widgets.Widget;
 import cc.blynk.utils.DateTimeUtils;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -30,6 +31,13 @@ public class RTC extends NoPinWidget {
     @Override
     public int getPrice() {
         return 100;
+    }
+
+    @Override
+    public void updateValue(Widget oldWidget) {
+        if (oldWidget instanceof RTC) {
+            this.tzName = ((RTC) oldWidget).tzName;
+        }
     }
 
     public long getTime() {

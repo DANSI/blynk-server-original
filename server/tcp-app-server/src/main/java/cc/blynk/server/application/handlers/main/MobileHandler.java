@@ -131,6 +131,7 @@ public class MobileHandler extends BaseSimpleChannelInboundHandler<StringMessage
     public final MobileStateHolder state;
     private final Holder holder;
     private final MobileHardwareLogic hardwareLogic;
+    private final MobileAddPushLogic mobileAddPushLogic;
 
     private MobileHardwareResendFromBTLogic hardwareResendFromBTLogic;
     private MobileExportGraphDataLogic exportGraphData;
@@ -146,6 +147,7 @@ public class MobileHandler extends BaseSimpleChannelInboundHandler<StringMessage
         this.holder = holder;
 
         this.hardwareLogic = new MobileHardwareLogic(holder, state.user.email);
+        this.mobileAddPushLogic = new MobileAddPushLogic(holder);
     }
 
     @Override
@@ -178,7 +180,7 @@ public class MobileHandler extends BaseSimpleChannelInboundHandler<StringMessage
                 MobileAssignTokenLogic.messageReceived(holder, ctx, state.user, msg);
                 break;
             case ADD_PUSH_TOKEN :
-                MobileAddPushLogic.messageReceived(ctx, state, msg);
+                mobileAddPushLogic.messageReceived(ctx, state, msg);
                 break;
             case REFRESH_TOKEN :
                 MobileRefreshTokenLogic.messageReceived(holder, ctx, state, msg);
