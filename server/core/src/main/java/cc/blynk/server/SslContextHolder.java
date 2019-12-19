@@ -87,7 +87,9 @@ public class SslContextHolder {
         return PlatformDependent.bitMode() != 32 && OpenSsl.isAvailable();
     }
 
-    private void regenerate() {
+    public void regenerate() throws Exception {
+        this.acmeClient.requestCertificate();
+
         String certPath = AcmeClient.DOMAIN_CHAIN_FILE.getAbsolutePath();
         String keyPath = AcmeClient.DOMAIN_KEY_FILE.getAbsolutePath();
 
@@ -103,10 +105,9 @@ public class SslContextHolder {
         if (isAutoGenerationEnabled && isNeedInitializeOnStart) {
             System.out.println("Generating own initial certificates...");
             try {
-                this.acmeClient.requestCertificate();
-                System.out.println("Success! The certificate for your domain "
-                        + props.getProperty("server.host") + " has been generated!");
                 regenerate();
+                System.out.println("Success! The certificate for your domain "
+                                           + props.getProperty("server.host") + " has been generated!");
             } catch (Exception e) {
                 System.out.println("Error during certificate generation.");
                 System.out.println(e.getMessage());

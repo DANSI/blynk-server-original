@@ -6,11 +6,8 @@ import cc.blynk.server.SslContextHolder;
 import cc.blynk.server.acme.AcmeClient;
 import cc.blynk.server.acme.ContentHolder;
 import cc.blynk.server.servers.BaseServer;
-import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.server.workers.CertificateRenewalWorker;
-import cc.blynk.utils.properties.ServerProperties;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,9 +15,11 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+
 
 /**
  * The Blynk Project.
@@ -36,13 +35,6 @@ public class AcmeTest extends BaseTest {
     @After
     public void shutdown() {
         httpServer.close();
-    }
-
-    @Before
-    public void init() throws Exception {
-        ServerProperties properties2 = new ServerProperties("no_certs.properties");
-        this.holder2 = new Holder(properties2, twitterWrapper, mailWrapper, gcmWrapper, smsWrapper, "no-db.properties");
-        httpServer = new HardwareAndHttpAPIServer(holder2).start();
     }
 
     @Override
@@ -64,19 +56,22 @@ public class AcmeTest extends BaseTest {
     public void testCreateCertificates() throws Exception {
         final String STAGING = "acme://letsencrypt.org/staging";
         ContentHolder contentHolder = holder2.sslContextHolder.contentHolder;
-        AcmeClient acmeClient = new AcmeClient(STAGING, "test@blynk.cc", "test.blynk.cc", contentHolder);
+        assertNull(contentHolder.content);
+        AcmeClient acmeClient = new AcmeClient(STAGING, "test@blynk.cc", "let.blynk.cc", contentHolder);
         acmeClient.requestCertificate();
+        assertNotNull(contentHolder.content);
     }
 
     @Test
     @Ignore
     public void testWorker() throws Exception {
         AcmeClient acmeClient = Mockito.mock(AcmeClient.class);
-        CertificateRenewalWorker certificateRenewalWorker = new CertificateRenewalWorker(acmeClient, 7);
+        SslContextHolder sslContextHolder = Mockito.mock(SslContextHolder.class);
+        CertificateRenewalWorker certificateRenewalWorker = new CertificateRenewalWorker(sslContextHolder);
         certificateRenewalWorker.run();
         verify(acmeClient, times(0)).requestCertificate();
 
-        certificateRenewalWorker = new CertificateRenewalWorker(acmeClient, 100);
+        certificateRenewalWorker = new CertificateRenewalWorker(sslContextHolder);
         certificateRenewalWorker.run();
         verify(acmeClient, times(1)).requestCertificate();
     }
