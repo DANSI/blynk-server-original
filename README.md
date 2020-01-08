@@ -108,7 +108,7 @@ Go [here](https://www.google.com/settings/security/lesssecureapps) and then clic
 + Login to Raspberry Pi via ssh;
 + Install java 8: 
         
-        sudo apt-get install oracle-java8-jdk
+        sudo apt install openjdk-8-jdk openjdk-8-jre
         
 + Make sure you are using Java 8
 
