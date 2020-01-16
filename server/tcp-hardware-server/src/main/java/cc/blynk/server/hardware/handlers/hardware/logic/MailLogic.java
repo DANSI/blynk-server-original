@@ -51,8 +51,12 @@ public class MailLogic extends NotificationBase {
 
         Mail mail = dash.getMailWidget();
 
-        if (mail == null || !dash.isActive) {
-            throw new NotAllowedException("User has no mail widget or active dashboard.", message.id);
+        if (mail == null) {
+            throw new NotAllowedException("User has no mail widget.", message.id);
+        }
+
+        if (!dash.isActive) {
+            throw new NotAllowedException("User has no active dashboard.", message.id);
         }
 
         if (message.body.isEmpty()) {
