@@ -85,7 +85,9 @@ public class TimeInput extends OnePinWidget {
     public void updateValue(Widget oldWidget) {
         if (oldWidget instanceof TimeInput) {
             TimeInput oldTimeInput = (TimeInput) oldWidget;
-            this.updateIfSame(oldTimeInput.deviceId, oldTimeInput.pin, oldTimeInput.pinType, oldTimeInput.value);
+            if (oldTimeInput.value != null) {
+                this.updateIfSame(oldTimeInput.deviceId, oldTimeInput.pin, oldTimeInput.pinType, oldTimeInput.value);
+            }
         }
     }
 
