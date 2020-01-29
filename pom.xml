@@ -157,8 +157,8 @@
         <maven-checkstyle-plugin.version>3.0.0</maven-checkstyle-plugin.version>
 
         <!-- dependencies -->
-        <netty.version>4.1.43.Final</netty.version>
-        <netty.boring.ssl.version>2.0.26.Final</netty.boring.ssl.version>
+        <netty.version>4.1.45.Final</netty.version>
+        <netty.boring.ssl.version>2.0.28.Final</netty.boring.ssl.version>
         <log4j2.version>2.12.1</log4j2.version>
         <jackson-databind.version>2.10.1</jackson-databind.version>
         <disruptor.version>3.4.2</disruptor.version>
