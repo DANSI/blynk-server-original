@@ -22,4 +22,17 @@ public final class TokenGeneratorUtil {
         return base64Encoder.encodeToString(randomBytes);
     }
 
+    public static boolean isNotValidResetToken(String token) {
+        if (token.length() != 64) {
+            return true;
+        }
+        for (int i = 0; i < 64; i++) {
+            char c = token.charAt(i);
+            if (!(Character.isLetterOrDigit(c) || c == '-' || c == '_')) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

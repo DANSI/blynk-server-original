@@ -146,6 +146,10 @@ public class ResetPasswordHttpLogic extends BaseHttpHandler {
             return badRequest("Your token was not found or it is outdated. Please try again.");
         }
 
+        if (TokenGeneratorUtil.isNotValidResetToken(token)) {
+            return badRequest("Invalid request parameters.");
+        }
+
         log.info("{} landed.", baseToken.email);
         String page = pageContent.replace(Placeholders.EMAIL, baseToken.email).replace(Placeholders.TOKEN, token);
         return ok(page, MediaType.TEXT_HTML);
@@ -160,6 +164,11 @@ public class ResetPasswordHttpLogic extends BaseHttpHandler {
         //if (user == null) {
         //    return badRequest("Your token was not found or it is outdated. Please try again.");
         //}
+
+        if (TokenGeneratorUtil.isNotValidResetToken(token)
+                || (email != null && BlynkEmailValidator.isNotValidEmail(email))) {
+            return badRequest("Invalid request parameters.");
+        }
 
         log.info("{} landed.", email);
         String resetUrl = "http://" + resetClickHost + "/restore?token=" + token + "&email=" + email;
