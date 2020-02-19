@@ -92,6 +92,12 @@ public class TimeInput extends OnePinWidget {
     }
 
     @Override
+    public void erase() {
+        super.erase();
+        this.tzName = null;
+    }
+
+    @Override
     public PinMode getModeType() {
         return PinMode.out;
     }
