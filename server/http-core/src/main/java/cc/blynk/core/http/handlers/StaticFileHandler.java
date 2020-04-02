@@ -285,8 +285,10 @@ public class StaticFileHandler extends ChannelInboundHandlerAdapter {
             return true;
         }
 
-        return uri.contains(File.separator + '.')
-                || uri.contains('.' + File.separator)
+        return uri.contains("/.")
+                || uri.contains("./")
+                || uri.contains(".\\")
+                || uri.contains("\\.")
                 || uri.charAt(0) == '.' || uri.charAt(uri.length() - 1) == '.'
                 || INSECURE_URI.matcher(uri).matches();
 
