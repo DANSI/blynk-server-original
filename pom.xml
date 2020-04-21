@@ -165,15 +165,15 @@
         <!-- dependencies -->
         <netty.version>4.1.25.Final</netty.version>
         <netty.boring.ssl.version>2.0.8.Final</netty.boring.ssl.version>
-        <log4j2.version>2.11.0</log4j2.version>
+        <log4j2.version>2.13.1</log4j2.version>
         <jackson-databind.version>2.9.5</jackson-databind.version>
         <disruptor.version>3.4.2</disruptor.version>
         <async-http-client.version>2.4.9</async-http-client.version>
         <postgresql.version>42.2.2</postgresql.version>
         <HikariCP.version>3.1.0</HikariCP.version>
         <qrgen.version>2.2.0</qrgen.version>
-        <bcpg-jdk15on.version>1.64</bcpg-jdk15on.version>
-        <acme4j-client.version>2.8</acme4j-client.version>
+        <bcpg-jdk15on.version>1.65</bcpg-jdk15on.version>
+        <acme4j-client.version>2.9</acme4j-client.version>
         <javax.mail.version>1.6.1</javax.mail.version>
         <javax.activation.version>1.2.0</javax.activation.version>
 
