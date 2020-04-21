@@ -65,7 +65,7 @@
          https://github.com/blynkkk/blynk-server/issues/751 -->
         <Logger name="io.netty.util.internal.NativeLibraryLoader" level="OFF" additivity="false" />
 
-        <Root>
+        <Root level="info">
             <AppenderRef ref="userLog"/>
         </Root>
 
