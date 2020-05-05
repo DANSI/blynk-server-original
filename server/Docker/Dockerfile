@@ -1,4 +1,4 @@
-FROM openjdk:11-jre
+FROM ubuntu
 MAINTAINER Florian Mauduit <f@lf.je>
 
 #############################################################
@@ -66,6 +66,12 @@ ENV ENABLE_RAW_DB_DATA_STORE false
 ENV INITIAL_ENERGY 100000
 ENV ADMIN_EMAIL admin@blynk.cc
 ENV ADMIN_PASS admin
+
+
+############################################################
+# Install OpenJDK
+RUN apt update && apt install -y openjdk-11-jdk libxrender1 maven
+RUN apt install -y curl
 
 
 ############################################################
