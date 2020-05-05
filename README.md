@@ -139,6 +139,13 @@ That's it!
 
         docker run -p 8080:8080 -p 9443:9443 mpherg/blynk-server
 
+### Quick Launch on Raspberry Pi
+
++ Install [Docker](https://docs.docker.com/engine/install/debian/)
++ Run Docker container
+
+        docker run -p 8080:8080 -p 9443:9443 linuxkonsult/rasbian-blynk
+
 ### Full customisation
 
 + Check [README](server/Docker) in docker folder
