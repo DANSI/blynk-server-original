@@ -5,7 +5,6 @@ import cc.blynk.server.application.handlers.main.auth.MobileStateHolder;
 import cc.blynk.server.core.BlockingIOProcessor;
 import cc.blynk.server.core.dao.UserDao;
 import cc.blynk.server.core.model.DashBoard;
-import cc.blynk.server.core.model.auth.User;
 import cc.blynk.server.core.model.widgets.notifications.Notification;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.utils.StringUtils;
@@ -58,6 +57,7 @@ public final class MobileAddPushLogic {
             case IOS :
                 //this fix is only for iOS, because it doesn't have enough control
                 //over the notifications, so we have to manage this on the server
+                /*
                 blockingIOProcessor.execute(() -> {
                     try {
                         for (User user : userDao.users.values()) {
@@ -72,6 +72,7 @@ public final class MobileAddPushLogic {
                         log.debug("Fail on ios token cleanup.", e);
                     }
                 });
+                 */
                 notification.iOSTokens.put(uid, token);
                 break;
         }

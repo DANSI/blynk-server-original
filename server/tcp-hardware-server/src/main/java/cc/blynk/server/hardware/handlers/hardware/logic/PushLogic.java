@@ -53,7 +53,13 @@ public class PushLogic extends NotificationBase {
 
         Notification widget = dash.getNotificationWidget();
 
-        if (widget == null || widget.hasNoToken()) {
+        if (widget == null) {
+            log.debug("User has no notifications widget.");
+            ctx.writeAndFlush(notificationNotAuthorized(message.id), ctx.voidPromise());
+            return;
+        }
+
+        if (widget.hasNoToken()) {
             log.debug("User has no access token provided for push widget.");
             ctx.writeAndFlush(notificationNotAuthorized(message.id), ctx.voidPromise());
             return;

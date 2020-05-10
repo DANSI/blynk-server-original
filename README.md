@@ -2,7 +2,7 @@
 Blynk is a platform with iOS and Android apps to control Arduino, ESP8266, Raspberry Pi and the likes over the Internet.  
 You can easily build graphic interfaces for all your projects by simply dragging and dropping widgets.
 If you need more information, please follow these links:
-* [Blynk site](https://www.blynk.cc)
+* [Blynk site](https://www.blynk.io)
 * [Blynk docs](http://docs.blynk.cc)
 * [Blynk community](https://community.blynk.cc)
 * [Blynk Examples generator](https://examples.blynk.cc)
@@ -74,7 +74,7 @@ For Windows download Java [here](https://www.oracle.com/technetwork/java/javase/
 
 + Run the server on default 'hardware port 8080' and default 'application port 9443' (SSL port)
 
-        java -jar server-0.41.12.jar -dataFolder /path
+        java -jar server-0.41.13.jar -dataFolder /path
         
 That's it! 
 
@@ -108,7 +108,7 @@ Go [here](https://www.google.com/settings/security/lesssecureapps) and then clic
 + Login to Raspberry Pi via ssh;
 + Install java 8: 
         
-        sudo apt-get install oracle-java8-jdk
+        sudo apt install openjdk-8-jdk openjdk-8-jre
         
 + Make sure you are using Java 8
 
@@ -117,11 +117,11 @@ Go [here](https://www.google.com/settings/security/lesssecureapps) and then clic
         
 + Download Blynk server jar file (or manually copy it to Raspberry Pi via ssh and scp command): 
    
-        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.41.12/server-0.41.12-java8.jar"
+        wget "https://github.com/blynkkk/blynk-server/releases/download/v0.41.13/server-0.41.13-java8.jar"
 
 + Run the server on default 'hardware port 8080' and default 'application port 9443' (SSL port)
 
-        java -jar server-0.41.12-java8.jar -dataFolder /home/pi/Blynk
+        java -jar server-0.41.13-java8.jar -dataFolder /home/pi/Blynk
         
 That's it! 
 
@@ -139,6 +139,13 @@ That's it!
 
         docker run -p 8080:8080 -p 9443:9443 mpherg/blynk-server
 
+### Quick Launch on Raspberry Pi
+
++ Install [Docker](https://docs.docker.com/engine/install/debian/)
++ Run Docker container
+
+        docker run -p 8080:8080 -p 9443:9443 linuxkonsult/rasbian-blynk
+
 ### Full customisation
 
 + Check [README](server/Docker) in docker folder
@@ -150,7 +157,7 @@ That's it!
         
 + To enable server auto restart find /etc/rc.local file and add:
 
-        java -jar /home/pi/server-0.41.12-java8.jar -dataFolder /home/pi/Blynk &
+        java -jar /home/pi/server-0.41.13-java8.jar -dataFolder /home/pi/Blynk &
         
 + Or if the approach above doesn't work, execute 
        
@@ -158,7 +165,7 @@ That's it!
 
 add the following line
 
-        @reboot java -jar /home/pi/server-0.41.12-java8.jar -dataFolder /home/pi/Blynk &
+        @reboot java -jar /home/pi/server-0.41.13-java8.jar -dataFolder /home/pi/Blynk &
         
 save and exit.
 
@@ -170,7 +177,7 @@ save and exit.
 
 + Put in it one line: 
 
-        java -jar server-0.41.12.jar -dataFolder /home/pi/Blynk
+        java -jar server-0.41.13.jar -dataFolder /home/pi/Blynk
         
 + Put bat file to windows startup folder
 
@@ -187,7 +194,7 @@ Server should be always updated before you update Blynk App. To update your serv
         
 + You should see something like that
  
-        username   10539  1.0 12.1 3325808 428948 pts/76 Sl   Jan22   9:11 java -jar server-0.41.12.jar   
+        username   10539  1.0 12.1 3325808 428948 pts/76 Sl   Jan22   9:11 java -jar server-0.41.13.jar   
         
 + Kill the old process
 
@@ -286,7 +293,7 @@ do the same with ```mail.properties``` via ```-mailConfig``` and ```sms.properti
  
 For example:
 
-    java -jar server-0.41.12-java8.jar -dataFolder /home/pi/Blynk -serverConfig /home/pi/someFolder/server.properties
+    java -jar server-0.41.13-java8.jar -dataFolder /home/pi/Blynk -serverConfig /home/pi/someFolder/server.properties
 
 Available server options:
 

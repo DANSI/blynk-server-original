@@ -5,9 +5,11 @@ import cc.blynk.integration.TestUtil;
 import cc.blynk.server.servers.BaseServer;
 import cc.blynk.server.servers.hardware.HardwareAndHttpAPIServer;
 import cc.blynk.utils.AppNameUtil;
+import cc.blynk.utils.TokenGeneratorUtil;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -90,5 +92,54 @@ public class HttpResetPassTest extends BaseTest {
                 contains("If you did not request a password reset from " + productName + ", please ignore this message."));
     }
 
+    @Test
+    public void correctToken() throws Exception {
+        String token = TokenGeneratorUtil.generateNewToken() + TokenGeneratorUtil.generateNewToken();
+        HttpGet getRestorePage = new HttpGet(httpServerUrl + "/restore?token=" + token);
+
+        try (CloseableHttpResponse response = httpclient.execute(getRestorePage)) {
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String data = TestUtil.consumeText(response);
+            assertNotNull(data);
+        }
+    }
+
+    @Test
+    public void getRestorePageXss() throws Exception {
+        HttpGet getRestorePage = new HttpGet(httpServerUrl + "/restore?token=123");
+
+        try (CloseableHttpResponse response = httpclient.execute(getRestorePage)) {
+            assertEquals(400, response.getStatusLine().getStatusCode());
+            String data = TestUtil.consumeText(response);
+            assertNotNull(data);
+            assertEquals("Invalid request parameters.", data);
+        }
+    }
+
+    @Test
+    public void getRestorePageXss2() throws Exception {
+        String token = TokenGeneratorUtil.generateNewToken() + TokenGeneratorUtil.generateNewToken();
+        HttpGet getRestorePage = new HttpGet(httpServerUrl + "/restore?token=" + token + "&email=123");
+
+        try (CloseableHttpResponse response = httpclient.execute(getRestorePage)) {
+            assertEquals(400, response.getStatusLine().getStatusCode());
+            String data = TestUtil.consumeText(response);
+            assertNotNull(data);
+            assertEquals("Invalid request parameters.", data);
+        }
+    }
+
+    @Test
+    public void getRestorePageXss3() throws Exception {
+        String token = "a".repeat(63) + "/";
+        HttpGet getRestorePage = new HttpGet(httpServerUrl + "/restore?token=" + token);
+
+        try (CloseableHttpResponse response = httpclient.execute(getRestorePage)) {
+            assertEquals(400, response.getStatusLine().getStatusCode());
+            String data = TestUtil.consumeText(response);
+            assertNotNull(data);
+            assertEquals("Invalid request parameters.", data);
+        }
+    }
 
 }
