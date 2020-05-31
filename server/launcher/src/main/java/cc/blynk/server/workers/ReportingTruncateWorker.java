@@ -33,15 +33,11 @@ public class ReportingTruncateWorker implements Runnable {
     private final long exportExpirePeriod;
     private final int maxRecordsCount;
 
-    public ReportingTruncateWorker(ReportingDiskDao reportingDao, int storeMinuteRecordDays) {
+    public ReportingTruncateWorker(ReportingDiskDao reportingDao, int storeMinuteRecordDays, long storeReportCSVDays) {
         //storing minute points only for 10 days
-        this(reportingDao, (int) TimeUnit.DAYS.toMinutes(storeMinuteRecordDays), TimeUnit.DAYS.toMillis(45));
-    }
-
-    public ReportingTruncateWorker(ReportingDiskDao reportingDao, int maxRecordsCount, long exportExpirePeriod) {
         this.reportingDao = reportingDao;
-        this.maxRecordsCount = maxRecordsCount;
-        this.exportExpirePeriod = exportExpirePeriod;
+        this.maxRecordsCount = (int) TimeUnit.DAYS.toMinutes(storeMinuteRecordDays);
+        this.exportExpirePeriod = TimeUnit.DAYS.toMillis(storeReportCSVDays);
     }
 
     @Override
