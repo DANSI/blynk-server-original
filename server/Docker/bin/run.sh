@@ -45,6 +45,6 @@ restore.host=${RESTORE_HOST}
 product.name=${PRODUCT_NAME}
 admin.email=${ADMIN_EMAIL}
 admin.pass=${ADMIN_PASS}
-" >> /data/config.properties
+" > /config/server.properties
 
 java -jar /blynk/server.jar -dataFolder /data -serverConfig /config/server.properties
