@@ -178,6 +178,7 @@ public class WebhookProcessor extends NotificationBase {
     private static boolean isValidResponseCode(int responseCode) {
         switch (responseCode) {
             case 200:
+            case 201:
             case 202:
             case 204:
             case 302:
