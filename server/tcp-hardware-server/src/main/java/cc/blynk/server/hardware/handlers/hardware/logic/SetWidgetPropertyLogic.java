@@ -7,6 +7,7 @@ import cc.blynk.server.core.model.auth.Session;
 import cc.blynk.server.core.model.enums.PinType;
 import cc.blynk.server.core.model.enums.WidgetProperty;
 import cc.blynk.server.core.model.widgets.Widget;
+import cc.blynk.server.core.model.widgets.ui.tiles.DeviceTiles;
 import cc.blynk.server.core.protocol.model.messages.StringMessage;
 import cc.blynk.server.core.session.HardwareStateHolder;
 import cc.blynk.utils.NumberUtil;
@@ -74,7 +75,7 @@ public final class SetWidgetPropertyLogic {
 
         Widget widget = dash.updateProperty(deviceId, pin, widgetProperty, propertyValue);
         //this is possible case for device selector
-        if (widget == null) {
+        if (widget == null || widget instanceof DeviceTiles) {
             state.user.profile.putPinPropertyStorageValue(dash,
                     deviceId, PinType.VIRTUAL, pin, widgetProperty, propertyValue);
         }

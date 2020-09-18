@@ -32,6 +32,7 @@ public class Limits {
     public final int hardwareIdleTimeout;
     public final int appIdleTimeout;
     public final int storeMinuteRecordDays;
+    public final int storeReportCSVDays;
 
     public Limits(ServerProperties props) {
         this.webRequestMaxSize = props.getIntProperty("web.request.max.size", 512 * 1024);
@@ -56,6 +57,7 @@ public class Limits {
         this.hourlyRegistrationsLimit = props.getIntProperty("hourly.registrations.limit", 1000);
         this.storeMinuteRecordDays = props.getIntProperty("store.minute.record.days", 10);
         this.reportsLimit = 25;
+        this.storeReportCSVDays = props.getIntProperty("store.export.csv.report.days", 45);
     }
 
     private static int isUnlimited(int val, int max) {

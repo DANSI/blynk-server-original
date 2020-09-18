@@ -70,7 +70,7 @@ public class MobileGetServerHandler extends SimpleChannelInboundHandler<GetServe
         } else {
             log.debug("Searching user {}-{} on another server.", email, appName);
             //user is on other server
-            blockingIOProcessor.executeDB(() -> {
+            blockingIOProcessor.executeDBGetServer(() -> {
                 String userServer = dbManager.getUserServerIp(email, appName);
                 if (userServer == null || userServer.isEmpty()) {
                     log.info("Could not find user ip for {}-{}. Returning current ip.", email, appName);

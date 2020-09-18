@@ -900,6 +900,75 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
     }
 
     @Test
+    public void testSyncForDeviceTilesAndSetProperty() throws Exception {
+        Device device0 = new Device(0, "My Dashboard", BoardType.ESP8266);
+        device0.status = Status.ONLINE;
+        Device device1 = new Device(1, "My Device", BoardType.ESP8266);
+        device1.status = Status.OFFLINE;
+
+        clientPair.appClient.createDevice(1, device1);
+        Device device = clientPair.appClient.parseDevice();
+        assertNotNull(device);
+        assertNotNull(device.token);
+        clientPair.appClient.verifyResult(createDevice(1, device));
+
+        long widgetId = 21321;
+
+        DeviceTiles deviceTiles = new DeviceTiles();
+        deviceTiles.id = widgetId;
+        deviceTiles.x = 8;
+        deviceTiles.y = 8;
+        deviceTiles.width = 50;
+        deviceTiles.height = 100;
+        deviceTiles.color = -231;
+
+        clientPair.appClient.createWidget(1, deviceTiles);
+        clientPair.appClient.verifyResult(ok(2));
+
+        PageTileTemplate tileTemplate = new PageTileTemplate(
+                1,
+                null,
+                new int[] {0, device.id},
+                "name", "name", "iconName", BoardType.ESP8266, new DataStream((short) 1, PinType.VIRTUAL),
+                false, null, null, null, -75056000, -231, FontSize.LARGE, false, 2);
+
+        clientPair.appClient.createTemplate(1, widgetId, tileTemplate);
+        clientPair.appClient.verifyResult(ok(3));
+
+        ValueDisplay valueDisplay = new ValueDisplay();
+        valueDisplay.id = 2322;
+        valueDisplay.width = 2;
+        valueDisplay.height = 2;
+        valueDisplay.pin = 1;
+        valueDisplay.pinType = PinType.VIRTUAL;
+
+        clientPair.appClient.createWidget(1, widgetId, tileTemplate.id, valueDisplay);
+        clientPair.appClient.verifyResult(ok(4));
+
+        clientPair.hardwareClient.setProperty(1, "label", "newLabel");
+        clientPair.appClient.verifyResult(setProperty(1, "1-0 1 label newLabel"));
+        clientPair.appClient.reset();
+
+        clientPair.appClient.sync(1, 0);
+
+        verify(clientPair.appClient.responseMock, timeout(500).times(12)).channelRead(any(), any());
+
+        clientPair.appClient.verifyResult(ok(1));
+
+        clientPair.appClient.verifyResult(appSync("1-0 dw 1 1"));
+        clientPair.appClient.verifyResult(appSync("1-0 dw 2 1"));
+        clientPair.appClient.verifyResult(appSync("1-0 aw 3 0"));
+        clientPair.appClient.verifyResult(appSync("1-0 dw 5 1"));
+        clientPair.appClient.verifyResult(appSync("1-0 vw 4 244"));
+        clientPair.appClient.verifyResult(appSync("1-0 aw 7 3"));
+        clientPair.appClient.verifyResult(appSync("1-0 aw 30 3"));
+        clientPair.appClient.verifyResult(appSync("1-0 vw 0 89.888037459418"));
+        clientPair.appClient.verifyResult(appSync("1-0 vw 11 -58.74774244674501"));
+        clientPair.appClient.verifyResult(appSync("1-0 vw 13 60 143 158"));
+        clientPair.appClient.verifyResult(setProperty(1111, "1-0 1 label newLabel"));
+    }
+
+    @Test
     public void testSyncForDeviceSelectorAndSetPropertyAndMultiValueWidget() throws Exception {
         Device device0 = new Device(0, "My Dashboard", BoardType.ESP8266);
         device0.status = Status.ONLINE;

@@ -55,6 +55,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.ZoneId;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPInputStream;
 
 import static cc.blynk.integration.TestUtil.b;
@@ -2036,7 +2037,8 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
     @Test
     public void truncateReportingDataWorks() throws Exception {
-        ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDiskDao, 10);
+        ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDiskDao,
+                                                                             (int) TimeUnit.MINUTES.toMinutes(10), 45);
         String tempDir = holder.props.getProperty("data.folder");
 
         Path userReportFolder = Paths.get(tempDir, "data", getUserName());
@@ -2107,7 +2109,8 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
     @Test
     public void doNotTruncateFileWithCorrectSize() throws Exception {
-        ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDiskDao, 10);
+        ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDiskDao,
+                                                                             (int) TimeUnit.DAYS.toMinutes(10), 45L);
         String tempDir = holder.props.getProperty("data.folder");
 
         Path userReportFolder = Paths.get(tempDir, "data", getUserName());
@@ -2143,7 +2146,8 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
     @Test
     public void truncateReportingDataDontFailsInEmptyFolder() throws Exception {
-        ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDiskDao, 10);
+        ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDiskDao,
+                                                                             (int) TimeUnit.DAYS.toMinutes(10), 45L);
         String tempDir = holder.props.getProperty("data.folder");
 
         Path userReportFolder = Paths.get(tempDir, "data", getUserName());
@@ -2158,7 +2162,8 @@ public class HistoryGraphTest extends SingleServerInstancePerTest {
 
     @Test
     public void truncateReportingDataDeletesEmptyFolder() throws Exception {
-        ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDiskDao, 10);
+        ReportingTruncateWorker truncateWorker = new ReportingTruncateWorker(holder.reportingDiskDao,
+                                                                             (int) TimeUnit.DAYS.toMinutes(10), 45L);
         String tempDir = holder.props.getProperty("data.folder");
 
         Path userReportFolder = Paths.get(tempDir, "data", getUserName());
