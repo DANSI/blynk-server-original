@@ -96,19 +96,19 @@ public class ReportingDBManager implements Closeable {
 
     public void insertReporting(Map<AggregationKey, AggregationValue> map, GraphGranularityType graphGranularityType) {
         if (isDBEnabled() && map.size() > 0) {
-            blockingIOProcessor.executeDB(() -> reportingDBDao.insert(map, graphGranularityType));
+            blockingIOProcessor.executeReportingDB(() -> reportingDBDao.insert(map, graphGranularityType));
         }
     }
 
     public void insertReportingRaw(Map<AggregationKey, Object> rawData) {
         if (isDBEnabled() && rawData.size() > 0) {
-            blockingIOProcessor.executeDB(() -> reportingDBDao.insertRawData(rawData));
+            blockingIOProcessor.executeReportingDB(() -> reportingDBDao.insertRawData(rawData));
         }
     }
 
     public void cleanOldReportingRecords(Instant now) {
         if (isDBEnabled() && cleanOldReporting) {
-            blockingIOProcessor.executeDB(() -> reportingDBDao.cleanOldReportingRecords(now));
+            blockingIOProcessor.executeReportingDB(() -> reportingDBDao.cleanOldReportingRecords(now));
         }
     }
 

@@ -22,6 +22,10 @@ class BlockingIOStat {
 
     private final long dbExecutedTasks;
 
+    private final int reportingActiveTasks;
+
+    private final long reportingExecutedTasks;
+
     private final int getServerActiveTasks;
 
     private final long getServerExecutedTasks;
@@ -42,6 +46,9 @@ class BlockingIOStat {
              blockingIOProcessor.dbExecutor.getQueue().size(),
              blockingIOProcessor.dbExecutor.getCompletedTaskCount(),
 
+             blockingIOProcessor.dbReportingExecutor.getQueue().size(),
+             blockingIOProcessor.dbReportingExecutor.getCompletedTaskCount(),
+
              blockingIOProcessor.dbGetServerExecutor.getQueue().size(),
              blockingIOProcessor.dbGetServerExecutor.getCompletedTaskCount(),
 
@@ -54,6 +61,7 @@ class BlockingIOStat {
     private BlockingIOStat(int messagingActiveTasks, long messagingExecutedTasks,
                           int historyActiveTasks, long historyExecutedTasks,
                           int dbActiveTasks, long dbExecutedTasks,
+                          int reportingActiveTasks, long reportingExecutedTasks,
                           int getServerActiveTasks, long getServerExecutedTasks,
                           int reportsActive, long reportsExecuted, int reportsFutureMapSize) {
         this.messagingActiveTasks = messagingActiveTasks;
@@ -62,6 +70,8 @@ class BlockingIOStat {
         this.historyExecutedTasks = historyExecutedTasks;
         this.dbActiveTasks = dbActiveTasks;
         this.dbExecutedTasks = dbExecutedTasks;
+        this.reportingActiveTasks = reportingActiveTasks;
+        this.reportingExecutedTasks = reportingExecutedTasks;
         this.getServerActiveTasks = getServerActiveTasks;
         this.getServerExecutedTasks = getServerExecutedTasks;
         this.reportsActive = reportsActive;
