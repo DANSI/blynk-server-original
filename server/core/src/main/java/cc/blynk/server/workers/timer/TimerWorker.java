@@ -171,11 +171,11 @@ public class TimerWorker implements Runnable {
     }
 
     public void delete(UserKey userKey, Timer timer, int dashId, long deviceTilesId, long templateId) {
-        if (timer.isValidStart()) {
+        if (Timer.isValidTime(timer.startTime)) {
             delete(userKey, dashId, timer.deviceId, timer.id, 0,
                     deviceTilesId, templateId, new TimerTime(timer.startTime));
         }
-        if (timer.isValidStop()) {
+        if (Timer.isValidTime(timer.stopTime)) {
             delete(userKey, dashId, timer.deviceId, timer.id, 1,
                     deviceTilesId, templateId, new TimerTime(timer.stopTime));
         }
