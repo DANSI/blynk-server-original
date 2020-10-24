@@ -74,7 +74,7 @@ For Windows download Java [here](https://www.oracle.com/technetwork/java/javase/
 
 + Run the server on default 'hardware port 8080' and default 'application port 9443' (SSL port)
 
-        java -jar server-0.41.13.jar -dataFolder /path
+        java -jar server-0.41.14.jar -dataFolder /path
         
 That's it! 
 
