@@ -598,7 +598,7 @@ For example
         
 + Convert server.key to PKCS#8 private key file in PEM format
 
-        openssl pkcs8 -topk8 -inform PEM -outform PEM -in server.key -out server.pem
+        openssl pkcs8 -topk8 -v1 PBE-SHA1-2DES -in server.key -out server.enc.key
         
 If you connect hardware with [USB script](https://github.com/blynkkk/blynk-library/tree/master/scripts) you have to provide an option '-s' pointing to "common name" (hostname) you did specified during certificate generation.
         
