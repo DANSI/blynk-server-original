@@ -88,7 +88,13 @@ public class MqttHardwareLoginHandler extends SimpleChannelInboundHandler<MqttCo
         }
 
         username = username.trim().toLowerCase();
-        String token = new String(message.payload().passwordInBytes(), CharsetUtil.UTF_8);
+        byte[] password = mqttConnectPayload.passwordInBytes();
+        if (password == null) {
+            ctx.writeAndFlush(createConnAckMessage(CONNECTION_REFUSED_BAD_USER_NAME_OR_PASSWORD), ctx.voidPromise());
+            return;
+        }
+
+        String token = new String(password, CharsetUtil.UTF_8);
 
         TokenValue tokenValue = holder.tokenManager.getTokenValueByToken(token);
 
