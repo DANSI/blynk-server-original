@@ -35,8 +35,11 @@ public class SslContextHolder {
 
     public final ContentHolder contentHolder;
 
+    private final boolean onlyLatestTLS;
+
     SslContextHolder(ServerProperties props, String email) {
         this.contentHolder = new ContentHolder();
+        this.onlyLatestTLS = props.getBoolProperty("latest.tls");
 
         String certPath = props.getProperty("server.ssl.cert");
         String keyPath = props.getProperty("server.ssl.key");
@@ -115,12 +118,11 @@ public class SslContextHolder {
         }
     }
 
-    private static SslContext initSslContext(String serverCertPath, String serverKeyPath, String serverPass,
-                                            SslProvider sslProvider) {
+    private SslContext initSslContext(String serverCertPath, String serverKeyPath, String serverPass,
+                                      SslProvider sslProvider) {
         try {
             File serverCert = new File(serverCertPath);
             File serverKey = new File(serverKeyPath);
-
 
             if (!serverCert.exists() || !serverKey.exists()) {
                 log.warn("ATTENTION. Server certificate paths (cert : '{}', key : '{}') not valid."
@@ -149,17 +151,20 @@ public class SslContextHolder {
                 .build();
     }
 
-    public static SslContext build(File serverCert, File serverKey,
-                                   String serverPass, SslProvider sslProvider) throws SSLException {
+    public SslContext build(File serverCert, File serverKey,
+                            String serverPass, SslProvider sslProvider) throws SSLException {
+        SslContextBuilder sslContextBuilder;
         if (serverPass == null || serverPass.isEmpty()) {
-            return SslContextBuilder.forServer(serverCert, serverKey)
-                    .sslProvider(sslProvider)
-                    .build();
+            sslContextBuilder = SslContextBuilder.forServer(serverCert, serverKey)
+                    .sslProvider(sslProvider);
         } else {
-            return SslContextBuilder.forServer(serverCert, serverKey, serverPass)
-                    .sslProvider(sslProvider)
-                    .build();
+            sslContextBuilder = SslContextBuilder.forServer(serverCert, serverKey, serverPass)
+                    .sslProvider(sslProvider);
         }
+        if (this.onlyLatestTLS) {
+            sslContextBuilder.protocols("TLSv1.3", "TLSv1.2");
+        }
+        return sslContextBuilder.build();
     }
 
     public static SslContext build(File serverCert, File serverKey, String serverPass,
