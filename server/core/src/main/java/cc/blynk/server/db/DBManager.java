@@ -108,7 +108,7 @@ public class DBManager implements Closeable {
 
         config.setAutoCommit(false);
         config.setConnectionTimeout(serverProperties.getLongProperty("connection.timeout.millis"));
-        config.setMaximumPoolSize(3);
+        config.setMaximumPoolSize(10);
         config.setMaxLifetime(0);
         config.setConnectionTestQuery("SELECT 1");
         return config;
