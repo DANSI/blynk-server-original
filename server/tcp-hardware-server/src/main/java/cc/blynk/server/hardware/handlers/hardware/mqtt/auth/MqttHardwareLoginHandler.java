@@ -18,6 +18,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.mqtt.MqttConnAckMessage;
 import io.netty.handler.codec.mqtt.MqttConnAckVariableHeader;
 import io.netty.handler.codec.mqtt.MqttConnectMessage;
+import io.netty.handler.codec.mqtt.MqttConnectPayload;
 import io.netty.handler.codec.mqtt.MqttConnectReturnCode;
 import io.netty.handler.codec.mqtt.MqttFixedHeader;
 import io.netty.handler.codec.mqtt.MqttMessageType;
@@ -74,8 +75,26 @@ public class MqttHardwareLoginHandler extends SimpleChannelInboundHandler<MqttCo
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, MqttConnectMessage message) {
-        String username = message.payload().userName().trim().toLowerCase();
-        String token = new String(message.payload().passwordInBytes(), CharsetUtil.UTF_8);
+        MqttConnectPayload mqttConnectPayload = message.payload();
+        if (mqttConnectPayload == null) {
+            ctx.writeAndFlush(createConnAckMessage(CONNECTION_REFUSED_BAD_USER_NAME_OR_PASSWORD), ctx.voidPromise());
+            return;
+        }
+
+        String username = mqttConnectPayload.userName();
+        if (username == null) {
+            ctx.writeAndFlush(createConnAckMessage(CONNECTION_REFUSED_BAD_USER_NAME_OR_PASSWORD), ctx.voidPromise());
+            return;
+        }
+
+        username = username.trim().toLowerCase();
+        byte[] password = mqttConnectPayload.passwordInBytes();
+        if (password == null) {
+            ctx.writeAndFlush(createConnAckMessage(CONNECTION_REFUSED_BAD_USER_NAME_OR_PASSWORD), ctx.voidPromise());
+            return;
+        }
+
+        String token = new String(password, CharsetUtil.UTF_8);
 
         TokenValue tokenValue = holder.tokenManager.getTokenValueByToken(token);
 

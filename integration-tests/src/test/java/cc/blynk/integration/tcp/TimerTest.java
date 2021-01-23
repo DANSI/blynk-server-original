@@ -454,6 +454,39 @@ public class TimerTest extends SingleServerInstancePerTest {
     }
 
     @Test
+    public void testStopTimerTrigger() throws Exception {
+        ses.scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
+        Timer timer = new Timer();
+        timer.id = 112;
+        timer.x = 1;
+        timer.y = 1;
+        timer.width = 2;
+        timer.height = 1;
+        timer.pinType = PinType.DIGITAL;
+        timer.pin = 5;
+        timer.startValue = "1";
+        timer.stopValue = "0";
+        LocalTime localDateTime = LocalTime.now(ZoneId.of("UTC"));
+        int curTime = localDateTime.toSecondOfDay();
+        timer.startTime = curTime + 1;
+        timer.stopTime = curTime + 2;
+
+        clientPair.appClient.createWidget(1, timer);
+        clientPair.appClient.verifyResult(ok(1));
+
+        timer.startTime = -1;
+        timer.stopTime = -1;
+
+        clientPair.appClient.updateWidget(1, timer);
+        clientPair.appClient.verifyResult(ok(1));
+
+        verify(clientPair.hardwareClient.responseMock, after(2500).times(0)).channelRead(any(), any());
+        //verify(clientPair.hardwareClient.responseMock, timeout(2500).times(2)).channelRead(any(), any());
+        //verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "dw 5 11")));
+        //verify(clientPair.hardwareClient.responseMock, timeout(2000)).channelRead(any(), eq(hardware(7777, "dw 5 10")));
+    }
+
+    @Test
     public void testDashTimerNotTriggered() throws Exception {
         ses.scheduleAtFixedRate(holder.timerWorker, 0, 1000, TimeUnit.MILLISECONDS);
         Timer timer = new Timer();

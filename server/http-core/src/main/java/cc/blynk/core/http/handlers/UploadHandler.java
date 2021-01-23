@@ -26,10 +26,10 @@ import io.netty.handler.codec.http.LastHttpContent;
 import io.netty.handler.codec.http.multipart.DefaultHttpDataFactory;
 import io.netty.handler.codec.http.multipart.DiskFileUpload;
 import io.netty.handler.codec.http.multipart.HttpDataFactory;
-import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
 import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder.EndOfDataDecoderException;
 import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder.ErrorDataDecoderException;
 import io.netty.handler.codec.http.multipart.InterfaceHttpData;
+import io.netty.handler.codec.http.multipart.InterfaceHttpPostRequestDecoder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -51,7 +51,7 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> {
 
     private static final HttpDataFactory factory = new DefaultHttpDataFactory(true);
     final String handlerUri;
-    private HttpPostRequestDecoder decoder;
+    private InterfaceHttpPostRequestDecoder decoder;
     private final String staticFolderPath;
     private final String uploadFolder;
 
@@ -85,7 +85,7 @@ public class UploadHandler extends SimpleChannelInboundHandler<HttpObject> {
 
             try {
                 log.debug("Incoming {} {}", req.method(), req.uri());
-                decoder = new HttpPostRequestDecoder(factory, req);
+                decoder = new BlynkHttpPostRequestDecoder(factory, req);
             } catch (ErrorDataDecoderException e) {
                 log.error("Error creating http post request decoder.", e);
                 ctx.writeAndFlush(badRequest(e.getMessage()));

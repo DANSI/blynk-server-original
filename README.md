@@ -74,7 +74,7 @@ For Windows download Java [here](https://www.oracle.com/technetwork/java/javase/
 
 + Run the server on default 'hardware port 8080' and default 'application port 9443' (SSL port)
 
-        java -jar server-0.41.13.jar -dataFolder /path
+        java -jar server-0.41.14.jar -dataFolder /path
         
 That's it! 
 
@@ -314,7 +314,8 @@ Available server options:
         server.ssl.cert=./server_embedded.crt
         server.ssl.key=./server_embedded.pem
         server.ssl.key.pass=pupkin123
-        
+
+**Note**: if you use Let's Encrypt certificates you'll have to add ```#define BLYNK_SSL_USE_LETSENCRYPT``` before ```#include <BlynkSimpleEsp8266_SSL.h>``` in the Arduino Sketch for your hardware.
         
 + User profiles folder. Folder in which all users profiles will be stored. By default System.getProperty("java.io.tmpdir")/blynk used. Will be created if not exists
 

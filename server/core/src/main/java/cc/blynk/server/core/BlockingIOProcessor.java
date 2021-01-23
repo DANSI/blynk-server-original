@@ -61,7 +61,7 @@ public class BlockingIOProcessor implements Closeable {
                 new ArrayBlockingQueue<>(100),
                 BlynkTPFactory.build("reporting-db"));
 
-        this.dbGetServerExecutor = new ThreadPoolExecutor(poolSize / 3, poolSize / 3, 2L,
+        this.dbGetServerExecutor = new ThreadPoolExecutor(poolSize, poolSize, 2L,
                 TimeUnit.MINUTES, new ArrayBlockingQueue<>(250),
                 BlynkTPFactory.build("getServer"));
 

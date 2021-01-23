@@ -74,6 +74,10 @@ public class ServerProperties extends BaseProperties {
         return getIntProperty("https.port");
     }
 
+    public boolean isRenewalDisabled() {
+        return getBoolProperty("renewal.disabled");
+    }
+
     private String getServerHost() {
         String host = getHostProperty();
         if (host == null || host.isEmpty()) {
