@@ -37,6 +37,7 @@ public final class StringUtils {
     public static final Pattern DEVICE_OWNER_EMAIL =  Pattern.compile("device_owner_email",
                                                                       Pattern.LITERAL | Pattern.CASE_INSENSITIVE);
     public static final String WEBSOCKET_PATH = "/websocket";
+    public static final String WEBSOCKETS_PATH = "/websockets";
     public static final String WEBSOCKET_WEB_PATH = "/dashws";
 
     private StringUtils() {
