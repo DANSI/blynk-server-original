@@ -31,6 +31,16 @@ public class Redeem {
                 .add(token).toString();
     }
 
+    public String formatToken(String title, String text) {
+        return new StringJoiner("+")
+                .add(company)
+                .add(String.valueOf(reward))
+                .add(token)
+                .add(title)
+                .add(text)
+                .toString();
+    }
+
     public Redeem() {
         this.isRedeemed = false;
         this.version = 1;
