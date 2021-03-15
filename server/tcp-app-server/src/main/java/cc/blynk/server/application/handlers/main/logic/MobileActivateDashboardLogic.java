@@ -93,8 +93,7 @@ public final class MobileActivateDashboardLogic {
                 appChannel.write(makeUTF8StringMessage(message.command, message.id, message.body));
             }
 
-            boolean isNewSyncFormat = mobileStateHolder != null && mobileStateHolder.isNewSyncFormat();
-            user.profile.sendAppSyncs(dash, appChannel, ANY_TARGET, isNewSyncFormat);
+            user.profile.sendAppSyncs(dash, appChannel, ANY_TARGET, true);
             appChannel.flush();
         }
     }

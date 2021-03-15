@@ -9,7 +9,6 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.server.internal.CommonByteBufUtil.ok;
-import static cc.blynk.utils.MobileStateHolderUtil.getAppState;
 import static cc.blynk.utils.StringUtils.split2Device;
 
 /**
@@ -40,9 +39,7 @@ public final class MobileSyncLogic {
 
         ctx.write(ok(message.id), ctx.voidPromise());
         Channel appChannel = ctx.channel();
-        MobileStateHolder mobileStateHolder = getAppState(appChannel);
-        boolean isNewSyncFormat = mobileStateHolder != null && mobileStateHolder.isNewSyncFormat();
-        user.profile.sendAppSyncs(dash, appChannel, targetId, isNewSyncFormat);
+        user.profile.sendAppSyncs(dash, appChannel, targetId, true);
         ctx.flush();
     }
 
