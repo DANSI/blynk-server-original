@@ -20,7 +20,6 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import java.io.File;
 import java.net.BindException;
 import java.security.Security;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -75,11 +74,13 @@ public final class ServerLauncher {
     }
 
     private static void setGlobalProperties(ServerProperties serverProperties) {
-        Map<String, String> globalProps = new HashMap<>(4);
-        globalProps.put("terminal.strings.pool.size", "25");
-        globalProps.put("initial.energy", "2000");
-        globalProps.put("table.rows.pool.size", "100");
-        globalProps.put("csv.export.data.points.max", "43200");
+        Map<String, String> globalProps = Map.of(
+                "terminal.strings.pool.size", "25",
+                "initial.energy", "2000",
+                "table.rows.pool.size", "100",
+                "csv.export.data.points.max", "43200",
+                "map.strings.pool.size", "25"
+        );
 
         for (var entry : globalProps.entrySet()) {
             String name = entry.getKey();
