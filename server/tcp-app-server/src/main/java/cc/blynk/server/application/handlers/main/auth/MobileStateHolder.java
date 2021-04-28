@@ -37,7 +37,4 @@ public class MobileStateHolder extends StateHolderBase {
         return true;
     }
 
-    public boolean isNewSyncFormat() {
-        return version.versionSingleNumber >= 22600;
-    }
 }

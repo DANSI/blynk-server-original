@@ -38,7 +38,7 @@ public class WebHook extends OnePinWidget {
     }
 
     @Override
-    public void sendAppSync(Channel appChannel, int dashId, int targetId, boolean useNewSyncFormat) {
+    public void sendAppSync(Channel appChannel, int dashId, int targetId) {
     }
 
     @Override

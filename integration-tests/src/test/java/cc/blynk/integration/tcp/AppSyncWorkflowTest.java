@@ -137,9 +137,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
 
         clientPair.appClient.activate(1);
         clientPair.appClient.verifyResult(ok(5));
-        clientPair.appClient.verifyResult(appSync("1-0 vw 17 a"));
-        clientPair.appClient.verifyResult(appSync("1-0 vw 17 b"));
-        clientPair.appClient.verifyResult(appSync("1-0 vw 17 c"));
+        clientPair.appClient.verifyResult(appSync("1-0 vm 17 a b c"));
     }
 
     @Test
@@ -162,11 +160,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
         verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(hardware(5, "1-0 vw 17 dddyyyiii")));
 
         clientPair.appClient.activate(1);
-        clientPair.appClient.verifyResult(appSync("1-0 vw 17 1"));
-        clientPair.appClient.verifyResult(appSync("1-0 vw 17 2"));
-        clientPair.appClient.verifyResult(appSync("1-0 vw 17 3"));
-        clientPair.appClient.verifyResult(appSync("1-0 vw 17 4"));
-        clientPair.appClient.verifyResult(appSync("1-0 vw 17 dddyyyiii"));
+        clientPair.appClient.verifyResult(appSync("1-0 vm 17 1 2 3 4 dddyyyiii"));
     }
 
     @Test
@@ -460,11 +454,7 @@ public class AppSyncWorkflowTest extends SingleServerInstancePerTest {
         appClient.sync(1, 0);
         appClient.verifyResult(ok(6));
 
-        appClient.verifyResult(appSync("1-0 vw 56 1"));
-        appClient.verifyResult(appSync("1-0 vw 56 2"));
-        appClient.verifyResult(appSync("1-0 vw 56 3"));
-        appClient.verifyResult(appSync("1-0 vw 56 4"));
-        appClient.verifyResult(appSync("1-0 vw 56 dddyyyiii"));
+        appClient.verifyResult(appSync("1-0 vm 56 1 2 3 4 dddyyyiii"));
     }
 
     @Test

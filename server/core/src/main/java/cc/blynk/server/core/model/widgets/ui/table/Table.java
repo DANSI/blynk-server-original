@@ -97,17 +97,15 @@ public class Table extends OnePinWidget {
     }
 
     @Override
-    public void sendAppSync(Channel appChannel, int dashId, int targetId, boolean useNewSyncFormat) {
+    public void sendAppSync(Channel appChannel, int dashId, int targetId) {
         if (isNotValid() || rows.size() == 0) {
             return;
         }
         if (targetId == ANY_TARGET || this.deviceId == targetId) {
-            if (useNewSyncFormat) {
-                Iterator<Row> valIterator = rows.iterator();
-                if (valIterator.hasNext()) {
-                    String body = makeMultiValueHardwareBody(dashId, deviceId, pinType.pintTypeChar, pin, valIterator);
-                    appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body));
-                }
+            Iterator<Row> valIterator = rows.iterator();
+            if (valIterator.hasNext()) {
+                String body = makeMultiValueHardwareBody(dashId, deviceId, pinType.pintTypeChar, pin, valIterator);
+                appChannel.write(makeUTF8StringMessage(APP_SYNC, SYNC_DEFAULT_MESSAGE_ID, body));
             }
         }
     }

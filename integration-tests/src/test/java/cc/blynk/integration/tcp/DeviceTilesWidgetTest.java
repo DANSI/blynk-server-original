@@ -2250,8 +2250,7 @@ public class DeviceTilesWidgetTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 11 -58.74774244674501")));
         clientPair.appClient.verifyResult(appSync(b("1-0 vw 13 60 143 158")));
 
-        clientPair.appClient.verifyResult(appSync(b("1-0 vw 6 111")));
-        clientPair.appClient.verifyResult(appSync(b("1-0 vw 6 112")));
+        clientPair.appClient.verifyResult(appSync(b("1-0 vm 6 111 112")));
     }
 
     @Test

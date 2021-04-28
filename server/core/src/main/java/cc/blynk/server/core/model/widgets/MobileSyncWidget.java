@@ -17,6 +17,6 @@ public interface MobileSyncWidget {
     int ANY_TARGET = -1;
 
     //todo remove useNewFormat in future. leave it for a while for back compatibility
-    void sendAppSync(Channel appChannel, int dashId, int targetId, boolean useNewFormat);
+    void sendAppSync(Channel appChannel, int dashId, int targetId);
 
 }

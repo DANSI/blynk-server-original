@@ -46,7 +46,7 @@ public class RGB extends MultiPinWidget implements HardwareSyncWidget {
     }
 
     @Override
-    public void sendAppSync(Channel appChannel, int dashId, int targetId, boolean useNewSyncFormat) {
+    public void sendAppSync(Channel appChannel, int dashId, int targetId) {
         if (dataStreams == null) {
             return;
         }

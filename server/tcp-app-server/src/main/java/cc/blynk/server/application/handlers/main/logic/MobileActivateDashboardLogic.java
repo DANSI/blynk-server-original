@@ -93,7 +93,7 @@ public final class MobileActivateDashboardLogic {
                 appChannel.write(makeUTF8StringMessage(message.command, message.id, message.body));
             }
 
-            user.profile.sendAppSyncs(dash, appChannel, ANY_TARGET, true);
+            user.profile.sendAppSyncs(dash, appChannel, ANY_TARGET);
             appChannel.flush();
         }
     }

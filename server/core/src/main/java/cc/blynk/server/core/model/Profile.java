@@ -225,23 +225,23 @@ public class Profile {
         }
     }
 
-    public void sendAppSyncs(DashBoard dash, Channel appChannel, int targetId, boolean useNewFormat) {
-        sendPinStorageSyncs(dash, appChannel, targetId, useNewFormat);
+    public void sendAppSyncs(DashBoard dash, Channel appChannel, int targetId) {
+        sendPinStorageSyncs(dash, appChannel, targetId);
         for (Widget widget : dash.widgets) {
             if (widget instanceof MobileSyncWidget && appChannel.isWritable()) {
-                ((MobileSyncWidget) widget).sendAppSync(appChannel, dash.id, targetId, useNewFormat);
+                ((MobileSyncWidget) widget).sendAppSync(appChannel, dash.id, targetId);
             }
         }
     }
 
-    private void sendPinStorageSyncs(DashBoard dash, Channel appChannel, int targetId, boolean useNewFormat) {
+    private void sendPinStorageSyncs(DashBoard dash, Channel appChannel, int targetId) {
         for (Map.Entry<DashPinStorageKey, PinStorageValue> entry : pinsStorage.entrySet()) {
             DashPinStorageKey key = entry.getKey();
             if ((targetId == ANY_TARGET || targetId == key.deviceId)
                     && dash.id == key.dashId
                     && appChannel.isWritable()) {
                 PinStorageValue pinStorageValue = entry.getValue();
-                pinStorageValue.sendAppSync(appChannel, dash.id, key, useNewFormat);
+                pinStorageValue.sendAppSync(appChannel, dash.id, key);
             }
         }
     }

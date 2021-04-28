@@ -398,9 +398,7 @@ public class SyncWorkflowTest extends SingleServerInstancePerTest {
 
         clientPair.appClient.activate(1);
         clientPair.appClient.verifyResult(ok(5));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 17 a"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 17 b"))));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vw 17 c"))));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(appSync(b("1-0 vm 17 a b c"))));
     }
 
     @Test

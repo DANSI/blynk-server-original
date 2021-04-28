@@ -62,7 +62,7 @@ public abstract class OnePinWidget extends Widget implements MobileSyncWidget, H
     }
 
     @Override
-    public void sendAppSync(Channel appChannel, int dashId, int targetId, boolean useNewSyncFormat) {
+    public void sendAppSync(Channel appChannel, int dashId, int targetId) {
         //do not send SYNC message for widgets assigned to device selector
         //as it will be duplicated later.
         if (isAssignedToDeviceSelector()) {

@@ -39,7 +39,7 @@ public final class MobileSyncLogic {
 
         ctx.write(ok(message.id), ctx.voidPromise());
         Channel appChannel = ctx.channel();
-        user.profile.sendAppSyncs(dash, appChannel, targetId, true);
+        user.profile.sendAppSyncs(dash, appChannel, targetId);
         ctx.flush();
     }
 

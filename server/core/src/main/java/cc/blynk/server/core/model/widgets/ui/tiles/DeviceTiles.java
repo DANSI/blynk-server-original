@@ -166,7 +166,7 @@ public class DeviceTiles extends Widget implements MobileSyncWidget, HardwareSyn
     }
 
     @Override
-    public void sendAppSync(Channel appChannel, int dashId, int targetId, boolean useNewSyncFormat) {
+    public void sendAppSync(Channel appChannel, int dashId, int targetId) {
         for (Tile tile : tiles) {
             if ((targetId == ANY_TARGET || tile.deviceId == targetId)
                     && tile.isValidDataStream() && tile.dataStream.isNotEmpty()) {

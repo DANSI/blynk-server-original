@@ -564,10 +564,10 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.sync(1, 0);
         clientPair.appClient.verifyResult(ok(1));
         //expecting 25 syncs and not 26
-        verify(clientPair.appClient.responseMock, timeout(1000).times(11 + 25)).channelRead(any(), any());
+        verify(clientPair.appClient.responseMock, timeout(1000).times(11 + 2)).channelRead(any(), any());
 
         for (var i = 2; i <= 26; i++) {
-            clientPair.appClient.verifyResult(appSync("1-0 vw 88 " + i));
+            clientPair.appClient.verifyResult(appSync("1-0 vm 88 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26"));
         }
     }
 
@@ -605,7 +605,7 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.verifyResult(ok(2));
         clientPair.appClient.verifyResult(ok(3));
 
-        for (var i = 1; i <= 101; i++) {
+        for (var i = 1; i <= 11; i++) {
             clientPair.hardwareClient.send("hardware vw 88 " + i);
             clientPair.appClient.verifyResult(hardware(i, "1-0 vw 88 " + i));
         }
@@ -613,12 +613,9 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.reset();
         clientPair.appClient.sync(1, 0);
         clientPair.appClient.verifyResult(ok(1));
-        //expecting 25 syncs and not 26
-        verify(clientPair.appClient.responseMock, timeout(1000).times(11 + 100)).channelRead(any(), any());
+        verify(clientPair.appClient.responseMock, timeout(1000).times(11 + 2)).channelRead(any(), any());
 
-        for (var i = 2; i <= 101; i++) {
-            clientPair.appClient.verifyResult(appSync("1-0 vw 88 " + i));
-        }
+        clientPair.appClient.verifyResult(appSync("1-0 vm 88 1 2 3 4 5 6 7 8 9 10 11"));
     }
 
     @Test
@@ -662,12 +659,9 @@ public class DeviceSelectorWorkflowTest extends SingleServerInstancePerTest {
         clientPair.appClient.reset();
         clientPair.appClient.sync(1, 0);
         clientPair.appClient.verifyResult(ok(1));
-        //expecting 25 syncs and not 26
-        verify(clientPair.appClient.responseMock, timeout(1000).times(11 + 6)).channelRead(any(), any());
+        verify(clientPair.appClient.responseMock, timeout(1000).times(11 + 2)).channelRead(any(), any());
 
-        for (var i = 2; i <= 7; i++) {
-            clientPair.appClient.verifyResult(appSync("1-0 vw 88 " + i));
-        }
+        clientPair.appClient.verifyResult(appSync("1-0 vm 88 2 3 4 5 6 7"));
     }
 
     @Test

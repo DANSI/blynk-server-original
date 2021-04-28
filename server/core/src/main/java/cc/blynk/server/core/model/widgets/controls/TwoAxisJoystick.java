@@ -48,7 +48,7 @@ public class TwoAxisJoystick extends MultiPinWidget implements HardwareSyncWidge
     }
 
     @Override
-    public void sendAppSync(Channel appChannel, int dashId, int targetId, boolean useNewSyncFormat) {
+    public void sendAppSync(Channel appChannel, int dashId, int targetId) {
         if (dataStreams == null) {
             return;
         }
