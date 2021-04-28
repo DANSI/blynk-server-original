@@ -76,7 +76,7 @@ public class AppMailTest extends SingleServerInstancePerTest {
                 "Sketch generator -> https://examples.blynk.cc/\n" +
                 "\n" +
                 "Latest Blynk library -> https://github.com/blynkkk/blynk-library/releases/download/v0.6.1/Blynk_Release_v0.6.1.zip\n" +
-                "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.41.13/server-0.41.13.jar\n" +
+                "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.41.16/server-0.41.16.jar\n" +
                 "-\n" +
                 "https://www.blynk.cc\n" +
                 "twitter.com/blynk_app\n" +
@@ -116,7 +116,7 @@ public class AppMailTest extends SingleServerInstancePerTest {
                 "Sketch generator -> https://examples.blynk.cc/\n" +
                 "\n" +
                 "Latest Blynk library -> https://github.com/blynkkk/blynk-library/releases/download/v0.6.1/Blynk_Release_v0.6.1.zip\n" +
-                "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.41.13/server-0.41.13.jar\n" +
+                "Latest Blynk server -> https://github.com/blynkkk/blynk-server/releases/download/v0.41.16/server-0.41.16.jar\n" +
                 "-\n" +
                 "https://www.blynk.cc\n" +
                 "twitter.com/blynk_app\n" +
