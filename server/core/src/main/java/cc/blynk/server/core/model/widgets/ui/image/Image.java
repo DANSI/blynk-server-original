@@ -44,7 +44,7 @@ public class Image extends OnePinWidget {
                 String[] split = StringUtils.split2(propertyValue);
                 if (split.length == 2) {
                     int index = Integer.parseInt(split[0]) - 1;
-                    if (index >= 0 && index < urls.length) {
+                    if (urls != null && index >= 0 && index < urls.length) {
                         this.urls = ArrayUtil.copyAndReplace(this.urls, split[1], index);
                         return true;
                     }
